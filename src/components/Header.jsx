@@ -11,7 +11,7 @@ import {
 } from "./ui/breadcrumb";
 
 import clsx from "clsx";
-import { NavUser } from "./Dashboard/nav-user";
+import { NavUser } from "./Layout/nav-user";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 

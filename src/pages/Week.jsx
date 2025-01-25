@@ -5,32 +5,32 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import CardItems from "./components/CardItems";
-import { Button } from "./components/ui/button";
-import { Calendar } from "./components/ui/calendar";
+import CardItems from "../components/CardItems";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./components/ui/dialog";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "./components/ui/form";
-import { Input } from "./components/ui/input";
-import { useGlobalStore } from "./store/GlobalStore";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { useGlobalStore } from "../store/GlobalStore";
 import { useState } from "react";
 
 dayjs.locale("es");
@@ -58,9 +58,9 @@ const FormSchema = z.object({
   numberRows: z.number().min({ message: "*Debe ser un número" }),
 });
 
-function HomePage() {
-  const items = useGlobalStore((state) => state.dataGenerate);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Estado para el modal
+function HomeWeek() {
+  const [open, setOpen] = useState(false);
+  const items = useGlobalStore((state) => state.dataGenerateWeek);
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -78,7 +78,7 @@ function HomePage() {
     console.log("Datos enviados:", data);
     const generatedData = generarEstructura(data.dob, data.numberRows);
     console.log("Datos generados:", generatedData);
-  
+
     const updatedData = {
       ...data,
       dataHotTable: {
@@ -86,12 +86,12 @@ function HomePage() {
         data: generatedData.data,
       },
       // Generar un ID único usando uuid
-      id: uuidv4(),  
+      id: uuidv4(),
     };
-  
-    const setDataGenerate = useGlobalStore.getState().setDataGenerate;
-    setDataGenerate(updatedData);
-    setIsDialogOpen(false); // Cerrar el modal
+
+    const setDataGenerateWeek = useGlobalStore.getState().setDataGenerateWeek;
+    setDataGenerateWeek(updatedData);
+    setOpen(false);
   }
 
   const generarEstructura = (dob, numberRows) => {
@@ -100,25 +100,28 @@ function HomePage() {
       return;
     }
   
-    const fechas = [];
+    const fechas = []; // Solo formato completo (YYYY-MM-DD)
     let currentDate = dayjs(dob.from);
     const end = dayjs(dob.to);
+  
     while (currentDate.isBefore(end) || currentDate.isSame(end, "day")) {
-      // Formato 01-NOV
-      fechas.push(currentDate.locale("es").format("YYYY-MM-DD").toUpperCase());
+      // Fecha en formato completo: 2024-12-01
+      fechas.push(currentDate.format("YYYY-MM-DD"));
       currentDate = currentDate.add(1, "day");
     }
   
+    // Generar las columnas dinámicas
     const dynamicColumns = [
       { data: "labor", title: "Labor", type: "text" },
       { data: "fase", title: "Fase", type: "text" },
       ...fechas.map((fecha) => ({
         data: fecha,
-        title: fecha,
+        title: fecha, // Mostrar la fecha completa en el encabezado
         type: "numeric",
       })),
     ];
   
+    // Generar datos de ejemplo
     const exampleData = Array.from({ length: numberRows }).map((_, index) => ({
       labor: `T-${index + 1}_OB1_${Math.floor(Math.random() * 1000)}`,
       fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
@@ -131,13 +134,14 @@ function HomePage() {
       ),
     }));
   
+    // Fila resumen
     const summaryRow = {
       labor: "Total",
-      fase: null, 
+      fase: null,
       ...fechas.reduce(
         (acc, fecha) => ({
           ...acc,
-          [fecha]: 0, 
+          [fecha]: 0,
         }),
         {}
       ),
@@ -145,21 +149,22 @@ function HomePage() {
   
     return {
       columns: dynamicColumns,
-      data: [...exampleData, summaryRow], 
+      data: [...exampleData, summaryRow],
+      fechas, // Devuelve las fechas completas si necesitas usarlas en otra parte
     };
   };
-
+  
 
   return (
     <>
-      <div className="w-full flex justify-between flex-wrap">
+       <div className="w-full flex justify-between flex-wrap">
         <div>
-          <h1 className="text-xl font-bold">  Gestión de Planificadores Mensuales</h1>
+          <h1 className="text-xl font-bold">  Gestión de Planificadores Semanales</h1>
           <p className="text-zinc-400 text-xs">
-            Administre y gestione los planes por turno del mes.
+            Administre y gestione los planes por turno de la semana.
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button variant="secondary">Crear nuevo</Button>
           </DialogTrigger>
@@ -246,16 +251,23 @@ function HomePage() {
                       <FormItem className="flex flex-col">
                         <FormLabel>Fecha para el plan</FormLabel>
                         <FormControl>
-                          <div className=" w-fit justify-start text-xs flex gap-2 text-left font-normal rounded-lg bg-zinc-50 px-2 py-1.5">
+                          <div className="w-fit justify-start text-xs flex gap-2 text-left font-normal rounded-lg bg-zinc-50 px-2 py-1.5">
                             <CalendarIcon className="h-4 w-4 text-zinc-400" />
                             {field.value?.from ? (
                               field.value.to ? (
                                 <>
-                                  {format(field.value.from, "LLL dd, y")} -{" "}
-                                  {format(field.value.to, "LLL dd, y")}
+                                  {format(field.value.from, "LLL dd, y", {
+                                    locale: es,
+                                  })}{" "}
+                                  -{" "}
+                                  {format(field.value.to, "LLL dd, y", {
+                                    locale: es,
+                                  })}
                                 </>
                               ) : (
-                                format(field.value.from, "LLL dd, y")
+                                format(field.value.from, "LLL dd, y", {
+                                  locale: es,
+                                })
                               )
                             ) : (
                               <span className="text-zinc-400">
@@ -267,12 +279,29 @@ function HomePage() {
                         <Calendar
                           mode="range"
                           selected={field.value}
-                          onSelect={(range) => field.onChange(range)}
+                          onSelect={(range) => {
+                            if (range?.from && range?.to) {
+                              const diff = Math.abs(
+                                (range.to.getTime() - range.from.getTime()) /
+                                  (1000 * 60 * 60 * 24)
+                              );
+
+                              if (diff > 7) {
+                                alert(
+                                  "Solo se permite seleccionar un rango de hasta 7 días."
+                                );
+                              } else {
+                                field.onChange(range);
+                              }
+                            } else {
+                              field.onChange(range);
+                            }
+                          }}
                           initialFocus
-                          locale={es} 
+                          locale={es}
                         />
                         <FormDescription>
-                          La fecha se usa para calcular la cantidad de filas
+                          Seleccione un rango de hasta 7 días.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -281,8 +310,9 @@ function HomePage() {
                 </div>
 
                 <DialogFooter className="flex gap-2 justify-between ">
-               
-                  <Button  className="w-1/2"  type="submit">Crear</Button>
+                  <Button className="w-1/2" type="submit">
+                    Crear
+                  </Button>
                   <DialogClose asChild>
                     <Button className="w-1/2" variant="secondary" type="button">
                       Cancelar
@@ -294,9 +324,9 @@ function HomePage() {
           </DialogContent>
         </Dialog>
       </div>
-     <CardItems items={items}/>
+      <CardItems items={items} />
     </>
   );
 }
 
-export default HomePage;
+export default HomeWeek;

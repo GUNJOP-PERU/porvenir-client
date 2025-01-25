@@ -19,7 +19,7 @@ export function NavMain() {
               <Link to={item.href} key={index}>
                 <li
                   className={clsx(
-                    " w-full h-9 text-[13px] py-1.5 px-4 rounded-lg cursor-pointer",
+                    " w-full h-8 flex items-center  text-[13px] py-1.5 px-4 rounded-lg cursor-pointer",
                     item.active ? "bg-primary/10 text-primary" : ""
                   )}
                 >

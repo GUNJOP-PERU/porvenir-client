@@ -1,12 +1,12 @@
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { ModalUser } from "./components/Gestion/Users/ModalUser";
+import { ModalUser } from "../../components/Gestion/Users/ModalUser";
 
-import { DataTable } from "./components/Gestion/data-table";
-import { Button } from "./components/ui/button";
+import { DataTable } from "../../components/Gestion/data-table";
+import { Button } from "../../components/ui/button";
 
-import useFetchData from "./hooks/useGlobalQuery";
-import { columns } from "./components/Gestion/PlanDay/columns";
+import useFetchData from "../../hooks/useGlobalQuery";
+import { columns } from "../../components/Gestion/PlanDay/columns";
 
 function PlanDay() {
   const { data = [], isLoading } = useFetchData("planDay", "planDay");

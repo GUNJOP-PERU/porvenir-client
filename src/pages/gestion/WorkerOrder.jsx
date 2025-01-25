@@ -1,25 +1,24 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { ModalUser } from "./components/Gestion/Users/ModalUser";
-import { columns } from "./components/Gestion/Users/columns";
-import { DataTable } from "./components/Gestion/data-table";
-import { Button } from "./components/ui/button";
+import { ModalWorkOrder } from "../../components/Gestion/WorkOrder/ModalWorkOrder";
+import { columns } from "../../components/Gestion/WorkOrder/columns";
+import { DataTable } from "../../components/Gestion/data-table";
+import { Button } from "../../components/ui/button";
+import useFetchData from "../../hooks/useGlobalQuery";
+import IconMore from "../../icons/IconMore";
+import { countItems } from "../../lib/utilsGeneral";
 
-import useFetchData from "./hooks/useGlobalQuery";
-import { countItems } from "./lib/utilsGeneral";
-
-function HomeUsers() {
-  const { data = [], isLoading } = useFetchData("user", "user");
+function WorkerOrder() {
+  const { data = [], isLoading } = useFetchData("workOrder", "workOrder");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log(data, "users")
+  console.log(data,"order");
 
   return (
     <>
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Gestión de Usuarios </h1>
+            <h1 className="text-xl font-bold">Gestión Orden de Trabajo </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
@@ -30,23 +29,21 @@ function HomeUsers() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
-            <RefreshCcw className="w-5 h-5 text-zinc-400" />
+          <Button className="w-fit" variant="outline">
+            <IconMore className="w-5 h-5 fill-zinc-400" /> Importar
           </Button>
           <Button className="w-fit" variant="outline">
-            <FileUp className="w-5 h-5 text-zinc-400" /> Importar
-          </Button>
-          <Button className="w-fit" variant="outline">
-            <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
+            <IconMore className="w-5 h-5 fill-zinc-400" /> Exportar
           </Button>
           <Button onClick={() => setDialogOpen(true)} className="w-fit">
-            <CircleFadingPlus className="w-5 h-5 text-white" />
+            <IconMore className="w-5 h-5 fill-white" />
             Añadir nuevo
           </Button>
         </div>
       </div>
       <DataTable data={data} columns={columns} />
-      <ModalUser
+
+      <ModalWorkOrder
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
@@ -55,4 +52,4 @@ function HomeUsers() {
   );
 }
 
-export default HomeUsers;
+export default WorkerOrder;

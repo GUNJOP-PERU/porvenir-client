@@ -8,9 +8,9 @@ import { Calendar as CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import CardItems from "./components/CardItems";
-import { Button } from "./components/ui/button";
-import { Calendar } from "./components/ui/calendar";
+import CardItems from "../components/CardItems";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./components/ui/dialog";
+} from "../components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -29,19 +29,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./components/ui/form";
-import { Input } from "./components/ui/input";
-import { useGlobalStore } from "./store/GlobalStore";
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { useGlobalStore } from "../store/GlobalStore";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./components/ui/select";
+} from "../components/ui/select";
 
-import useFetchData from "./hooks/useGlobalQuery";
-import { dataTurn } from "./lib/data";
+import useFetchData from "../hooks/useGlobalQuery";
+import { dataTurn } from "../lib/data";
 
 dayjs.locale("es");
 

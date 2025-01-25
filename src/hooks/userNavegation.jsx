@@ -70,9 +70,6 @@ export const useNavigation = () => {
         icon: <IconDashboard />,
         active: pathname === "/checklist",
       },
-      
-     
-     
       {
         name: "Ciclos",
         href: "/cycle",
@@ -84,6 +81,12 @@ export const useNavigation = () => {
         href: "/activity",
         icon: <IconDashboard />,
         active: pathname === "/activity",
+      },
+      {
+        name: "Dahboard Turno",
+        href: "/dashboard/turno",
+        icon: <IconDashboard />,
+        active: pathname === "/dashboard/turno",
       },
      
     ],

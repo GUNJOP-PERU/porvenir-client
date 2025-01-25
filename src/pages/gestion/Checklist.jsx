@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { ModalChecklist } from "./components/Gestion/Checklist/ModalChecklist";
-import { columns } from "./components/Gestion/Checklist/columns";
-import { DataTable } from "./components/Gestion/data-table";
-import { Button } from "./components/ui/button";
-import useFetchData from "./hooks/useGlobalQuery";
-import IconMore from "./icons/IconMore";
-import { countItems } from "./lib/utilsGeneral";
+import { ModalChecklist } from "../../components/Gestion/Checklist/ModalChecklist";
+import { columns } from "../../components/Gestion/Checklist/columns";
+import { DataTable } from "../../components/Gestion/data-table";
+import { Button } from "../../components/ui/button";
+import useFetchData from "../../hooks/useGlobalQuery";
+import IconMore from "../../icons/IconMore";
+import { countItems } from "../../lib/utilsGeneral";
 
 function Checklist() {
   const { data = [], isLoading } = useFetchData("checklist", "checklist");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log(data,"checklist");
 
   return (
     <>

@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { HotTable } from "@handsontable/react";
 import "handsontable/dist/handsontable.full.css";
-import { Button } from "./components/ui/button";
+import { Button } from "../components/ui/button";
 import { useGlobalStore } from "@/store/GlobalStore";
 import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
-import { postDataRequest } from "./lib/api";
+import { postDataRequest } from "../lib/api";
 import { FileDown, FileUp, RefreshCcw, Save } from "lucide-react";
-import { dataFase } from "./lib/data";
-import useFetchData from "./hooks/useGlobalQuery";
+import { dataFase } from "../lib/data";
+import useFetchData from "../hooks/useGlobalQuery";
 
 registerAllModules();
 registerLanguageDictionary(esMX);

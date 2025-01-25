@@ -1,18 +1,17 @@
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { DataTable } from "./components/Gestion/data-table";
-import { Button } from "./components/ui/button";
+import { DataTable } from "../../components/Gestion/data-table";
+import { Button } from "../../components/ui/button";
 
-import { ModalActivity } from "./components/Gestion/Activity/ModalActivity";
-import { columns } from "./components/Gestion/Activity/columns";
-import useFetchData from "./hooks/useGlobalQuery";
-import { countItems } from "./lib/utilsGeneral";
+import { ModalCycle } from "../../components/Gestion/Cycle/ModalCycle";
+import useFetchData from "../../hooks/useGlobalQuery";
+import { countItems } from "../../lib/utilsGeneral";
+import { columns } from "../../components/Gestion/Cycle/columns";
 
-function PageActivity() {
-  const { data = [], isLoading } = useFetchData("activity", "activity");
+function PageCycle() {
+  const { data = [], isLoading } = useFetchData("cycle", "cycle");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log(data,"actividad")
 
   return (
     <>
@@ -46,7 +45,7 @@ function PageActivity() {
         </div>
       </div>
       <DataTable data={data} columns={columns} />
-      <ModalActivity
+      <ModalCycle
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
@@ -55,4 +54,4 @@ function PageActivity() {
   );
 }
 
-export default PageActivity;
+export default PageCycle;

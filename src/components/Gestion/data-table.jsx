@@ -53,9 +53,9 @@ export function DataTable({ columns, data }) {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 flex-1 flex flex-col">
       <DataTableToolbar table={table} />
-      <div className="rounded-md ">
+      <div className="rounded-md flex-1 ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

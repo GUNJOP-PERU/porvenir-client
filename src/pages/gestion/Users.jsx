@@ -1,24 +1,24 @@
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { ModalUser } from "./components/Gestion/Users/ModalUser";
-import { DataTable } from "./components/Gestion/data-table";
-import { Button } from "./components/ui/button";
+import { ModalUser } from "../../components/Gestion/Users/ModalUser";
+import { columns } from "../../components/Gestion/Users/columns";
+import { DataTable } from "../../components/Gestion/data-table";
+import { Button } from "../../components/ui/button";
 
-import useFetchData from "./hooks/useGlobalQuery";
-import { countItems } from "./lib/utilsGeneral";
-import { columns } from "./components/Gestion/Company/columns";
-import { ModalCompany } from "./components/Gestion/Company/ModalCompany";
+import useFetchData from "../../hooks/useGlobalQuery";
+import { countItems } from "../../lib/utilsGeneral";
 
-function PageCompany() {
-  const { data = [], isLoading } = useFetchData("enterprise", "enterprise");
+function HomeUsers() {
+  const { data = [], isLoading } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
+
 
   return (
     <>
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Gestión de Empresas </h1>
+            <h1 className="text-xl font-bold">Gestión de Usuarios </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
@@ -45,7 +45,7 @@ function PageCompany() {
         </div>
       </div>
       <DataTable data={data} columns={columns} />
-      <ModalCompany
+      <ModalUser
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
@@ -54,4 +54,4 @@ function PageCompany() {
   );
 }
 
-export default PageCompany;
+export default HomeUsers;
