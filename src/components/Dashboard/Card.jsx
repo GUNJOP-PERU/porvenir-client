@@ -1,9 +1,9 @@
-function CardItem({ value, title, change, valueColor }) {
+function CardItem({ value, title, change, valueColor,unid }) {
     return (
-      <div className="flex flex-col ">
+      <div className="flex flex-col justify-center ">
         <div className="flex justify-between gap-1">
           <h1 className={`${valueColor} font-extrabold text-2xl leading-8`}>
-            {value}
+            {value}<small>{unid}</small>
           </h1>
         </div>
         <span className="text-[10px] font-semibold text-zinc-700">{title}</span>

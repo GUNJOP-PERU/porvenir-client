@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 
 import { ModalActivity } from "../../components/Gestion/Activity/ModalActivity";
 import { columns } from "../../components/Gestion/Activity/columns";
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
 function PageActivity() {

@@ -148,6 +148,7 @@ table th:last-child {
 
 table td:last-child {
   text-align: center;
+
 }
 
 /* 
@@ -155,6 +156,7 @@ table td:last-child {
   width: 250px;
   padding-left: 1rem;
   padding-bottom: 0.5rem;
+ 
 }
 
 .combobox {

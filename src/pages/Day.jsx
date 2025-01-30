@@ -40,7 +40,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 
-import useFetchData from "../hooks/useGlobalQuery";
+import {useFetchData} from "../hooks/useGlobalQuery";
 import { dataTurn } from "../lib/data";
 
 dayjs.locale("es");

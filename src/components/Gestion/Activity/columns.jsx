@@ -44,7 +44,7 @@ export const columns = [
             </span>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize truncate max-w-[100px]">
               {row.getValue("activityName")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">

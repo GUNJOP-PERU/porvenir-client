@@ -1,4 +1,4 @@
-import useFetchData from "@/hooks/useGlobalQuery";
+import {useFetchData} from "@/hooks/useGlobalQuery";
 import { useHandleFormSubmit } from "@/hooks/useMutation";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";

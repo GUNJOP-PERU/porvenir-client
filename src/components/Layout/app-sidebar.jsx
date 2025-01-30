@@ -13,8 +13,7 @@ import { NavUser } from "./nav-user"
 export function AppSidebar({ ...props }) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      
-      <SidebarContent>
+      <SidebarContent >
         <NavMain  />
         <NavProjects  />
       </SidebarContent>

@@ -27,8 +27,6 @@ export const formatRelativeTime = (updatedAt) => {
     .replace("dias", "ds");
 };
 
-
-
 export function formatFecha(dateString) {
   const date = dayjs(dateString);
 
@@ -76,3 +74,6 @@ export function formatDurationHour(durationInSeconds) {
   }
 }
 
+export function formatThousands (value) {
+  return value >= 1000 ? (value / 1000).toFixed(1) + "k" : value;
+}

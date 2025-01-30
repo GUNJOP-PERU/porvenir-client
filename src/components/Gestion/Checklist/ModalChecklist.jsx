@@ -1,4 +1,4 @@
-import useFetchData from "@/hooks/useGlobalQuery";
+import {useFetchData} from "@/hooks/useGlobalQuery";
 import { useHandleFormSubmit } from "@/hooks/useMutation";
 import { dataTurn } from "@/lib/data";
 import { zodResolver } from "@hookform/resolvers/zod";

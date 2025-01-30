@@ -5,7 +5,7 @@ import { columns } from "../../components/Gestion/Users/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
 function HomeUsers() {

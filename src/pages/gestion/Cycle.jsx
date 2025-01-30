@@ -4,7 +4,7 @@ import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
 import { ModalCycle } from "../../components/Gestion/Cycle/ModalCycle";
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 import { columns } from "../../components/Gestion/Cycle/columns";
 
@@ -12,7 +12,7 @@ function PageCycle() {
   const { data = [], isLoading } = useFetchData("cycle", "cycle");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
+console.log("ciclo", data);
   return (
     <>
       <div className="flex justify-between">

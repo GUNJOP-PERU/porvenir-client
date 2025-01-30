@@ -19,6 +19,7 @@ import DashboardTurno from "./pages/dashboard/Turno";
 import PageLogin from "./pages/login/Login";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import { useAuthStore } from "./store/AuthStore";
+import DashboardTruck from "./pages/dashboard/Truck";
 
 function App() {
   const queryClient = new QueryClient();
@@ -33,7 +34,6 @@ function App() {
             <Route path="/login" element={<PageLogin />} />
             <Route path="/" element={<HomePage />} />
             <Route path="*" element={<PageError />} />
-
             <Route element={<ProtectedRoute isAllowed={isAuth} />}>
               <Route path="/edit/:id" element={<EditPage />} />
               <Route path="/week" element={<WeekPage />} />
@@ -49,6 +49,7 @@ function App() {
               <Route path="/activity" element={<PageActivity />} />
               <Route path="/dashboard/turno" element={<DashboardTurno />} />
               <Route path="/dashboard/scoop" element={<DashboardTurno />} />
+              <Route path="/dashboard/truck" element={<DashboardTruck />} />
             </Route>
           </Routes>
         </Layout>

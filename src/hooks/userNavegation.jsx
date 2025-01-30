@@ -9,86 +9,88 @@ export const useNavigation = () => {
 
   const paths = useMemo(
     () => [
-      // {
-      //   name: "Mensual",
-      //   href: "/",
-      //   icon: <IconDashboard />,
-      //   active: pathname === "/",
-      // },
-      // {
-      //   name: "Semanal",
-      //   href: "/week",
-      //   icon: <IconDashboard />,
-      //   active: pathname === "/week",
-      // },
       {
-        name: "Diario",
-        href: "/day",
-        icon: <IconDashboard />,
-        active: pathname === "/day",
+        title: "Gestión", 
+        items: [
+          {
+            name: "Compañia",
+            href: "/company",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/company",
+          },
+          {
+            name: "Usuarios",
+            href: "/users",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/users",
+          },
+          {
+            name: "Vehiculos",
+            href: "/vehicle",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/vehicle",
+          },
+          {
+            name: "Frente de Labor",
+            href: "/frontLabor",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/frontLabor",
+          },
+          {
+            name: "Plan del dia",
+            href: "/planDay",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/planDay",
+          },
+          {
+            name: "Orden de Trabajo",
+            href: "/workOrder",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/workOrder",
+          },
+          {
+            name: "Checklist",
+            href: "/checklist",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/checklist",
+          },
+          {
+            name: "Ciclos",
+            href: "/cycle",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/cycle",
+          },
+          {
+            name: "Actividades",
+            href: "/activity",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/activity",
+          },
+        ],
       },
       {
-        name: "Compañia",
-        href: "/company",
-        icon: <IconDashboard />,
-        active: pathname === "/company",
+        title: "Dashboard", 
+        items: [
+          {
+            name: "Dashboard Turno",
+            href: "/dashboard/turno",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/turno",
+          },
+          {
+            name: "Dahboard Scoop",
+            href: "/dashboard/scoop",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/scoop",
+          },
+          {
+            name: "Dahboard Truck",
+            href: "/dashboard/truck",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/truck",
+          },
+        ],
       },
-      {
-        name: "Usuarios",
-        href: "/users",
-        icon: <IconDashboard />,
-        active: pathname === "/users",
-      },
-     
-      {
-        name: "Vehiculos",
-        href: "/vehicle",
-        icon: <IconDashboard />,
-        active: pathname === "/vehicle",
-      },
-      {
-        name: "Frente de Labor",
-        href: "/frontLabor",
-        icon: <IconDashboard />,
-        active: pathname === "/frontLabor",
-      },
-      {
-        name: "Plan del dia",
-        href: "/planDay",
-        icon: <IconDashboard />,
-        active: pathname === "/planDay",
-      },
-      {
-        name: "Orden de Trabajo",
-        href: "/workOrder",
-        icon: <IconDashboard />,
-        active: pathname === "/workOrder",
-      },
-      {
-        name: "Checklist",
-        href: "/checklist",
-        icon: <IconDashboard />,
-        active: pathname === "/checklist",
-      },
-      {
-        name: "Ciclos",
-        href: "/cycle",
-        icon: <IconDashboard />,
-        active: pathname === "/cycle",
-      },
-      {
-        name: "Actividades",
-        href: "/activity",
-        icon: <IconDashboard />,
-        active: pathname === "/activity",
-      },
-      {
-        name: "Dahboard Turno",
-        href: "/dashboard/turno",
-        icon: <IconDashboard />,
-        active: pathname === "/dashboard/turno",
-      },
-     
     ],
     [pathname]
   );

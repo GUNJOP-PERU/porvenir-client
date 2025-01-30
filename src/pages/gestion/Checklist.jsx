@@ -3,7 +3,7 @@ import { ModalChecklist } from "../../components/Gestion/Checklist/ModalChecklis
 import { columns } from "../../components/Gestion/Checklist/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 

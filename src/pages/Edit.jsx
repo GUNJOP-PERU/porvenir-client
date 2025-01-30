@@ -9,7 +9,7 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import { postDataRequest } from "../lib/api";
 import { FileDown, FileUp, RefreshCcw, Save } from "lucide-react";
 import { dataFase } from "../lib/data";
-import useFetchData from "../hooks/useGlobalQuery";
+import {useFetchData} from "../hooks/useGlobalQuery";
 
 registerAllModules();
 registerLanguageDictionary(esMX);

@@ -3,7 +3,7 @@ import { ModalVehicle } from "../../components/Gestion/Vehicle/ModalVehicle";
 import { columns } from "../../components/Gestion/Vehicle/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 

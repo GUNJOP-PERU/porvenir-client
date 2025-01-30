@@ -5,7 +5,7 @@ import { ModalUser } from "../../components/Gestion/Users/ModalUser";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
-import useFetchData from "../../hooks/useGlobalQuery";
+import {useFetchData} from "../../hooks/useGlobalQuery";
 import { columns } from "../../components/Gestion/PlanDay/columns";
 
 function PlanDay() {
