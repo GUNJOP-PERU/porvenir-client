@@ -44,7 +44,7 @@ console.log("ciclo", data);
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} />
       <ModalCycle
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

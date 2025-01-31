@@ -6,64 +6,94 @@ if (typeof Highcharts === "object") {
 }
 
 export default function CardPie({ data, title }) {
-
   const dataChart = data?.data_chart ?? [];
   const dataCard = data?.data_card ?? [];
 
   const options = useMemo(
     () => ({
-    chart: {
-      backgroundColor: "transparent",
-      type: "pie",
-      marginTop: 0,
-      marginBottom: 0,
-      marginRight: 120,
-      height: 250,
-    },
-    title: {
-      text: "", 
-    },
-    series: [
-      {
-        name: "",
-        colorByPoint: false,
-        innerSize: "60%",
-        data: dataChart.map((item) => ({
-          name: item.title, 
-          y: item.value, 
-          color: item.fill,
-        })),
+      chart: {
+        backgroundColor: "transparent",
+        type: "pie",
+        marginTop: 0,
+        marginBottom: 0,
+        marginRight: 120,
+        height: 250,
       },
-    ],
-    tooltip: {
-      pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})",
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: "pointer",
-        dataLabels: {
-          enabled: false,
+      title: {
+        text: "",
+      },
+      series: [
+        {
+          name: "",
+          colorByPoint: false,
+          innerSize: "60%",
+          data: dataChart.map((item) => ({
+            name: item.title,
+            y: item.value,
+            color: item.fill,
+          })),
         },
-        showInLegend: true,
+      ],
+      tooltip: {
+        pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})", 
+        backgroundColor: "#111214", 
+        borderWidth: 0, 
+        shadow: false,
+        borderRadius: 10,
+        padding: 10,
+        style: {
+          color: "#FFFFFF", 
+          fontSize: "11px",
+          fontWeight: "",
+        },
+        headerFormat: '<span style="font-size: 11px; color: #A6A6A6; padding:10px">{point.key}</span><br>',
+        valueDecimals: 1, 
       },
-    },
-    legend: {
-      align: "right", 
-      verticalAlign: "center",
-      layout: "vertical",
-      floating: true,
-      borderWidth: 0, 
-    },
-    credits: {
-      enabled: false, 
-    },
-    exporting: {
-      enabled: false, 
-    },
-  }),
-  [dataChart]
-);
+      
+      
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: "pointer",
+          animation: false,
+          borderWidth: 0,
+          dataLabels: {
+            enabled: false,
+          },
+          showInLegend: true,
+        },
+      },
+      
+      legend: {
+        align: "right", 
+        verticalAlign: "center", 
+        layout: "vertical", 
+        x: 0,
+        itemStyle: {
+          color: "#A6A6A6", 
+          fontSize: "9px", 
+          fontWeight: "bold",
+          textTransform: "uppercase", 
+        },
+        itemHoverStyle: {
+          color: "#1EE0EE", 
+        },
+        symbolWidth: 10, 
+        symbolHeight: 9, 
+        symbolRadius: 2, 
+        itemMarginTop: 1, 
+        itemMarginBottom: 1, 
+        zIndex: 10, 
+      },
+      credits: {
+        enabled: false,
+      },
+      exporting: {
+        enabled: false,
+      },
+    }),
+    [dataChart]
+  );
 
   return (
     <>

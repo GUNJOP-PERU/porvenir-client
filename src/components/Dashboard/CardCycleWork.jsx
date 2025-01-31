@@ -11,7 +11,7 @@ export function CardCycleWork({ data, title }) {
   return (
     <>
       <h4 className="text-xs font-bold">{title}</h4>
-      <div className="grid grid-cols-2 grid-rows-2 gap-y-10 w-full relative bg-muted/50 rounded-xl">
+      <div className="grid grid-cols-2 grid-rows-2 gap-y-10 w-full relative">
         <div className="flex items-center justify-center gap-4 font-bold  flex-row ">
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Descargando</h4>

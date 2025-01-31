@@ -20,8 +20,9 @@ import {
 import { useState } from "react";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import SkeletonWrapper from "../SkeletonWrapper";
 
-export function DataTable({ columns, data }) {
+export function DataTable({ columns, data,isLoading }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
@@ -32,7 +33,7 @@ export function DataTable({ columns, data }) {
 
   const table = useReactTable({
     data: data || emptyData,
-    columns : columns || emptyColumns,
+    columns: columns || emptyColumns,
     state: {
       sorting,
       columnVisibility,
@@ -56,6 +57,7 @@ export function DataTable({ columns, data }) {
     <div className="space-y-4 flex-1 flex flex-col">
       <DataTableToolbar table={table} />
       <div className="rounded-md flex-1 ">
+      <SkeletonWrapper isLoading={isLoading}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -98,12 +100,23 @@ export function DataTable({ columns, data }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <div className="max-w-xs m-auto py-24">
+                    <p className="text-center text-zinc-400 leading-4 mb-4 text-[11px]">
+                      <strong className="text-zinc-500 font-semibold">
+                        Sin datos disponibles
+                      </strong>
+                      <br />
+                      Lo sentimos, no hay datos para mostrar en este momento.
+                      Por favor, verifica tu selección e intente de nuevo más
+                      tarde.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        </SkeletonWrapper>
       </div>
       <DataTablePagination table={table} />
     </div>

@@ -20,6 +20,7 @@ import PageLogin from "./pages/login/Login";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import { useAuthStore } from "./store/AuthStore";
 import DashboardTruck from "./pages/dashboard/Truck";
+import DashboardAvanceMes from "./pages/dashboard/AvanceMes";
 
 function App() {
   const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ function App() {
               <Route path="/dashboard/turno" element={<DashboardTurno />} />
               <Route path="/dashboard/scoop" element={<DashboardTurno />} />
               <Route path="/dashboard/truck" element={<DashboardTruck />} />
+              <Route path="/dashboard/month" element={<DashboardAvanceMes />} />
             </Route>
           </Routes>
         </Layout>

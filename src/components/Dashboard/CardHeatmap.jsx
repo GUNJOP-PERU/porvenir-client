@@ -33,14 +33,12 @@ export default function HighchartsHeatmap({ data, title }) {
       chart: {
         backgroundColor: "transparent",
         type: "heatmap",
-        plotBorderWidth: 1,
+        plotBorderWidth: 0, 
         height: 300,
       },
-
       title: {
         text: "",
       },
-
       xAxis: {
         categories: xCategories,
         title: {
@@ -53,8 +51,9 @@ export default function HighchartsHeatmap({ data, title }) {
         tickLength: 0,
         labels: {
           style: {
-            color: "#6e6d7a",
-            fontSize: "0.7em",
+            color: "#A1A1AA",
+            fontSize: "0.6em",
+            fontWeight: "bold",
           },
         },
       },
@@ -66,34 +65,42 @@ export default function HighchartsHeatmap({ data, title }) {
         },
         labels: {
           style: {
-            color: "#6e6d7a",
-            fontSize: "0.7em",
+            color: "#A1A1AA",
+            fontSize: "0.6em",
+            fontWeight: "bold",
           },
         },
-        gridLineColor: "#2D3343",
-        gridLineWidth: 0.5,
-        gridLineDashStyle: "Dash",
+        gridLineWidth: 0,
+      
       },
 
       colorAxis: {
         min: 0,
         stops: [
-          [0, "#e0f3f8"],  // Azul claro
+          [0, "#e0f3f8"], // Azul claro
           [0.5, "#abd9e9"], // Azul medio
           [0.75, "#74add1"], // Azul fuerte
           [1, "#4575b4"], // Azul oscuro
         ],
       },
-      
 
       series: [
         {
           name: "Valores",
-          borderWidth: 1,
+          borderRadius: "15%",
           data: heatmapData,
+          borderWidth: 2,
+          borderColor: "#FFFFFF",
           dataLabels: {
             enabled: true,
             color: "#000000",
+            style: {
+              fontSize: "0.7em",
+              color: "#000",
+              fontWeight: "bold",
+              textOutline: "none",
+            },
+            borderWidth: 0,
           },
         },
       ],
@@ -108,17 +115,29 @@ export default function HighchartsHeatmap({ data, title }) {
         enabled: false,
       },
       tooltip: {
+        valueSuffix: " toneladas",
+        backgroundColor: "#111214",
+        borderWidth: 0,
+        shadow: false,
+        borderRadius: 10,
+        padding: 12,
+        style: {
+          color: "#FFFFFF",
+          fontSize: "11px",
+          fontWeight: "",
+        },
         formatter: function () {
           return (
-            "<b>" +
+            "<b><span style='color:#abd9e9;'>" +
             this.series.xAxis.categories[this.point.x] +
-            "</b> tiene un valor de <br><b>" +
+            "</span></b> tiene un valor de <br><b><span style='color:#F59E0B;'>" +
             this.point.value +
-            "</b> en <br><b>" +
+            "</span></b> en <b><span style='color:#10B981;'>" +
             this.series.yAxis.categories[this.point.y] +
-            "</b>"
+            "</span></b>"
           );
         },
+        
       },
     }),
     [heatmapData, xCategories, yCategories]

@@ -1,4 +1,4 @@
-import CardItem from "@/components/Dashboard/Card";
+import CardItem from "@/components/Dashboard/CardItem";
 import CardClock from "@/components/Dashboard/CardClock";
 
 const cardData = [

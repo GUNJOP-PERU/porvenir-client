@@ -7,7 +7,9 @@ export function useFetchData(queryKey, endpoint) {
     queryFn: () => getDataRequest(endpoint),
     networkMode: "always",
     select: (response) => {
-      return response.data;
+      return response.data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
     },
   });
 }

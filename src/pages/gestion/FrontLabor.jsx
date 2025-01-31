@@ -39,7 +39,7 @@ function HomeFrontLabor() {
         </div>
       </div>
 
-      <DataTable data={data} columns={columns} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} />
       <ModalFrontLabor
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

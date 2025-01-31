@@ -41,8 +41,7 @@ function WorkerOrder() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} />
-
+      <DataTable data={data} columns={columns} isLoading={isLoading} />
       <ModalWorkOrder
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

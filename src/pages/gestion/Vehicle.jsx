@@ -39,7 +39,7 @@ function HomeVehicles() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} />
       <ModalVehicle
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

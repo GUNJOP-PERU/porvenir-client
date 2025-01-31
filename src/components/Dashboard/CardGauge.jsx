@@ -1,21 +1,27 @@
-import { useFetchDashboardData } from "@/hooks/useGlobalQuery";
+import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { formatThousands } from "@/lib/utilsGeneral";
+import { useProductionStore } from "@/store/ProductionStore";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 if (typeof Highcharts === "object") {
 }
 
-export default function CardGauge({data} ) {
-  const { data: dataGuage, isLoading } = useFetchDashboardData(
-    "dashboardTruckProgressDay",
-    "dashboard/truck/progress-day"
-  );
+export default function CardGauge( ) {
 
-  console.log(dataGuage);
+  useProductionWebSocket();
+  const fetchDataGauge = useProductionStore(
+    (state) => state.fetchDataGauge
+  );
+  const { dataGuage } = useProductionStore();
+
+  useEffect(() => {
+    fetchDataGauge(); 
+  }, []);
+
 
   const options = useMemo(
     () => ({
@@ -48,7 +54,7 @@ export default function CardGauge({data} ) {
       },
       yAxis: {
         min: 0,
-        max: 60000, // Meta
+        max: dataGuage.goal_tonnages.value, // Meta
         stops: [[0.1, "#22C2C5"]],
         lineWidth: 0,
         tickWidth: 0,
@@ -67,7 +73,7 @@ export default function CardGauge({data} ) {
       series: [
         {
           name: "toneladas",
-          data: [data || 20000], // Tonelada
+          data: [dataGuage.total_tonnages_accumulated.value || 0], // Tonelada
           innerRadius: "75%",
           enableMouseTracking: false,
           states: {
@@ -102,6 +108,7 @@ export default function CardGauge({data} ) {
       plotOptions: {
         solidgauge: {
           borderRadius: 50,
+          animation:false,
           dataLabels: {
             
             y: 0,
@@ -111,7 +118,7 @@ export default function CardGauge({data} ) {
         },
       },
     }),
-    [data]
+    [dataGuage]
   );
 
   return (

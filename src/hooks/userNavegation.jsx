@@ -72,6 +72,18 @@ export const useNavigation = () => {
         title: "Dashboard", 
         items: [
           {
+            name: "Dahboard Truck",
+            href: "/dashboard/truck",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/truck",
+          },
+          {
+            name: "Dahboard Mensual",
+            href: "/dashboard/month",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/month",
+          },
+          {
             name: "Dashboard Turno",
             href: "/dashboard/turno",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
@@ -82,12 +94,6 @@ export const useNavigation = () => {
             href: "/dashboard/scoop",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/scoop",
-          },
-          {
-            name: "Dahboard Truck",
-            href: "/dashboard/truck",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/truck",
           },
         ],
       },

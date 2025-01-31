@@ -217,29 +217,29 @@ function DayPage() {
                             <div className="grid gap-2 overflow-auto h-48">
                               {dataLaborList?.map((item) => (
                                 <label
-                                  key={item._id}
+                                  key={item.name}
                                   className="flex items-center gap-2"
                                 >
                                   <input
                                     type="checkbox"
-                                    value={item._id}
+                                    value={item.name}
                                     onChange={(e) => {
                                       const selectedValues = field.value || [];
                                       const isChecked = e.target.checked;
                                       if (isChecked) {
                                         field.onChange([
                                           ...selectedValues,
-                                          item._id,
+                                          item.name,
                                         ]);
                                       } else {
                                         field.onChange(
                                           selectedValues.filter(
-                                            (v) => v !== item._id
+                                            (v) => v !== item.name
                                           )
                                         );
                                       }
                                     }}
-                                    checked={field.value.includes(item._id)}
+                                    checked={field.value.includes(item.name)}
                                   />
                                   {item.name}
                                 </label>

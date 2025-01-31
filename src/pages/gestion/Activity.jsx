@@ -44,7 +44,7 @@ function PageActivity() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} />
       <ModalActivity
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
