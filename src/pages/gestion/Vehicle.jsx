@@ -11,6 +11,7 @@ function HomeVehicles() {
   const { data = [], isLoading } = useFetchData("vehicle", "vehicle");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+
   return (
     <>
       <div className="flex justify-between">

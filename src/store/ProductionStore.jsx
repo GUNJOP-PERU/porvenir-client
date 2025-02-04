@@ -3,13 +3,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export const useProductionStore = create(
-  persist(
+ 
     (set, get) => ({
       //Gauge
       dataGuage: [],
       //Truck
-      progressDay: {},
-      heatmap: {},
+      progressDay: [],
+      heatmap: [],
       truckJobCycle: [],
       chartProductivity: [],
       dataFleet: [],
@@ -18,6 +18,13 @@ export const useProductionStore = create(
       dataChartToness: [],
       dataRangeTruck: [],
       dataRangeScoop: [],
+
+       //Scoop
+       scoopProgressDay: [],
+       scoopTonnagHour: [],
+      //  truckJobCycle: [],
+      //  chartProductivity: [],
+      //  dataFleet: [],
 
       setProductionData: (key, value) =>
         set((state) => ({ ...state, [key]: value })),
@@ -46,10 +53,28 @@ export const useProductionStore = create(
 
           set({
             progressDay: progress.data,
-            heatmap: heatmap.data,
+            heatmap: heatmap.data.origins_destinies_tonnages,
             truckJobCycle: truckJob.data,
             chartProductivity: chart.data,
             dataFleet: fleet.data,
+          });
+        } catch (error) {
+          console.error("Error cargando datos iniciales", error);
+        }
+      },
+      fetchDataScoop: async () => {
+        try {
+          const [progress, scoopTonnagHour] = await Promise.all(
+            [
+              getDataRequest("dashboard/scoop/progress-day"),
+              getDataRequest("dashboard/scoop/tonnage-per-hour"),
+             
+            ]
+          );
+
+          set({
+            scoopProgressDay: progress.data,
+            scoopTonnagHour: scoopTonnagHour.data,
           });
         } catch (error) {
           console.error("Error cargando datos iniciales", error);
@@ -64,19 +89,18 @@ export const useProductionStore = create(
             getDataRequest("dashboard/monthly/average-journals?equipment=scoop"),
           ]);
 
-          set({
+          set((state) => ({
+            ...state,
             dataAccumulatedProgress: accumulated.data,
             dataChartToness: tonnes.data,
             dataRangeTruck: rangeTruck.data,
             dataRangeScoop: rangeScoop.data,
-          });
+          }));
         } catch (error) {
           console.error("Error cargando datos iniciales", error);
         }
       },
-    }),
-    {
-      name: "ProductionDashboard",
     }
+    
   )
 );

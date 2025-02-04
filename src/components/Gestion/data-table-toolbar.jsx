@@ -3,7 +3,7 @@ import { Search, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
-import { cargo, statuses, turn } from "@/lib/data"
+import { cargo, dataTypeVehicle, statuses, turn } from "@/lib/data"
 
 export function DataTableToolbar({ table }) {
   const isFiltered = table.getState().columnFilters.length > 0
@@ -21,14 +21,17 @@ export function DataTableToolbar({ table }) {
   const handleSearchChange = (value) => {
     const nameColumn = table.getColumn("name")
     const tagNameColumn = table.getColumn("tagName")
-    const userNameColumn = table.getColumn("userName")
+    const userNameColumn = table.getColumn("user")
+    const userLabor = table.getColumn("frontLabor")
 
     if (nameColumn) {
       nameColumn.setFilterValue(value)
     } else if (tagNameColumn) {
       tagNameColumn.setFilterValue(value)
-    }else if (userNameColumn) {
+    } else if (userNameColumn) {
       userNameColumn.setFilterValue(value)
+    } else if (userLabor) {
+      userLabor.setFilterValue(value)
     }
   }
 
@@ -39,7 +42,7 @@ export function DataTableToolbar({ table }) {
           <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4 text-zinc-300" />
           <Input
             placeholder="Buscar..."
-            value={getFilterValue("name") || getFilterValue("tagName") || getFilterValue("userName")}
+            value={getFilterValue("name") || getFilterValue("tagName") || getFilterValue("user") || getFilterValue("frontLabor") } 
             onChange={(event) => handleSearchChange(event.target.value)}
             className="pl-8 md:w-[200px] lg:w-[250px]"
           />
@@ -49,6 +52,8 @@ export function DataTableToolbar({ table }) {
         {renderFacetedFilter("role", "Rol", statuses)}
         {renderFacetedFilter("cargo", "Cargo", cargo)}
         {renderFacetedFilter("shift", "Turno", turn)}
+        {renderFacetedFilter("type", "Vehiculo", dataTypeVehicle)}
+        {renderFacetedFilter("vehicleType", "Vehiculo", dataTypeVehicle)}
         {isFiltered && (
           <Button
             variant="ghost"

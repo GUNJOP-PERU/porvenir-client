@@ -68,7 +68,7 @@ export const columns = [
   },
 
   {
-    accessorKey: "completedOperatorTime",
+    accessorKey: "vehicleType",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Hora finalizada" />
     ),

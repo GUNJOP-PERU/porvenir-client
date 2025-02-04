@@ -3,15 +3,18 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardRange({ data }) {
-  const minValue = Math.min(...data?.data?.averages.map(([min]) => min));
-  const maxValue = Math.max(...data?.data?.averages.map(([, max]) => max));
+export default function CardRange({ data, title }) {
+  const minValue = data?.data?.averages?.length
+    ? Math.min(...data.data.averages.map(([min]) => min))
+    : null;
+  const maxValue = data?.data?.averages?.length
+    ? Math.max(...data.data.averages.map(([, max]) => max))
+    : null;
 
-  // Función para formatear las horas a hh:mm
   const formatHours = (hours) => {
-    const h = Math.floor(hours);  // Horas completas
-    const m = Math.round((hours - h) * 60);  // Minutos (resto convertido a minutos)
-    return `${h}:${m < 10 ? "0" + m : m}`;  // Formato hh:mm
+    const h = Math.floor(hours); // Horas completas
+    const m = Math.round((hours - h) * 60); // Minutos (resto convertido a minutos)
+    return `${h}:${m < 10 ? "0" + m : m}`; // Formato hh:mm
   };
 
   const options = useMemo(
@@ -19,7 +22,7 @@ export default function CardRange({ data }) {
       chart: {
         type: "columnrange",
         backgroundColor: "transparent",
-        height: 280,
+        height: 260,
       },
       title: {
         text: null,
@@ -56,10 +59,10 @@ export default function CardRange({ data }) {
         gridLineDashStyle: "Dash",
         plotLines: [
           {
-            value: minValue,
-            color: "#A855F7", 
-            width: 1, 
-            dashStyle: "Dash", 
+            value: minValue || 0,
+            color: "#A855F7",
+            width: 1,
+            dashStyle: "Dash",
             label: {
               text: `Prom: ${formatHours(minValue)}`,
               align: "right",
@@ -70,10 +73,10 @@ export default function CardRange({ data }) {
             },
           },
           {
-            value: maxValue,
-            color: "#A855F7", 
-            width: 1, 
-            dashStyle: "Dash", 
+            value: maxValue || 0,
+            color: "#A855F7",
+            width: 1,
+            dashStyle: "Dash",
             label: {
               text: `Prom: ${formatHours(maxValue)}`,
               align: "right",
@@ -100,7 +103,7 @@ export default function CardRange({ data }) {
         },
         formatter: function () {
           return `${this.series.name}: <b>${formatHours(this.y)}</b> hr`; // Formato de 2 decimales para horas
-        }
+        },
       },
       plotOptions: {
         columnrange: {
@@ -131,60 +134,69 @@ export default function CardRange({ data }) {
   );
 
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-      <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
-        <IconWarning className="text-red-500 w-3 h-3" />
-        <div className="flex items-center">
-          <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-            {/* Verificar si los datos existen antes de renderizar */}
-            {data?.perfomance_summary ? (
-              <>
-                {data?.perfomance_summary.level_production?.high?.advice ? (
-                  <li>
-                    {data?.perfomance_summary.level_production.high.advice}
-                  </li>
-                ) : (
-                  <li>No hay consejo para nivel alto</li> // Mensaje alternativo
-                )}
+    <>
+      {data?.data?.dates.length > 0 ? (
+        <>
+          <h4 className="text-xs font-bold">{title}</h4>
+          <HighchartsReact highcharts={Highcharts} options={options} />
+          <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
+            <IconWarning className="text-red-500 w-3 h-3" />
+            <div className="flex items-center">
+              <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
+                {/* Verificar si los datos existen antes de renderizar */}
+                {data?.perfomance_summary ? (
+                  <>
+                    {data?.perfomance_summary.level_production?.high?.advice ? (
+                      <li>
+                        {data?.perfomance_summary.level_production.high.advice}
+                      </li>
+                    ) : (
+                      <li>No hay consejo para nivel alto</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.level_production?.low?.advice ? (
-                  <li>
-                    {data?.perfomance_summary.level_production.low.advice}
-                  </li>
-                ) : (
-                  <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
-                )}
+                    {data?.perfomance_summary.level_production?.low?.advice ? (
+                      <li>
+                        {data?.perfomance_summary.level_production.low.advice}
+                      </li>
+                    ) : (
+                      <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.best_day?.date &&
-                data?.perfomance_summary.best_day?.value ? (
-                  <li>
-                    Mejor día: {data?.perfomance_summary.best_day.date}{" "}
-                    {data?.perfomance_summary.best_day.value.toLocaleString(
-                      "es-MX"
-                    )}{" "}
-                    toneladas
-                  </li>
-                ) : (
-                  <li>No hay datos para el mejor día</li> // Mensaje alternativo
-                )}
+                    {data?.perfomance_summary.best_day?.date &&
+                    data?.perfomance_summary.best_day?.value ? (
+                      <li>
+                        Mejor día: {data?.perfomance_summary.best_day.date}{" "}
+                        {data?.perfomance_summary.best_day.value.toLocaleString(
+                          "es-MX"
+                        )}{" "}
+                        toneladas
+                      </li>
+                    ) : (
+                      <li>No hay datos para el mejor día</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.worst_day?.date &&
-                data?.perfomance_summary.worst_day?.value ? (
-                  <li>
-                    Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
-                    {data?.perfomance_summary.worst_day.value} toneladas
-                  </li>
+                    {data?.perfomance_summary.worst_day?.date &&
+                    data?.perfomance_summary.worst_day?.value ? (
+                      <li>
+                        Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
+                        {data?.perfomance_summary.worst_day.value} toneladas
+                      </li>
+                    ) : (
+                      <li>No hay datos para el peor día </li> // Mensaje alternativo
+                    )}
+                  </>
                 ) : (
-                  <li>No hay datos para el peor día </li> // Mensaje alternativo
+                  <li>No hay datos disponibles</li> // Si no hay datos
                 )}
-              </>
-            ) : (
-              <li>No hay datos disponibles</li> // Si no hay datos
-            )}
-          </ul>
-        </div>
-      </div>
-    </div>
+              </ul>
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
+          No hay datos disponibles
+        </p>
+      )}
+    </>
   );
 }

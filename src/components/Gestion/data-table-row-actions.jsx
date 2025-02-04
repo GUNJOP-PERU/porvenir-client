@@ -111,7 +111,7 @@ export function DataTableRowActions({ componentToShow, row }) {
             Crear nuevo
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleClick(row.original)}>
-            <IconEdit className="h-5 w-5 text-gray-500" />
+            <IconEdit className="h-5 w-5 stroke-black" />
             Editar detalles
           </DropdownMenuItem>
           <DropdownMenuItem>

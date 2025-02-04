@@ -3,13 +3,13 @@ import { useState } from "react";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
-import { ModalCycle } from "../../components/Gestion/Cycle/ModalCycle";
+import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
 import {useFetchData} from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
-import { columns } from "../../components/Gestion/Cycle/columns";
+import { columns } from "../../components/Gestion/CycleTruck/columns";
 
 function PageCycle() {
-  const { data = [], isLoading } = useFetchData("cycle", "cycle");
+  const { data = [], isLoading } = useFetchData("cycleTruck", "cycle");
   const [dialogOpen, setDialogOpen] = useState(false);
 
 console.log("ciclo", data);
@@ -18,7 +18,7 @@ console.log("ciclo", data);
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Gestión de Actividades </h1>
+            <h1 className="text-xl font-bold">Gestión de Ciclos / Truck </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}

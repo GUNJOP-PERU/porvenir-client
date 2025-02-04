@@ -49,7 +49,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "plate",
+    accessorKey: "type",
     header: "Placa",
     cell: ({ row }) => {
       return (

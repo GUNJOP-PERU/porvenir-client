@@ -8,6 +8,8 @@ import { DataTableRowActions } from "../data-table-row-actions";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import clsx from "clsx";
+import IconMineral from "@/icons/IconMineral";
+import IconClearance from "@/icons/IconClearance";
 
 export const columns = [
   {
@@ -63,7 +65,14 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/src/assets/vehicle/truck.png')]"></div>
+          <div  className={clsx(
+              "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center ",
+              {
+                "bg-[url('/src/assets/vehicle/scoop.png')]": row.original?.equipment === "Scoop",
+                "bg-[url('/src/assets/vehicle/truck.png')]": row.original?.equipment === "Volquete",
+              }
+            )}
+          ></div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("user")}
@@ -83,19 +92,26 @@ export const columns = [
       return <>{row.getValue("frontLabor")}</>;
     },
   },
-
-  {
-    accessorKey: "tonnage",
-    header: "Tonelaje",
-    cell: ({ row }) => {
-      return <>{row.getValue("tonnage")} TN</>;
-    },
-  },
   {
     accessorKey: "material",
     header: "Material",
     cell: ({ row }) => {
-      return <>{row.getValue("material")}</>;
+      return (
+        <>
+          {row.getValue("material") === "Mineral" ? (
+            <IconMineral className="h-5 w-5 fill-[#14B8A6]" />
+          ) : (
+            <IconClearance className="h-5 w-5 fill-[#a46424]" />
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "tagName",
+    header: "Tonelaje",
+    cell: ({ row }) => {
+      return <>{row.getValue("tonnage")} TN</>;
     },
   },
   {

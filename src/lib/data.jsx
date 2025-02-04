@@ -13,7 +13,7 @@ export const dataLaborList = [
 
 export const dataFase = [
   { value: "Extracción / Producción", name: "Extracción / Producción" },
-  { value: "Fase", name: "Fase" },
+  { value: "Avance", name: "Avance" },
 ];
 
 export const dataCargo = [
@@ -29,18 +29,19 @@ export const dataTurn = [
 ];
 
 export const dataLabor = [
-  { value: "TJ", name: "Tajo" },
+  { value: "T", name: "Tajo" },
   { value: "CX", name: "Crucero" },
   { value: "GA", name: "Galeria" },
   { value: "BP", name: "By Pass" },
   { value: "RP", name: "Rampa" },
   { value: "CH", name: "Chimenea" },
   { value: "OV", name: "Ovalo" },
+  { value: "AVANCE", name: "Avance" },
 ];
 export const dataTypeVehicle = [
-  { value: "scoop", name: "Scoop" },
-  { value: "truck", name: "Truck" },
-  { value: "drill", name: "Drill" },
+  { value: "scoop", label: "Scoop" },
+  { value: "truck", label: "Truck" },
+  { value: "drill", label: "Drill" },
 ];
 
 export const dataOB = [

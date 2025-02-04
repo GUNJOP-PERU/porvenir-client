@@ -10,7 +10,7 @@ import { countItems } from "../../lib/utilsGeneral";
 function Checklist() {
   const { data = [], isLoading } = useFetchData("checklist", "checklist");
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  console.log("datav",data);
 
   return (
     <>

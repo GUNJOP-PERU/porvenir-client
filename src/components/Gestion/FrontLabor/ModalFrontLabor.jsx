@@ -20,6 +20,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,6 +35,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { ComboBoxSearch } from "../ComboBoxSearch";
+import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
   firstPart: z.string().refine((value) => /^\d{4}$/.test(value), {
@@ -41,11 +43,13 @@ const FormSchema = z.object({
   }),
   secondPart: z.string().min(1, { message: "*Requerida" }),
   thirdPart: z.string().min(1, { message: "*Requerida" }),
-  quarterPart: z.string().refine((value) => /^\d{3}$/.test(value), {
-    message: "*Requerida.",
+  quarterPart: z.string().refine((value) => /^\d{2,4}$/.test(value), {
+    message: "*Debe tener entre 2 y 4 dígitos.",
   }),
+
   description: z.string().optional(),
   type: z.string().optional(),
+  status: z.boolean().optional(),
 });
 
 export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -62,6 +66,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
       quarterPart: dataCrud?.name?.split("_")[2]?.split("-")[1] || "",
       description: dataCrud?.description || "",
       type: dataCrud?.type || "",
+      status: dataCrud?.status || false,
     },
   });
 
@@ -81,6 +86,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
         quarterPart: dataCrud?.name?.split("_")[2]?.split("-")[1] || "",
         description: dataCrud?.description || "",
         type: dataCrud?.type || "",
+        status: dataCrud?.status || false,
       });
     } else {
       reset({
@@ -90,6 +96,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
         quarterPart: "",
         description: "",
         type: "",
+        status: false,
       });
     }
   }, [dataCrud, reset]);
@@ -101,6 +108,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
       ...data,
       name,
     };
+    console.log(responseData);
     await handleFormSubmit({
       isEdit,
       endpoint: "frontLabor",
@@ -113,7 +121,11 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }
 
   return (
-    <Dialog open={isOpen}   onOpenChange={(onClose) => !loadingGlobal && setDeleteModal(onClose)}  modal={true}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(onClose) => !loadingGlobal && setDeleteModal(onClose)}
+      modal={true}
+    >
       <DialogContent className="w-[450px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
@@ -271,33 +283,60 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="status"
+                 
+                  render={({ field }) => (
+                    <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
+                      <div className="flex flex-col  justify-center ">
+                        <FormLabel>Activar/Desactivar</FormLabel>
+                        <FormDescription className="pt-0">
+                          Permanecerá el modal siempre abierto.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          aria-readonly
+                          disabled={loadingGlobal}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="pt-6 flex gap-2 ">
-              <Button
-                type="button"
-                className="w-1/2"
-                onClick={() => onClose()}
-                variant="secondary"
-                disabled={loadingGlobal}
-              >
-                <IconClose className="fill-zinc-400/50 w-4 h-4" />
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={loadingGlobal} className="w-1/2">
-                {loadingGlobal ? (
-                  <>
-                    <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
-                    Cargando...
-                  </>
-                ) : (
-                  <>
-                    <IconToggle className="text-background w-4 h-4" />
-                    {isEdit ? "Actualizar" : "Crear"}
-                  </>
-                )}
-              </Button>
-            </div>
+                <Button
+                  type="button"
+                  className="w-1/2"
+                  onClick={() => onClose()}
+                  variant="secondary"
+                  disabled={loadingGlobal}
+                >
+                  <IconClose className="fill-zinc-400/50 w-4 h-4" />
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loadingGlobal}
+                  className="w-1/2"
+                >
+                  {loadingGlobal ? (
+                    <>
+                      <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                      Cargando...
+                    </>
+                  ) : (
+                    <>
+                      <IconToggle className="text-background w-4 h-4" />
+                      {isEdit ? "Actualizar" : "Crear"}
+                    </>
+                  )}
+                </Button>
+              </div>
             </form>
           </Form>
         </div>

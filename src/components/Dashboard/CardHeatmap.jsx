@@ -1,39 +1,35 @@
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import Heatmap from "highcharts/modules/heatmap";
 import { useMemo } from "react";
+import * as Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import highchartsHeatmap from "highcharts/modules/heatmap";
 
 // Inicializar los módulos
-if (typeof Highcharts === "object") {
+if (typeof highchartsHeatmap === "function") {
+  highchartsHeatmap(Highcharts);
 }
-
 export default function HighchartsHeatmap({ data, title }) {
   const xCategories = useMemo(() => {
-    return [
-      ...new Set(data?.origins_destinies_tonnages.map((item) => item.destiny)),
-    ];
-  }, [data?.origins_destinies_tonnages]);
+    return [...new Set(data.map((item) => item.destiny))];
+  }, [data]);
 
   const yCategories = useMemo(() => {
-    return [
-      ...new Set(data?.origins_destinies_tonnages.map((item) => item.origin)),
-    ];
-  }, [data?.origins_destinies_tonnages]);
+    return [...new Set(data.map((item) => item.origin))];
+  }, [data]);
 
   const heatmapData = useMemo(() => {
-    return data?.origins_destinies_tonnages.map((item) => {
+    return data.map((item) => {
       const xIndex = xCategories.indexOf(item.destiny);
       const yIndex = yCategories.indexOf(item.origin);
       return [xIndex, yIndex, item.value]; // Formato: [xIndex, yIndex, value]
     });
-  }, [data?.origins_destinies_tonnages, xCategories, yCategories]);
+  }, [data, xCategories, yCategories]);
 
   const options = useMemo(
     () => ({
       chart: {
         backgroundColor: "transparent",
         type: "heatmap",
-        plotBorderWidth: 0, 
+        plotBorderWidth: 0,
         height: 300,
       },
       title: {
@@ -71,7 +67,6 @@ export default function HighchartsHeatmap({ data, title }) {
           },
         },
         gridLineWidth: 0,
-      
       },
 
       colorAxis: {
@@ -137,15 +132,20 @@ export default function HighchartsHeatmap({ data, title }) {
             "</span></b>"
           );
         },
-        
       },
     }),
     [heatmapData, xCategories, yCategories]
   );
   return (
     <>
-      <h4 className="text-xs font-bold">{title}</h4>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      {heatmapData.length > 0 ? (
+        <>
+          <h4 className="text-xs font-bold">{title}</h4>
+          <HighchartsReact highcharts={Highcharts} options={options} />
+        </>
+      ) : (
+        <p className="text-zinc-400 text-[10px] leading-3 max-w-20 text-center">No hay datos disponibles</p>
+      )}
     </>
   );
 }

@@ -52,12 +52,12 @@ function CardItem({ value, title, change, valueColor, unid }) {
           </div>
          
 
-          <div class=" absolute -top-3 left-0 -mt-[2px] flex flex-col group-focus-within:visible group-active:visible">
-            <div class="flex min-w-max flex-col rounded-md bg-red-500 text-[8px] leading-[8px] font-bold text-white px-2.5 py-1.5 uppercase">
+          <div className=" absolute -top-3 left-0 -mt-[2px] flex flex-col group-focus-within:visible group-active:visible">
+            <div className="flex min-w-max flex-col rounded-md bg-red-500 text-[8px] leading-[8px] font-bold text-white px-2.5 py-1.5 uppercase">
               {getTooltipText(change)}!
             </div>
-            <div class="ml-1 -mt-[4px] inline-block overflow-hidden">
-              <div class="h-2 w-2 origin-bottom-right rotate-45 transform bg-red-500 "></div>
+            <div className="ml-1 -mt-[4px] inline-block overflow-hidden">
+              <div className="h-2 w-2 origin-bottom-right rotate-45 transform bg-red-500 "></div>
             </div>
           </div>
         </>

@@ -2,30 +2,29 @@ import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
+import { countItems } from "@/lib/utilsGeneral";
+import { columns } from "../../components/Gestion/PlanDay/columns";
+import { useFetchData } from "../../hooks/useGlobalQuery";
+import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
 
-import { ModalActivity } from "../../components/Gestion/Activity/ModalActivity";
-import { columns } from "../../components/Gestion/Activity/columns";
-import {useFetchData} from "../../hooks/useGlobalQuery";
-import { countItems } from "../../lib/utilsGeneral";
 
-function PageActivity() {
-  const { data = [], isLoading } = useFetchData("activity", "activity");
+function PlanWeek() {
+  const { data = [], isLoading } = useFetchData("planDay", "planDay");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
+  console.log(data);
   return (
     <>
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Gestión de Actividades </h1>
+            <h1 className="text-xl font-bold">Gestión de Plan Semanal</h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
           </div>
           <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
+            Administre los planes y sus caractestisticas.
           </p>
         </div>
         <div className="flex gap-2">
@@ -45,7 +44,7 @@ function PageActivity() {
         </div>
       </div>
       <DataTable data={data} columns={columns} isLoading={isLoading} />
-      <ModalActivity
+      <ModalPlanMonth
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
@@ -54,4 +53,4 @@ function PageActivity() {
   );
 }
 
-export default PageActivity;
+export default PlanWeek;

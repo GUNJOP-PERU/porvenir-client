@@ -40,7 +40,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 
-import {useFetchData} from "../hooks/useGlobalQuery";
+import { useFetchData } from "../hooks/useGlobalQuery";
 import { dataTurn } from "../lib/data";
 
 dayjs.locale("es");
@@ -185,7 +185,7 @@ function DayPage() {
                               {...field}
                             />
                           </FormControl>
-                        
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -202,7 +202,7 @@ function DayPage() {
                               {...field}
                             />
                           </FormControl>
-                          
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -275,7 +275,7 @@ function DayPage() {
                               </SelectContent>
                             </Select>
                           </FormControl>
-                         
+
                           <FormMessage />
                         </FormItem>
                       )}

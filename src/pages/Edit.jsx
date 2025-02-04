@@ -141,20 +141,10 @@ function EditPage() {
           <Button onClick={() => fetchUsers()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button className="w-fit" variant="outline">
-            <FileUp className="w-5 h-5 text-zinc-400" /> Importar
-          </Button>
-          <Button className="w-fit" variant="outline">
-            <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
-          </Button>
+         
 
           <Button onClick={handleCancel} variant="secondary">
             Cancelar
-          </Button>
-
-          <Button onClick={handleSave} className="w-fit">
-            <Save className="w-5 h-5 text-white" />
-            Guardar
           </Button>
           <Button onClick={handleSendData} className="w-fit">
             <Save className="w-5 h-5 text-white" />
@@ -212,7 +202,7 @@ function EditPage() {
           afterChange={handleAfterChange} // Pasamos el callback de afterChange
         />
       </div>
-      <div>Novedades</div>
+   
     </>
   );
 }

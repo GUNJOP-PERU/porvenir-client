@@ -3,6 +3,7 @@ import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
+
 const projectedValues = [
   5234, 8790, 6352, 7998, 5543, 9000, 7684, 8321, 7120, 6955, 8473, 5998, 7450,
   8201, 6593, 8745, 5102, 8888, 5342, 7999, 6011, 8555, 7777, 6900, 5400, 8692,
@@ -10,6 +11,8 @@ const projectedValues = [
 ];
 
 export default function CardColum({ data }) {
+
+  console.log(data, "colum")
   const options = useMemo(
     () => ({
       chart: {
@@ -64,16 +67,15 @@ export default function CardColum({ data }) {
       tooltip: {
         shared: true,
         valueSuffix: " toneladas",
-        backgroundColor: "#111214", 
-        borderWidth: 0, 
+        backgroundColor: "#111214",
+        borderWidth: 0,
         shadow: false,
         borderRadius: 10,
         padding: 15,
         style: {
-          color: "#FFFFFF", 
+          color: "#FFFFFF",
           fontSize: "11px",
           fontWeight: "",
-         
         },
       },
       plotOptions: {
@@ -170,57 +172,68 @@ export default function CardColum({ data }) {
   );
 
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-      <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
-        <IconWarning className="text-red-500 w-3 h-3" />
-        <div className="flex items-center">
-          <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-            {/* Verificar si los datos existen antes de renderizar */}
-            {data?.perfomance_summary ? (
-              <>
-                {data?.perfomance_summary.level_production?.high?.advice ? (
-                  <li>
-                    {data?.perfomance_summary.level_production.high.advice}
-                  </li>
-                ) : (
-                  <li>No hay consejo para nivel alto</li> // Mensaje alternativo
-                )}
+    <>
+      {data?.data?.dates.length > 0 ? (
+        <>
+         <h4 className="text-xs font-bold">
+            Tonelaje - Planificado vs Ejecutado
+          </h4>
+          <HighchartsReact highcharts={Highcharts} options={options} />
+          <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
+            <IconWarning className="text-red-500 w-3 h-3" />
+            <div className="flex items-center">
+              <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
+                {/* Verificar si los datos existen antes de renderizar */}
+                {data?.perfomance_summary ? (
+                  <>
+                    {data?.perfomance_summary.level_production?.high?.advice ? (
+                      <li>
+                        {data?.perfomance_summary.level_production.high.advice}
+                      </li>
+                    ) : (
+                      <li>No hay consejo para nivel alto</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.level_production?.low?.advice ? (
-                  <li>
-                    {data?.perfomance_summary.level_production.low.advice}
-                  </li>
-                ) : (
-                  <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
-                )}
+                    {data?.perfomance_summary.level_production?.low?.advice ? (
+                      <li>
+                        {data?.perfomance_summary.level_production.low.advice}
+                      </li>
+                    ) : (
+                      <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.best_day?.date &&
-                data?.perfomance_summary.best_day?.value ? (
-                  <li>
-                    Mejor día: {data?.perfomance_summary.best_day.date}{" "}
-                    {data?.perfomance_summary.best_day.value} toneladas
-                  </li>
-                ) : (
-                  <li>No hay datos para el mejor día</li> // Mensaje alternativo
-                )}
+                    {data?.perfomance_summary.best_day?.date &&
+                    data?.perfomance_summary.best_day?.value ? (
+                      <li>
+                        Mejor día: {data?.perfomance_summary.best_day.date}{" "}
+                        {data?.perfomance_summary.best_day.value} toneladas
+                      </li>
+                    ) : (
+                      <li>No hay datos para el mejor día</li> // Mensaje alternativo
+                    )}
 
-                {data?.perfomance_summary.worst_day?.date &&
-                data?.perfomance_summary.worst_day?.value ? (
-                  <li>
-                    Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
-                    {data?.perfomance_summary.worst_day.value} toneladas
-                  </li>
+                    {data?.perfomance_summary.worst_day?.date &&
+                    data?.perfomance_summary.worst_day?.value ? (
+                      <li>
+                        Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
+                        {data?.perfomance_summary.worst_day.value} toneladas
+                      </li>
+                    ) : (
+                      <li>No hay datos para el peor día</li> // Mensaje alternativo
+                    )}
+                  </>
                 ) : (
-                  <li>No hay datos para el peor día</li> // Mensaje alternativo
+                  <li>No hay datos disponibles</li> // Si no hay datos
                 )}
-              </>
-            ) : (
-              <li>No hay datos disponibles</li> // Si no hay datos
-            )}
-          </ul>
-        </div>
-      </div>
-    </div>
+              </ul>
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
+          No hay datos disponibles
+        </p>
+      )}
+    </>
   );
 }

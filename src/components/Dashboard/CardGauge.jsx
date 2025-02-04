@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { formatThousands } from "@/lib/utilsGeneral";
 import { useProductionStore } from "@/store/ProductionStore";
@@ -5,21 +6,20 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
-import { useEffect, useMemo } from "react";
 
-if (typeof Highcharts === "object") {
+if (typeof solidGauge === "function") {
+  solidGauge(Highcharts);
 }
 
-export default function CardGauge( ) {
-
+export default function CardGauge() {
   useProductionWebSocket();
-  const fetchDataGauge = useProductionStore(
-    (state) => state.fetchDataGauge
-  );
+  const fetchDataGauge = useProductionStore((state) => state.fetchDataGauge);
   const { dataGuage } = useProductionStore();
 
   useEffect(() => {
-    fetchDataGauge(); 
+    if (dataGuage.length === 0) {
+      fetchDataGauge();
+    }
   }, []);
 
 
@@ -54,7 +54,7 @@ export default function CardGauge( ) {
       },
       yAxis: {
         min: 0,
-        max: dataGuage.goal_tonnages.value, // Meta
+        max: dataGuage?.goal_tonnages?.value || 0, // Meta
         stops: [[0.1, "#22C2C5"]],
         lineWidth: 0,
         tickWidth: 0,
@@ -73,7 +73,7 @@ export default function CardGauge( ) {
       series: [
         {
           name: "toneladas",
-          data: [dataGuage.total_tonnages_accumulated.value || 0], // Tonelada
+          data: [dataGuage?.total_tonnages_accumulated?.value || 0], // Tonelada
           innerRadius: "75%",
           enableMouseTracking: false,
           states: {
@@ -108,9 +108,7 @@ export default function CardGauge( ) {
       plotOptions: {
         solidgauge: {
           borderRadius: 50,
-          animation:false,
           dataLabels: {
-            
             y: 0,
             borderWidth: 0,
             useHTML: true,

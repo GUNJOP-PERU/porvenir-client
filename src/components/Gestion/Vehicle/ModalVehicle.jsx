@@ -252,7 +252,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       <SelectContent>
                         {dataTypeVehicle?.map((i) => (
                           <SelectItem key={i.value} value={i.value}>
-                            {i.name}
+                            {i.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -298,7 +298,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, "PPP",{ locale: es })
                             ) : (
                               <span>Pick a date</span>
                             )}

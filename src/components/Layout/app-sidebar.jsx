@@ -15,7 +15,7 @@ export function AppSidebar({ ...props }) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent >
         <NavMain  />
-        <NavProjects  />
+     
       </SidebarContent>
       <SidebarFooter>
         {/* <NavUser /> */}
