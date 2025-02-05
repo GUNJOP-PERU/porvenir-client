@@ -1,3 +1,4 @@
+
 export const dataRole = [
   { value: "Supervisor", name: "Supervisor" },
   { value: "Operador", name: "Operador" },
@@ -122,17 +123,6 @@ export const dataOB = [
   { _id: "OB15D", name: "OB15D" },
 ];
 
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  CheckCircle,
-  Circle,
-  CircleOff,
-  HelpCircle,
-  Timer,
-} from "lucide-react"
-
 export const cargo = [
   {
     value: "Operador Truck",
@@ -156,12 +146,10 @@ export const statuses = [
   {
     value: "Supervisor",
     label: "Supervisor",
-    icon: HelpCircle,
   },
   {
     value: "Operador",
     label: "Operador",
-    icon: Circle,
   },
 ]
 
@@ -169,14 +157,23 @@ export const turn = [
   {
     label: "Dia",
     value: "dia",
-    icon: ArrowDown,
+
   },
   {
     label: "Noche",
     value: "noche",
-    icon: ArrowRight,
   },
- 
+]
+export const dataMaterial = [
+  {
+    label: "Mineral",
+    value: "Mineral",
+
+  },
+  {
+    label: "Desmonte",
+    value: "Desmonte",
+  },
 ]
 
 

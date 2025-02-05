@@ -7,9 +7,9 @@ import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { useProductionStore } from "@/store/ProductionStore";
 import { useEffect } from "react";
 
-function DashboardScoop() {
+function ProductionScoop() {
   const fetchDataScoop = useProductionStore((state) => state.fetchDataScoop);
-  const { scoopProgressDay,scoopTonnagHour } = useProductionStore();
+  const { scoopProgressDay,scoopTonnagHour,scoopActivityHour,scoopEvents} = useProductionStore();
 
   useEffect(() => {
     if (scoopProgressDay.length === 0) {
@@ -19,7 +19,7 @@ function DashboardScoop() {
 
   useProductionWebSocket();
 
-  console.log(scoopTonnagHour, "scoopTonnagHour");
+  console.log(scoopProgressDay, "scoopProgressDay");
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
@@ -70,17 +70,17 @@ function DashboardScoop() {
       </div>
       <div className="flex-1 grid grid-rows-3 gap-4 md:grid-cols-1">
         <div className=" bg-muted/50 rounded-2xl flex flex-col gap-1 px-4 p-3">
-          <CardColumScoop />
+          <CardColumScoop data={scoopTonnagHour} />
         </div>
         <div className=" bg-muted/50 rounded-2xl flex flex-col gap-1 px-4 p-3">
-          <CardTimeline />
+          <CardTimeline data={scoopActivityHour} />
         </div>
         <div className=" bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3 ">
-          <CardTable />
+          <CardTable data={scoopEvents} />
         </div>
       </div>
     </>
   );
 }
 
-export default DashboardScoop;
+export default ProductionScoop;

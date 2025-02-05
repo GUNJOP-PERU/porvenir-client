@@ -3,8 +3,6 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardPie({ data, title }) {
-  const dataChart = data?.data_chart ?? [];
-  const dataCard = data?.data_card ?? [];
 
   const options = useMemo(
     () => ({
@@ -24,7 +22,7 @@ export default function CardPie({ data, title }) {
           name: "",
           colorByPoint: false,
           innerSize: "60%",
-          data: dataChart.map((item) => ({
+          data: data?.data_chart?.map((item) => ({
             name: item.title,
             y: item.value,
             color: item.fill,
@@ -89,19 +87,19 @@ export default function CardPie({ data, title }) {
         enabled: false,
       },
     }),
-    [dataChart]
+    [data]
   );
 
   return (
     <>
-      {dataChart.length > 0 ? (
+      {data?.data_card?.length > 0 ? (
         <>
           <h4 className="text-xs font-bold">{title}</h4>
           <div className="flex flex-1 justify-center items-center gap-2">
             <HighchartsReact highcharts={Highcharts} options={options} />
             <div className="flex flex-col gap-1">
-              {dataCard.length > 0 ? (
-                dataCard.map((i, index) => (
+              {data?.data_card?.length > 0 ? (
+                data?.data_card?.map((i, index) => (
                   <div
                     key={index}
                     className="flex flex-col justify-center items-center border rounded-2xl p-4 gap-0.5"
@@ -122,7 +120,7 @@ export default function CardPie({ data, title }) {
                 ))
               ) : (
                 <div className="text-center text-gray-400 text-[10px] leading-3 max-w-20">
-                  {dataCard.length === 0
+                  {data?.data_card?.length === 0
                     ? "No hay datos disponibles."
                     : "Cargando datos..."}
                 </div>

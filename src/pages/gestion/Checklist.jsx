@@ -8,7 +8,9 @@ import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 
 function Checklist() {
-  const { data = [], isLoading } = useFetchData("checklist", "checklist");
+  const { data = [],  isFetching,
+    isError,
+    refetch } = useFetchData("checklist", "checklist");
   const [dialogOpen, setDialogOpen] = useState(false);
   console.log("datav",data);
 
@@ -28,7 +30,7 @@ function Checklist() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button  className="w-fit" variant="outline">
+        <Button onClick={() => refetch()} variant="outline" size="icon">
             <IconMore className="w-5 h-5 fill-zinc-400" /> Importar
           </Button>
           <Button  className="w-fit" variant="outline">
@@ -41,7 +43,8 @@ function Checklist() {
         </div>
       </div>
      
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable data={data} columns={columns}  isLoading={isFetching}
+        isError={isError} />
       <ModalChecklist
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

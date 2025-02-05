@@ -9,7 +9,9 @@ import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
 
 
 function PlanWeek() {
-  const { data = [], isLoading } = useFetchData("planDay", "planDay");
+  const { data = [],  isFetching,
+    isError,
+    refetch } = useFetchData("planDay", "planDay");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   console.log(data);
@@ -28,7 +30,7 @@ function PlanWeek() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
+        <Button onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -43,7 +45,8 @@ function PlanWeek() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable data={data} columns={columns}  isLoading={isFetching}
+        isError={isError}/>
       <ModalPlanMonth
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

@@ -10,7 +10,9 @@ import { columns } from "@/components/Gestion/CycleScoop/columns";
 
 
 function PageCycleScoop() {
-  const { data = [], isLoading } = useFetchData("cycleScoop", "cycle/scoop");
+  const { data = [],  isFetching,
+    isError,
+    refetch } = useFetchData("cycleScoop", "cycle/scoop");
   const [dialogOpen, setDialogOpen] = useState(false);
 
 console.log("ciclo", data);
@@ -30,7 +32,7 @@ console.log("ciclo", data);
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
+        <Button onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -45,7 +47,8 @@ console.log("ciclo", data);
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable data={data} columns={columns}  isLoading={isFetching}
+        isError={isError} />
       <ModalCycle
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

@@ -108,7 +108,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "tagName",
+    accessorKey: "tonnage",
     header: "Tonelaje",
     cell: ({ row }) => {
       return <>{row.getValue("tonnage")} TN</>;
@@ -130,7 +130,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "start",
+    accessorKey: "tagName",
     header: "Tiempo Viaje",
     cell: ({ row }) => {
       return (

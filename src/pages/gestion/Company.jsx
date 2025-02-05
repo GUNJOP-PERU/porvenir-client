@@ -10,7 +10,9 @@ import { columns } from "../../components/Gestion/Company/columns";
 import { ModalCompany } from "../../components/Gestion/Company/ModalCompany";
 
 function PageCompany() {
-  const { data = [], isLoading } = useFetchData("enterprise", "enterprise");
+  const { data = [],  isFetching,
+    isError,
+    refetch } = useFetchData("enterprise", "enterprise");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
@@ -29,7 +31,7 @@ function PageCompany() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
+        <Button onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -44,7 +46,8 @@ function PageCompany() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable data={data} columns={columns}  isLoading={isFetching}
+        isError={isError}/>
       <ModalCompany
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

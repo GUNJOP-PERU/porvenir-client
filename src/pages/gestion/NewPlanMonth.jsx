@@ -28,15 +28,15 @@ const FormSchema = z.object({
     })
     .refine((data) => data.start <= data.end, {
       message: "*La fecha de inicio no puede ser posterior a la fecha de fin.",
-      path: ["start"], // Error en el campo start si la fecha de inicio es mayor que la de fin
+      path: ["start"],
     }),
-  shift: z.string().min(2, { message: "*Turno." }),
   selectedItems: z.array(z.string()).optional(),
 });
 
-export const NewPlanMonth = ( ) => {
+export const NewPlanMonth = () => {
   const navigate = useNavigate();
   const [dataHotTable, setDataHotTable] = useState([]);
+  const [invalidLabors, setInvalidLabors] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -49,7 +49,6 @@ export const NewPlanMonth = ( ) => {
         end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
       },
       selectedItems: [],
-      shift: "", // El valor para el turno (shift) es por defecto vacío
     },
   });
 
@@ -108,7 +107,7 @@ export const NewPlanMonth = ( ) => {
 
   const handleSendData = async () => {
     setLoadingGlobal(true);
-    const { shift } = form.getValues();
+    const { dob } = form.getValues();
 
     const tieneCamposVacios = dataHotTable.some(
       (row) => !row.labor || !row.fase
@@ -118,8 +117,9 @@ export const NewPlanMonth = ( ) => {
       acc[row.labor] = (acc[row.labor] || 0) + 1;
       return acc;
     }, {});
-    const tieneRepetidos = Object.values(laborCounts).some((count) => count > 1);
-
+    const tieneRepetidos = Object.values(laborCounts).some(
+      (count) => count > 1
+    );
 
     if (tieneCamposVacios) {
       alert("Error: Hay filas con 'Labor' o 'Fase' vacías en la tabla.");
@@ -134,41 +134,67 @@ export const NewPlanMonth = ( ) => {
     }
 
     const datosFinales = dataHotTable.flatMap((row) => {
-      const fechas = Object.keys(row).filter((key) =>
-        key.match(/^\d{4}-\d{2}-\d{2}$/)
+      const fechas = Object.keys(row).filter(
+        (key) => key.match(/^\d{2}-\d{2}$/) // Busca fechas en formato "DD-MM"
       );
 
-      return fechas.map((fecha) => ({
-        frontLabor: row.labor,
-        phase: row.fase,
-        date: fecha,
-        tonnage: row[fecha],
-        shift: shift,
-      }));
+      return fechas.map((fecha) => {
+        const [day, month] = fecha.split("-"); // Extraer día y mes
+        const year = new Date().getFullYear(); // Obtener el año actual
+
+        return {
+          frontLabor: row.labor,
+          phase: row.fase,
+          date: `${year}-${month}-${day}`, // Convertir "DD-MM" a "YYYY-MM-DD"
+          tonnage: row[fecha],
+          month: parseInt(month, 10), // Convertir el mes a entero
+        };
+      });
     });
-    const totalTonnage = datosFinales.reduce((sum, item) => sum + item.tonnage, 0);
 
-    const laborsUnicos = [
-      ...new Set(datosFinales.map((item) => item.frontLabor)),
-    ].map((labor) => ({
-      name: labor, 
-      status: true, 
+    const totalTonnage = datosFinales.reduce(
+      (sum, item) => sum + item.tonnage,
+      0
+    );
+
+    const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
+      name: labor,  // El nombre del labor
+      status: true, // El status que le quieres asignar
     }));
+    console.log("Labors en rojo:", invalidLaborsWithStatus);
+    console.log("Datos Finales:", datosFinales);
 
-    // console.log("Datos Finales:",datosFinales );
-    // console.log("Labors:",  laborsUnicos);
+    const fecha = dayjs(dob.end);
+    const mes = fecha.month() + 1; // Convertir a 1-12
+    const año = fecha.year();
 
-    console.log("Total Tonnage:", dataHotTable);
-    
+    const dataFinal = {
+      dataGenerate: datosFinales,
+      dataEdit: dataHotTable,
+      status: "creado",
+      totalTonnage: totalTonnage,
+      month: mes, // Mes en formato entero (1-12)
+      year: año, // Año en formato YYYY
+    };
+    console.log("Datos Finales:", dataFinal);
     try {
-      const response = await postDataRequest("planMonth", datosFinales);
+      const response = await postDataRequest("planMonth/many", dataFinal);
 
+      console.log(response);
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
       } else {
         alert("Error al enviar los datos.");
       }
-      if (reset) reset();
+
+      const responseFront = await postDataRequest(
+        "frontLabor/many",
+        invalidLaborsWithStatus
+      );
+
+      console.log(responseFront);
+
+      form.reset();
       navigate("/planMonth");
     } catch (error) {
       console.error("Error al enviar los datos:", error);
@@ -228,32 +254,29 @@ export const NewPlanMonth = ( ) => {
               dataLaborList={dataLaborList}
               setDataHotTable={setDataHotTable}
               loadingGlobal={loadingGlobal}
+              setInvalidLabors={setInvalidLabors}
             />
           )}
         </div>
       </div>
-      <div className="flex gap-3 justify-between">
-        <div>
-          <div className="bg-[#F0BB33]/20 w-fit rounded-xl px-6 py-2.5 flex gap-1 text-[#BC9021]  text-[11px] leading-4 mt-4 ">
-            <IconWarning className="text-[#BC9021]  w-5 h-5 mr-1.5" />
-            <div className="flex items-center">
-              <ul className="list-disc ml-3 gap-x-6 ">
-                <li className="text-green-700">
-                  {" "}
-                  <strong className="font-bold text-green-500">Verde</strong>:
-                  Labor reconocida en la lista.
-                </li>
-                <li className="text-red-700">
-                  <strong className="font-bold text-red-600">Rojo</strong>:
-                  Labor no reconocida en la lista.
-                </li>
-                <li>
-                  {" "}
-                  <strong className="font-bold bg-yellow-300">Amarillo</strong>:
-                  Labor repetida en el mes.
-                </li>
-              </ul>
-            </div>
+      <div className="flex gap-3 justify-between items-end">
+        <div className="bg-sky-100/50 w-fit rounded-xl px-6 py-2.5 flex gap-1 text-zinc-600 text-[11px] leading-4 mt-4 border-t border-blue-500">
+          <IconWarning className="text-blue-500  w-5 h-5 mr-1.5" />
+          <div className="flex items-center">
+            <ul className="list-disc ml-3 gap-x-6 ">
+              <li className="">
+                <strong className="font-bold text-green-500">Verde: </strong>
+                Labor existente en el sistema.
+              </li>
+              <li className="">
+                <strong className="font-bold text-red-600">Rojo: </strong>
+                Labor no existente en el sistema.
+              </li>
+              <li>
+                <strong className="font-bold bg-yellow-300">Amarillo</strong>:
+                Labor repetida en el mes.
+              </li>
+            </ul>
           </div>
         </div>
         <div className="flex gap-3 justify-center items-center">

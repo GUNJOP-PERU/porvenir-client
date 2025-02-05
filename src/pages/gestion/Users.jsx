@@ -5,13 +5,17 @@ import { columns } from "../../components/Gestion/Users/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
-import {useFetchData} from "../../hooks/useGlobalQuery";
+import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
 function HomeUsers() {
-  const { data = [], isLoading } = useFetchData("user", "user");
+  const {
+    data = [],
+    isFetching,
+    isError,
+    refetch,
+  } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
-
 
   return (
     <>
@@ -29,7 +33,7 @@ function HomeUsers() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
+          <Button onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -44,7 +48,12 @@ function HomeUsers() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable
+        data={data}
+        columns={columns}
+        isLoading={isFetching}
+        isError={isError}
+      />
       <ModalUser
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

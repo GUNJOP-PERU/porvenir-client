@@ -4,6 +4,8 @@ import { DataTableRowActions } from "../data-table-row-actions";
 import clsx from "clsx";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
+import IconMineral from "@/icons/IconMineral";
+import IconClearance from "@/icons/IconClearance";
 
 export const columns = [
   {
@@ -71,7 +73,15 @@ export const columns = [
     accessorKey: "material",
     header: "Material",
     cell: ({ row }) => {
-      return <>{row.getValue("material")}</>;
+      return (
+        <>
+          {row.getValue("material") === "Mineral" ? (
+            <IconMineral className="h-5 w-5 fill-[#14B8A6]" />
+          ) : (
+            <IconClearance className="h-5 w-5 fill-[#a46424]" />
+          )}
+        </>
+      );
     },
   },
   

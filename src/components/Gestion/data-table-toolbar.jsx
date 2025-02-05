@@ -3,7 +3,7 @@ import { Search, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
-import { cargo, dataTypeVehicle, statuses, turn } from "@/lib/data"
+import { cargo, dataMaterial, dataTypeVehicle, statuses, turn } from "@/lib/data"
 
 export function DataTableToolbar({ table }) {
   const isFiltered = table.getState().columnFilters.length > 0
@@ -53,6 +53,7 @@ export function DataTableToolbar({ table }) {
         {renderFacetedFilter("cargo", "Cargo", cargo)}
         {renderFacetedFilter("shift", "Turno", turn)}
         {renderFacetedFilter("type", "Vehiculo", dataTypeVehicle)}
+        {renderFacetedFilter("material", "Material", dataMaterial)}
         {renderFacetedFilter("vehicleType", "Vehiculo", dataTypeVehicle)}
         {isFiltered && (
           <Button

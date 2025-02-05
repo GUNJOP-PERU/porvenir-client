@@ -48,31 +48,6 @@ export const PlanHeader = ({ form, onSubmit, dataLaborList, hasData ,loadingGlob
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 justify-between">
         <div className="flex gap-2">
-          {/* Selección de Turno */}
-          <FormField
-            control={form.control}
-            name="shift"
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormControl>
-                  <Select onValueChange={field.onChange} disabled={loadingGlobal}>
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder="Turno..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dataTurn?.map((i) => (
-                        <SelectItem key={i.value} value={i.value}>
-                          {i.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Selección de Mes y Año */}
           <FormField
             control={form.control}

@@ -1,16 +1,20 @@
+import { countItems } from "@/lib/utilsGeneral";
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import { countItems } from "@/lib/utilsGeneral";
-import { columns } from "../../components/Gestion/PlanDay/columns";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
-import { Link } from "react-router-dom";
+import { columns } from "@/components/Gestion/PlanMonth/columns";
 
 function PlanMonth() {
-  const { data = [], isLoading } = useFetchData("planMonth", "planMonth");
+  const {
+    data = [],
+    isFetching,
+    isError,
+    refetch,
+  } = useFetchData("planMonth", "planMonth");
 
+  console.log(data, "plan");
   return (
     <>
       <div className="flex justify-between">
@@ -26,7 +30,7 @@ function PlanMonth() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon">
+          <Button onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -36,16 +40,19 @@ function PlanMonth() {
             <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
           </Button>
           <Link to={`/newPlanMonth`}>
-            <Button className="w-fit" >
+            <Button className="w-fit">
               <CircleFadingPlus className="w-5 h-5 text-white" />
               Añadir nuevo
             </Button>
           </Link>
-       
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
-    
+      <DataTable
+        data={data}
+        columns={columns}
+        isLoading={isFetching}
+        isError={isError}
+      />
     </>
   );
 }

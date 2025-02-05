@@ -52,7 +52,7 @@ const cardData = [
   },
 ];
 
-function DashboardTurno() {
+function ProductionUV() {
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-6 py-4 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-6">
@@ -79,4 +79,4 @@ function DashboardTurno() {
   );
 }
 
-export default DashboardTurno;
+export default ProductionUV;

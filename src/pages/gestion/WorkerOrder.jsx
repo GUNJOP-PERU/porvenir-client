@@ -6,9 +6,12 @@ import { Button } from "../../components/ui/button";
 import {useFetchData} from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
+import { RefreshCcw } from "lucide-react";
 
 function WorkerOrder() {
-  const { data = [], isLoading } = useFetchData("workOrder", "workOrder");
+  const { data = [],  isFetching,
+    isError,
+    refetch } = useFetchData("workOrder", "workOrder");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   console.log(data,"order");
@@ -29,6 +32,9 @@ function WorkerOrder() {
           </p>
         </div>
         <div className="flex gap-2">
+        <Button onClick={() => refetch()} variant="outline" size="icon">
+            <RefreshCcw className="w-5 h-5 text-zinc-400" />
+          </Button>
           <Button className="w-fit" variant="outline">
             <IconMore className="w-5 h-5 fill-zinc-400" /> Importar
           </Button>
@@ -41,7 +47,8 @@ function WorkerOrder() {
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns} isLoading={isLoading} />
+      <DataTable data={data} columns={columns}  isLoading={isFetching}
+        isError={isError} />
       <ModalWorkOrder
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}

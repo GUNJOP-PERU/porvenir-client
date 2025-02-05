@@ -3,6 +3,7 @@ import { HotTable } from "@handsontable/react";
 import clsx from "clsx";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
+import { useEffect, useState } from "react";
 
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -12,10 +13,13 @@ export const PlanContent = ({
   setDataHotTable,
   dataLaborList,
   loadingGlobal,
+  setInvalidLabors
 }) => {
+ 
+
   // ✅ Verifica si el valor de la celda está en dataLaborList
   const isLaborInList = (laborName) => {
-    return dataLaborList.some((item) => item.name === laborName);
+    return dataLaborList?.some((item) => item.name === laborName);
   };
 
   // ✅ Función para actualizar la tabla después de un cambio
@@ -35,6 +39,15 @@ export const PlanContent = ({
     });
   };
 
+  useEffect(() => {
+    const invalids = dataHotTable
+      .map((row) => row.labor)
+      .filter((laborName) => !isLaborInList(laborName));
+    setInvalidLabors(invalids);
+  }, [dataHotTable, dataLaborList]);
+
+
+
   return (
     <div
       className={clsx("h-[60vh] z-0", {
@@ -52,7 +65,7 @@ export const PlanContent = ({
         height="100%"
         mergeCells={true}
         contextMenu={true}
-        readOnly={false} 
+        readOnly={false}
         fixedColumnsStart={1}
         autoWrapRow={true}
         autoWrapCol={true}
@@ -64,7 +77,6 @@ export const PlanContent = ({
                     title: key,
                     type: "text", // Permitir entrada manual
                     data: key,
-                    
                   };
                 } else if (key === "fase") {
                   return {
@@ -108,7 +120,6 @@ export const PlanContent = ({
             };
           }
         }}
-        
       />
     </div>
   );

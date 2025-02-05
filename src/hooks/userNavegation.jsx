@@ -1,7 +1,6 @@
-import { useLocation } from 'react-router-dom';
-import { useMemo } from 'react';
-import IconDashboard from '../icons/IconDashboard';
-
+import { useLocation } from "react-router-dom";
+import { useMemo } from "react";
+import IconDashboard from "../icons/IconDashboard";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -10,7 +9,7 @@ export const useNavigation = () => {
   const paths = useMemo(
     () => [
       {
-        title: "Gestión", 
+        title: "Gestión",
         items: [
           {
             name: "Compañia",
@@ -42,12 +41,7 @@ export const useNavigation = () => {
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/planDay",
           },
-          {
-            name: "Plan Semanal",
-            href: "/planWeek",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/planWeek",
-          },
+
           {
             name: "Plan Mensual",
             href: "/planMonth",
@@ -93,31 +87,44 @@ export const useNavigation = () => {
         ],
       },
       {
-        title: "Dashboard", 
+        title: "Dashboard",
         items: [
           {
-            name: " Truck",
-            href: "/dashboard/truck",
+            name: "Producción Truck",
+            href: "/dashboard/productionTruck",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/truck",
+            active: pathname === "/dashboard/productionTruck",
+          },
+
+          {
+            name: "Producción Scoop",
+            href: "/dashboard/productionScoop",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/productionScoop",
           },
           {
-            name: " Scoop",
-            href: "/dashboard/scoop",
+            name: "Pareto Truck",
+            href: "/dashboard/paretoTruck",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/scoop",
+            active: pathname === "/dashboard/paretoTruck",
           },
           {
-            name: " Mensual",
-            href: "/dashboard/month",
+            name: "Pareto Scoop",
+            href: "/dashboard/paretoScoop",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/month",
+            active: pathname === "/dashboard/paretoScoop",
           },
           {
-            name: " Turno",
-            href: "/dashboard/turno",
+            name: "Producción Mensual",
+            href: "/dashboard/productionMonth",
             icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/turno",
+            active: pathname === "/dashboard/productionMonth",
+          },
+          {
+            name: "Utilización y Velocidad",
+            href: "/dashboard/productionUV",
+            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/productionUV",
           },
         ],
       },

@@ -3,30 +3,14 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumScoop({}) {
-  const advance = [10, 20, 30,0, 20, 0,0, 20, 30,10, 20, 30,2];
-  const production = [5, 0, 15, 15, 15, 15, 5, 10,5, 0, 0, 0, 0];
-  const hour = [
-    "07:00",
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-  ];
+export default function CardColumScoop({data}) {
+
   const options = useMemo(
     () => ({
       chart: {
         type: "column",
         backgroundColor: "transparent",
-        height: 200,
+        height: 180,
         marginTop: 35,
         marginBottom:30,
       },
@@ -34,7 +18,7 @@ export default function CardColumScoop({}) {
         text: null,
       },
       xAxis: {
-        categories: hour,
+        categories: data?.hours,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -113,14 +97,14 @@ export default function CardColumScoop({}) {
         {
           type: "column",
           name: "Avance",
-          data: advance,
+          data: data?.advance,
           color: "#F59E0B",
           stack: "Tiempo",
         },
         {
           type: "column",
           name: "Produccion",
-          data: production,
+          data: data?.production,
           color: "#14B8A6",
           stack: "Tiempo",
         },
@@ -154,12 +138,12 @@ export default function CardColumScoop({}) {
         enabled: false,
       },
     }),
-    [advance]
+    [data]
   );
 
   return (
     <>
-      {advance.length > 0 ? (
+      {data?.hours?.length > 0 ? (
         <>
           <h4 className="text-xs font-bold">
             Tonelaje - Planificado vs Ejecutado

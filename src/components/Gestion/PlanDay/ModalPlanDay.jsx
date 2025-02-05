@@ -215,8 +215,8 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
                 loadingGlobal={loadingGlobal}
               />
             )}
-            <div className="  bg-[#F0BB33]/20 w-full rounded-xl px-4 py-2.5 flex gap-1 text-[#BC9021]  text-[11px] leading-4">
-              <IconWarning className="text-[#BC9021]  w-5 h-5 mr-1.5" />
+            <div className="  bg-sky-100/50 border-t border-blue-500 w-full rounded-xl px-4 py-2.5 flex gap-1 text-zinc-600  text-[11px] leading-4">
+              <IconWarning className="text-blue-500  w-5 h-5 mr-1.5" />
               <div className="flex items-center">
                 <ul className="list-disc ml-3 gap-x-6 ">
                   <li>

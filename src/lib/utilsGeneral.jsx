@@ -27,6 +27,10 @@ export const formatRelativeTime = (updatedAt) => {
     .replace("dias", "ds");
 };
 
+export function getMonthName(monthNumber) {
+  return dayjs().month(monthNumber - 1).format("MMMM");
+}
+
 export function formatFecha(dateString) {
   const date = dayjs(dateString);
 

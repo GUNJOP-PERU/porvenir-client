@@ -7,7 +7,7 @@ import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { useProductionStore } from "@/store/ProductionStore";
 import { useEffect } from "react";
 
-function DashboardAvanceMes() {
+function ProductionMonth() {
   const fetchDataMonth = useProductionStore((state) => state.fetchDataMonth);
 
   // useProductionWebSocket();
@@ -117,4 +117,4 @@ function DashboardAvanceMes() {
   );
 }
 
-export default DashboardAvanceMes;
+export default ProductionMonth;
