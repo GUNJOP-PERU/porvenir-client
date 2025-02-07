@@ -19,12 +19,12 @@ function ProductionMonth() {
   const dataRangeScoop = useProductionStore((state) => state.dataRangeScoop);
 
   useEffect(() => {
-    if (dataAccumulatedProgress.length === 0) {
-      fetchDataMonth();
-    }
+    // if (dataAccumulatedProgress.length === 0) {
+    //   fetchDataMonth();
+    // }
+    fetchDataMonth();
   }, []);
 
- 
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
@@ -96,8 +96,8 @@ function ProductionMonth() {
           unid="h"
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-4 md:grid-cols-2">
-        <div className="col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+      <div className="flex-1 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
           <CardColum data={dataChartToness} />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">

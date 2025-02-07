@@ -3,15 +3,14 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardPie({ data, title }) {
-
   const options = useMemo(
     () => ({
       chart: {
         backgroundColor: "transparent",
         type: "pie",
-        marginTop: 0,
-        marginBottom: 0,
-        marginRight: 120,
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
         height: 250,
       },
       title: {
@@ -52,6 +51,7 @@ export default function CardPie({ data, title }) {
           allowPointSelect: true,
           cursor: "pointer",
           borderWidth: 0,
+          size: "100%",
           dataLabels: {
             enabled: false,
           },
@@ -60,32 +60,27 @@ export default function CardPie({ data, title }) {
       },
 
       legend: {
-        align: "right",
-        verticalAlign: "center",
-        layout: "vertical",
-        x: 0,
-        itemStyle: {
-          color: "#A6A6A6",
-          fontSize: "9px",
-          fontWeight: "bold",
-          textTransform: "uppercase",
-        },
-        itemHoverStyle: {
-          color: "#1EE0EE",
-        },
-        symbolWidth: 10,
-        symbolHeight: 9,
-        symbolRadius: 2,
-        itemMarginTop: 1,
-        itemMarginBottom: 1,
-        zIndex: 10,
+        enabled: false,
       },
+
       credits: {
         enabled: false,
       },
       exporting: {
         enabled: false,
       },
+      responsive: {
+        rules: [{
+          condition: {
+            maxWidth: 500
+          },
+          chartOptions: {
+            legend: {
+              enabled: false
+            }
+          }
+        }]
+      }
     }),
     [data]
   );
@@ -96,24 +91,30 @@ export default function CardPie({ data, title }) {
         <>
           <h4 className="text-xs font-bold">{title}</h4>
           <div className="flex flex-1 justify-center items-center gap-2">
-            <HighchartsReact highcharts={Highcharts} options={options} />
-            <div className="flex flex-col gap-1">
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <HighchartsReact highcharts={Highcharts} options={options} />
+            </div>
+            <div className="flex flex-col gap-2">
               {data?.data_card?.length > 0 ? (
                 data?.data_card?.map((i, index) => (
                   <div
                     key={index}
-                    className="flex flex-col justify-center items-center border rounded-2xl p-4 gap-0.5"
+                    className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5"
                   >
-                    <span className="text-[10px] leading-3 font-semibold text-zinc-700">
+                    <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
                       {i.title}
                     </span>
                     <div className="flex justify-between gap-0.5">
-                      <h1 className="text-[#EF9517] font-black text-2xl leading-8">
+                      <h1 className="text-[#EF9517] font-black text-xl leading-5">
                         {i.value?.toFixed(1)}
                         <small className="font-extrabold">{i.unit}</small>
                       </h1>
                     </div>
-                    <span className="text-green-600 leading-[8px] text-[10px]">
+                    <span className="text-green-600 leading-[8px] text-[8px]">
                       1.1 % más eficiente
                     </span>
                   </div>

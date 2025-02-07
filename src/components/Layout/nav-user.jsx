@@ -9,15 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "../ui/sidebar";
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
+
 
   const user = {
     name: "James Poma",
@@ -26,13 +20,16 @@ export function NavUser() {
   };
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
+    <div className="w-full h-14 flex items-center justify-between p-4 border-b border-zinc-2 bg-zinc-100">
+      <div>
+
+      </div>
+      <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
+            <div
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="flex"
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -43,11 +40,11 @@ export function NavUser() {
                 <span className="truncate text-xs text-zinc-500">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "bottom"}
+          
             align="end"
             sideOffset={4}
           >
@@ -92,7 +89,7 @@ export function NavUser() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+      </div>
+    </div>
   );
 }

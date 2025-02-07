@@ -40,6 +40,7 @@ export default function HighchartsHeatmap({ data, title }) {
         title: {
           text: "",
         },
+
         lineColor: "transparent",
         alignTicks: false,
         crosshair: true,
@@ -85,7 +86,7 @@ export default function HighchartsHeatmap({ data, title }) {
           borderRadius: "15%",
           data: heatmapData,
           borderWidth: 2,
-          borderColor: "#FFFFFF",
+          borderColor: "#F4F4F580",
           dataLabels: {
             enabled: true,
             color: "#000000",
@@ -141,10 +142,14 @@ export default function HighchartsHeatmap({ data, title }) {
       {heatmapData.length > 0 ? (
         <>
           <h4 className="text-xs font-bold">{title}</h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
+          <div style={{ width: "100%", overflowX: "auto" }}>
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          </div>
         </>
       ) : (
-        <p className="text-zinc-400 text-[10px] leading-3 max-w-20 text-center">No hay datos disponibles</p>
+        <p className="text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
+          No hay datos disponibles
+        </p>
       )}
     </>
   );

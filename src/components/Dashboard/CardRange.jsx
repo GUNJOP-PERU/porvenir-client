@@ -17,12 +17,15 @@ export default function CardRange({ data, title }) {
     return `${h}:${m < 10 ? "0" + m : m}`; // Formato hh:mm
   };
 
+  console.log(data,"range")
+
   const options = useMemo(
     () => ({
       chart: {
         type: "columnrange",
         backgroundColor: "transparent",
         height: 260,
+        marginBottom:35,
       },
       title: {
         text: null,
@@ -45,13 +48,16 @@ export default function CardRange({ data, title }) {
         title: {
           text: null,
         },
+        min: 0, // Inicio del eje Y en 0 horas
+        max: 24, // Fin del eje Y en 24 horas
+        tickInterval: 2, // Intervalos cada 2 horas para mejor visualización
         labels: {
           style: {
             color: "#A6A6A6",
             fontSize: "0.6em",
           },
           formatter: function () {
-            return formatHours(this.value); // Formatear las horas para el eje Y
+            return formatHours(this.value); // Manteniendo el formateo de horas
           },
         },
         gridLineColor: "#D9D9D9",
@@ -99,7 +105,6 @@ export default function CardRange({ data, title }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
-          fontWeight: "",
         },
         formatter: function () {
           return `${this.series.name}: <b>${formatHours(this.y)}</b> hr`; // Formato de 2 decimales para horas
@@ -132,6 +137,7 @@ export default function CardRange({ data, title }) {
     }),
     [data]
   );
+  
 
   return (
     <>

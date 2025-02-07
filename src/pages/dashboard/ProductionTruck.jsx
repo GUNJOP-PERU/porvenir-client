@@ -15,10 +15,10 @@ function ProductionTruck() {
     useProductionStore();
 
   useEffect(() => {
-    if (progressDay.length === 0) {
-      fetchDataTruck();
-    }
-  }, [fetchDataTruck, progressDay]);
+    // if (progressDay.length === 0) {
+    // }
+    fetchDataTruck();
+  }, []);
 
   useProductionWebSocket();
 
@@ -67,7 +67,7 @@ function ProductionTruck() {
         />
       </div>
 
-      <div className="flex-1 grid grid-rows-2 gap-4 md:grid-cols-2">
+      <div className="flex-1 grid grid-rows-2 gap-4 grid-cols-1 md:grid-cols-2">
         <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl  ">
           <CardHeatMap data={heatmap} title="Ruta vs tonelaje" />
         </div>

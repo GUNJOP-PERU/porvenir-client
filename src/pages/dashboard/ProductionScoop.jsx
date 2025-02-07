@@ -12,10 +12,10 @@ function ProductionScoop() {
   const { scoopProgressDay,scoopTonnagHour,scoopActivityHour,scoopEvents} = useProductionStore();
 
   useEffect(() => {
-    if (scoopProgressDay.length === 0) {
-      fetchDataScoop();
-    }
-  }, [fetchDataScoop, scoopProgressDay]);
+    // if (scoopProgressDay.length === 0) {
+    // }
+    fetchDataScoop();
+  }, []);
 
   useProductionWebSocket();
 
@@ -68,7 +68,7 @@ function ProductionScoop() {
         />
         
       </div>
-      <div className="flex-1 grid grid-rows-3 gap-4 md:grid-cols-1">
+      <div className="flex-1 grid grid-rows-3 gap-4 grid-cols-1">
         <div className=" bg-muted/50 rounded-2xl flex flex-col gap-1 px-4 p-3">
           <CardColumScoop data={scoopTonnagHour} />
         </div>

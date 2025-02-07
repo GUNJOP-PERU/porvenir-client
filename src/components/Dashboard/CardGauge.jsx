@@ -17,9 +17,9 @@ export default function CardGauge() {
   const { dataGuage } = useProductionStore();
 
   useEffect(() => {
-    if (dataGuage.length === 0) {
-      fetchDataGauge();
-    }
+    // if (dataGuage.length === 0) {
+    // }
+    fetchDataGauge();
   }, []);
 
 

@@ -1,4 +1,6 @@
+import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
 import CardClock from "@/components/Dashboard/CardClock";
+import CardColumPareto from "@/components/Dashboard/CardColumPareto";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 
@@ -12,19 +14,17 @@ function ParetoTruck() {
   );
   const {
     truckParetoProgress,
-    truckParetoProductive,
     truckParetoNoProductive,
+    truckParetoActivitiesChart,
   } = useProductionStore();
 
   useEffect(() => {
-    if (truckParetoProgress.length === 0) {
-      fetchParetoTruck();
-    }
-  }, [fetchParetoTruck, truckParetoProgress]);
+    fetchParetoTruck();
+  }, []);
 
   useProductionWebSocket();
 
-  console.log(truckParetoProgress, "truckParetoProgress");
+  console.log(truckParetoActivitiesChart, "truckParetoActivitiesChart");
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
@@ -34,17 +34,17 @@ function ParetoTruck() {
           value={truckParetoProgress?.total_events || 0}
           title="Total de eventos"
           valueColor="text-[#6399C7]"
-          unid={""}
+          unid={"ev"}
         />
         <CardItem
-          value={truckParetoProgress?.data?.total_lost?.toFixed(2) || 0}
+          value={truckParetoProgress?.data?.total_lost?.toFixed(1) || 0}
           title="Tiempo total perdido"
           valueColor="text-[#6399C7]"
           unid={"h"}
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_planned_activities?.toFixed(2) || 0
+            truckParetoProgress?.data?.avg_planned_activities?.toFixed(1) || 0
           }
           title="Prom. Actividad Programada"
           valueColor="text-[#B16940]"
@@ -52,7 +52,7 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_unplanned_activities?.toFixed(2) || 0
+            truckParetoProgress?.data?.avg_unplanned_activities?.toFixed(1) || 0
           }
           title="Prom. Actividad No Programada"
           valueColor="text-[#B16940]"
@@ -60,7 +60,7 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_maintenance_activities?.toFixed(2) ||
+            truckParetoProgress?.data?.avg_maintenance_activities?.toFixed(1) ||
             0
           }
           title="Prom. Actividad Mantto y falla"
@@ -69,22 +69,22 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_service_activities?.toFixed(2) || 0
+            truckParetoProgress?.data?.avg_service_activities?.toFixed(1) || 0
           }
           title="Prom. Actividad Servicios"
           valueColor="text-black-500"
           unid={"h"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-4 md:grid-cols-2">
-        <div className="col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-          {/* <CardColum data={dataChartToness} /> */}
+      <div className="flex-1 grid grid-rows-2 gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+          <CardColumPareto data={truckParetoNoProductive} />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          {/* <CardRange
-          data={dataRangeTruck}
+          <CardActivitiesChart
+          data={truckParetoActivitiesChart}
           title="Rango de horario de trabajo Camiones"
-        /> */}
+        />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
           {/* <CardRange

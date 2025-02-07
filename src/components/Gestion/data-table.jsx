@@ -69,7 +69,7 @@ export function DataTable({ columns, data, isLoading, isError }) {
   return (
     <div className="space-y-4 flex-1 flex flex-col">
       <DataTableToolbar table={table} />
-      <div className="rounded-md flex-1">
+      <div className="rounded-md flex-1 flex">
         <SkeletonWrapper isLoading={isLoading}>
           <Table>
             <TableHeader>

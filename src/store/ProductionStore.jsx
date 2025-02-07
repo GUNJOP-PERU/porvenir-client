@@ -28,11 +28,18 @@ export const useProductionStore = create((set, get) => ({
   scoopParetoProgress: [],
   scoopParetoProductive: [],
   scoopParetoNoProductive: [],
+  scoopParetoActivitiesChart: [],
 
   //Pareto Truck
   truckParetoProgress: [],
   truckParetoProductive: [],
   truckParetoNoProductive: [],
+  truckParetoActivitiesChart: [],
+
+  //Produccion / Utilizacion y Velocidad
+  progressVelocity: [],
+  chartUtility: [],
+
 
   setProductionData: (key, value) =>
     set((state) => ({ ...state, [key]: value })),
@@ -89,10 +96,13 @@ export const useProductionStore = create((set, get) => ({
   },
   fetchParetoScoop: async () => {
     try {
-      const [progress, noProductive] = await Promise.all([
+      const [progress, noProductive,activities] = await Promise.all([
         getDataRequest("dashboard/pareto/progress-monthly?equipment=scoop"),
         getDataRequest(
           "dashboard/pareto/no-productive-activities?equipment=scoop"
+        ),
+        getDataRequest(
+          "dashboard/pareto/scoop/no-productive-activities-chart?quantity=10"
         ),
       ]);
 
@@ -100,7 +110,7 @@ export const useProductionStore = create((set, get) => ({
         ...state,
         scoopParetoProgress: progress.data,
         scoopParetoNoProductive: noProductive.data,
-  
+        scoopParetoActivitiesChart: activities.data,
       }));
     } catch (error) {
       console.error("Error cargando datos iniciales", error);
@@ -108,10 +118,13 @@ export const useProductionStore = create((set, get) => ({
   },
   fetchParetoTruck: async () => {
     try {
-      const [progress, noProductive] = await Promise.all([
+      const [progress, noProductive,activities] = await Promise.all([
         getDataRequest("dashboard/pareto/progress-monthly?equipment=truck"),
         getDataRequest(
           "dashboard/pareto/no-productive-activities?equipment=truck"
+        ),
+        getDataRequest(
+          "dashboard/pareto/truck/no-productive-activities-chart?quantity=10"
         ),
       ]);
 
@@ -119,7 +132,7 @@ export const useProductionStore = create((set, get) => ({
         ...state,
         truckParetoProgress: progress.data,
         truckParetoNoProductive: noProductive.data,
-  
+        truckParetoActivitiesChart: activities.data,
       }));
     } catch (error) {
       console.error("Error cargando datos iniciales", error);
@@ -140,6 +153,24 @@ export const useProductionStore = create((set, get) => ({
         dataChartToness: tonnes.data,
         dataRangeTruck: rangeTruck.data,
         dataRangeScoop: rangeScoop.data,
+      }));
+    } catch (error) {
+      console.error("Error cargando datos iniciales", error);
+    }
+  },
+  fetchDataUtilization: async () => {
+    try {
+      const [progress, utility] = await Promise.all([
+        getDataRequest("dashboard/production/progress-velocity"),
+        getDataRequest("dashboard/production/chart-utility"),
+        
+      ]);
+
+      set((state) => ({
+        ...state,
+        progressVelocity: progress.data,
+        chartUtility: utility.data,
+       
       }));
     } catch (error) {
       console.error("Error cargando datos iniciales", error);

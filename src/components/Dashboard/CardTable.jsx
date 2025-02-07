@@ -48,7 +48,7 @@ export default function CardTable({ data }) {
   return (
     <>
       {data?.data?.length > 0 ? (
-        <div className="overflow-y-auto max-h-[200px]">
+        <div className="overflow-y-auto h-[200px]">
           <table className="min-w-full table-auto border-collapse">
             {/* Cabecera de la tabla */}
             <thead className="text-[10px] bg-zinc-100 text-zinc-400 sticky top-0 shadow-sm">

@@ -45,7 +45,7 @@ export const columns = [
               {row.getValue("userName")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-              {row.original?.vehicleData?.plate}
+              {row.original?.vehicleData?.tagName}
             </span>
           </div>
         </div>

@@ -12,7 +12,8 @@ export default function CardColum({ data }) {
         type: "column",
         backgroundColor: "transparent",
         height: 280,
-        marginTop: 35,
+        marginTop: 5,
+        marginBottom:35,
       },
       title: {
         text: null,
@@ -31,26 +32,12 @@ export default function CardColum({ data }) {
           rotation: 0,
         },
       },
-      // yAxis: {
-      //   title: {
-      //     text: null,
-      //   },
-      //   labels: {
-      //     style: {
-      //       color: "#A6A6A6",
-      //       fontSize: "0.6em",
-      //     },
-      //   },
-      //   gridLineColor: "#D9D9D9",
-      //   gridLineWidth: 0.5,
-      //   gridLineDashStyle: "Dash",
-      // },
       yAxis: {
         title: {
           text: null,
         },
         labels: {
-          enabled: false, // Oculta solo los números del eje Y
+          enabled: false, 
         },
         gridLineColor: "#D9D9D9",
         gridLineWidth: 0.5,
@@ -114,12 +101,12 @@ export default function CardColum({ data }) {
           data: data?.goal_tonnages,
           color: "#1EE0EE",
           marker: {
-            enabled: true, // Muestra los puntos en la línea
-            radius: 3, // Tamaño de los puntos
-            symbol: "circle", // Forma del punto (puedes cambiarlo a square, diamond, etc.)
+            enabled: true, 
+            radius: 3, 
+            symbol: "circle", 
           },
           dataLabels: {
-            enabled: true, // Activa las etiquetas
+            enabled: true, 
             style: {
               fontSize: "9px",
               color: "#A1A1AA",
@@ -127,7 +114,7 @@ export default function CardColum({ data }) {
               textOutline: "none",
             },
             formatter: function () {
-              return formatThousands(this.y); // Aplica el formato de miles
+              return formatThousands(this.y); 
             },
           },
         },
@@ -230,3 +217,20 @@ export default function CardColum({ data }) {
     </>
   );
 }
+
+
+
+ // yAxis: {
+      //   title: {
+      //     text: null,
+      //   },
+      //   labels: {
+      //     style: {
+      //       color: "#A6A6A6",
+      //       fontSize: "0.6em",
+      //     },
+      //   },
+      //   gridLineColor: "#D9D9D9",
+      //   gridLineWidth: 0.5,
+      //   gridLineDashStyle: "Dash",
+      // },

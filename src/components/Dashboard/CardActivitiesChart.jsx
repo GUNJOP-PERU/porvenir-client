@@ -2,22 +2,22 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumPareto({ data }) {
-  console.log(data);
+export default function CardActivitiesChart({ data }) {
+  console.log(data, "activities");
   const options = useMemo(
     () => ({
       chart: {
         type: "column",
         backgroundColor: "transparent",
         height: 280,
-        marginTop: 25,
+        marginTop: 5,
         marginBottom:25,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.dates,
+        categories: data?.labors, // Categorías de actividades
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -27,25 +27,43 @@ export default function CardColumPareto({ data }) {
             color: "#A6A6A6",
             fontSize: "0.6em",
           },
-        
+          rotation: 0,
         },
       },
-
-      yAxis: {
-        title: {
-          text: null,
+      yAxis: [
+        {
+          title: {
+            text: null,
+          },
+          labels: {
+            enabled: false,
+            style: {
+              color: "#F43F5E",
+              fontSize: "0.6em",
+            },
+          },
+          min: 0,
+          gridLineWidth: 0.5,
+          gridLineColor: "#D9D9D9",
         },
-        labels: {
-          enabled: false, // Oculta solo los números del eje Y
+        {
+          title: {
+            text: null,
+          },
+          labels: {
+            enabled: false,
+            style: {
+              color: "#40CEEB",
+              fontSize: "0.6em",
+            },
+          },
+          min: 0,
+          gridLineWidth: 0,
+          opposite: true, // Eje lado derecho
         },
-        gridLineColor: "#D9D9D9",
-        gridLineWidth: 0.5,
-        gridLineDashStyle: "Dash",
-      },
-
+      ],
       tooltip: {
         shared: true,
-        valueSuffix: " toneladas",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -54,33 +72,48 @@ export default function CardColumPareto({ data }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
-          fontWeight: "",
         },
-        // formatter: function () {
-        //   return `<b>${this.series.name}</b>: ${Number(this.y).toFixed(1)} toneladas`;
-        // },
       },
       plotOptions: {
         column: {
-          stacking: "normal",
           borderRadius: "15%",
-          pointPadding: 0.05,
-          groupPadding: 0.05,
+          pointPadding: 0.1,
+          groupPadding: 0.1,
           borderWidth: 0,
+          dataLabels: {
+            enabled: true,
+            inside: true, //  números dentro de la columna
+            verticalAlign: "middle", // Centra el número verticalmente dentro de la barra
+            style: {
+              fontSize: "9px",
+              color: "#000", //  visibilidad dentro de la barra
+              textOutline: "none",
+            },
+            backgroundColor: "rgba(255, 255, 255, 0.6)",
+            borderRadius: 5,
+            padding: 5,
+            borderWidth: 0,
+            formatter: function () {
+              return this.y.toFixed(1);
+            },
+          },
+        },
+        spline: {
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: "circle",
+          },
           dataLabels: {
             enabled: true,
             style: {
               fontSize: "9px",
-              color: "#000",
-              fontWeight: "",
+              color: "#A1A1AA",
+              fontWeight: "bold",
               textOutline: "none",
             },
-            backgroundColor: "rgba(255, 255, 255, 0.5)",  
-            borderRadius: 5,            
-            padding: 5,    
-            borderWidth: 0,
             formatter: function () {
-              return this.y !== 0 ? Number(this.y).toFixed(1) : "";
+              return this.y.toFixed(1);
             },
           },
         },
@@ -88,39 +121,23 @@ export default function CardColumPareto({ data }) {
       series: [
         {
           type: "column",
-          name: "Mantenimiento y falla",
-          data: data?.maintenance_act,
-          color: "#FF9500",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Act.Programada",
-          data: data?.programming_act,
-          color: "#22C2C5",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Servicio y Apoyo",
-          data: data?.service_act,
+          name: "Suma de Cola por Origen",
+          data: data?.sum_cola_origin,
           color: "#F43F5E",
-          stack: "Hour",
+          yAxis: 0, // Eje izquierdo
         },
         {
-          type: "column",
-          name: "Act.No Programada",
-          data: data?.unplanned_act,
-          color: "#347AE2",
-          stack: "Hour",
+          type: "spline",
+          name: "Prom. de Cola por Ciclo",
+          data: data?.avg_cola_cycle,
+          color: "#40CEEB",
+          yAxis: 1, // Eje derecho
         },
       ],
       legend: {
         align: "right",
         verticalAlign: "top",
         layout: "horizontal",
-        floating: false,
-
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -135,7 +152,6 @@ export default function CardColumPareto({ data }) {
         symbolRadius: 2,
         itemMarginTop: 1,
         itemMarginBottom: 1,
-        zIndex: 10,
       },
       credits: {
         enabled: false,
@@ -149,9 +165,11 @@ export default function CardColumPareto({ data }) {
 
   return (
     <>
-      {data?.dates?.length > 0 ? (
+      {data?.labors?.length > 0 ? (
         <>
-          <h4 className="text-xs font-bold">Actividades Improductivas Mes</h4>
+          <h4 className="text-xs font-bold">
+            Tonelaje - Planificado vs Ejecutado
+          </h4>
           <HighchartsReact highcharts={Highcharts} options={options} />
         </>
       ) : (

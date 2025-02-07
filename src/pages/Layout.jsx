@@ -1,15 +1,19 @@
-import {  SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "../components/Layout/app-sidebar";
-import Header from "../components/Header";
+import { NavMain } from "@/components/Layout/nav-main";
+import { NavUser } from "@/components/Layout/nav-user";
 
 export default function Layout({ children }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <div className="h-svh w-full overflow-hidden flex flex-col">
-        <Header />
-        <main className="flex flex-1 flex-col gap-4 px-5 pb-4">{children}</main>
+    <main className="h-screen flex w-full overflow-hidden">
+      <NavMain />
+      <div
+        className="w-screen h-screen bg-gray-50 text-gray-900
+      dark:bg-gray-900 dark:text-white overflow-hidden flex flex-col"
+      >
+        <NavUser />
+        <section className="flex-1 flex flex-col gap-4 p-4 overflow-auto">
+          {children}
+        </section>
       </div>
-    </SidebarProvider>
+    </main>
   );
 }

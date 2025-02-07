@@ -40,7 +40,7 @@ export default function Header() {
           <NavUser />
         </div>
       </header>
-      <div className="w-full left-0 py-2 flex flex-col justify-center gap-1 ">
+      {/* <div className="w-full left-0 py-2 flex flex-col justify-center gap-1 ">
         <div className="flex gap-2 border-b border-zinc-100 mx-8">
           {paths.map((route, index) => {
             return (
@@ -70,7 +70,7 @@ export default function Header() {
             );
           })}
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
