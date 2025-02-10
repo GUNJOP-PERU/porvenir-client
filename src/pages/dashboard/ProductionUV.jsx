@@ -3,6 +3,7 @@ import CardColumPareto from "@/components/Dashboard/CardColumPareto";
 import CardColumUtilization from "@/components/Dashboard/CardColumUtilization";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
+import CardVelocity from "@/components/Dashboard/CardVelocity";
 
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { useProductionStore } from "@/store/ProductionStore";
@@ -12,7 +13,8 @@ function ProductionUV() {
   const fetchDataUtilization = useProductionStore(
     (state) => state.fetchDataUtilization
   );
-  const { progressVelocity, chartUtility } = useProductionStore();
+  const { progressVelocity, chartUtility, velocityParrilla, velocityCancha } =
+    useProductionStore();
 
   useEffect(() => {
     fetchDataUtilization();
@@ -20,7 +22,7 @@ function ProductionUV() {
 
   useProductionWebSocket();
 
-  console.log(chartUtility, "chartUtility");
+  console.log(velocityCancha, "velocityCancha");
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
@@ -45,16 +47,16 @@ function ProductionUV() {
           <CardColumUtilization data={chartUtility} />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          {/* <CardRange
-            data={dataRangeTruck}
-            title="Rango de horario de trabajo Camiones"
-          /> */}
+          <CardVelocity
+            data={velocityParrilla}
+            title="Análisis de velocidad rutas a Parrillas"
+          />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          {/* <CardRange
-            data={dataRangeScoop}
-            title="Rango de horario de trabajo Scooptram"
-          /> */}
+        <CardVelocity
+            data={velocityCancha}
+            title="Análisis de velocidad rutas a Canchas"
+          />         
         </div>
       </div>
     </>

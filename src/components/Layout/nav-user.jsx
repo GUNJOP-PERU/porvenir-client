@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import IconReducer from "@/icons/IconReducer";
 
 export function NavUser() {
 
@@ -22,7 +23,7 @@ export function NavUser() {
   return (
     <div className="w-full h-14 flex items-center justify-between p-4 border-b border-zinc-2 bg-zinc-100">
       <div>
-
+      <IconReducer className="w-5 h-5 fill-zinc-400"/>
       </div>
       <div>
         <DropdownMenu>

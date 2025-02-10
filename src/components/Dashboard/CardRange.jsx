@@ -19,6 +19,13 @@ export default function CardRange({ data, title }) {
 
   console.log(data,"range")
 
+  const parseTimeToDecimal = (timeString) => {
+    if (!timeString) return null;
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours + minutes / 60;
+  };
+
+  
   const options = useMemo(
     () => ({
       chart: {
@@ -122,9 +129,12 @@ export default function CardRange({ data, title }) {
       series: [
         {
           name: "Tiempos",
-          data: data?.data?.averages,
+          data: data?.data?.averages.map(([min, max]) => [
+            parseTimeToDecimal(min), // Convertir el mínimo
+            parseTimeToDecimal(max), // Convertir el máximo
+          ]),
         },
-      ],
+      ],      
       legend: {
         enabled: false,
       },

@@ -9,9 +9,8 @@ export default function CardPie({ data, title }) {
         backgroundColor: "transparent",
         type: "pie",
         plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
-        height: 250,
+   
+        height: 200,
       },
       title: {
         text: "",
@@ -50,17 +49,35 @@ export default function CardPie({ data, title }) {
         pie: {
           allowPointSelect: true,
           cursor: "pointer",
-          borderWidth: 0,
-          size: "100%",
+          borderWidth: 2,
+          borderColor: "#F4F4F580",
           dataLabels: {
             enabled: false,
           },
-          showInLegend: true,
+          
         },
       },
 
       legend: {
-        enabled: false,
+        align: "right",
+        verticalAlign: "center", // Cambia la leyenda a la parte inferior
+        layout: "vertical",
+        floating: false,       
+        itemStyle: {
+          color: "#A6A6A6",
+          fontSize: "9px",
+          fontWeight: "bold",
+          textTransform: "uppercase",
+        },
+        itemHoverStyle: {
+          color: "#1EE0EE",
+        },
+        symbolWidth: 10,
+        symbolHeight: 9,
+        symbolRadius: 2,
+        itemMarginTop: 1,
+        itemMarginBottom: 1,
+        zIndex: 10,
       },
 
       credits: {
@@ -69,18 +86,6 @@ export default function CardPie({ data, title }) {
       exporting: {
         enabled: false,
       },
-      responsive: {
-        rules: [{
-          condition: {
-            maxWidth: 500
-          },
-          chartOptions: {
-            legend: {
-              enabled: false
-            }
-          }
-        }]
-      }
     }),
     [data]
   );
@@ -91,13 +96,9 @@ export default function CardPie({ data, title }) {
         <>
           <h4 className="text-xs font-bold">{title}</h4>
           <div className="flex flex-1 justify-center items-center gap-2">
-            <div
-              style={{
-                width: "100%",
-              }}
-            >
+            
               <HighchartsReact highcharts={Highcharts} options={options} />
-            </div>
+            
             <div className="flex flex-col gap-2">
               {data?.data_card?.length > 0 ? (
                 data?.data_card?.map((i, index) => (

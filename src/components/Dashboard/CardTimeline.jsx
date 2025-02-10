@@ -96,13 +96,13 @@ export default function CardTimeline({ data }) {
             text: null,
           },
           lineColor: "#A6A6A6",
-          gridLineWidth: 0,
+          lineWidth: 0.5,
+          tickAmount: 2,
           categories: data?.rows,
           reversed: true,
-          lineWidth: 0.5,
           tickWidth: 0,
           minorTickInterval: 0,
-          tickAmount: 2,
+          gridLineWidth: 1,
           labels: {
             align: "right",
             style: {
@@ -110,6 +110,7 @@ export default function CardTimeline({ data }) {
               fontSize: "9px",
             },
           },
+          
         },
       ],
       tooltip: {
@@ -140,7 +141,9 @@ export default function CardTimeline({ data }) {
         xrange: {
           borderRadius: 0,
           borderWidth: 0,
-          grouping: false,
+          pointPadding: 0.05,
+          groupPadding: 0.05,
+          minPointLength: 2, // Mínimo grosor de las barras
           dataLabels: {
             align: "center",
             enabled: true,
@@ -151,7 +154,7 @@ export default function CardTimeline({ data }) {
       series: [
         {
           name: "valores",
-          pointWidth: 20,
+       
           data: transformedData,
         },
       ],

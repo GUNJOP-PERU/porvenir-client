@@ -2,22 +2,22 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumPareto({ data }) {
-  console.log(data);
+export default function CardVelocity({ data, title }) {
+  console.log(data, "velocity");
   const options = useMemo(
     () => ({
       chart: {
-        type: "column",
+        type: "spline",
         backgroundColor: "transparent",
         height: 280,
-        marginTop: 25,
-        marginBottom:25,
+        marginTop: 45,
+        marginBottom: 25,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.dates,
+        categories: data?.dates, // Horas
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -27,25 +27,27 @@ export default function CardColumPareto({ data }) {
             color: "#A6A6A6",
             fontSize: "0.6em",
           },
-        
+          rotation: 0,
         },
       },
-
       yAxis: {
         title: {
           text: null,
         },
         labels: {
-          enabled: false, // Oculta solo los números del eje Y
+          enabled: true,
+          style: {
+            color: "#A6A6A6",
+            fontSize: "0.6em",
+          },
         },
-        gridLineColor: "#D9D9D9",
+        min: 0, // Evita que muestre valores en 0
+        softMin: 1, // Para que no empiece en 0 si hay datos bajos
         gridLineWidth: 0.5,
-        gridLineDashStyle: "Dash",
+        gridLineColor: "#D9D9D9",
       },
-
       tooltip: {
         shared: true,
-        valueSuffix: " toneladas",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -54,73 +56,45 @@ export default function CardColumPareto({ data }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
-          fontWeight: "",
         },
-        // formatter: function () {
-        //   return `<b>${this.series.name}</b>: ${Number(this.y).toFixed(1)} toneladas`;
-        // },
       },
       plotOptions: {
-        column: {
-          stacking: "normal",
-          borderRadius: "15%",
-          pointPadding: 0.05,
-          groupPadding: 0.05,
-          borderWidth: 0,
+        spline: {
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: "circle",
+          },
           dataLabels: {
             enabled: true,
             style: {
-              fontSize: "8px",
-              color: "#000",
+              fontSize: "9px",
+              color: "#A1A1AA",
               fontWeight: "bold",
               textOutline: "none",
             },
-            backgroundColor: "rgba(255, 255, 255, 0.5)",  
-            borderRadius: 3,            
-            padding: 3,    
-            borderWidth: 0,
             formatter: function () {
-              return this.y !== 0 ? Number(this.y).toFixed(1) : "";
+              return this.y ? this.y.toFixed(1) : ""; // Oculta etiquetas en 0
             },
           },
         },
       },
       series: [
         {
-          type: "column",
-          name: "Mantenimiento y falla",
-          data: data?.maintenance_act,
-          color: "#FF9500",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Act.Programada",
-          data: data?.programming_act,
-          color: "#22C2C5",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Servicio y Apoyo",
-          data: data?.service_act,
+          name: "Velocidad Vacio",
+          data: data?.velocities_lleno,
           color: "#F43F5E",
-          stack: "Hour",
         },
         {
-          type: "column",
-          name: "Act.No Programada",
-          data: data?.unplanned_act,
-          color: "#347AE2",
-          stack: "Hour",
+          name: "Velocidad Cargado",
+          data: data?.velocities_empty,
+          color: "#84CC16",
         },
       ],
       legend: {
         align: "right",
         verticalAlign: "top",
         layout: "horizontal",
-        floating: false,
-
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -135,7 +109,6 @@ export default function CardColumPareto({ data }) {
         symbolRadius: 2,
         itemMarginTop: 1,
         itemMarginBottom: 1,
-        zIndex: 10,
       },
       credits: {
         enabled: false,
@@ -151,7 +124,7 @@ export default function CardColumPareto({ data }) {
     <>
       {data?.dates?.length > 0 ? (
         <>
-          <h4 className="text-xs font-bold">Actividades Improductivas Mes</h4>
+          <h4 className="text-xs font-bold">{title}</h4>
           <HighchartsReact highcharts={Highcharts} options={options} />
         </>
       ) : (

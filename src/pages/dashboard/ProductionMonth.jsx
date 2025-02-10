@@ -101,16 +101,16 @@ function ProductionMonth() {
           <CardColum data={dataChartToness} />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          <CardRange
+          {/* <CardRange
             data={dataRangeTruck}
             title="Rango de horario de trabajo Camiones"
-          />
+          /> */}
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          <CardRange
+          {/* <CardRange
             data={dataRangeScoop}
             title="Rango de horario de trabajo Scooptram"
-          />
+          /> */}
         </div>
       </div>
     </>

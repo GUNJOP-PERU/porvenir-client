@@ -1,5 +1,6 @@
 import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
 import CardClock from "@/components/Dashboard/CardClock";
+import CardColumImpact from "@/components/Dashboard/CardColumImpact";
 import CardColumPareto from "@/components/Dashboard/CardColumPareto";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
@@ -16,6 +17,7 @@ function ParetoTruck() {
     truckParetoProgress,
     truckParetoNoProductive,
     truckParetoActivitiesChart,
+    truckImpactDiagram
   } = useProductionStore();
 
   useEffect(() => {
@@ -24,7 +26,7 @@ function ParetoTruck() {
 
   useProductionWebSocket();
 
-  console.log(truckParetoActivitiesChart, "truckParetoActivitiesChart");
+  console.log(truckImpactDiagram, "truckImpactDiagram");
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
@@ -83,14 +85,14 @@ function ParetoTruck() {
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
           <CardActivitiesChart
           data={truckParetoActivitiesChart}
-          title="Rango de horario de trabajo Camiones"
+        
         />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-          {/* <CardRange
-          data={dataRangeScoop}
-          title="Rango de horario de trabajo Scooptram"
-        /> */}
+          <CardColumImpact
+          data={truckImpactDiagram}
+        
+        />
         </div>
       </div>
     </>

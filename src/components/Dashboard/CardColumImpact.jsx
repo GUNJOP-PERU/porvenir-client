@@ -1,9 +1,10 @@
+import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardActivitiesChart({ data }) {
-  console.log(data, "activities");
+export default function CardColumImpact({ data }) {
+  console.log(data, "impact");
   const options = useMemo(
     () => ({
       chart: {
@@ -17,7 +18,7 @@ export default function CardActivitiesChart({ data }) {
         text: null,
       },
       xAxis: {
-        categories: data?.labors, // Categorías de actividades
+        categories: data?.categories, // Categorías de días
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -33,37 +34,36 @@ export default function CardActivitiesChart({ data }) {
       yAxis: [
         {
           title: {
-            text: null,
+            text: null, // Título del eje
           },
           labels: {
-            enabled: false,
-            style: {
-              color: "#F43F5E",
-              fontSize: "0.6em",
-            },
+            enabled: false, 
           },
           min: 0,
-          gridLineWidth: 0.5,
-          gridLineColor: "#D9D9D9",
+          gridLineWidth: 0,
         },
+        // Segundo eje Y (para los porcentajes)
         {
           title: {
             text: null,
           },
           labels: {
-            enabled: false,
+            enabled: true,
+            format: "{value}%", 
             style: {
-              color: "#40CEEB",
+              color: "#A6A6A6", 
               fontSize: "0.6em",
             },
           },
           min: 0,
-          gridLineWidth: 0,
-          opposite: true, // Eje lado derecho
+          max: 100,
+          tickInterval: 10,
+          gridLineWidth: 0.5, 
         },
       ],
       tooltip: {
         shared: true,
+        valueSuffix: " toneladas",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -72,29 +72,30 @@ export default function CardActivitiesChart({ data }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
+          fontWeight: "",
         },
       },
       plotOptions: {
         column: {
+          stacking: "normal", // Si usas apilamiento
           borderRadius: "15%",
-          pointPadding: 0.1,
-          groupPadding: 0.1,
+          pointPadding: 0.05,
+          groupPadding: 0.05,
           borderWidth: 0,
           dataLabels: {
             enabled: true,
-            inside: true, //  números dentro de la columna
-            verticalAlign: "middle", // Centra el número verticalmente dentro de la barra
             style: {
               fontSize: "9px",
-              color: "#000", //  visibilidad dentro de la barra
+              color: "#000",
+              fontWeight: "",
               textOutline: "none",
             },
-            backgroundColor: "rgba(255, 255, 255, 0.6)",
-            borderRadius: 5,
-            padding: 5,
+            backgroundColor: "#C1F0F7",  
+            borderRadius: 5,            
+            padding: 5,    
             borderWidth: 0,
             formatter: function () {
-              return this.y.toFixed(1);
+                return this.y.toFixed(1) ; // Formatear como porcentaje
             },
           },
         },
@@ -113,7 +114,7 @@ export default function CardActivitiesChart({ data }) {
               textOutline: "none",
             },
             formatter: function () {
-              return this.y.toFixed(1);
+              return this.y.toFixed(1) + "%"; // Formatear como porcentaje
             },
           },
         },
@@ -121,23 +122,37 @@ export default function CardActivitiesChart({ data }) {
       series: [
         {
           type: "column",
-          name: "Suma de Cola por Origen",
-          data: data?.sum_cola_origin,
-          color: "#F43F5E",
-          yAxis: 0, // Eje izquierdo
+          name: "Indice de impacto",
+          data: data?.index_impact,
+          color: "#84CC16",
+          yAxis: 0, // Asigna esta serie al primer eje Y (monto)
+          stack: "Tiempo",
         },
         {
           type: "spline",
-          name: "Prom. de Cola por Ciclo",
-          data: data?.avg_cola_cycle,
-          color: "#40CEEB",
-          yAxis: 1, // Eje derecho
+          name: "Porcentaje acumulado",
+          data: data?.percentages,
+          color: "#38BDF8",
+          yAxis: 1, // Asigna esta serie al segundo eje Y (porcentaje)
+          dataLabels: {
+            enabled: true,
+            style: {
+              fontSize: "9px",
+              color: "#A1A1AA",
+              fontWeight: "bold",
+              textOutline: "none",
+            },
+            formatter: function () {
+              return this.y.toFixed(1) + "%"; // Formatear como porcentaje
+            },
+          },
         },
       ],
       legend: {
         align: "right",
         verticalAlign: "top",
         layout: "horizontal",
+        floating: false,
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -152,6 +167,7 @@ export default function CardActivitiesChart({ data }) {
         symbolRadius: 2,
         itemMarginTop: 1,
         itemMarginBottom: 1,
+        zIndex: 10,
       },
       credits: {
         enabled: false,
@@ -162,15 +178,17 @@ export default function CardActivitiesChart({ data }) {
     }),
     [data]
   );
+  
 
   return (
     <>
-      {data?.labors?.length > 0 ? (
+      {data?.categories?.length > 0 ? (
         <>
           <h4 className="text-xs font-bold">
-          Actividades Improductivas Promedio vs Acumulada
+          Analisis de Pareto con Indice de Impacto Ponderado
           </h4>
           <HighchartsReact highcharts={Highcharts} options={options} />
+         
         </>
       ) : (
         <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">

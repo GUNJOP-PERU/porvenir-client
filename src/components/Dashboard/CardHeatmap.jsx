@@ -30,7 +30,9 @@ export default function HighchartsHeatmap({ data, title }) {
         backgroundColor: "transparent",
         type: "heatmap",
         plotBorderWidth: 0,
-        height: 300,
+        height: 280,
+        marginTop: 0,
+        marginBottom:25,
       },
       title: {
         text: "",
@@ -52,7 +54,10 @@ export default function HighchartsHeatmap({ data, title }) {
             fontSize: "0.6em",
             fontWeight: "bold",
           },
+          rotation: 0,
         },
+        gridLineWidth: 1,
+        // gridLineColor: "#A1A1AA",
       },
 
       yAxis: {
@@ -67,7 +72,7 @@ export default function HighchartsHeatmap({ data, title }) {
             fontWeight: "bold",
           },
         },
-        gridLineWidth: 0,
+        gridLineWidth: 1,
       },
 
       colorAxis: {
@@ -83,7 +88,6 @@ export default function HighchartsHeatmap({ data, title }) {
       series: [
         {
           name: "Valores",
-          borderRadius: "15%",
           data: heatmapData,
           borderWidth: 2,
           borderColor: "#F4F4F580",
@@ -96,7 +100,7 @@ export default function HighchartsHeatmap({ data, title }) {
               fontWeight: "bold",
               textOutline: "none",
             },
-            borderWidth: 0,
+          
           },
         },
       ],

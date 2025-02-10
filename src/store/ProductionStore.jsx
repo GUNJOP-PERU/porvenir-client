@@ -26,20 +26,22 @@ export const useProductionStore = create((set, get) => ({
 
   //Pareto Scoop
   scoopParetoProgress: [],
-  scoopParetoProductive: [],
+
   scoopParetoNoProductive: [],
   scoopParetoActivitiesChart: [],
+  scoopImpactDiagram: [],
 
   //Pareto Truck
   truckParetoProgress: [],
-  truckParetoProductive: [],
   truckParetoNoProductive: [],
   truckParetoActivitiesChart: [],
+  truckImpactDiagram: [],
 
   //Produccion / Utilizacion y Velocidad
   progressVelocity: [],
   chartUtility: [],
-
+  velocityParrilla: [],
+  velocityCancha: [],
 
   setProductionData: (key, value) =>
     set((state) => ({ ...state, [key]: value })),
@@ -96,36 +98,38 @@ export const useProductionStore = create((set, get) => ({
   },
   fetchParetoScoop: async () => {
     try {
-      const [progress, noProductive,activities] = await Promise.all([
+      const results = await Promise.allSettled([
         getDataRequest("dashboard/pareto/progress-monthly?equipment=scoop"),
-        getDataRequest(
-          "dashboard/pareto/no-productive-activities?equipment=scoop"
-        ),
-        getDataRequest(
-          "dashboard/pareto/scoop/no-productive-activities-chart?quantity=10"
-        ),
+        getDataRequest("dashboard/pareto/no-productive-activities?equipment=scoop"),
+        getDataRequest("dashboard/pareto/scoop/no-productive-activities-chart?quantity=7"),
+        getDataRequest("dashboard/pareto/scoop/impact-diagram?quantity=7"),
       ]);
-
+  
+      const [progress, noProductive, activities, impact] = results;
+  
       set((state) => ({
         ...state,
-        scoopParetoProgress: progress.data,
-        scoopParetoNoProductive: noProductive.data,
-        scoopParetoActivitiesChart: activities.data,
+        scoopParetoProgress: progress.status === "fulfilled" ? progress.value.data : state.scoopParetoProgress,
+        scoopParetoNoProductive: noProductive.status === "fulfilled" ? noProductive.value.data : state.scoopParetoNoProductive,
+        scoopParetoActivitiesChart: activities.status === "fulfilled" ? activities.value.data : state.scoopParetoActivitiesChart,
+        scoopImpactDiagram: impact.status === "fulfilled" ? impact.value.data : state.scoopImpactDiagram,
       }));
     } catch (error) {
-      console.error("Error cargando datos iniciales", error);
+      console.error("Error cargando algunos datos de Pareto Scoop", error);
     }
   },
+    
   fetchParetoTruck: async () => {
     try {
-      const [progress, noProductive,activities] = await Promise.all([
+      const [progress, noProductive, activities, impact] = await Promise.all([
         getDataRequest("dashboard/pareto/progress-monthly?equipment=truck"),
         getDataRequest(
           "dashboard/pareto/no-productive-activities?equipment=truck"
         ),
         getDataRequest(
-          "dashboard/pareto/truck/no-productive-activities-chart?quantity=10"
+          "dashboard/pareto/truck/no-productive-activities-chart?quantity=7"
         ),
+        getDataRequest("dashboard/pareto/truck/impact-diagram?quantity=7"),
       ]);
 
       set((state) => ({
@@ -133,6 +137,7 @@ export const useProductionStore = create((set, get) => ({
         truckParetoProgress: progress.data,
         truckParetoNoProductive: noProductive.data,
         truckParetoActivitiesChart: activities.data,
+        truckImpactDiagram: impact.data,
       }));
     } catch (error) {
       console.error("Error cargando datos iniciales", error);
@@ -160,17 +165,19 @@ export const useProductionStore = create((set, get) => ({
   },
   fetchDataUtilization: async () => {
     try {
-      const [progress, utility] = await Promise.all([
+      const [progress, utility, velocityP, velocityC] = await Promise.all([
         getDataRequest("dashboard/production/progress-velocity"),
         getDataRequest("dashboard/production/chart-utility"),
-        
+        getDataRequest("dashboard/production/velocity-analysis/parrilla"),
+        getDataRequest("dashboard/production/velocity-analysis/cancha"),
       ]);
 
       set((state) => ({
         ...state,
         progressVelocity: progress.data,
         chartUtility: utility.data,
-       
+        velocityParrilla: velocityP.data,
+        velocityCancha: velocityC.data,
       }));
     } catch (error) {
       console.error("Error cargando datos iniciales", error);
