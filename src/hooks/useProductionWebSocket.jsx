@@ -1,36 +1,17 @@
-import { useProductionStore } from "@/store/ProductionStore";
+import { useGlobalStore } from "@/store/GlobalStore";
+import { useTruckStore } from "@/store/TruckStore";
 import { useEffect } from "react";
-
+import { io } from "socket.io-client";
 
 export function useProductionWebSocket() {
   useEffect(() => {
-    // const socket = new WebSocket(`${import.meta.env.VITE_URL}/websocket`);
+    const socket = io(`${import.meta.env.VITE_URL}`);
 
-    // socket.onopen = () => {
-    //   console.log("Conectado al WebSocket");
-    // };
+    useGlobalStore.getState().subscribeToSocketUpdates(socket);
+    useTruckStore.getState().subscribeToSocketUpdates(socket);
 
-    // socket.onmessage = (event) => {
-    //   const data = JSON.parse(event.data);
-    //   console.log("Datos recibidos:", data);
-
-    //   // Actualiza solo la parte específica del estado en Zustand
-    //   if (data.type && data.payload) {
-    //     useProductionStore.getState().setProductionData(data.type, data.payload);
-    //   }
-    // };
-
-    // socket.onerror = (error) => {
-    //   console.error("Error en WebSocket:", error);
-    // };
-
-    // socket.onclose = () => {
-    //   console.log("WebSocket cerrado, intentando reconectar...");
-    //   setTimeout(() => useProductionWebSocket(), 3000); // Intentar reconectar en 3s
-    // };
-
-    // return () => {
-    //   socket.close();
-    // };
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 }

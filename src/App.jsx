@@ -29,6 +29,7 @@ import WorkerOrder from "./pages/gestion/WorkerOrder";
 import PageLogin from "./pages/login/Login";
 import { useAuthStore } from "./store/AuthStore";
 
+
 function App() {
   const queryClient = new QueryClient();
 
@@ -40,13 +41,13 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/login" element={<PageLogin />} />
-            <Route path="/" element={<HomePage />} />
+            {/* <Route path="/" element={<HomePage />} /> */}
             <Route path="*" element={<PageError />} />
             <Route element={<ProtectedRoute isAllowed={isAuth} />}>
               <Route path="/edit/:id" element={<EditPage />} />
               <Route path="/week" element={<WeekPage />} />
               <Route path="/day" element={<DayPage />} />
-              <Route path="/users" element={<HomeUsers />} />
+              <Route path="/" element={<HomeUsers />} />
               <Route path="/frontLabor" element={<HomeFrontLabor />} />
               <Route path="/vehicle" element={<HomeVehicles />} />
               <Route path="/workOrder" element={<WorkerOrder />} />

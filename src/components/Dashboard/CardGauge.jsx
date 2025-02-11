@@ -6,6 +6,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
+import { useGlobalStore } from "@/store/GlobalStore";
 
 if (typeof solidGauge === "function") {
   solidGauge(Highcharts);
@@ -13,14 +14,14 @@ if (typeof solidGauge === "function") {
 
 export default function CardGauge() {
   useProductionWebSocket();
-  const fetchDataGauge = useProductionStore((state) => state.fetchDataGauge);
-  const { dataGuage } = useProductionStore();
+  const fetchDataGauge = useGlobalStore((state) => state.fetchDataGauge);
+  const { dataGuage } = useGlobalStore();
 
   useEffect(() => {
-    // if (dataGuage.length === 0) {
-    // }
-    fetchDataGauge();
-  }, []);
+    if (dataGuage.length === 0) {
+      fetchDataGauge();
+    }
+  }, [fetchDataGauge]);
 
 
   const options = useMemo(
@@ -88,7 +89,7 @@ export default function CardGauge() {
                   <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px">
                     <span style="font-size: 8px; opacity: 0.3;line-height:8px">Toneladas</span>
                     <span style="font-size: 28px; font-weight: 800; color: #5190FF;line-height:1.9rem">
-                      ${formatThousands(this.y)}
+                      ${formatThousands(this.y) || `${0}k`}
                     </span>
                   </div>
                 `;
@@ -104,6 +105,9 @@ export default function CardGauge() {
       },
       exporting: {
         enabled: false,
+      },
+      accessibility: {
+        enabled: false
       },
       plotOptions: {
         solidgauge: {

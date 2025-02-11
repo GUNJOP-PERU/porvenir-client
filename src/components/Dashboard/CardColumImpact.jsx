@@ -175,11 +175,13 @@ export default function CardColumImpact({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );
   
-
   return (
     <>
       {data?.categories?.length > 0 ? (

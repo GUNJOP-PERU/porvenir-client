@@ -147,6 +147,9 @@ export default function CardColum({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );

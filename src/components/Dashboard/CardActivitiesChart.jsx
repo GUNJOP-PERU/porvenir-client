@@ -159,6 +159,9 @@ export default function CardActivitiesChart({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );

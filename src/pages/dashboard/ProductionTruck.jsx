@@ -4,50 +4,55 @@ import CardGauge from "@/components/Dashboard/CardGauge";
 import CardHeatMap from "@/components/Dashboard/CardHeatmap";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardPie from "@/components/Dashboard/CardPie";
-
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
-import { useProductionStore } from "@/store/ProductionStore";
+import IconLoader from "@/icons/IconLoader";
+import { useTruckStore } from "@/store/TruckStore";
 import { useEffect } from "react";
 
 function ProductionTruck() {
-  const fetchDataTruck = useProductionStore((state) => state.fetchDataTruck);
-  const { progressDay, heatmap, chartProductivity, truckJobCycle, dataFleet } =
-    useProductionStore();
+  const fetchDataTruck = useTruckStore((state) => state.fetchDataTruck);
+  const {
+    progressDay,
+    heatmap,
+    chartProductivity,
+    truckJobCycle,
+    dataFleet,
+    truckLoading,
+  } = useTruckStore();
 
   useEffect(() => {
     // if (progressDay.length === 0) {
     // }
     fetchDataTruck();
-  }, []);
+  }, [fetchDataTruck]);
 
   useProductionWebSocket();
 
-  console.log(progressDay,"progressDay");
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
         <CardGauge />
         <CardClock />
         <CardItem
-          value={progressDay?.total_mineral || 0 }
+          value={progressDay?.total_mineral || 0}
           title="Toneladas mineral"
           valueColor="text-[#6399C7]"
           unid={"tn"}
         />
         <CardItem
-          value={progressDay?.travels?.mineral || 0 }
+          value={progressDay?.travels?.mineral || 0}
           title="Por mineral"
           valueColor="text-[#6399C7]"
           unid={"vjs"}
         />
         <CardItem
-          value={progressDay?.total_waste || 0 }
+          value={progressDay?.total_waste || 0}
           title="Toneladas desmonte"
           valueColor="text-[#B16940]"
           unid={"tn"}
         />
         <CardItem
-          value={progressDay?.travels?.waste || 0 }
+          value={progressDay?.travels?.waste || 0}
           title="Por desmonte"
           valueColor="text-[#B16940]"
           unid={"vjs"}

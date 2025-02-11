@@ -143,6 +143,9 @@ export default function CardColumPareto({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );

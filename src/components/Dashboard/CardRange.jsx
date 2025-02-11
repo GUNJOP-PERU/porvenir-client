@@ -144,6 +144,9 @@ export default function CardRange({ data, title }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );

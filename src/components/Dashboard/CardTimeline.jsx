@@ -167,6 +167,9 @@ export default function CardTimeline({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data, transformedData, min, max]
   );

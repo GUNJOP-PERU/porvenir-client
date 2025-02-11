@@ -26,7 +26,7 @@ function ParetoTruck() {
 
   useProductionWebSocket();
 
-  console.log(truckImpactDiagram, "truckImpactDiagram");
+
   return (
     <>
       <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">

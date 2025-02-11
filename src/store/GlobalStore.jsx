@@ -1,29 +1,40 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { BehaviorSubject } from "rxjs";
+import { getDataRequest } from "@/lib/api";
 
-export const useGlobalStore = create(
-  persist(
-    (set, get) => ({
-      dataGenerate: [],
-      dataGenerateWeek: [],
-      dataGenerateDay: [],
-      dataUsers: [],
-      setDataGenerate: (data) =>
-        set({
-          dataGenerate: [...get().dataGenerate, data],
-        }),
-      setDataGenerateWeek: (data) =>
-        set({
-          dataGenerateWeek: [...get().dataGenerateWeek, data],
-        }),
-      setDataGenerateDay: (data) =>
-        set({
-          dataGenerateDay: [...get().dataGenerateDay, data],
-        }),
-    }),
-    {
-      name: "PruebaPlan",
+const productionSubject = new BehaviorSubject({
+  dataGuage: [],
+});
+
+export const useGlobalStore = create((set, get) => ({
+  ...productionSubject.getValue(),
+
+  subscribeToUpdates: () => {
+    productionSubject.subscribe((newData) => set(newData));
+  },
+
+  fetchDataGauge: async () => {
+    try {
+      const accumulated = await getDataRequest("dashboard/progress-shift");
+      set({ dataGuage: accumulated.data });
+
+      // 🔹 Actualiza RXJS para que otros subscriptores reciban la data
+      productionSubject.next({
+        ...productionSubject.getValue(),
+        dataGuage: accumulated.data,
+      });
+    } catch (error) {
+      console.error("Error cargando datos de Gauge", error);
     }
-  )
-);
+  },
 
+  subscribeToSocketUpdates: (socket) => {
+    socket.on("progress-shift", (newData) => {
+      set({ dataGuage: newData });
+      productionSubject.next({
+        ...productionSubject.getValue(),
+        dataGuage: newData,
+      });
+    });
+  },
+}));

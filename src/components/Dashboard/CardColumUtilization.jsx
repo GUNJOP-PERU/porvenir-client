@@ -1,4 +1,3 @@
-import IconWarning from "@/icons/IconWarning";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -11,7 +10,7 @@ export default function CardColumUtilization({ data }) {
       chart: {
         type: "column",
         backgroundColor: "transparent",
-        height: 320,
+        height: 300,
         marginTop: 5,
       },
       title: {
@@ -172,6 +171,9 @@ export default function CardColumUtilization({ data }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );
@@ -182,7 +184,7 @@ export default function CardColumUtilization({ data }) {
       {data?.dates?.length > 0 ? (
         <>
           <h4 className="text-xs font-bold">
-            Tonelaje - Planificado vs Ejecutado
+          Produccion (Ton) / Utilizacion (%)
           </h4>
           <HighchartsReact highcharts={Highcharts} options={options} />
          

@@ -3,24 +3,25 @@ import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import highchartsHeatmap from "highcharts/modules/heatmap";
 
+
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
   highchartsHeatmap(Highcharts);
 }
 export default function HighchartsHeatmap({ data, title }) {
   const xCategories = useMemo(() => {
-    return [...new Set(data.map((item) => item.destiny))];
+    return [...new Set(data?.map((item) => item?.destiny))];
   }, [data]);
 
   const yCategories = useMemo(() => {
-    return [...new Set(data.map((item) => item.origin))];
+    return [...new Set(data?.map((item) => item?.origin))];
   }, [data]);
 
   const heatmapData = useMemo(() => {
-    return data.map((item) => {
-      const xIndex = xCategories.indexOf(item.destiny);
-      const yIndex = yCategories.indexOf(item.origin);
-      return [xIndex, yIndex, item.value]; // Formato: [xIndex, yIndex, value]
+    return data?.map((item) => {
+      const xIndex = xCategories.indexOf(item?.destiny);
+      const yIndex = yCategories.indexOf(item?.origin);
+      return [xIndex, yIndex, item.value]; 
     });
   }, [data, xCategories, yCategories]);
 
@@ -113,6 +114,9 @@ export default function HighchartsHeatmap({ data, title }) {
       },
       exporting: {
         enabled: false,
+      },
+      accessibility: {
+        enabled: false
       },
       tooltip: {
         valueSuffix: " toneladas",

@@ -137,6 +137,9 @@ export default function CardColumScoop({data}) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );

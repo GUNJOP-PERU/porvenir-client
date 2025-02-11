@@ -3,13 +3,35 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardPie({ data, title }) {
+  const dataChartTemporal = [
+    {
+      name: "Descargando",
+      y: 0,
+      color: "#F44336",
+    },
+    {
+      name: "Viaje Vacio",
+      y: 0,
+      color: "#FFC107",
+    },
+    {
+      name: "Viaje Cargado",
+      y: 0,
+      color: "#4CAF50",
+    },
+    {
+      name: "Cargando",
+      y: 0,
+      color: "#008CBA",
+    },
+  ];
+
   const options = useMemo(
     () => ({
       chart: {
         backgroundColor: "transparent",
         type: "pie",
         plotBackgroundColor: null,
-   
         height: 200,
       },
       title: {
@@ -20,11 +42,12 @@ export default function CardPie({ data, title }) {
           name: "",
           colorByPoint: false,
           innerSize: "60%",
-          data: data?.data_chart?.map((item) => ({
-            name: item.title,
-            y: item.value,
-            color: item.fill,
-          })),
+          data:
+            data?.data_chart?.map((item) => ({
+              name: item.title,
+              y: item.value,
+              color: item.fill,
+            })) || dataChartTemporal,
         },
       ],
       tooltip: {
@@ -54,7 +77,6 @@ export default function CardPie({ data, title }) {
           dataLabels: {
             enabled: false,
           },
-          
         },
       },
 
@@ -62,7 +84,7 @@ export default function CardPie({ data, title }) {
         align: "right",
         verticalAlign: "center", // Cambia la leyenda a la parte inferior
         layout: "vertical",
-        floating: false,       
+        floating: true,
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -86,55 +108,48 @@ export default function CardPie({ data, title }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false,
+      },
     }),
     [data]
   );
 
   return (
     <>
-      {data?.data_card?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">{title}</h4>
-          <div className="flex flex-1 justify-center items-center gap-2">
-            
-              <HighchartsReact highcharts={Highcharts} options={options} />
-            
-            <div className="flex flex-col gap-2">
-              {data?.data_card?.length > 0 ? (
-                data?.data_card?.map((i, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5"
-                  >
-                    <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
-                      {i.title}
-                    </span>
-                    <div className="flex justify-between gap-0.5">
-                      <h1 className="text-[#EF9517] font-black text-xl leading-5">
-                        {i.value?.toFixed(1)}
-                        <small className="font-extrabold">{i.unit}</small>
-                      </h1>
-                    </div>
-                    <span className="text-green-600 leading-[8px] text-[8px]">
-                      1.1 % más eficiente
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center text-gray-400 text-[10px] leading-3 max-w-20">
-                  {data?.data_card?.length === 0
-                    ? "No hay datos disponibles."
-                    : "Cargando datos..."}
+      <h4 className="text-xs font-bold">{title}</h4>
+      <div className="flex flex-1 justify-center items-center gap-2">
+        <HighchartsReact highcharts={Highcharts} options={options} />
+        <div className="flex flex-col gap-2">
+          {data?.data_card?.length > 0 ? (
+            data?.data_card?.map((i, index) => (
+              <div
+                key={index}
+                className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5"
+              >
+                <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
+                  {i.title}
+                </span>
+                <div className="flex justify-between gap-0.5">
+                  <h1 className="text-[#EF9517] font-black text-xl leading-5">
+                    {i.value?.toFixed(2)}
+                    <small className="font-extrabold">{i.unit}</small>
+                  </h1>
                 </div>
-              )}
+                <span className="text-green-600 leading-[8px] text-[8px]">
+                  1.1 % más eficiente
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-400 text-[10px] leading-3 max-w-20">
+              {data?.data_card?.length === 0
+                ? "No hay datos disponibles."
+                : "Cargando datos..."}
             </div>
-          </div>
-        </>
-      ) : (
-        <p className="text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+          )}
+        </div>
+      </div>
     </>
   );
 }

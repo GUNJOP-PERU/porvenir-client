@@ -116,6 +116,9 @@ export default function CardVelocity({ data, title }) {
       exporting: {
         enabled: false,
       },
+      accessibility: {
+        enabled: false
+      },
     }),
     [data]
   );
