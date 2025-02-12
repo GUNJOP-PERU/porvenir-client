@@ -1,14 +1,26 @@
-import { useMemo } from "react";
+import React, { Suspense, useMemo } from "react";
 import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import highchartsHeatmap from "highcharts/modules/heatmap";
-
 
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
   highchartsHeatmap(Highcharts);
 }
-export default function HighchartsHeatmap({ data, title }) {
+
+const HighchartsHeatmap = React.memo(({ data, title }) => {
+  const dataTemporal = {
+    xCategories: ["Cancha 100", "Faja 4", "Pocket 3"],
+    yCategories: ["CX-097"],
+    heatmapData: [
+      {
+        y: "CX-097",
+        x: "Cancha 100",
+        value: 100,
+      },
+    ],
+  };
+
   const xCategories = useMemo(() => {
     return [...new Set(data?.map((item) => item?.destiny))];
   }, [data]);
@@ -21,7 +33,7 @@ export default function HighchartsHeatmap({ data, title }) {
     return data?.map((item) => {
       const xIndex = xCategories.indexOf(item?.destiny);
       const yIndex = yCategories.indexOf(item?.origin);
-      return [xIndex, yIndex, item.value]; 
+      return [xIndex, yIndex, item.value];
     });
   }, [data, xCategories, yCategories]);
 
@@ -33,13 +45,13 @@ export default function HighchartsHeatmap({ data, title }) {
         plotBorderWidth: 0,
         height: 280,
         marginTop: 0,
-        marginBottom:25,
+        marginBottom: 25,
       },
       title: {
         text: "",
       },
       xAxis: {
-        categories: xCategories,
+        categories: xCategories || dataTemporal.xCategories,
         title: {
           text: "",
         },
@@ -62,7 +74,7 @@ export default function HighchartsHeatmap({ data, title }) {
       },
 
       yAxis: {
-        categories: yCategories,
+        categories: yCategories || dataTemporal.yCategories,
         title: {
           text: "",
         },
@@ -89,7 +101,7 @@ export default function HighchartsHeatmap({ data, title }) {
       series: [
         {
           name: "Valores",
-          data: heatmapData,
+          data: heatmapData || dataTemporal.heatmapData,
           borderWidth: 2,
           borderColor: "#F4F4F580",
           dataLabels: {
@@ -101,7 +113,6 @@ export default function HighchartsHeatmap({ data, title }) {
               fontWeight: "bold",
               textOutline: "none",
             },
-          
           },
         },
       ],
@@ -116,7 +127,7 @@ export default function HighchartsHeatmap({ data, title }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
       tooltip: {
         valueSuffix: " toneladas",
@@ -147,18 +158,12 @@ export default function HighchartsHeatmap({ data, title }) {
   );
   return (
     <>
-      {heatmapData.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">{title}</h4>
-          <div style={{ width: "100%", overflowX: "auto" }}>
-            <HighchartsReact highcharts={Highcharts} options={options} />
-          </div>
-        </>
-      ) : (
-        <p className="text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">{title}</h4>
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      </div>
     </>
   );
-}
+});
+HighchartsHeatmap.displayName = "HighchartsHeatmap";
+export default HighchartsHeatmap;

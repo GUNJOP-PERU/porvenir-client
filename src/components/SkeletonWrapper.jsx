@@ -42,335 +42,56 @@ function SkeletonWrapper({ children, isLoading, fullWidth = true }) {
         </thead>
         <tbody>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
           <tr className="h-16 bg-zinc-100 ">
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
+            <td colSpan={10}  className="py-0.5 px-2  bg-zinc-100">
+              <div className="h-14 bg-zinc-200 rounded-xl w-full animate-pulse"></div>
             </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            <td className="p-2  bg-zinc-100">
-              <div className="h-12 bg-zinc-200 rounded w-full animate-pulse"></div>
-            </td>
-            
           </tr>
+          
         </tbody>
       </table>
     </div>

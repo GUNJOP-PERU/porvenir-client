@@ -4,30 +4,26 @@ import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardRange from "@/components/Dashboard/CardRange";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
-import { useProductionStore } from "@/store/ProductionStore";
+import { useMonthStore } from "@/store/MonthStore";
 import { useEffect } from "react";
 
 function ProductionMonth() {
-  const fetchDataMonth = useProductionStore((state) => state.fetchDataMonth);
-
-  // useProductionWebSocket();
-  const dataAccumulatedProgress = useProductionStore(
-    (state) => state.dataAccumulatedProgress
-  );
-  const dataChartToness = useProductionStore((state) => state.dataChartToness);
-  const dataRangeTruck = useProductionStore((state) => state.dataRangeTruck);
-  const dataRangeScoop = useProductionStore((state) => state.dataRangeScoop);
+  const fetchDataMonth = useMonthStore((state) => state.fetchDataMonth);
+  const {
+    dataAccumulatedProgress,
+    dataChartToness,
+    dataRangeTruck,
+    dataRangeScoop,
+  } = useMonthStore();
 
   useEffect(() => {
-    // if (dataAccumulatedProgress.length === 0) {
-    //   fetchDataMonth();
-    // }
     fetchDataMonth();
-  }, []);
+  }, [fetchDataMonth]);
 
+  useProductionWebSocket();
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
+      <div className="w-full flex flex-wrap justify-between gap-2 ">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -90,13 +86,15 @@ function ProductionMonth() {
           unid="h"
         />
         <CardItem
-          value={dataAccumulatedProgress?.average_time_scoop?.value.toFixed(2) || 0}
+          value={
+            dataAccumulatedProgress?.average_time_scoop?.value.toFixed(2) || 0
+          }
           title="Tiempo Prom. Scoop"
           valueColor="text-[#A855F7]"
           unid="h"
         />
       </div>
-      <div className="flex-1 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="flex-1 grid grid-cols-1 gap-2 md:grid-cols-2">
         <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
           <CardColum data={dataChartToness} />
         </div>

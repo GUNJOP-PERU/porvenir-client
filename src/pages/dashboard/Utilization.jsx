@@ -1,30 +1,29 @@
 import CardClock from "@/components/Dashboard/CardClock";
-import CardColumPareto from "@/components/Dashboard/CardColumPareto";
 import CardColumUtilization from "@/components/Dashboard/CardColumUtilization";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardVelocity from "@/components/Dashboard/CardVelocity";
 
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
-import { useProductionStore } from "@/store/ProductionStore";
+import { useUtilizationStore } from "@/store/UtilizationStore";
 import { useEffect } from "react";
 
-function ProductionUV() {
-  const fetchDataUtilization = useProductionStore(
+function Utilization() {
+  const fetchDataUtilization = useUtilizationStore(
     (state) => state.fetchDataUtilization
   );
   const { progressVelocity, chartUtility, velocityParrilla, velocityCancha } =
-    useProductionStore();
+    useUtilizationStore();
 
   useEffect(() => {
     fetchDataUtilization();
-  }, []);
+  }, [fetchDataUtilization]);
 
   useProductionWebSocket();
 
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
+      <div className="w-full flex flex-wrap justify-between gap-2">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -41,7 +40,7 @@ function ProductionUV() {
           unid={"%"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-4 grid-cols-1 md:grid-cols-2">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
         <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
           <CardColumUtilization data={chartUtility} />
         </div>
@@ -52,14 +51,14 @@ function ProductionUV() {
           />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
-        <CardVelocity
+          <CardVelocity
             data={velocityCancha}
             title="Análisis de velocidad rutas a Canchas"
-          />         
+          />
         </div>
       </div>
     </>
   );
 }
 
-export default ProductionUV;
+export default Utilization;

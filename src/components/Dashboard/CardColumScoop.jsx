@@ -3,7 +3,27 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumScoop({data}) {
+export default function CardColumScoop({ data }) {
+
+  const dataTemporal = {
+    hours: [
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00",
+      "00:00",
+      "01:00",
+      "02:00",
+      "03:00",
+      "04:00",
+      "05:00",
+      "06:00",
+    ],
+    advance: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    production: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  };
 
   const options = useMemo(
     () => ({
@@ -12,13 +32,13 @@ export default function CardColumScoop({data}) {
         backgroundColor: "transparent",
         height: 180,
         marginTop: 35,
-        marginBottom:30,
+        marginBottom: 30,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.hours,
+        categories: data?.hours || dataTemporal.hours,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -97,14 +117,14 @@ export default function CardColumScoop({data}) {
         {
           type: "column",
           name: "Avance",
-          data: data?.advance,
+          data: data?.advance || dataTemporal.advance,
           color: "#F59E0B",
           stack: "Tiempo",
         },
         {
           type: "column",
           name: "Produccion",
-          data: data?.production,
+          data: data?.production || dataTemporal.production,
           color: "#14B8A6",
           stack: "Tiempo",
         },
@@ -138,7 +158,7 @@ export default function CardColumScoop({data}) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
@@ -146,18 +166,8 @@ export default function CardColumScoop({data}) {
 
   return (
     <>
-      {data?.hours?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">
-            Tonelaje - Planificado vs Ejecutado
-          </h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">Tonelaje - Planificado vs Ejecutado</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

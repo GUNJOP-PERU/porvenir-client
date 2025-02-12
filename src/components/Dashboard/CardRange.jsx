@@ -17,7 +17,7 @@ export default function CardRange({ data, title }) {
     return `${h}:${m < 10 ? "0" + m : m}`; // Formato hh:mm
   };
 
-  console.log(data,"range")
+  console.log(data, "range");
 
   const parseTimeToDecimal = (timeString) => {
     if (!timeString) return null;
@@ -25,14 +25,13 @@ export default function CardRange({ data, title }) {
     return hours + minutes / 60;
   };
 
-  
   const options = useMemo(
     () => ({
       chart: {
         type: "columnrange",
         backgroundColor: "transparent",
         height: 260,
-        marginBottom:35,
+        marginBottom: 35,
       },
       title: {
         text: null,
@@ -134,7 +133,7 @@ export default function CardRange({ data, title }) {
             parseTimeToDecimal(max), // Convertir el máximo
           ]),
         },
-      ],      
+      ],
       legend: {
         enabled: false,
       },
@@ -145,77 +144,68 @@ export default function CardRange({ data, title }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
   );
-  
 
   return (
     <>
-      {data?.data?.dates.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">{title}</h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-          <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
-            <IconWarning className="text-red-500 w-3 h-3" />
-            <div className="flex items-center">
-              <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-                {/* Verificar si los datos existen antes de renderizar */}
-                {data?.perfomance_summary ? (
-                  <>
-                    {data?.perfomance_summary.level_production?.high?.advice ? (
-                      <li>
-                        {data?.perfomance_summary.level_production.high.advice}
-                      </li>
-                    ) : (
-                      <li>No hay consejo para nivel alto</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.level_production?.low?.advice ? (
-                      <li>
-                        {data?.perfomance_summary.level_production.low.advice}
-                      </li>
-                    ) : (
-                      <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.best_day?.date &&
-                    data?.perfomance_summary.best_day?.value ? (
-                      <li>
-                        Mejor día: {data?.perfomance_summary.best_day.date}{" "}
-                        {data?.perfomance_summary.best_day.value.toLocaleString(
-                          "es-MX"
-                        )}{" "}
-                        toneladas
-                      </li>
-                    ) : (
-                      <li>No hay datos para el mejor día</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.worst_day?.date &&
-                    data?.perfomance_summary.worst_day?.value ? (
-                      <li>
-                        Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
-                        {data?.perfomance_summary.worst_day.value} toneladas
-                      </li>
-                    ) : (
-                      <li>No hay datos para el peor día </li> // Mensaje alternativo
-                    )}
-                  </>
+      <h4 className="text-xs font-bold">{title}</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+      <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
+        <IconWarning className="text-red-500 w-3 h-3" />
+        <div className="flex items-center">
+          <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
+            {/* Verificar si los datos existen antes de renderizar */}
+            {data?.perfomance_summary ? (
+              <>
+                {data?.perfomance_summary.level_production?.high?.advice ? (
+                  <li>
+                    {data?.perfomance_summary.level_production.high.advice}
+                  </li>
                 ) : (
-                  <li>No hay datos disponibles</li> // Si no hay datos
+                  <li>No hay consejo para nivel alto</li> // Mensaje alternativo
                 )}
-              </ul>
-            </div>
-          </div>
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+
+                {data?.perfomance_summary.level_production?.low?.advice ? (
+                  <li>
+                    {data?.perfomance_summary.level_production.low.advice}
+                  </li>
+                ) : (
+                  <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
+                )}
+
+                {data?.perfomance_summary.best_day?.date &&
+                data?.perfomance_summary.best_day?.value ? (
+                  <li>
+                    Mejor día: {data?.perfomance_summary.best_day.date}{" "}
+                    {data?.perfomance_summary.best_day.value.toLocaleString(
+                      "es-MX"
+                    )}{" "}
+                    toneladas
+                  </li>
+                ) : (
+                  <li>No hay datos para el mejor día</li> // Mensaje alternativo
+                )}
+
+                {data?.perfomance_summary.worst_day?.date &&
+                data?.perfomance_summary.worst_day?.value ? (
+                  <li>
+                    Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
+                    {data?.perfomance_summary.worst_day.value} toneladas
+                  </li>
+                ) : (
+                  <li>No hay datos para el peor día </li> // Mensaje alternativo
+                )}
+              </>
+            ) : (
+              <li>No hay datos disponibles</li> // Si no hay datos
+            )}
+          </ul>
+        </div>
+      </div>
     </>
   );
 }

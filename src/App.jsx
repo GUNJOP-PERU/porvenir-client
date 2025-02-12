@@ -6,13 +6,13 @@ import PageError from "./pages/404";
 import DayPage from "./pages/Day";
 import EditPage from "./pages/Edit";
 import Layout from "./pages/Layout";
-import WeekPage from "./pages/Week";
+
 import ParetoScoop from "./pages/dashboard/ParetoScoop";
 import ParetoTruck from "./pages/dashboard/ParetoTruck";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionScoop from "./pages/dashboard/ProductionScoop";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
-import ProductionUV from "./pages/dashboard/ProductionUV";
+import ProductionUV from "./pages/dashboard/Utilization";
 import PageActivityScoop from "./pages/gestion/ActivityScoop";
 import PageActivity from "./pages/gestion/ActivityTruck";
 import Checklist from "./pages/gestion/Checklist";
@@ -28,6 +28,7 @@ import HomeVehicles from "./pages/gestion/Vehicle";
 import WorkerOrder from "./pages/gestion/WorkerOrder";
 import PageLogin from "./pages/login/Login";
 import { useAuthStore } from "./store/AuthStore";
+import Utilization from "./pages/dashboard/Utilization";
 
 
 function App() {
@@ -45,7 +46,7 @@ function App() {
             <Route path="*" element={<PageError />} />
             <Route element={<ProtectedRoute isAllowed={isAuth} />}>
               <Route path="/edit/:id" element={<EditPage />} />
-              <Route path="/week" element={<WeekPage />} />
+         
               <Route path="/day" element={<DayPage />} />
               <Route path="/" element={<HomeUsers />} />
               <Route path="/frontLabor" element={<HomeFrontLabor />} />
@@ -68,7 +69,7 @@ function App() {
               <Route path="/dashboard/paretoTruck" element={<ParetoTruck />} />
               <Route path="/dashboard/paretoScoop" element={<ParetoScoop />} />
               <Route path="/dashboard/productionMonth" element={<ProductionMonth />} />
-              <Route path="/dashboard/productionUV" element={<ProductionUV />} />
+              <Route path="/dashboard/productionUV" element={<Utilization />} />
             </Route>
           </Routes>
         </Layout>

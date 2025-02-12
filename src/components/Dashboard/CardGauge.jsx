@@ -18,21 +18,20 @@ export default function CardGauge() {
   const { dataGuage } = useGlobalStore();
 
   useEffect(() => {
-    if (dataGuage.length === 0) {
-      fetchDataGauge();
-    }
+    fetchDataGauge();
   }, [fetchDataGauge]);
-
 
   const options = useMemo(
     () => ({
       chart: {
         backgroundColor: "transparent",
         type: "solidgauge",
-        height: 100,
-        width: 165,
+        height: 75,
+        width: 120,
         marginTop: -20,
         marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
       },
       title: {
         text: null,
@@ -86,10 +85,10 @@ export default function CardGauge() {
             useHTML: true,
             formatter: function () {
               return `
-                  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px">
-                    <span style="font-size: 8px; opacity: 0.3;line-height:8px">Toneladas</span>
-                    <span style="font-size: 28px; font-weight: 800; color: #5190FF;line-height:1.9rem">
-                      ${formatThousands(this.y) || `${0}k`}
+                  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
+                    <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
+                      ${formatThousands(this.y) || `${0}`}<small>k</small>
                     </span>
                   </div>
                 `;
@@ -107,7 +106,7 @@ export default function CardGauge() {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
       plotOptions: {
         solidgauge: {
@@ -124,7 +123,7 @@ export default function CardGauge() {
   );
 
   return (
-    <div>
+    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

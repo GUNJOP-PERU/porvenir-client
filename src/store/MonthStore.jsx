@@ -1,0 +1,67 @@
+import { create } from "zustand";
+import { getDataRequest } from "@/lib/api";
+import { BehaviorSubject } from "rxjs";
+
+const productionSubject = new BehaviorSubject({
+  dataAccumulatedProgress: [],
+  dataChartToness: [],
+  dataRangeTruck: [],
+  dataRangeScoop: [],
+
+  truckLoading: false,
+});
+
+export const useMonthStore = create((set) => ({
+  ...productionSubject.getValue(),
+
+  subscribeToUpdates: () => {
+    productionSubject.subscribe((newData) => set(newData));
+  },
+
+  fetchDataMonth: async () => {
+    try {
+      const [accumulated, tonnes, rangeTruck, rangeScoop] = await Promise.all([
+        getDataRequest("dashboard/monthly/accumulated-progress"),
+        getDataRequest("dashboard/monthly/chart-tonnes"),
+        getDataRequest("dashboard/monthly/average-journals?equipment=truck"),
+        getDataRequest("dashboard/monthly/average-journals?equipment=scoop"),
+      ]);
+
+      set((state) => ({
+        ...state,
+        dataAccumulatedProgress: accumulated.data,
+        dataChartToness: tonnes.data,
+        dataRangeTruck: rangeTruck.data,
+        dataRangeScoop: rangeScoop.data,
+      }));
+    } catch (error) {
+      console.error("Error cargando datos iniciales", error);
+    }
+  },
+
+  subscribeToSocketUpdates: (socket) => {
+    socket.on("monthly-progress", (newData) => {
+      console.log("monthly-progress", newData);
+      if (
+        !newData ||
+        (typeof newData === "object" && Object.keys(newData).length === 0)
+      ) {
+        console.log("Datos vacíos");
+      } else {
+        set({ dataAccumulatedProgress: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          dataAccumulatedProgress: newData,
+        });
+      }
+    });
+    socket.on("monthly-chart-tonnes", (newData) => {
+      console.log("tonnes mensual", newData);
+     
+    });
+    socket.on("monthly-average-journals", (newData) => {
+      console.log("monthly average", newData);
+     
+    });
+  },
+}));

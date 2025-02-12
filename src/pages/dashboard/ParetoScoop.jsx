@@ -6,12 +6,11 @@ import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
-import { useProductionStore } from "@/store/ProductionStore";
+import { useParetoScoopStore } from "@/store/ParetoScoopStore";
 import { useEffect } from "react";
-import { shallow } from "zustand/shallow";
 
 function ParetoScoop() {
-  const fetchParetoScoop = useProductionStore(
+  const fetchParetoScoop = useParetoScoopStore(
     (state) => state.fetchParetoScoop
   );
   const {
@@ -19,7 +18,7 @@ function ParetoScoop() {
     scoopParetoNoProductive,
     scoopParetoActivitiesChart,
     scoopImpactDiagram,
-  } = useProductionStore();
+  } = useParetoScoopStore();
 
   useEffect(() => {
     fetchParetoScoop();
@@ -30,14 +29,14 @@ function ParetoScoop() {
 
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between px-4 py-2 bg-zinc-100/50 border border-zinc-100 rounded-xl gap-2">
+      <div className="w-full flex flex-wrap justify-between  gap-2">
         <CardGauge />
         <CardClock />
         <CardItem
           value={scoopParetoProgress?.total_events || 0}
           title="Total de eventos"
           valueColor="text-[#6399C7]"
-          unid={""}
+          unid={"evt"}
         />
         <CardItem
           value={scoopParetoProgress?.data?.total_lost?.toFixed(1) || 0}
@@ -79,7 +78,7 @@ function ParetoScoop() {
           unid={"h"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-4 grid-cols-1 md:grid-cols-2">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
         <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
           <CardColumPareto data={scoopParetoNoProductive} />
         </div>

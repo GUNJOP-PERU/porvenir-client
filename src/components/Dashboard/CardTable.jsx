@@ -1,7 +1,30 @@
 import React, { useMemo, useCallback } from "react";
 
 export default function CardTable({ data }) {
+ 
 
+  const dataTemporal = {
+    data: [
+      {
+        code_activity: "105",
+        equipment: "SC-12 - CX-690",
+        id: 2,
+        last_event: "Limpieza y carguío de Mineral. Tajos (Explotación)",
+        productive_hours: 0.2975,
+        stop_hours: 0,
+        time: "15:59:48",
+      },
+    ],
+    headers: [
+      { id: "id", label: "Id", type: "number" },
+      { id: "equipment", label: "Equipo", type: "text" },
+      { id: "code_activity", label: "Código Actividad", type: "code" },
+      { id: "last_event", label: "Último Evento", type: "text" },
+      { id: "time", label: "Tiempo", type: "time" },
+      { id: "productive_hours", label: "Horas Productivas", type: "hours" },
+      { id: "stop_hours", label: "Horas Parada", type: "hours" },
+    ],
+  };
   const getCellValue = useCallback((row, header) => {
     if (header.id === "time") {
       return (
@@ -43,7 +66,7 @@ export default function CardTable({ data }) {
         })}
       </tr>
     ));
-  }, [data?.data, data?.headers, getCellValue]); 
+  }, [data?.data, data?.headers, getCellValue]);
 
   return (
     <>
@@ -55,7 +78,8 @@ export default function CardTable({ data }) {
               <tr>
                 {data?.headers.map((header, index) => {
                   // Ocultar la columna con id 'id'
-                  if (header.id === "id" || header.id === "code_activity") return null;
+                  if (header.id === "id" || header.id === "code_activity")
+                    return null;
                   return (
                     <th key={header.id} className="px-4 py-2 text-left">
                       {header.label}

@@ -4,7 +4,6 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardColumImpact({ data }) {
-  console.log(data, "impact");
   const options = useMemo(
     () => ({
       chart: {
@@ -12,7 +11,7 @@ export default function CardColumImpact({ data }) {
         backgroundColor: "transparent",
         height: 280,
         marginTop: 45,
-        marginBottom:25,
+        marginBottom: 25,
       },
       title: {
         text: null,
@@ -37,7 +36,7 @@ export default function CardColumImpact({ data }) {
             text: null, // Título del eje
           },
           labels: {
-            enabled: false, 
+            enabled: false,
           },
           min: 0,
           gridLineWidth: 0,
@@ -49,16 +48,16 @@ export default function CardColumImpact({ data }) {
           },
           labels: {
             enabled: true,
-            format: "{value}%", 
+            format: "{value}%",
             style: {
-              color: "#A6A6A6", 
+              color: "#A6A6A6",
               fontSize: "0.6em",
             },
           },
           min: 0,
           max: 100,
           tickInterval: 10,
-          gridLineWidth: 0.5, 
+          gridLineWidth: 0.5,
         },
       ],
       tooltip: {
@@ -90,12 +89,12 @@ export default function CardColumImpact({ data }) {
               fontWeight: "",
               textOutline: "none",
             },
-            backgroundColor: "#C1F0F7",  
-            borderRadius: 5,            
-            padding: 5,    
+            backgroundColor: "#C1F0F7",
+            borderRadius: 5,
+            padding: 5,
             borderWidth: 0,
             formatter: function () {
-                return this.y.toFixed(1) ; // Formatear como porcentaje
+              return this.y.toFixed(1); // Formatear como porcentaje
             },
           },
         },
@@ -176,27 +175,18 @@ export default function CardColumImpact({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
   );
-  
+
   return (
     <>
-      {data?.categories?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">
-          Analisis de Pareto con Indice de Impacto Ponderado
-          </h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-         
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">
+        Analisis de Pareto con Indice de Impacto Ponderado
+      </h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

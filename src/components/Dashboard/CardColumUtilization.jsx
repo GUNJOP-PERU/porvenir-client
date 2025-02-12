@@ -5,6 +5,42 @@ import { useMemo } from "react";
 
 export default function CardColumUtilization({ data }) {
   console.log(data, "Utilization");
+  const dataTemporal = {
+    dates: [
+      "01:02",
+      "02:02",
+      "03:02",
+      "04:02",
+      "06:02",
+      "07:02",
+      "08:02",
+      "09:02",
+      "10:02",
+      "11:02",
+      "12:02",
+      "13:02",
+      "14:02",
+      "15:02",
+      "16:02",
+      "17:02",
+      "18:02",
+      "19:02",
+      "20:02",
+      "21:02",
+      "22:02",
+      "23:02",
+      "24:02",
+      "25:02",
+      "26:02",
+      "27:02",
+      "28:02",
+    ],
+    maintenance_act: [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0,
+    ],
+  };
+
   const options = useMemo(
     () => ({
       chart: {
@@ -36,7 +72,7 @@ export default function CardColumUtilization({ data }) {
             text: null, // Título del eje
           },
           labels: {
-            enabled: false, 
+            enabled: false,
           },
           min: 0,
           gridLineWidth: 0,
@@ -48,16 +84,16 @@ export default function CardColumUtilization({ data }) {
           },
           labels: {
             enabled: true,
-            format: "{value}%", 
+            format: "{value}%",
             style: {
-              color: "#A6A6A6", 
+              color: "#A6A6A6",
               fontSize: "0.6em",
             },
           },
           min: 0,
           max: 100,
           tickInterval: 10,
-          gridLineWidth: 0.5, 
+          gridLineWidth: 0.5,
         },
       ],
       tooltip: {
@@ -172,28 +208,16 @@ export default function CardColumUtilization({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
   );
-  
 
   return (
     <>
-      {data?.dates?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">
-          Produccion (Ton) / Utilizacion (%)
-          </h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-         
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">Produccion (Ton) / Utilizacion (%)</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

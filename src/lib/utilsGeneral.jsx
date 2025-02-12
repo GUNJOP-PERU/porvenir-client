@@ -80,5 +80,5 @@ export function formatDurationHour(durationInSeconds) {
 
 export function formatThousands(value) {
   if (value === 0) return "";
-  return value >= 1000 ? (value / 1000).toFixed(1) + "k" : value;
+  return value >= 1000 ? (value / 1000).toFixed(1) : value;
 }

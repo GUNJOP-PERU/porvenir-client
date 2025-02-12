@@ -38,22 +38,30 @@ export const useTruckStore = create((set) => ({
     } catch (error) {
       console.error("Error cargando datos iniciales", error);
     } finally {
-     
     }
   },
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("truck-progress-day", (newData) => {
-     
-      set({ progressDay: newData });
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        progressDay: newData,
-      });
+      if (
+        !newData ||
+        (typeof newData === "object" && Object.keys(newData).length === 0)
+      ) {
+        console.log("Datos vacíos");
+      } else {
+        set({ progressDay: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          progressDay: newData,
+        });
+      }
     });
 
     socket.on("truck-heatmap", (newData) => {
-      console.log("heatmap:", newData);
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+        return;
+      }
       set((state) => {
         const index = state.heatmap.findIndex(
           (entry) =>
@@ -79,7 +87,10 @@ export const useTruckStore = create((set) => ({
     });
 
     socket.on("truck-job-cycle", (newData) => {
-      console.log("job-cycle:", newData);
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+        return;
+      }
       set({ truckJobCycle: newData });
       productionSubject.next({
         ...productionSubject.getValue(),
@@ -88,7 +99,10 @@ export const useTruckStore = create((set) => ({
     });
 
     socket.on("truck-chart-productivity", (newData) => {
-      console.count("chartProductivity:", newData);
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+        return;
+      }
       set({ chartProductivity: newData });
       productionSubject.next({
         ...productionSubject.getValue(),
@@ -97,7 +111,10 @@ export const useTruckStore = create((set) => ({
     });
 
     socket.on("truck-chart-fleet", (newData) => {
-      console.count("chart-fleet:", newData);
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+        return;
+      }
       set({ dataFleet: newData });
       productionSubject.next({
         ...productionSubject.getValue(),

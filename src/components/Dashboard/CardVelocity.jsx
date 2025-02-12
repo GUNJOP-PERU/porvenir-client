@@ -3,7 +3,38 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardVelocity({ data, title }) {
-  console.log(data, "velocity");
+  const dataTemporal = {
+    dates: [
+      "01",
+      "02",
+      "03",
+      "04",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+    ],
+    
+  };
   const options = useMemo(
     () => ({
       chart: {
@@ -17,7 +48,7 @@ export default function CardVelocity({ data, title }) {
         text: null,
       },
       xAxis: {
-        categories: data?.dates, // Horas
+        categories: data?.dates || dataTemporal.dates, // Horas
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -82,12 +113,12 @@ export default function CardVelocity({ data, title }) {
       series: [
         {
           name: "Velocidad Vacio",
-          data: data?.velocities_lleno,
+          data: data?.velocities_lleno  ,
           color: "#F43F5E",
         },
         {
           name: "Velocidad Cargado",
-          data: data?.velocities_empty,
+          data: data?.velocities_empty || dataTemporal.velocities_empty,
           color: "#84CC16",
         },
       ],
@@ -117,7 +148,7 @@ export default function CardVelocity({ data, title }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
@@ -125,16 +156,8 @@ export default function CardVelocity({ data, title }) {
 
   return (
     <>
-      {data?.dates?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">{title}</h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">{title}</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

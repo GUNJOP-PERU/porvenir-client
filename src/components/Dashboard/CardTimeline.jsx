@@ -11,8 +11,7 @@ if (typeof highchartsXrange === "function") {
 
 dayjs.tz.setDefault("America/Lima");
 
-export default function CardTimeline({ data }) {
-
+export default function CardTimeline({ data = [] }) {
   const getTimeRange = (shift) => {
     if (shift === "dia") {
       return {
@@ -56,8 +55,6 @@ export default function CardTimeline({ data }) {
   }, [data]);
 
   const { min, max } = getTimeRange(data?.shift);
-
-  console.log(data, "nuev");
 
   const options = useMemo(
     () => ({
@@ -110,7 +107,6 @@ export default function CardTimeline({ data }) {
               fontSize: "9px",
             },
           },
-          
         },
       ],
       tooltip: {
@@ -154,7 +150,7 @@ export default function CardTimeline({ data }) {
       series: [
         {
           name: "valores",
-       
+
           data: transformedData,
         },
       ],
@@ -168,7 +164,7 @@ export default function CardTimeline({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data, transformedData, min, max]
@@ -181,19 +177,18 @@ export default function CardTimeline({ data }) {
   );
 }
 
-
-  // const dataGen = {
-  //   shift: "dia",
-  //   data: [
-  //     { x: "06:10", x2: "07:40", y: "SC-21 TJ-381", color: "red", format: 1 },
-  //     { x: "06:50", x2: "08:20", y: "SC-22 TJ-382", color: "blue", format: 1 },
-  //     { x: "08:45", x2: "09:15", y: "SC-23 TJ-383", color: "green", format: 1 },
-  //     { x: "11:35", x2: "12:15", y: "SC-23 TJ-383", color: "gray", format: 1 },
-  //     { x: "13:45", x2: "15:15", y: "SC-23 TJ-383", color: "pink", format: 1 },
-  //     { x: "15:35", x2: "15:45", y: "SC-23 TJ-383", color: "gray", format: 1 },
-  //     { x: "15:46", x2: "15:55", y: "SC-23 TJ-383", color: "pink", format: 1 },
-  //     { x: "16:35", x2: "17:15", y: "SC-23 TJ-383", color: "gray", format: 1 },
-  //     { x: "17:30", x2: "17:45", y: "SC-23 TJ-383", color: "pink", format: 1 },
-  //   ],
-  //   categories: ["SC-21 TJ-381", "SC-22 TJ-382", "SC-23 TJ-383"],
-  // };
+// const dataGen = {
+//   shift: "dia",
+//   data: [
+//     { x: "06:10", x2: "07:40", y: "SC-21 TJ-381", color: "red", format: 1 },
+//     { x: "06:50", x2: "08:20", y: "SC-22 TJ-382", color: "blue", format: 1 },
+//     { x: "08:45", x2: "09:15", y: "SC-23 TJ-383", color: "green", format: 1 },
+//     { x: "11:35", x2: "12:15", y: "SC-23 TJ-383", color: "gray", format: 1 },
+//     { x: "13:45", x2: "15:15", y: "SC-23 TJ-383", color: "pink", format: 1 },
+//     { x: "15:35", x2: "15:45", y: "SC-23 TJ-383", color: "gray", format: 1 },
+//     { x: "15:46", x2: "15:55", y: "SC-23 TJ-383", color: "pink", format: 1 },
+//     { x: "16:35", x2: "17:15", y: "SC-23 TJ-383", color: "gray", format: 1 },
+//     { x: "17:30", x2: "17:45", y: "SC-23 TJ-383", color: "pink", format: 1 },
+//   ],
+//   categories: ["SC-21 TJ-381", "SC-22 TJ-382", "SC-23 TJ-383"],
+// };

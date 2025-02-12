@@ -6,11 +6,11 @@ export function NavMain() {
   const paths = useNavigation();
 
   return (
-    <nav className="h-screen w-16 md:w-72 border-r border-zinc-200 bg-zinc-100">
+    <nav className="h-screen w-16 md:w-72 border-r border-zinc-200 bg-zinc-100 flex flex-col ">
       <div className="w-full px-6 flex justify-between items-center h-14 border-b border-zinc-200">
         <img src="/src/assets/logo.svg" alt="" className="h-7" />
       </div>
-      <div className="w-full px-3 md:px-6 py-4">
+      <div className="w-full flex-1 overflow-y-auto px-3 md:px-6 py-4 ">
         {paths.map((section) => (
           <div key={section.title} className="mb-4">
             <span className="text-[10px] text-zinc-400 uppercase font-semibold hidden md:inline">

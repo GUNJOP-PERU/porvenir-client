@@ -30,6 +30,10 @@ export const useGlobalStore = create((set, get) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("progress-shift", (newData) => {
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+        return; 
+      }
       set({ dataGuage: newData });
       productionSubject.next({
         ...productionSubject.getValue(),

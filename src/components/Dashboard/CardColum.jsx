@@ -6,6 +6,42 @@ import { useMemo } from "react";
 
 export default function CardColum({ data }) {
 
+  const dataTemporal = {
+    dates: [
+      "01:02",
+      "02:02",
+      "03:02",
+      "04:02",
+      "06:02",
+      "07:02",
+      "08:02",
+      "09:02",
+      "10:02",
+      "11:02",
+      "12:02",
+      "13:02",
+      "14:02",
+      "15:02",
+      "16:02",
+      "17:02",
+      "18:02",
+      "19:02",
+      "20:02",
+      "21:02",
+      "22:02",
+      "23:02",
+      "24:02",
+      "25:02",
+      "26:02",
+      "27:02",
+      "28:02",
+    ],
+    values_day: [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0,0
+    ],
+  };
+
   const options = useMemo(
     () => ({
       chart: {
@@ -13,13 +49,13 @@ export default function CardColum({ data }) {
         backgroundColor: "transparent",
         height: 280,
         marginTop: 5,
-        marginBottom:35,
+        marginBottom: 35,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.dates,
+        categories: data?.dates || dataTemporal.dates ,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -37,7 +73,7 @@ export default function CardColum({ data }) {
           text: null,
         },
         labels: {
-          enabled: false, 
+          enabled: false,
         },
         gridLineColor: "#D9D9D9",
         gridLineWidth: 0.5,
@@ -84,7 +120,7 @@ export default function CardColum({ data }) {
         {
           type: "column",
           name: "Día",
-          data: data?.values_day,
+          data: data?.values_day || dataTemporal.values_day,
           color: "#FAC34C",
           stack: "Tiempo",
         },
@@ -101,12 +137,12 @@ export default function CardColum({ data }) {
           data: data?.goal_tonnages,
           color: "#1EE0EE",
           marker: {
-            enabled: true, 
-            radius: 3, 
-            symbol: "circle", 
+            enabled: true,
+            radius: 3,
+            symbol: "circle",
           },
           dataLabels: {
-            enabled: true, 
+            enabled: true,
             style: {
               fontSize: "9px",
               color: "#A1A1AA",
@@ -114,7 +150,7 @@ export default function CardColum({ data }) {
               textOutline: "none",
             },
             formatter: function () {
-              return formatThousands(this.y); 
+              return formatThousands(this.y);
             },
           },
         },
@@ -148,7 +184,7 @@ export default function CardColum({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
@@ -156,84 +192,72 @@ export default function CardColum({ data }) {
 
   return (
     <>
-      {data?.dates?.length > 0 ? (
-        <>
-         <h4 className="text-xs font-bold">
-            Tonelaje - Planificado vs Ejecutado
-          </h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-          <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
-            <IconWarning className="text-red-500 w-3 h-3" />
-            <div className="flex items-center">
-              <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-                {/* Verificar si los datos existen antes de renderizar */}
-                {data?.perfomance_summary ? (
-                  <>
-                    {data?.perfomance_summary.level_production?.high?.advice ? (
-                      <li>
-                        {data?.perfomance_summary.level_production.high.advice}
-                      </li>
-                    ) : (
-                      <li>No hay consejo para nivel alto</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.level_production?.low?.advice ? (
-                      <li>
-                        {data?.perfomance_summary.level_production.low.advice}
-                      </li>
-                    ) : (
-                      <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.best_day?.date &&
-                    data?.perfomance_summary.best_day?.value ? (
-                      <li>
-                        Mejor día: {data?.perfomance_summary.best_day.date}{" "}
-                        {data?.perfomance_summary.best_day.value} toneladas
-                      </li>
-                    ) : (
-                      <li>No hay datos para el mejor día</li> // Mensaje alternativo
-                    )}
-
-                    {data?.perfomance_summary.worst_day?.date &&
-                    data?.perfomance_summary.worst_day?.value ? (
-                      <li>
-                        Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
-                        {data?.perfomance_summary.worst_day.value} toneladas
-                      </li>
-                    ) : (
-                      <li>No hay datos para el peor día</li> // Mensaje alternativo
-                    )}
-                  </>
+      <h4 className="text-xs font-bold">Tonelaje - Planificado vs Ejecutado</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+      <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
+        <IconWarning className="text-red-500 w-3 h-3" />
+        <div className="flex items-center">
+          <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
+            {/* Verificar si los datos existen antes de renderizar */}
+            {data?.perfomance_summary ? (
+              <>
+                {data?.perfomance_summary.level_production?.high?.advice ? (
+                  <li>
+                    {data?.perfomance_summary.level_production.high.advice}
+                  </li>
                 ) : (
-                  <li>No hay datos disponibles</li> // Si no hay datos
+                  <li>No hay consejo para nivel alto</li> // Mensaje alternativo
                 )}
-              </ul>
-            </div>
-          </div>
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+
+                {data?.perfomance_summary.level_production?.low?.advice ? (
+                  <li>
+                    {data?.perfomance_summary.level_production.low.advice}
+                  </li>
+                ) : (
+                  <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
+                )}
+
+                {data?.perfomance_summary.best_day?.date &&
+                data?.perfomance_summary.best_day?.value ? (
+                  <li>
+                    Mejor día: {data?.perfomance_summary.best_day.date}{" "}
+                    {data?.perfomance_summary.best_day.value} toneladas
+                  </li>
+                ) : (
+                  <li>No hay datos para el mejor día</li> // Mensaje alternativo
+                )}
+
+                {data?.perfomance_summary.worst_day?.date &&
+                data?.perfomance_summary.worst_day?.value ? (
+                  <li>
+                    Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
+                    {data?.perfomance_summary.worst_day.value} toneladas
+                  </li>
+                ) : (
+                  <li>No hay datos para el peor día</li> // Mensaje alternativo
+                )}
+              </>
+            ) : (
+              <li>No hay datos disponibles</li> // Si no hay datos
+            )}
+          </ul>
+        </div>
+      </div>
     </>
   );
 }
 
-
-
- // yAxis: {
-      //   title: {
-      //     text: null,
-      //   },
-      //   labels: {
-      //     style: {
-      //       color: "#A6A6A6",
-      //       fontSize: "0.6em",
-      //     },
-      //   },
-      //   gridLineColor: "#D9D9D9",
-      //   gridLineWidth: 0.5,
-      //   gridLineDashStyle: "Dash",
-      // },
+// yAxis: {
+//   title: {
+//     text: null,
+//   },
+//   labels: {
+//     style: {
+//       color: "#A6A6A6",
+//       fontSize: "0.6em",
+//     },
+//   },
+//   gridLineColor: "#D9D9D9",
+//   gridLineWidth: 0.5,
+//   gridLineDashStyle: "Dash",
+// },

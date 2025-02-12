@@ -3,7 +3,6 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardActivitiesChart({ data }) {
-  console.log(data, "activities");
   const options = useMemo(
     () => ({
       chart: {
@@ -11,7 +10,7 @@ export default function CardActivitiesChart({ data }) {
         backgroundColor: "transparent",
         height: 280,
         marginTop: 45,
-        marginBottom:25,
+        marginBottom: 25,
       },
       title: {
         text: null,
@@ -160,7 +159,7 @@ export default function CardActivitiesChart({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
@@ -168,18 +167,10 @@ export default function CardActivitiesChart({ data }) {
 
   return (
     <>
-      {data?.labors?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">
-          Actividades Improductivas Promedio vs Acumulada
-          </h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">
+        Actividades Improductivas Promedio vs Acumulada
+      </h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

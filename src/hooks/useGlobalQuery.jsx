@@ -9,12 +9,10 @@ export function useFetchData(queryKey, endpoint) {
     refetchOnReconnect: true,
     retry: 2, // Intentará 2 veces antes de fallar
     retryDelay: 2000, // Espera 2s entre intentos
-    refetchOnMount: false, 
-     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     select: (response) => {
-      return response.data.sort(
-        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-      );
+      return response.data;
     },
   });
 }

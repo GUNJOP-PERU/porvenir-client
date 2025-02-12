@@ -3,7 +3,42 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardColumPareto({ data }) {
-  console.log(data);
+  const dataTemporal = {
+    dates: [
+      "01:02",
+      "02:02",
+      "03:02",
+      "04:02",
+      "06:02",
+      "07:02",
+      "08:02",
+      "09:02",
+      "10:02",
+      "11:02",
+      "12:02",
+      "13:02",
+      "14:02",
+      "15:02",
+      "16:02",
+      "17:02",
+      "18:02",
+      "19:02",
+      "20:02",
+      "21:02",
+      "22:02",
+      "23:02",
+      "24:02",
+      "25:02",
+      "26:02",
+      "27:02",
+      "28:02",
+    ],
+    maintenance_act: [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0,0
+    ],
+  };
+
   const options = useMemo(
     () => ({
       chart: {
@@ -11,13 +46,13 @@ export default function CardColumPareto({ data }) {
         backgroundColor: "transparent",
         height: 280,
         marginTop: 25,
-        marginBottom:25,
+        marginBottom: 25,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.dates,
+        categories: data?.dates || dataTemporal.dates,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -27,7 +62,6 @@ export default function CardColumPareto({ data }) {
             color: "#A6A6A6",
             fontSize: "0.6em",
           },
-        
         },
       },
 
@@ -75,9 +109,9 @@ export default function CardColumPareto({ data }) {
               fontWeight: "bold",
               textOutline: "none",
             },
-            backgroundColor: "rgba(255, 255, 255, 0.5)",  
-            borderRadius: 3,            
-            padding: 3,    
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderRadius: 3,
+            padding: 3,
             borderWidth: 0,
             formatter: function () {
               return this.y !== 0 ? Number(this.y).toFixed(1) : "";
@@ -89,7 +123,7 @@ export default function CardColumPareto({ data }) {
         {
           type: "column",
           name: "Mantenimiento y falla",
-          data: data?.maintenance_act,
+          data: data?.maintenance_act || dataTemporal.maintenance_act,
           color: "#FF9500",
           stack: "Hour",
         },
@@ -144,7 +178,7 @@ export default function CardColumPareto({ data }) {
         enabled: false,
       },
       accessibility: {
-        enabled: false
+        enabled: false,
       },
     }),
     [data]
@@ -152,16 +186,8 @@ export default function CardColumPareto({ data }) {
 
   return (
     <>
-      {data?.dates?.length > 0 ? (
-        <>
-          <h4 className="text-xs font-bold">Actividades Improductivas Mes</h4>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </>
-      ) : (
-        <p className="mx-auto text-zinc-400 text-[10px] leading-3 max-w-20 text-center">
-          No hay datos disponibles
-        </p>
-      )}
+      <h4 className="text-xs font-bold">Actividades Improductivas Mes</h4>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 }

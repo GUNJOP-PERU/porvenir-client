@@ -7,7 +7,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { z } from "zod";
-import CardItems from "../components/CardItems";
+
 import { Button } from "../components/ui/button";
 import { Calendar } from "../components/ui/calendar";
 import {
@@ -294,7 +294,7 @@ function HomePage() {
           </DialogContent>
         </Dialog>
       </div>
-     <CardItems items={items}/>
+    
     </>
   );
 }
