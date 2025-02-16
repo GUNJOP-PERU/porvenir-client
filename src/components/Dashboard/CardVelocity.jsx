@@ -3,38 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardVelocity({ data, title }) {
-  const dataTemporal = {
-    dates: [
-      "01",
-      "02",
-      "03",
-      "04",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25",
-      "26",
-      "27",
-      "28",
-    ],
-    
-  };
+  
   const options = useMemo(
     () => ({
       chart: {
@@ -48,7 +17,7 @@ export default function CardVelocity({ data, title }) {
         text: null,
       },
       xAxis: {
-        categories: data?.dates || dataTemporal.dates, // Horas
+        categories: data?.dates, // Horas
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -118,7 +87,7 @@ export default function CardVelocity({ data, title }) {
         },
         {
           name: "Velocidad Cargado",
-          data: data?.velocities_empty || dataTemporal.velocities_empty,
+          data: data?.velocities_empty,
           color: "#84CC16",
         },
       ],

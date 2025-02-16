@@ -19,10 +19,10 @@ function ProductionScoop() {
 
   useProductionWebSocket();
 
-  console.log(scoopProgressDay, "day");
+  console.log(scoopTonnagHour, "scoopTonnagHour");
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between gap-2">
+      <div className="w-full flex flex-wrap justify-between gap-1">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -32,7 +32,7 @@ function ProductionScoop() {
             ) || 0
           }
           title="Mineral Producción"
-          valueColor="text-blue-600"
+          valueColor="text-[#14B8A6]"
           unid={"tn"}
         />
         <CardItem
@@ -40,14 +40,14 @@ function ProductionScoop() {
             scoopProgressDay?.mineral?.avance?.value?.toLocaleString("es-MX") ||
             0
           }
-          title="Mineral avance"
-          valueColor="text-red-800"
+          title="Mineral Avance"
+          valueColor="text-[#F59E0B]"
           unid={"tn"}
         />
         <CardItem
           value={scoopProgressDay?.time?.productive?.value?.toFixed(2) || 0}
           title="Horas productivas"
-          valueColor="text-[#06C445]"
+          valueColor="text-green-800"
           unid={"h"}
         />
         <CardItem
@@ -70,21 +70,23 @@ function ProductionScoop() {
         />
         <CardItem
           value={
-            scoopProgressDay?.mineral?.percentageDisponibility?.value.toFixed(
+            scoopProgressDay?.mineral?.percentageDisponibility?.value?.toFixed(
               2
             ) || 0
           }
           title="Disponiblidad"
+          change={scoopProgressDay?.mineral?.percentageDisponibility?.value || 0}
           valueColor="text-purple-600"
           unid={"%"}
         />
         <CardItem
           value={
-            scoopProgressDay?.mineral?.percentageUtilization?.value.toFixed(
+            scoopProgressDay?.mineral?.percentageUtilization?.value?.toFixed(
               2
             ) || 0
           }
           title="Utilización"
+          change={scoopProgressDay?.mineral?.percentageUtilization?.value || 0}
           valueColor="text-pink-600"
           unid={"%"}
         />

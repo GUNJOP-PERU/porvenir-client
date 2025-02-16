@@ -1,7 +1,8 @@
 import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
 import CardClock from "@/components/Dashboard/CardClock";
 import CardColumImpact from "@/components/Dashboard/CardColumImpact";
-import CardColumPareto from "@/components/Dashboard/CardColumPareto";
+
+import CardColumParetoTruck from "@/components/Dashboard/CardColumParetoTruck";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 
@@ -26,6 +27,8 @@ function ParetoTruck() {
 
   useProductionWebSocket();
 
+  // console.log(truckParetoNoProductive,"truckParetoNoProductive")
+
   return (
     <>
       <div className="w-full flex flex-wrap justify-between gap-2 ">
@@ -47,16 +50,16 @@ function ParetoTruck() {
           value={
             truckParetoProgress?.data?.avg_planned_activities?.toFixed(1) || 0
           }
-          title="Prom. Actividad Programada"
-          valueColor="text-[#B16940]"
+          title="Prom. Hora de Parada Planificada"
+          valueColor="text-[#22C2C5]"
           unid={"h"}
         />
         <CardItem
           value={
             truckParetoProgress?.data?.avg_unplanned_activities?.toFixed(1) || 0
           }
-          title="Prom. Actividad No Programada"
-          valueColor="text-[#B16940]"
+          title="Prom. Horas Perdidas"
+          valueColor="text-[#F43F5E]"
           unid={"h"}
         />
         <CardItem
@@ -64,22 +67,22 @@ function ParetoTruck() {
             truckParetoProgress?.data?.avg_maintenance_activities?.toFixed(1) ||
             0
           }
-          title="Prom. Actividad Mantto y falla"
-          valueColor="text-red-500"
+          title="Prom. Mantenimiento"
+          valueColor="text-[#FF9500]"
           unid={"h"}
         />
         <CardItem
           value={
             truckParetoProgress?.data?.avg_service_activities?.toFixed(1) || 0
           }
-          title="Prom. Actividad Servicios"
-          valueColor="text-black-500"
+          title="Prom. Otros"
+          valueColor="text-[#347AE2]"
           unid={"h"}
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
         <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-          <CardColumPareto data={truckParetoNoProductive} />
+          <CardColumParetoTruck data={truckParetoNoProductive} />
         </div>
         <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
           <CardActivitiesChart data={truckParetoActivitiesChart} />

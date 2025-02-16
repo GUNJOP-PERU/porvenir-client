@@ -2,7 +2,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumPareto({ data }) {
+export default function CardColumParetoScoop({ data }) {
   const dataTemporal = {
     dates: [
       "01:02",
@@ -35,7 +35,7 @@ export default function CardColumPareto({ data }) {
     ],
     maintenance_act: [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0,0
+      0, 0,
     ],
   };
 
@@ -79,7 +79,7 @@ export default function CardColumPareto({ data }) {
 
       tooltip: {
         shared: true,
-        valueSuffix: " toneladas",
+        valueSuffix: "hr",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -88,12 +88,21 @@ export default function CardColumPareto({ data }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
-          fontWeight: "",
         },
-        // formatter: function () {
-        //   return `<b>${this.series.name}</b>: ${Number(this.y).toFixed(1)} toneladas`;
-        // },
+        formatter: function () {
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+          let tooltipText = `<b>${category}</b><br/>`; // Mostrar la fecha/hora correcta
+          this.points.forEach((point) => {
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${
+              point.series.name
+            }</b>: ${Number(point.y).toFixed(1)}hr<br/>`;
+          });
+
+          return tooltipText;
+        },
       },
+
       plotOptions: {
         column: {
           stacking: "normal",
@@ -122,30 +131,23 @@ export default function CardColumPareto({ data }) {
       series: [
         {
           type: "column",
-          name: "Mantenimiento y falla",
-          data: data?.maintenance_act || dataTemporal.maintenance_act,
+          name: "Horas Parada por Mantenimiento",
+          data: data?.maintenance_act,
           color: "#FF9500",
           stack: "Hour",
         },
         {
           type: "column",
-          name: "Act.Programada",
-          data: data?.programming_act,
-          color: "#22C2C5",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Servicio y Apoyo",
-          data: data?.service_act,
-          color: "#F43F5E",
-          stack: "Hour",
-        },
-        {
-          type: "column",
-          name: "Act.No Programada",
+          name: "Horas Improductivas No Gerenciales",
           data: data?.unplanned_act,
           color: "#347AE2",
+          stack: "Hour",
+        },
+        {
+          type: "column",
+          name: "Horas Improductivas Gerenciales",
+          data: data?.programming_act,
+          color: "#22C2C5",
           stack: "Hour",
         },
       ],

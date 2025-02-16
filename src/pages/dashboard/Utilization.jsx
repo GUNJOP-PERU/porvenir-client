@@ -20,6 +20,7 @@ function Utilization() {
   }, [fetchDataUtilization]);
 
   useProductionWebSocket();
+  console.log(progressVelocity, "progressVelocity");
 
   return (
     <>
@@ -38,6 +39,30 @@ function Utilization() {
           change={progressVelocity?.percentage_success || 0}
           valueColor="text-red-500"
           unid={"%"}
+        />
+        <CardItem
+          value={progressVelocity?.velocities?.max_empty?.value?.toFixed(1) || 0}
+          title="Velocidad máxima vacío"         
+          valueColor="text-red-500"
+          unid={"km/h"}
+        />
+        <CardItem
+          value={progressVelocity?.velocities?.max_loaded?.value?.toFixed(1) || 0}
+          title="Velocidad máxima cargado"         
+          valueColor="text-red-500"
+          unid={"km/h"}
+        />
+        <CardItem
+          value={progressVelocity?.velocities?.min_empty?.value?.toFixed(1) || 0}
+          title="Velocidad mínima vacío"         
+          valueColor="text-red-500"
+          unid={"km/h"}
+        />
+        <CardItem
+          value={progressVelocity?.velocities?.min_loaded?.value?.toFixed(1) || 0}
+          title="Velocidad mínima cargado"         
+          valueColor="text-red-500"
+          unid={"km/h"}
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">

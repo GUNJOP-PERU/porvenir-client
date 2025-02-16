@@ -45,7 +45,7 @@ const HighchartsHeatmap = React.memo(({ data, title }) => {
         plotBorderWidth: 0,
         height: 280,
         marginTop: 0,
-        marginBottom: 25,
+        marginBottom: 30,
       },
       title: {
         text: "",

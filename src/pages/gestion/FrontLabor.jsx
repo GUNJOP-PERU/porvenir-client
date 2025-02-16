@@ -31,7 +31,7 @@ function HomeFrontLabor() {
           </p>
         </div>
         <div className="flex gap-2">
-        <Button onClick={() => refetch()} variant="outline" size="icon">
+        <Button disabled={isFetching } onClick={() => refetch()} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -40,7 +40,7 @@ function HomeFrontLabor() {
           <Button className="w-fit" variant="outline">
             <IconMore className="w-5 h-5 fill-zinc-400" /> Exportar
           </Button>
-          <Button onClick={() => setDialogOpen(true)} className="w-fit">
+          <Button disabled={isFetching || isError} onClick={() => setDialogOpen(true)} className="w-fit">
             <IconMore className="w-5 h-5 fill-white" />
             Añadir nuevo
           </Button>

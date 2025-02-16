@@ -39,9 +39,41 @@ export const useUtilizationStore = create((set) => ({
   },
 
   subscribeToSocketUpdates: (socket) => {
-    // socket.on("scoop-progress", (newData) => {
-    //   console.log("Scoop Progress:", newData);
-    //   set({ scoopProgressDay: newData });
-    // });
+    socket.on("production-progress-velocity", (newData) => {
+      console.log(newData, "production-progress-velocity");
+       if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ progressVelocity: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          progressVelocity: newData,
+        });
+      }
+    });
+    socket.on("production-velocity-analysis", (newData) => {
+      console.log(newData, "production-velocity-analysis");
+       if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ progressVelocity: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          progressVelocity: newData,
+        });
+      }
+    });
+    socket.on("production-chart-utility", (newData) => {
+      console.log(newData, "production-chart-utility");
+       if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ progressVelocity: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          progressVelocity: newData,
+        });
+      }
+    });
   },
 }));

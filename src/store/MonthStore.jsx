@@ -41,11 +41,8 @@ export const useMonthStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("monthly-progress", (newData) => {
-      console.log("monthly-progress", newData);
-      if (
-        !newData ||
-        (typeof newData === "object" && Object.keys(newData).length === 0)
-      ) {
+      // console.log("monthly-progress", newData);
+       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set({ dataAccumulatedProgress: newData });
@@ -56,11 +53,19 @@ export const useMonthStore = create((set) => ({
       }
     });
     socket.on("monthly-chart-tonnes", (newData) => {
-      console.log("tonnes mensual", newData);
-     
+      // console.log("tonnes mensual", newData);
+       if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ dataChartToness: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          dataChartToness: newData,
+        });
+      }
     });
     socket.on("monthly-average-journals", (newData) => {
-      console.log("monthly average", newData);
+      console.log("monthly-average-journals", newData);
      
     });
   },

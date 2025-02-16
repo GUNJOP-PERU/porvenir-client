@@ -3,66 +3,86 @@ import HighchartsReact from "highcharts-react-official";
 import React, { Suspense, useMemo } from "react";
 
 const CardPie = React.memo(({ data, title }) => {
-  const dataChartTemporal = [
-    {
-      name: "Produccion",
-      y: 0,
-      color: "#EBEBEB",
-    },
-  ];
-
   const options = useMemo(
     () => ({
       chart: {
         backgroundColor: "transparent",
         type: "pie",
-        plotBackgroundColor: null,
-        height: 200,
+        marginRight: 0,
+        marginLeft: 0,
+        marginTop: 0,
+        marginBottom: 0,
+        height: 300,
       },
       title: {
-        text: null,
+        text: "",
       },
       series: [
         {
-          name: "Producción", // Agrega un nombre a la serie
-          colorByPoint: true, // Permite que cada punto tenga su color
-          innerSize: "60%",
-          data:
-            data?.data_chart?.map((item) => ({
-              name: item.title,
-              y: item.value,
-              color: item.fill,
-            })) || dataChartTemporal,
+          enableMouseTracking: false,
+          animation: {
+            duration: 2000,
+          },
+          colorByPoint: true,
+          innerSize: "45%",
+          data: data?.data_chart?.map((item) => ({
+            name: item.title,
+            y: item.value,
+            color: item.fill,
+          })),
         },
       ],
       tooltip: {
-        pointFormat:
-          "{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})",
+        // pointFormat:
+        //   "{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})",
+        // backgroundColor: "#111214",
+        // borderWidth: 0,
+        // shadow: false,
+        // borderRadius: 10,
+        // padding: 10,
+        // style: {
+        //   color: "#FFFFFF",
+        //   fontSize: "11px",
+        //   fontWeight: "",
+        // },
+        // headerFormat:
+        //   '<span style="font-size: 11px; color: #A6A6A6; padding:10px">{point.key}</span><br>',
+        // valueDecimals: 1,
+        enabled: false,
       },
       plotOptions: {
         pie: {
           allowPointSelect: true,
-          cursor: "pointer",
           borderWidth: 2,
-          borderColor: "#F4F4F580",
+          cursor: "pointer",
+          borderRadius: 10,
           dataLabels: {
-            enabled: false,
+            enabled: true,
+            format:
+              '<b><span style="color:{point.color}">{point.name}</span></b><br>' +
+              '<span style="color:#347AE2; font-size:14px">{point.percentage:.2f}%</span>',
+            distance: 15,
+            style: {
+              fontSize: "10px",
+              color: "#000",
+              fontWeight: "bold",
+              textOutline: "none",
+              whiteSpace: "normal", // Permite saltos de línea
+              wordWrap: "break-word", // Divide automáticamente si es largo
+              width: "80px", // Define un ancho para el ajuste automático
+              textAlign: "center", // Centra el texto
+            },
+            filter: {
+              operator: ">",
+              property: "percentage",
+              value: 0.5,
+            },
           },
+          showInLegend: true,
         },
       },
       legend: {
-        align: "center", // Centra la leyenda
-        verticalAlign: "bottom", // Coloca la leyenda en la parte inferior
-        layout: "horizontal", // Cambia a diseño horizontal
-        floating: false, // Evita que flote sobre el gráfico
-        itemStyle: {
-          color: "#A6A6A6",
-          fontSize: "9px",
-          fontWeight: "bold",
-        },
-        itemHoverStyle: {
-          color: "#1EE0EE",
-        },
+        enabled: false,
       },
       credits: {
         enabled: false,
@@ -81,7 +101,9 @@ const CardPie = React.memo(({ data, title }) => {
     <>
       <h4 className="text-xs font-bold">{title}</h4>
       <div className="w-full flex flex-1 justify-center items-center gap-2">
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <div style={{ width: "100%", overflowX: "auto" }}>
+          <HighchartsReact highcharts={Highcharts} options={options} />
+        </div>
         <div className="flex flex-col gap-2">
           {data?.data_card?.length > 0 ? (
             data?.data_card?.map((i, index) => (

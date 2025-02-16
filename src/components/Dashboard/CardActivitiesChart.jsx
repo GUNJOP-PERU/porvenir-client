@@ -63,6 +63,7 @@ export default function CardActivitiesChart({ data }) {
       ],
       tooltip: {
         shared: true,
+        valueSuffix: "hr",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -72,7 +73,20 @@ export default function CardActivitiesChart({ data }) {
           color: "#FFFFFF",
           fontSize: "11px",
         },
+        formatter: function () {
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+      
+          let tooltipText = `<b>${category}</b><br/>`; 
+      
+          this.points.forEach((point) => {
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${point.series.name}</b>: ${Number(point.y).toFixed(1)}hr<br/>`;
+          });
+      
+          return tooltipText;
+        },
       },
+      
       plotOptions: {
         column: {
           borderRadius: "15%",

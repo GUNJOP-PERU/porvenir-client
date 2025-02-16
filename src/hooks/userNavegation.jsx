@@ -1,6 +1,21 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import IconDashboard from "../icons/IconDashboard";
+import IconCompany from "@/icons/Dashboard/IconCompany";
+import IconUsers from "@/icons/Dashboard/IconUsers";
+import IconVehicle from "@/icons/Dashboard/IconVehicle";
+import IconLabor from "@/icons/Dashboard/IconLabor";
+import IconPlan from "@/icons/Dashboard/IconPlan";
+import IconWork from "@/icons/Dashboard/IconWork";
+import IconChecklist from "@/icons/Dashboard/IconChecklist";
+import IconCycle from "@/icons/Dashboard/IconCycle";
+import IconActivity from "@/icons/Dashboard/IconActivity";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
+import IconDash2 from "@/icons/Dashboard/IconDash2";
+import IconDash3 from "@/icons/Dashboard/IconDash3";
+import IconDash4 from "@/icons/Dashboard/IconDash4";
+import IconDash5 from "@/icons/Dashboard/IconDash5";
+import IconDash6 from "@/icons/Dashboard/IconDash6";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -14,116 +29,116 @@ export const useNavigation = () => {
           {
             name: "Compañia",
             href: "/company",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconCompany className="w-4 h-4 " />,
             active: pathname === "/company",
           },
           {
             name: "Usuarios",
             href: "/users",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconUsers className="w-4 h-4 " />,
             active: pathname === "/users",
           },
           {
             name: "Vehiculos",
             href: "/vehicle",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconVehicle className="w-4 h-4 " />,
             active: pathname === "/vehicle",
           },
           {
             name: "Frente de Labor",
             href: "/frontLabor",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconLabor className="w-4 h-4 " />,
             active: pathname === "/frontLabor",
           },
           {
             name: "Plan Diario",
             href: "/planDay",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconPlan className="w-4 h-4 " />,
             active: pathname === "/planDay",
           },
 
           {
             name: "Plan Mensual",
             href: "/planMonth",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconPlan className="w-4 h-4 " />,
             active: pathname === "/planMonth",
           },
           {
             name: "Orden de Trabajo",
             href: "/workOrder",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconWork className="w-4 h-4 " />,
             active: pathname === "/workOrder",
           },
           {
             name: "Checklist",
             href: "/checklist",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconChecklist className="w-4 h-4 " />,
             active: pathname === "/checklist",
           },
           {
             name: "Ciclo Truck",
             href: "/cycleTruck",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconCycle className="w-4 h-4 " />,
             active: pathname === "/cycleTruck",
           },
           {
             name: "Ciclo Scoop",
             href: "/cycleScoop",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconCycle className="w-4 h-4 " />,
             active: pathname === "/cycleScoop",
           },
           {
             name: "Actividades Truck",
             href: "/activityTruck",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/activityTruck",
           },
           {
             name: "Actividades Scoop",
             href: "/activityScoop",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/activityScoop",
           },
         ],
       },
       {
-        title: "Dashboard",
+        title: "Análisis",
         items: [
           {
             name: "Producción Truck",
             href: "/dashboard/productionTruck",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash1 className="w-4 h-4 " />,
             active: pathname === "/dashboard/productionTruck",
           },
 
           {
             name: "Producción Scoop",
             href: "/dashboard/productionScoop",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/productionScoop",
           },
           {
             name: "Pareto Truck",
             href: "/dashboard/paretoTruck",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash3 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/paretoTruck",
           },
           {
             name: "Pareto Scoop",
             href: "/dashboard/paretoScoop",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash4 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/paretoScoop",
           },
           {
             name: "Producción Mensual",
             href: "/dashboard/productionMonth",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash5 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/productionMonth",
           },
           {
             name: "Utilización y Velocidad",
             href: "/dashboard/productionUV",
-            icon: <IconDashboard className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/productionUV",
           },
         ],

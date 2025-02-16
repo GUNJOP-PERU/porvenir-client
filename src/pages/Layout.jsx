@@ -6,7 +6,7 @@ export default function Layout({ children }) {
     <main className="h-screen flex w-full overflow-hidden">
       <NavMain />
       <div
-        className="w-screen h-screen bg-gray-50 text-gray-900
+        className="w-screen h-screen bg-white text-gray-900
       dark:bg-gray-900 dark:text-white overflow-hidden flex flex-col"
       >
         <NavUser />

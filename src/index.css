@@ -125,16 +125,16 @@ html[dir] .dark ::-webkit-scrollbar-track {
     @apply bg-background text-foreground;
   }
 }
-/* 
-th:first-child {
+
+/* th:first-child {
   border-radius: 8px 0 0 8px;
 }
 
 th:last-child {
   border-radius: 0 8px 8px 0;
-}
+} */
 
-table th:first-child {
+/* table th:first-child {
 
   text-align: center;
 }
@@ -159,4 +159,22 @@ table td:last-child {
 
 .htCore{
   z-index: 99;
+}
+
+@keyframes spin-once {
+  0%,to {
+      transform: rotate(0deg)
+  }
+
+  25% {
+      transform: rotate(-30deg)
+  }
+
+  75% {
+      transform: rotate(30deg)
+  }
+}
+
+.animate-spin-once {
+  animation: spin-once 1s ease-in-out
 }

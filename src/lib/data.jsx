@@ -30,7 +30,7 @@ export const dataTurn = [
 ];
 
 export const dataLabor = [
-  { value: "T", name: "Tajo" },
+  { value: "TJ", name: "Tajo" },
   { value: "CX", name: "Crucero" },
   { value: "GA", name: "Galeria" },
   { value: "BP", name: "By Pass" },

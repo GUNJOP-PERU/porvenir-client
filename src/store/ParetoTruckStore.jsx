@@ -45,29 +45,38 @@ export const useParetoTruckStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("pareto-truck-progress-monthly", (newData) => {
-    
-      if (
-        !newData ||
-        (typeof newData === "object" && Object.keys(newData).length === 0)
-      ) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
-        set({ truckParetoProgress: newData });
+        set((state) => ({
+          truckParetoProgress: {
+            ...state.truckParetoProgress,
+            ...newData, 
+          },
+        }));
         productionSubject.next({
           ...productionSubject.getValue(),
-          truckParetoProgress: newData,
+          truckParetoProgress: {
+            ...productionSubject.getValue().truckParetoProgress,
+            ...newData,
+          },
         });
       }
     });
     socket.on("pareto-truck-no-productive-activities", (newData) => {
-      console.log("No activities ", newData);
+      // console.log("pareto-truck-no-productive-activities ", newData);
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ truckParetoNoProductive: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          truckParetoNoProductive: newData,
+        });
+      }
     });
     socket.on("pareto-truck-improductive-activities", (newData) => {
-      
-      if (
-        !newData ||
-        (typeof newData === "object" && Object.keys(newData).length === 0)
-      ) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set({ truckParetoActivitiesChart: newData });
@@ -78,11 +87,7 @@ export const useParetoTruckStore = create((set) => ({
       }
     });
     socket.on("pareto-truck-impact-diagram", (newData) => {
-     
-      if (
-        !newData ||
-        (typeof newData === "object" && Object.keys(newData).length === 0)
-      ) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set({ truckImpactDiagram: newData });

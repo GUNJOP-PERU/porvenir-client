@@ -18,31 +18,65 @@ export const useTruckStore = create((set) => ({
     productionSubject.subscribe((newData) => set(newData));
   },
 
-  fetchDataTruck: async () => {
+  fetchTruckProgressDay: async () => {
     try {
-      const [progress, heatmap, truckJob, chart, fleet] = await Promise.all([
-        getDataRequest("dashboard/truck/progress-day"),
-        getDataRequest("dashboard/truck/heatmap"),
-        getDataRequest("dashboard/truck/job-cycle"),
-        getDataRequest("dashboard/truck/chart-productivity"),
-        getDataRequest("dashboard/truck/chart-fleet"),
-      ]);
-
-      set({
+      const progress = await getDataRequest("dashboard/truck/progress-day");
+      set((state) => ({
+        ...state,
         progressDay: progress.data,
-        heatmap: heatmap.data.origins_destinies_tonnages,
-        truckJobCycle: truckJob.data,
-        chartProductivity: chart.data,
-        dataFleet: fleet.data,
-      });
+      }));
     } catch (error) {
-      console.error("Error cargando datos iniciales", error);
-    } finally {
+      console.error("Error cargando Progress Day", error);
+    }
+  },
+  fetchTruckHeatmap: async () => {
+    try {
+      const heatmap = await getDataRequest("dashboard/truck/heatmap");
+      set((state) => ({
+        ...state,
+        heatmap: heatmap.data.origins_destinies_tonnages,
+      }));
+    } catch (error) {
+      console.error("Error cargando Heatmap", error);
+    }
+  },
+  fetchTruckJobCycle: async () => {
+    try {
+      const truckJob = await getDataRequest("dashboard/truck/job-cycle");
+      set((state) => ({
+        ...state,
+        truckJobCycle: truckJob.data,
+      }));
+    } catch (error) {
+      console.error("Error cargando Job Cycle", error);
+    }
+  },
+  fetchTruckChartProductivity: async () => {
+    try {
+      const chart = await getDataRequest("dashboard/truck/chart-productivity");
+      set((state) => ({
+        ...state,
+        chartProductivity: chart.data,
+      }));
+    } catch (error) {
+      console.error("Error cargando Chart Productivity", error);
+    }
+  },
+  fetchTruckFleetData: async () => {
+    try {
+      const fleet = await getDataRequest("dashboard/truck/chart-fleet");
+      set((state) => ({
+        ...state,
+        dataFleet: fleet.data,
+      }));
+    } catch (error) {
+      console.error("Error cargando Fleet Data", error);
     }
   },
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("truck-progress-day", (newData) => {
+      console.log(data,"truck-progress-day")
       if (
         !newData ||
         (typeof newData === "object" && Object.keys(newData).length === 0)

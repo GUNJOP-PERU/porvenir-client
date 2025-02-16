@@ -35,7 +35,7 @@ const CardItem = React.memo(
               className={clsx(
                 "mt-0.5 flex items-center px-1 py-[2px] w-fit rounded-[5px]",
                 change >= 85
-                  ? "text-green-500"
+                  ? "bg-green-100"
                   : change >= 60
                   ? "bg-yellow-100"
                   : "bg-red-100" // Colores basados en el valor de change
@@ -62,12 +62,30 @@ const CardItem = React.memo(
               </span>
             </div>
 
-            <div className=" absolute -top-3 left-0 -mt-[2px] flex flex-col group-focus-within:visible group-active:visible">
-              <div className="flex min-w-max flex-col rounded-md bg-red-500 text-[8px] leading-[8px] font-bold text-white px-2.5 py-1.5 uppercase">
-                {getTooltipText(change)}!
+            <div className=" absolute -top-2 left-0 flex flex-col group-focus-within:visible group-active:visible">
+              <div
+                className={clsx(
+                  "min-w-max flex-col rounded-md  text-[8px] leading-[8px] font-bold text-white px-2 py-[4px] uppercase flex items-center justify-center",
+                  change >= 85
+                    ? "bg-green-500"
+                    : change >= 60
+                    ? "bg-yellow-500"
+                    : "bg-red-500" // Colores basados en el valor de change
+                )}
+              >
+               <span className="mt-[1px]"> {getTooltipText(change)}!</span>
               </div>
               <div className="ml-1 -mt-[4px] inline-block overflow-hidden">
-                <div className="h-2 w-2 origin-bottom-right rotate-45 transform bg-red-500 "></div>
+                <div
+                  className={clsx(
+                    "h-2 w-2 origin-bottom-right rotate-45 transform",
+                    change >= 85
+                      ? "bg-green-500"
+                      : change >= 60
+                      ? "bg-yellow-500"
+                      : "bg-red-500" // Colores basados en el valor de change
+                  )}
+                ></div>
               </div>
             </div>
           </>

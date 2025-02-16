@@ -1,17 +1,31 @@
-import { Suspense, useEffect, lazy } from "react";
+import { Suspense, useEffect, lazy, useCallback } from "react";
 import CardClock from "@/components/Dashboard/CardClock";
-import { CardCycleWork } from "@/components/Dashboard/CardCycleWork";
 import CardGauge from "@/components/Dashboard/CardGauge";
+import CardHeatMap from "@/components/Dashboard/CardHeatMap";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardPie from "@/components/Dashboard/CardPie";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import IconLoader from "@/icons/IconLoader";
 import { useTruckStore } from "@/store/TruckStore";
-
-const CardHeatMap = lazy(() => import("@/components/Dashboard/CardHeatmap"));
+import CardCycleWork from "@/components/Dashboard/CardCycleWork";
+import { motion, AnimatePresence } from "motion/react";
 
 function ProductionTruck() {
-  const fetchDataTruck = useTruckStore((state) => state.fetchDataTruck);
+  const fetchTruckProgressDay = useTruckStore(
+    (state) => state.fetchTruckProgressDay
+  );
+  const fetchTruckHeatmap = useTruckStore(
+    (state) => state.fetchTruckHeatmap
+  );
+  const fetchTruckJobCycle = useTruckStore(
+    (state) => state.fetchTruckJobCycle
+  );
+  const fetchTruckChartProductivity = useTruckStore(
+    (state) => state.fetchTruckChartProductivity
+  );
+  const fetchTruckFleetData = useTruckStore(
+    (state) => state.fetchTruckFleetData
+  );
   const {
     progressDay,
     heatmap,
@@ -21,9 +35,23 @@ function ProductionTruck() {
     truckLoading,
   } = useTruckStore();
 
+  const fetchData = useCallback(() => {
+    fetchTruckProgressDay();
+    fetchTruckHeatmap();
+    fetchTruckJobCycle();
+    fetchTruckChartProductivity();
+    fetchTruckFleetData();
+  }, [
+    fetchTruckProgressDay,
+    fetchTruckHeatmap,
+    fetchTruckJobCycle,
+    fetchTruckChartProductivity,
+    fetchTruckFleetData,
+  ]); 
+  
   useEffect(() => {
-    fetchDataTruck();
-  }, [fetchDataTruck]);
+    fetchData();
+  }, [fetchData]);
 
   useProductionWebSocket();
 
@@ -39,7 +67,6 @@ function ProductionTruck() {
           unid={"tn"}
           subtitle={`De ${progressDay?.travels?.mineral || 0} viajes`}
         />
-
         <CardItem
           value={progressDay?.total_waste || 0}
           title="Desmonte"
@@ -61,27 +88,37 @@ function ProductionTruck() {
           unid={"min"}
         />
         <CardItem
-          value={progressDay?.disponibility?.value.toFixed(2) || 0}
+          value={progressDay?.disponibility?.value?.toFixed(2) || 0}
           title="Disponiblidad"
           change={progressDay?.disponibility?.value || 0}
           valueColor="text-purple-600"
           unid={"%"}
         />
         <CardItem
-          value={progressDay?.utilization?.value.toFixed(2) || 0}
+          value={progressDay?.utilization?.value?.toFixed(2) || 0}
           title="Utilización"
+          change={progressDay?.utilization?.value || 0}
           valueColor="text-pink-600"
           unid={"%"}
         />
       </div>
-
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl">
-          <Suspense fallback={<p>Loading...</p>}>
-            <CardHeatMap data={heatmap} title="Ruta vs tonelaje" />
-          </Suspense>
+        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl relative">
+          {truckLoading && (
+            <AnimatePresence>
+              <motion.div
+                key="loading"
+                className="bg-zinc-200 absolute top-0 left-0 w-full h-full rounded-2xl z-50 animate-pulse"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              />
+            </AnimatePresence>
+          )}
+          <CardHeatMap data={heatmap} title="Ruta vs tonelaje" />
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl">
+        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl relative">
           <Suspense fallback={<p>Loading...</p>}>
             <CardCycleWork data={truckJobCycle} title="Ciclo de trabajo" />
           </Suspense>

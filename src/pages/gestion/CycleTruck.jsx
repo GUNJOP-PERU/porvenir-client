@@ -38,7 +38,7 @@ function PageCycle() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => refetch()} variant="outline" size="icon">
+          <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
           <Button className="w-fit" variant="outline">
@@ -47,7 +47,7 @@ function PageCycle() {
           <Button className="w-fit" variant="outline">
             <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
           </Button>
-          <Button onClick={() => setDialogOpen(true)} className="w-fit">
+          <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
             <CircleFadingPlus className="w-5 h-5 text-white" />
             Añadir nuevo
           </Button>

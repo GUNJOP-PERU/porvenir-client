@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import { formatThousands } from "@/lib/utilsGeneral";
-import { useProductionStore } from "@/store/ProductionStore";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
@@ -88,7 +87,7 @@ export default function CardGauge() {
                   <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
                     <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
                     <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
-                      ${formatThousands(this.y) || `${0}`}<small>k</small>
+                      ${formatThousands(this.y) || `${0}`}
                     </span>
                   </div>
                 `;
@@ -123,7 +122,7 @@ export default function CardGauge() {
   );
 
   return (
-    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4">
+    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 w-[150px]">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

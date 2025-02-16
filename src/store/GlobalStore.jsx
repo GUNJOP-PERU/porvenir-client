@@ -17,7 +17,6 @@ export const useGlobalStore = create((set, get) => ({
     try {
       const accumulated = await getDataRequest("dashboard/progress-shift");
       set({ dataGuage: accumulated.data });
-
       // 🔹 Actualiza RXJS para que otros subscriptores reciban la data
       productionSubject.next({
         ...productionSubject.getValue(),
@@ -32,13 +31,13 @@ export const useGlobalStore = create((set, get) => ({
     socket.on("progress-shift", (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
-        return; 
+      } else {
+        set({ dataGuage: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          dataGuage: newData,
+        });
       }
-      set({ dataGuage: newData });
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        dataGuage: newData,
-      });
     });
   },
 }));

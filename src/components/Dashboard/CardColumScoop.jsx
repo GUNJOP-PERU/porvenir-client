@@ -1,3 +1,4 @@
+import { hoursDay, hoursNight } from "@/lib/dataDashboard";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -5,25 +6,10 @@ import { useMemo } from "react";
 
 export default function CardColumScoop({ data }) {
 
-  const dataTemporal = {
-    hours: [
-      "18:00",
-      "19:00",
-      "20:00",
-      "21:00",
-      "22:00",
-      "23:00",
-      "00:00",
-      "01:00",
-      "02:00",
-      "03:00",
-      "04:00",
-      "05:00",
-      "06:00",
-    ],
-    advance: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    production: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  };
+
+  const selectedData = useMemo(() => {
+    return data?.shift === "noche" ? hoursNight : data;
+  }, [data, hoursNight]);
 
   const options = useMemo(
     () => ({
@@ -38,7 +24,7 @@ export default function CardColumScoop({ data }) {
         text: null,
       },
       xAxis: {
-        categories: data?.hours || dataTemporal.hours,
+        categories: selectedData?.hours || (data?.shift === "noche" ? hoursNight : hoursDay),
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -117,14 +103,14 @@ export default function CardColumScoop({ data }) {
         {
           type: "column",
           name: "Avance",
-          data: data?.advance || dataTemporal.advance,
+          data: data?.advance ,
           color: "#F59E0B",
           stack: "Tiempo",
         },
         {
           type: "column",
-          name: "Produccion",
-          data: data?.production || dataTemporal.production,
+          name: "Producción",
+          data: data?.production ,
           color: "#14B8A6",
           stack: "Tiempo",
         },
