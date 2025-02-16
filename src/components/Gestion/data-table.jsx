@@ -58,8 +58,8 @@ export function DataTable({ columns, data, isLoading, isError }) {
     return (
       <div className="space-y-4 flex-1 flex flex-col">      
         <div className="max-w-[150px] leading-3 mx-auto flex-1 flex flex-col items-center justify-center gap-1">
-          <IconWarning className="w-6 h-6 text-red-500" />
-          <p className="text-center text-red-500 text-[10px]">
+          <IconWarning className="w-6 h-6 text-red-300" />
+          <p className="text-center text-zinc-300 text-[10px]">
             Hubo un error al cargar los datos. Por favor, intente nuevamente.
           </p>
         </div>
@@ -69,7 +69,7 @@ export function DataTable({ columns, data, isLoading, isError }) {
 
   return (
     <>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} isLoading={isLoading}/>
       <SkeletonWrapper isLoading={isLoading}>
         <Table>
           <TableHeader>
@@ -130,7 +130,7 @@ export function DataTable({ columns, data, isLoading, isError }) {
           </TableBody>
         </Table>
       </SkeletonWrapper>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} isLoading={isLoading}/>
     </>
   );
 }

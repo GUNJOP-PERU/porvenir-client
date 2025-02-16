@@ -61,7 +61,7 @@ export default function CardTimeline({ data = [] }) {
       chart: {
         type: "xrange",
         backgroundColor: "transparent",
-        height: 200,
+        height: 170,
         marginTop: 20,
         marginBottom: 30,
       },

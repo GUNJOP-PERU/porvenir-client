@@ -195,7 +195,6 @@ export default function CardColumParetoTruck({ data }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">Actividades Improductivas Mes</h4>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );

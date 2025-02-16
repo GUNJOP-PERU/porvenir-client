@@ -4,7 +4,9 @@ import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/CardTable";
 import CardTimeline from "@/components/Dashboard/CardTimeline";
+import CardTitle from "@/components/Dashboard/CardTitle";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
 import { useScoopStore } from "@/store/ScoopStore";
 import { useEffect } from "react";
 
@@ -22,7 +24,7 @@ function ProductionScoop() {
   console.log(scoopTonnagHour, "scoopTonnagHour");
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between gap-1">
+      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(125px,1fr))]">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -75,7 +77,9 @@ function ProductionScoop() {
             ) || 0
           }
           title="Disponiblidad"
-          change={scoopProgressDay?.mineral?.percentageDisponibility?.value || 0}
+          change={
+            scoopProgressDay?.mineral?.percentageDisponibility?.value || 0
+          }
           valueColor="text-purple-600"
           unid={"%"}
         />
@@ -92,13 +96,28 @@ function ProductionScoop() {
         />
       </div>
       <div className="flex-1 grid grid-rows-3 gap-2 grid-cols-1">
-        <div className=" bg-muted/50 rounded-2xl flex flex-col gap-1 px-4 p-3">
+        <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
+          <CardTitle
+            title="Tonelaje Mineral / Avance"
+            subtitle="Relación entre tonelaje mineral y avance."
+            icon={IconDash1}
+          />
           <CardColumScoop data={scoopTonnagHour} />
         </div>
-        <div className=" bg-muted/50 rounded-2xl flex flex-col gap-1 px-4 p-3">
+        <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
+        <CardTitle
+            title="Eventos por vehiculo y labor"
+            subtitle="Eventos por vehículo y tipo de labor.."
+            icon={IconDash1}
+          />
           <CardTimeline data={scoopActivityHour} />
         </div>
-        <div className=" bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3 ">
+        <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3 ">
+        <CardTitle
+            title="Eventos "
+            subtitle="Registro y análisis de eventos."
+            icon={IconDash1}
+          />
           <CardTable data={scoopEvents} />
         </div>
       </div>

@@ -1,8 +1,10 @@
+import IconDash1 from "@/icons/Dashboard/IconDash1";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { Subtitles } from "lucide-react";
 import React, { Suspense, useMemo } from "react";
 
-const CardPie = React.memo(({ data, title }) => {
+const CardPie = React.memo(({ data }) => {
   const options = useMemo(
     () => ({
       chart: {
@@ -12,7 +14,8 @@ const CardPie = React.memo(({ data, title }) => {
         marginLeft: 0,
         marginTop: 0,
         marginBottom: 0,
-        height: 300,
+        height: 280,
+        // width: 280,
       },
       title: {
         text: "",
@@ -98,56 +101,51 @@ const CardPie = React.memo(({ data, title }) => {
   );
 
   return (
-    <>
-      <h4 className="text-xs font-bold">{title}</h4>
-      <div className="w-full flex flex-1 justify-center items-center gap-2">
-        <div style={{ width: "100%", overflowX: "auto" }}>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </div>
-        <div className="flex flex-col gap-2">
-          {data?.data_card?.length > 0 ? (
-            data?.data_card?.map((i, index) => (
-              <div
-                key={index}
-                className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5"
-              >
-                <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
-                  {i.title}
-                </span>
-                <div className="flex justify-between gap-0.5">
-                  <h1 className="text-[#EF9517] font-black text-xl leading-5">
-                    {i.value?.toFixed(2)}
-                    <small className="font-extrabold">
-                      {i.unit?.charAt(0)}
-                    </small>
-                  </h1>
-                </div>
-                <span className="text-green-600 leading-[8px] text-[8px]">
-                  1.1 % más eficiente
-                </span>
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-400 text-[10px] leading-3 max-w-20">
-              <div className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5">
-                <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
-                  Tiempo improductivo
-                </span>
-                <div className="flex justify-between gap-0.5">
-                  <h1 className="text-[#EF9517] font-black text-xl leading-5">
-                    0.0
-                    <small className="font-extrabold">h</small>
-                  </h1>
-                </div>
-                <span className="text-green-600 leading-[8px] text-[8px]">
-                  1.1 % más eficiente
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="w-full flex flex-1 justify-center items-center gap-2">
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
-    </>
+      <div className="flex flex-col gap-2">
+        {data?.data_card?.length > 0 ? (
+          data?.data_card?.map((i, index) => (
+            <div
+              key={index}
+              className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5"
+            >
+              <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
+                {i.title}
+              </span>
+              <div className="flex justify-between gap-0.5">
+                <h1 className="text-[#EF9517] font-black text-xl leading-5">
+                  {i.value?.toFixed(2)}
+                  <small className="font-extrabold">{i.unit?.charAt(0)}</small>
+                </h1>
+              </div>
+              <span className="text-green-600 leading-[8px] text-[8px]">
+                1.1 % más eficiente
+              </span>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-400 text-[10px] leading-3 max-w-20">
+            <div className="flex flex-col justify-center items-center border rounded-xl p-3 px-3.5 gap-0.5">
+              <span className="text-[10px] text-center leading-3 font-semibold text-zinc-700 mb-1.5">
+                Tiempo improductivo
+              </span>
+              <div className="flex justify-between gap-0.5">
+                <h1 className="text-[#EF9517] font-black text-xl leading-5">
+                  0.0
+                  <small className="font-extrabold">h</small>
+                </h1>
+              </div>
+              <span className="text-green-600 leading-[8px] text-[8px]">
+                1.1 % más eficiente
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 });
 

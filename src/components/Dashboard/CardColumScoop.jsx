@@ -16,7 +16,7 @@ export default function CardColumScoop({ data }) {
       chart: {
         type: "column",
         backgroundColor: "transparent",
-        height: 180,
+        height: 170,
         marginTop: 35,
         marginBottom: 30,
       },
@@ -152,7 +152,6 @@ export default function CardColumScoop({ data }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">Tonelaje - Planificado vs Ejecutado</h4>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );

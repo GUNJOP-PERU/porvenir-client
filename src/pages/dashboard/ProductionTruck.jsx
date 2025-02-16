@@ -9,17 +9,15 @@ import IconLoader from "@/icons/IconLoader";
 import { useTruckStore } from "@/store/TruckStore";
 import CardCycleWork from "@/components/Dashboard/CardCycleWork";
 import { motion, AnimatePresence } from "motion/react";
+import CardTitle from "@/components/Dashboard/CardTitle";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
 
 function ProductionTruck() {
   const fetchTruckProgressDay = useTruckStore(
     (state) => state.fetchTruckProgressDay
   );
-  const fetchTruckHeatmap = useTruckStore(
-    (state) => state.fetchTruckHeatmap
-  );
-  const fetchTruckJobCycle = useTruckStore(
-    (state) => state.fetchTruckJobCycle
-  );
+  const fetchTruckHeatmap = useTruckStore((state) => state.fetchTruckHeatmap);
+  const fetchTruckJobCycle = useTruckStore((state) => state.fetchTruckJobCycle);
   const fetchTruckChartProductivity = useTruckStore(
     (state) => state.fetchTruckChartProductivity
   );
@@ -47,8 +45,8 @@ function ProductionTruck() {
     fetchTruckJobCycle,
     fetchTruckChartProductivity,
     fetchTruckFleetData,
-  ]); 
-  
+  ]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -57,7 +55,7 @@ function ProductionTruck() {
 
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between gap-2">
+      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(150px,1fr))]">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -103,7 +101,7 @@ function ProductionTruck() {
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl relative">
+        <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl first-line:relative">
           {truckLoading && (
             <AnimatePresence>
               <motion.div
@@ -116,24 +114,41 @@ function ProductionTruck() {
               />
             </AnimatePresence>
           )}
-          <CardHeatMap data={heatmap} title="Ruta vs tonelaje" />
+          <CardTitle
+            title="Ruta vs Tonelaje"
+            subtitle="   Comparación del tonelaje transportado en distintas rutas."
+            icon={IconDash1}
+          />
+          <CardHeatMap data={heatmap} />
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl relative">
+        <div className="flex flex-col gap-2 border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl relative">
           <Suspense fallback={<p>Loading...</p>}>
+            <CardTitle
+              title="Ciclo de Trabajo"
+              subtitle=" Duración y fases del proceso operativo."
+              icon={IconDash1}
+            />
             <CardCycleWork data={truckJobCycle} title="Ciclo de trabajo" />
           </Suspense>
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl">
+        <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
           <Suspense fallback={<p>Loading...</p>}>
-            <CardPie
-              data={chartProductivity}
-              title="Tiempos productivos vs improductivos"
+            <CardTitle
+              title="Tiempos productivos vs Improductivos"
+              subtitle="Comparación entre trabajo efectivo y tiempo perdido."
+              icon={IconDash1}
             />
+            <CardPie data={chartProductivity} />
           </Suspense>
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center bg-muted/50 p-4 rounded-2xl">
+        <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
           <Suspense fallback={<p>Loading...</p>}>
-            <CardPie data={dataFleet} title="Estado de Flota" />
+            <CardTitle
+              title="Estado de Flota"
+              subtitle="Disponibilidad y rendimiento de los vehículos."
+              icon={IconDash1}
+            />
+            <CardPie data={dataFleet} />
           </Suspense>
         </div>
       </div>

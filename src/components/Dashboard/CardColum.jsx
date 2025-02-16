@@ -202,7 +202,6 @@ export default function CardColum({ data }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">Tonelaje - Planificado vs Ejecutado</h4>
       <HighchartsReact highcharts={Highcharts} options={options} />
       <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
         <IconWarning className="text-red-500 w-3 h-3" />

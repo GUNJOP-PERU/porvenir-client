@@ -122,7 +122,7 @@ export default function CardGauge() {
   );
 
   return (
-    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 w-[150px]">
+    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center ">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

@@ -1,7 +1,8 @@
 import { NavMain } from "@/components/Layout/nav-main";
 import { NavUser } from "@/components/Layout/nav-user";
+import { Outlet } from "react-router-dom";
 
-export default function Layout({ children }) {
+export default function Layout() {
   return (
     <main className="h-screen flex w-full overflow-hidden">
       <NavMain />
@@ -11,7 +12,7 @@ export default function Layout({ children }) {
       >
         <NavUser />
         <section className="flex-1 flex flex-col gap-x-4 gap-y-2 p-4 overflow-auto">
-          {children}
+          <Outlet /> {/* Renderiza las rutas anidadas aquí */}
         </section>
       </div>
     </main>

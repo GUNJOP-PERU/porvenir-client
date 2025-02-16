@@ -2,7 +2,7 @@ import authApi from "./axios";
 
 // Login
 export const loginRequest = async (data) =>
-  authApi.post("/api/auth/auth.login.user", data);
+  authApi.post("/auth/verify-login", data);
 
 // Obtener datos
 export const getDataRequest = (endpoint) => authApi.get(`api/v1/${endpoint}`);

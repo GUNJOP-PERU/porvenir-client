@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-
 import { useNavigate } from "react-router-dom";
 import IconLoader from "@/icons/IconLoader";
 import { loginRequest } from "@/lib/api";
 import { useAuthStore } from "@/store/AuthStore";
 import { Button } from "@/components/ui/button";
+import IconSubmit from "@/icons/IconSubmit";
 
 export default function PageLogin() {
   const setToken = useAuthStore.getState().setToken;
@@ -55,29 +55,34 @@ export default function PageLogin() {
     setLoading(true);
 
     const combinedValue = codes.join("");
-    const initialData = { dni: combinedValue };
-    try {
-      const success = await loginRequest(initialData);
+    const initialData = { code: combinedValue };
+    // try {
+    //   const success = await loginRequest(initialData);
+
+    //   if (success.data.status === true) {
+    //     setToken(success.data.token);
+    //     // Cookies.set("userData", JSON.stringify(success.data.user));
+    //     setProfile(success.data.user);
+    //     sessionStorage.setItem("firstLogin", "true");
+    //     navigate("/");
+    //   } else {
+    //     resetForm();
+    //     setLoading(false);
+    //     setShowError(true);
+    //     setTimeout(() => {
+    //       setShowError(false);
+    //     }, 3000);
+    //   }
+    // } catch (error) {
+    //   console.error("Error :", error);
+    //   resetForm();
+    //   setLoading(false);
+    // } finally {
+    // }
+    console.log(initialData, "codigo")
+    sessionStorage.setItem("firstLogin", "true");
+    navigate("/");
     
-      if (success.data.status === true) {
-        setToken(success.data.token);
-        // Cookies.set("userData", JSON.stringify(success.data.user));
-        setProfile(success.data.user);
-        navigate('/');
-      } else {
-        resetForm();
-        setLoading(false);
-        setShowError(true);
-        setTimeout(() => {
-          setShowError(false);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error("Error :", error);
-      resetForm();
-      setLoading(false);
-    } finally {
-    }
   };
 
   useEffect(() => {
@@ -98,8 +103,8 @@ export default function PageLogin() {
             pointerEvents: loading ? "none" : "auto",
           }}
         >
-          <img className="w-24 h-24" src="/src/assets/logo-white.svg" alt="" />
-          <font className="text-[#ffffff66] text-xs text-center font-normal mt-2">
+          <img className="h-10" src="/src/assets/logo-white.svg" alt="" />
+          <font className="text-zinc-300 text-xs leading-4 text-center mt-3">
             Ingrese su clave de{" "}
             <strong className="text-[##ffffff99]">inicio de sesión</strong> para
             acceder
@@ -120,16 +125,16 @@ export default function PageLogin() {
                   ref={(ref) => (inputReferences.current[index] = ref)}
                   pattern="[0-9]*"
                   inputMode="numeric"
-                  className="w-9 md:w-10 h-10 md:h-11 p-0 text-center text-lg text-zinc-400 rounded-md bg-zinc-800 border border-zinc-800 focus:border-primary"
+                  className="w-9 md:w-10 h-10 md:h-11 p-0 text-center text-2xl text-zinc-400 rounded-[10px] bg-zinc-800 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/20 focus:shadow-primary  transition ease-in-out duration-300"
                   required
                 />
               ))}
             </div>
           </div>
-          <div></div>
+
           <Button
             type="submit"
-            // className="bg-[#ffffff10] h-9 text-xs rounded-xl text-[#ffffff66] max-w-[200px] w-full flex justify-center items-center gap-1.5 hover:bg-primary hover:text-zinc-200"
+            className="bg-[#ffffff10] h-9 text-xs rounded-xl text-[#ffffff66] max-w-[200px] w-full flex justify-center items-center gap-1.5 hover:bg-primary hover:text-zinc-200"
             disabled={loading || codes.join("").length !== 8}
           >
             {loading ? (
@@ -138,9 +143,36 @@ export default function PageLogin() {
                 Cargando...
               </>
             ) : (
-              "Ingresar"
+              <>
+                Iniciar sesión
+                <IconSubmit className="h-5 w-5 transition-colors fill-zinc-500" />
+              </>
             )}
           </Button>
+          <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary mt-8">
+            <font className="vertical-align: inherit;">
+              <font className="vertical-align: inherit;">
+                Al hacer clic en continuar, usted acepta nuestro{" "}
+              </font>
+              <a href="#">
+                <font className="vertical-align: inherit;">
+                  <font className="vertical-align: inherit;">
+                    Términos de Servicio
+                  </font>
+                </font>
+              </a>{" "}
+              <font className="vertical-align: inherit;">
+                <font className="vertical-align: inherit;">y </font>
+              </font>
+              <a href="#">
+                <font className="vertical-align: inherit;">
+                  <font className="vertical-align: inherit;">
+                    Política de Privacidad
+                  </font>
+                </font>
+              </a>
+            </font>
+          </div>
         </form>
       </section>
       <div
@@ -174,4 +206,3 @@ export default function PageLogin() {
     </>
   );
 }
-

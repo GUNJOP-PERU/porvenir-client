@@ -7,7 +7,7 @@ export function NavMain() {
   const paths = useNavigation();
 
   return (
-    <nav className="h-screen w-16 md:w-72 border-r border-zinc-100 bg-zinc-50 flex flex-col ">
+    <nav className="h-screen w-16 md:w-72 border-r border-zinc-100 bg-zinc-100 flex flex-col ">
       <div className="w-full px-6 flex justify-between items-center h-14 border-b border-zinc-100">
         <img src="/src/assets/logo.svg" alt="" className="h-7" />
       </div>
@@ -22,10 +22,10 @@ export function NavMain() {
                 <Link to={item.href} key={index}>
                   <li
                     className={clsx(
-                      "w-full h-8 flex items-center gap-2 text-[13px] py-1.5 px-2 rounded-lg cursor-pointer font-semibold hover:bg-primary/10 ",
+                      "w-full h-8 flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-white hover:text-zinc-600 transition ease-in-out duration-200 ",
                       item.active
-                        ? "bg-primary/50 md:bg-primary/10 text-primary"
-                        : "text-zinc-600"
+                        ? "bg-white text-zinc-600 shadow-sm"
+                        : "text-zinc-400"
                     )}
                   >
                     {React.cloneElement(item.icon, {

@@ -17,7 +17,7 @@ const CardItem = React.memo(
     };
 
     return (
-      <div className="flex flex-col justify-center relative bg-zinc-100/50 rounded-xl py-2 px-4 min-w-[130px] h-[90px]">
+      <div className="flex flex-col justify-center relative  border border-[#F0F0F0] shadow-sm rounded-xl py-2 px-4 h-[90px] ">
         <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[100px] mb-2">
           {title}
         </span>
@@ -58,7 +58,7 @@ const CardItem = React.memo(
                   getColorClass(change)
                 )}
               >
-                {`${(100 - change).toFixed(2)}%`}
+                {`${(100 - change).toFixed(0)}%`}
               </span>
             </div>
 

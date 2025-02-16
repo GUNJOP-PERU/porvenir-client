@@ -181,9 +181,6 @@ export default function CardActivitiesChart({ data }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">
-        Actividades Improductivas Promedio vs Acumulada
-      </h4>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );

@@ -24,7 +24,7 @@ function CardClock() {
   }, [time]);
 
   return (
-    <div className="flex items-center justify-center bg-zinc-100/50 rounded-2xl py-2 px-4 w-[150px]">
+    <div className="flex items-center justify-center bg-zinc-100/50 rounded-2xl py-2 px-4 ">
       <h1 className="font-extrabold text-2xl leading-8">
         <span className="text-yellow-600">{formattedTime.hours}</span>
         <span className="text-zinc-400">

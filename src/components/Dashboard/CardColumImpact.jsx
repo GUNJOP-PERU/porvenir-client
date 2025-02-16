@@ -195,9 +195,7 @@ export default function CardColumImpact({ data }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">
-        Analisis de Pareto con Indice de Impacto Ponderado
-      </h4>
+    
       <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );

@@ -2,8 +2,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardVelocity({ data, title }) {
-  
+export default function CardVelocity({ data }) {
   const options = useMemo(
     () => ({
       chart: {
@@ -82,7 +81,7 @@ export default function CardVelocity({ data, title }) {
       series: [
         {
           name: "Velocidad Vacio",
-          data: data?.velocities_lleno  ,
+          data: data?.velocities_lleno,
           color: "#F43F5E",
         },
         {
@@ -123,10 +122,5 @@ export default function CardVelocity({ data, title }) {
     [data]
   );
 
-  return (
-    <>
-      <h4 className="text-xs font-bold">{title}</h4>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
-  );
+  return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

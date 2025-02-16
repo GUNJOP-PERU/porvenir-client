@@ -3,7 +3,9 @@ import CardColum from "@/components/Dashboard/CardColum";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardRange from "@/components/Dashboard/CardRange";
+import CardTitle from "@/components/Dashboard/CardTitle";
 import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
 import { useMonthStore } from "@/store/MonthStore";
 import { useEffect } from "react";
 
@@ -23,7 +25,7 @@ function ProductionMonth() {
   useProductionWebSocket();
   return (
     <>
-      <div className="w-full flex flex-wrap justify-between gap-2 ">
+       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(140px,1fr))]">
         <CardGauge />
         <CardClock />
         <CardItem
@@ -95,16 +97,31 @@ function ProductionMonth() {
         />
       </div>
       <div className="flex-1 grid grid-cols-1 gap-2 md:grid-cols-2">
-        <div className="md:col-span-2 bg-muted/50 rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+        <div className="md:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+        <CardTitle
+            title=" Tonelaje / Planificado vs Ejecutado"
+            subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
+            icon={IconDash1}
+          />
           <CardColum data={dataChartToness} />
         </div>
-        <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
+        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
+        <CardTitle
+            title=" Rango de horario de trabajo Camiones"
+            subtitle="Horario de operación del Camión."
+            icon={IconDash1}
+          />
           {/* <CardRange
             data={dataRangeTruck}
             title="Rango de horario de trabajo Camiones"
           /> */}
         </div>
-        <div className="flex flex-col justify-center gap-2  bg-muted/50 p-4 rounded-2xl">
+        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
+        <CardTitle
+            title=" Rango de horario de trabajo Scooptram"
+            subtitle="Horario de operación del Scooptram."
+            icon={IconDash1}
+          />
           {/* <CardRange
             data={dataRangeScoop}
             title="Rango de horario de trabajo Scooptram"

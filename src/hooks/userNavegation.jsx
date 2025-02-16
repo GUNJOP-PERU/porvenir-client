@@ -106,9 +106,9 @@ export const useNavigation = () => {
         items: [
           {
             name: "Producción Truck",
-            href: "/dashboard/productionTruck",
+            href: "/",
             icon: <IconDash1 className="w-4 h-4 " />,
-            active: pathname === "/dashboard/productionTruck",
+            active: pathname === "/",
           },
 
           {

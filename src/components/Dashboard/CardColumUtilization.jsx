@@ -179,10 +179,5 @@ export default function CardColumUtilization({ data }) {
     [data]
   );
 
-  return (
-    <>
-      <h4 className="text-xs font-bold">Produccion (Ton) / Utilizacion (%)</h4>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
-  );
+  return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

@@ -2,13 +2,15 @@ import React, { Suspense, useMemo } from "react";
 import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import highchartsHeatmap from "highcharts/modules/heatmap";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { MoreHorizontal, MoreVertical } from "lucide-react";
 
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
   highchartsHeatmap(Highcharts);
 }
 
-const HighchartsHeatmap = React.memo(({ data, title }) => {
+const HighchartsHeatmap = React.memo(({ data }) => {
   const dataTemporal = {
     xCategories: ["Cancha 100", "Faja 4", "Pocket 3"],
     yCategories: ["CX-097"],
@@ -157,12 +159,11 @@ const HighchartsHeatmap = React.memo(({ data, title }) => {
     [heatmapData, xCategories, yCategories]
   );
   return (
-    <>
-      <h4 className="text-xs font-bold">{title}</h4>
+        
       <div style={{ width: "100%", overflowX: "auto" }}>
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
-    </>
+  
   );
 });
 HighchartsHeatmap.displayName = "HighchartsHeatmap";
