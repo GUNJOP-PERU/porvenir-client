@@ -56,33 +56,45 @@ export default function PageLogin() {
 
     const combinedValue = codes.join("");
     const initialData = { code: combinedValue };
-    // try {
-    //   const success = await loginRequest(initialData);
+    try {
+      const response = await loginRequest(initialData);
+      console.log("respuesta", response);
+      const token = response.data.token;
+      const payload = token.split(".")[1];
+      const decodedPayload = JSON.parse(
+        atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+      );
 
-    //   if (success.data.status === true) {
-    //     setToken(success.data.token);
-    //     // Cookies.set("userData", JSON.stringify(success.data.user));
-    //     setProfile(success.data.user);
-    //     sessionStorage.setItem("firstLogin", "true");
-    //     navigate("/");
-    //   } else {
-    //     resetForm();
-    //     setLoading(false);
-    //     setShowError(true);
-    //     setTimeout(() => {
-    //       setShowError(false);
-    //     }, 3000);
-    //   }
-    // } catch (error) {
-    //   console.error("Error :", error);
-    //   resetForm();
-    //   setLoading(false);
-    // } finally {
-    // }
-    console.log(initialData, "codigo")
-    sessionStorage.setItem("firstLogin", "true");
-    navigate("/");
-    
+      const userLogued = {
+        user: {
+          _id: decodedPayload.id,
+          name: decodedPayload.name,
+          rol: decodedPayload.cargo,
+        },
+        token,
+      };
+      console.log(userLogued);
+        setToken(userLogued.token);
+        setProfile(userLogued.user);
+        navigate("/");
+      
+    } catch (error) {
+      console.error("Error :", error);
+      resetForm();
+        setLoading(false);
+        setShowError(true);
+        setTimeout(() => {
+          setShowError(false);
+        }, 3000);
+      if (
+        ["Bad credentials", "User not found locally"].includes(error.message)
+      ) {
+        console.log("error");
+      }
+    } finally {
+    }
+
+    // navigate("/");
   };
 
   useEffect(() => {
@@ -93,7 +105,7 @@ export default function PageLogin() {
 
   return (
     <>
-      <section className="h-dvh flex flex-col justify-center items-center bg-[#121316]">
+      <section className="h-dvh flex flex-col justify-center items-center bg-[#121316] relative">
         <form
           className="flex flex-col justify-center items-center gap-2 max-w-[400px]"
           action=""
@@ -174,9 +186,8 @@ export default function PageLogin() {
             </font>
           </div>
         </form>
-      </section>
       <div
-        className={` absolute top-0 left-0  error-login ${
+        className={`absolute left-1/2 -translate-x-1/2 bottom-40 bg-[#212226] rounded-xl flex gap-1 py-2 px-3 shadow-2xl ${
           showError ? "error-visible" : "error-hidden"
         }`}
       >
@@ -201,8 +212,9 @@ export default function PageLogin() {
             strokeLinejoin="round"
           ></path>
         </svg>
-        <h4>Código inválido, inténtelo de nuevo</h4>
+        <h4 className="text-xs text-zinc-300">Código inválido, inténtelo de nuevo</h4>
       </div>
+      </section>
     </>
   );
 }

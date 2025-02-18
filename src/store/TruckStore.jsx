@@ -34,7 +34,7 @@ export const useTruckStore = create((set) => ({
       const heatmap = await getDataRequest("dashboard/truck/heatmap");
       set((state) => ({
         ...state,
-        heatmap: heatmap.data.origins_destinies_tonnages,
+        heatmap: heatmap.data,
       }));
     } catch (error) {
       console.error("Error cargando Heatmap", error);
@@ -76,11 +76,7 @@ export const useTruckStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("truck-progress-day", (newData) => {
-      console.log(data,"truck-progress-day")
-      if (
-        !newData ||
-        (typeof newData === "object" && Object.keys(newData).length === 0)
-      ) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set({ progressDay: newData });
@@ -94,66 +90,75 @@ export const useTruckStore = create((set) => ({
     socket.on("truck-heatmap", (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
-        return;
+      } else {
+        set({ heatmap: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          heatmap: newData,
+        });
       }
-      set((state) => {
-        const index = state.heatmap.findIndex(
-          (entry) =>
-            entry.origin === newData.origin && entry.destiny === newData.destiny
-        );
+      // set((state) => {
+      //   const index = state.heatmap.findIndex(
+      //     (entry) =>
+      //       entry.origin === newData.origin && entry.destiny === newData.destiny
+      //   );
 
-        if (index !== -1) {
-          const updatedHeatmap = [...state.heatmap];
-          updatedHeatmap[index] = {
-            ...updatedHeatmap[index],
-            value: newData.value,
-          };
-          return { heatmap: updatedHeatmap };
-        } else {
-          return { heatmap: [...state.heatmap, newData] };
-        }
-      });
+      //   if (index !== -1) {
+      //     const updatedHeatmap = [...state.heatmap];
+      //     updatedHeatmap[index] = {
+      //       ...updatedHeatmap[index],
+      //       value: newData.value,
+      //     };
+      //     return { heatmap: updatedHeatmap };
+      //   } else {
+      //     return { heatmap: [...state.heatmap, newData] };
+      //   }
+      // });
 
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        heatmap: newData,
-      });
+      // productionSubject.next({
+      //   ...productionSubject.getValue(),
+      //   heatmap: newData,
+      // });
     });
 
     socket.on("truck-job-cycle", (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
-        return;
+      }else{
+        set({ truckJobCycle: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          truckJobCycle: newData,
+        });
       }
-      set({ truckJobCycle: newData });
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        truckJobCycle: newData,
-      });
     });
 
     socket.on("truck-chart-productivity", (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
-        return;
+     
+      }else{
+
+        set({ chartProductivity: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          chartProductivity: newData,
+        });
       }
-      set({ chartProductivity: newData });
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        chartProductivity: newData,
-      });
     });
 
     socket.on("truck-chart-fleet", (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
-        return;
+       
+      }else{
+
+        set({ dataFleet: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          dataFleet: newData,
+        });
       }
-      set({ dataFleet: newData });
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        dataFleet: newData,
-      });
     });
   },
 }));

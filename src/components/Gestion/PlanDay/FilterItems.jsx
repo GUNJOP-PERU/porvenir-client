@@ -16,10 +16,11 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import IconClose from "@/icons/IconClose";
+import { useState } from "react";
 
 export function FilterItems({ title, options, field,loadingGlobal }) {
   const selectedValues = new Set(field.value || []);
-
+  const [openDrawer, setOpenDrawer] = useState(false);
   const toggleSelection = (value) => {
     const newSet = new Set(selectedValues);
     if (newSet.has(value)) {
@@ -31,7 +32,7 @@ export function FilterItems({ title, options, field,loadingGlobal }) {
   };
 
   return (
-    <Popover modal={true}>
+    <Popover modal={true} open={openDrawer} onOpenChange={setOpenDrawer} autoFocus={openDrawer}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"

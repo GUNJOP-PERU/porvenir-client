@@ -6,12 +6,10 @@ import IconNight from "@/icons/IconNight";
 
 export const columns = [
   {
-    accessorKey: "idFrontLabor",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idFrontLabor")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
@@ -28,7 +26,7 @@ export const columns = [
             {row.getValue("frontLabor")}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.phase}
+            {row.original?.phase || ""}
           </span>
         </div>
       );
@@ -71,10 +69,10 @@ export const columns = [
     },
   },
   {
-    accessorKey: "tonnage",
+    accessorKey: "phase",
     header: "Tonelaje",
     cell: ({ row }) => {
-      return <>{row.getValue("tonnage")} TN</>;
+      return <>{row.original.tonnage || ""} TN</>;
     },
   },
   {

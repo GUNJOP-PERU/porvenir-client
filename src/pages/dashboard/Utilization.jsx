@@ -22,7 +22,7 @@ function Utilization() {
   }, [fetchDataUtilization]);
 
   useProductionWebSocket();
-  console.log(progressVelocity, "progressVelocity");
+  // console.log(progressVelocity, "progressVelocity");
 
   return (
     <>

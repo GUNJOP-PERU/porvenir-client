@@ -9,12 +9,10 @@ import IconClearance from "@/icons/IconClearance";
 
 export const columns = [
   {
-    accessorKey: "idCycle",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idCycle")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
@@ -63,10 +61,10 @@ export const columns = [
     },
   },
   {
-    accessorKey: "tonnage",
+    accessorKey: "tagName",
     header: "Tonelaje",
     cell: ({ row }) => {
-      return <>{row.getValue("tonnage")} TN</>;
+      return <>{row.original.tonnage} TN</>;
     },
   },
   {
@@ -155,11 +153,11 @@ export const columns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"enterprise"} row={row} />
-    ),
-    enableHiding: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions componentToShow={"enterprise"} row={row} />
+  //   ),
+  //   enableHiding: false,
+  // },
 ];

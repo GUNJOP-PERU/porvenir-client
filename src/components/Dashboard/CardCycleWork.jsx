@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import React from "react";
-
-// const data = [
-//   { text: "Descargando", value: 1.1,unit:"min", icon: load, reverse: false },
-//   { text: "Viaje Vacio", value: 20.3,unit:"min", icon: empty, reverse: true },
-//   { text: "Viaje Cargado", value: 31.4,unit:"min", icon: transport, reverse: false },
-//   { text: "Cargando", value: 8.1,unit:"min", icon: dump, reverse: true },
-// ];
+import React from "react"
 
 const CardCycleWork = React.memo(({ data }) => {
   return (
@@ -16,7 +9,7 @@ const CardCycleWork = React.memo(({ data }) => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Descargando</h4>
             <span className={clsx("font-extrabold leading-4")}>
-              {data?.avg_time_dump?.value ? `${data.avg_time_dump.value}` : "0"}
+              {data?.avg_time_dump?.value?.toFixed(2) || "0"}
               min
             </span>
           </div>
@@ -26,10 +19,7 @@ const CardCycleWork = React.memo(({ data }) => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Viaje vacio</h4>
             <span className={clsx("font-extrabold leading-4")}>
-              {" "}
-              {data?.avg_time_empty?.value
-                ? `${data.avg_time_empty.value}`
-                : "0"}
+              {data?.avg_time_empty?.value?.toFixed(2) || "0"}
               min
             </span>
           </div>
@@ -39,10 +29,8 @@ const CardCycleWork = React.memo(({ data }) => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Viaje cargado</h4>
             <span className={clsx("font-extrabold leading-4")}>
-              {" "}
-              {data?.avg_time_transport?.value
-                ? `${data.avg_time_transport.value}`
-                : "0"}
+              {data?.avg_time_transport?.value?.toFixed(2)
+                || "0"}
               min
             </span>
           </div>
@@ -52,8 +40,7 @@ const CardCycleWork = React.memo(({ data }) => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Cargando</h4>
             <span className={clsx("font-extrabold leading-4")}>
-              {" "}
-              {data?.avg_time_load?.value ? `${data.avg_time_load.value}` : "0"}
+              {data?.avg_time_load?.value?.toFixed(2) ||  "0"}
               min
             </span>
           </div>
@@ -74,3 +61,11 @@ const CardCycleWork = React.memo(({ data }) => {
 
 CardCycleWork.displayName = "CardCycleWork";
 export default CardCycleWork;
+
+
+// const data = [
+//   { text: "Descargando", value: 1.1,unit:"min", icon: load, reverse: false },
+//   { text: "Viaje Vacio", value: 20.3,unit:"min", icon: empty, reverse: true },
+//   { text: "Viaje Cargado", value: 31.4,unit:"min", icon: transport, reverse: false },
+//   { text: "Cargando", value: 8.1,unit:"min", icon: dump, reverse: true },
+// ];

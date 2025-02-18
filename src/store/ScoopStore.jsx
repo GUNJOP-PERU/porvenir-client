@@ -53,34 +53,15 @@ export const useScoopStore = create((set) => ({
     });
 
     socket.on("scoop-tonnage-per-hour", (newData) => {
-      set((state) => {
-        let updatedScoopTonnagHour = { ...state.scoopTonnagHour };
-
-        // 🟢 Si el turno cambia, reinicializar todo
-        if (updatedScoopTonnagHour.shift !== newData.shift) {
-          const newHours = newData.shift === "dia" ? hoursDay : hoursNight;
-
-          updatedScoopTonnagHour = {
-            shift: newData.shift,
-            hours: newHours, // Nueva lista de horas según el turno
-            advance: new Array(newHours.length).fill(0),
-            production: new Array(newHours.length).fill(0),
-          };
-        }
-
-        // 🔍 Buscar el índice correcto en la nueva lista de horas
-        const index = updatedScoopTonnagHour.hours.indexOf(newData.hours?.[0]);
-
-        if (index !== -1) {
-          updatedScoopTonnagHour.advance[index] = newData.advance?.[0] ?? 0;
-          updatedScoopTonnagHour.production[index] =
-            newData.production?.[0] ?? 0;
-        } else {
-          console.warn("⚠️ Hora no encontrada en la lista de horas.");
-        }
-
-        return { scoopTonnagHour: updatedScoopTonnagHour };
-      });
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        set({ scoopTonnagHour: newData });
+        productionSubject.next({
+          ...productionSubject.getValue(),
+          scoopTonnagHour: newData,
+        });
+      }
     });
 
     socket.on("scoop-activities-per-hour", (newData) => {

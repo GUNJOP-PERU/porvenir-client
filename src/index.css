@@ -178,3 +178,22 @@ table td:last-child {
 .animate-spin-once {
   animation: spin-once 1s ease-in-out
 }
+
+
+.error-login {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 12px 16px -4px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  animation: 0.3s ease-in 0s 1 normal none running fadeIn;
+}
+.error-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+.error-visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+

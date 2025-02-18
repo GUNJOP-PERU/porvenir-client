@@ -40,20 +40,7 @@ export const useUtilizationStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("production-progress-velocity", (newData) => {
-      console.log(newData, "production-progress-velocity");
-       if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
-      } else {
-        set({ progressVelocity: newData });
-        productionSubject.next({
-          ...productionSubject.getValue(),
-          progressVelocity: newData,
-        });
-      }
-    });
-    socket.on("production-velocity-analysis", (newData) => {
-      console.log(newData, "production-velocity-analysis");
-       if (!newData || Object.keys(newData).length === 0) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set({ progressVelocity: newData });
@@ -64,15 +51,36 @@ export const useUtilizationStore = create((set) => ({
       }
     });
     socket.on("production-chart-utility", (newData) => {
-      console.log(newData, "production-chart-utility");
-       if (!newData || Object.keys(newData).length === 0) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
-        set({ progressVelocity: newData });
+        set({ chartUtility: newData });
         productionSubject.next({
           ...productionSubject.getValue(),
-          progressVelocity: newData,
+          chartUtility: newData,
         });
+      }
+    });
+    socket.on("production-velocity-analysis", (newData) => {
+     
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        if (newData.destiny === "parrilla") {
+          console.log("parrilla");
+          set({ velocityParrilla: newData });
+          productionSubject.next({
+            ...productionSubject.getValue(),
+            velocityParrilla: newData,
+          });
+        } else {
+          console.log("cancha");
+          set({ velocityCancha: newData });
+          productionSubject.next({
+            ...productionSubject.getValue(),
+            velocityCancha: newData,
+          });
+        }
       }
     });
   },

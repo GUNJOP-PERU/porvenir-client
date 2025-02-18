@@ -1,15 +1,20 @@
 import React from "react";
 import { Search, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { cargo, dataMaterial, dataTypeVehicle, statuses, turn } from "@/lib/data";
 
-export function DataTableToolbar({ table, isLoading }) {
+export function DataTableToolbar({
+  table,
+  isFetching,
+  filters = [], // Filtros dinámicos pasados como props
+  searchColumns = [], // Columnas en las que se aplicará el buscador
+}) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  const renderFacetedFilter = (columnId, title, options) => {
+  // Función para renderizar un filtro solo si la columna existe
+  const renderFacetedFilter = ({ columnId, title, options }) => {
     const column = table.getColumn(columnId);
     return column ? (
       <motion.div
@@ -19,32 +24,35 @@ export function DataTableToolbar({ table, isLoading }) {
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.2 }}
       >
-        <DataTableFacetedFilter column={column} title={title} options={options} />
+        <DataTableFacetedFilter
+          column={column}
+          title={title}
+          options={options}
+        />
       </motion.div>
     ) : null;
   };
 
-  const getFilterValue = (columnId) => {
-    const column = table.getColumn(columnId);
-    return column ? column.getFilterValue() || "" : "";
+  // Obtener el valor de búsqueda de las columnas permitidas
+  const getFilterValue = () => {
+    for (const columnId of searchColumns) {
+      const column = table.getColumn(columnId);
+      if (column?.getFilterValue()) return column.getFilterValue();
+    }
+    return "";
   };
 
+  // Aplicar el valor de búsqueda a las columnas permitidas
   const handleSearchChange = (value) => {
-    const nameColumn = table.getColumn("name");
-    const tagNameColumn = table.getColumn("tagName");
-    const userNameColumn = table.getColumn("user");
-    const userLabor = table.getColumn("frontLabor");
-
-    if (nameColumn) nameColumn.setFilterValue(value);
-    if (tagNameColumn) tagNameColumn.setFilterValue(value);
-    if (userNameColumn) userNameColumn.setFilterValue(value);
-    if (userLabor) userLabor.setFilterValue(value);
+    searchColumns.forEach((columnId) => {
+      const column = table.getColumn(columnId);
+      if (column) column.setFilterValue(value);
+    });
   };
 
   return (
     <div className="flex items-center justify-between">
-      {/* Loader cuando isLoading es true */}
-      {isLoading ? (
+      {isFetching ? (
         <motion.div
           key="loading"
           initial={{ opacity: 0 }}
@@ -53,9 +61,8 @@ export function DataTableToolbar({ table, isLoading }) {
           transition={{ duration: 0.3 }}
           className="flex w-full justify-between gap-4"
         >
-          <div className="h-10 w-48 bg-zinc-200 animate-pulse rounded-lg"></div>
-          <div className="h-10 w-32 bg-zinc-200 animate-pulse rounded-lg"></div>
-          <div className="h-10 w-24 bg-zinc-200 animate-pulse rounded-lg"></div>
+          <div className="h-[34px] w-[250px] bg-zinc-200 animate-pulse rounded-lg"></div>
+          <div className="h-[34px] w-24 bg-zinc-200 animate-pulse rounded-lg"></div>
         </motion.div>
       ) : (
         <>
@@ -65,7 +72,7 @@ export function DataTableToolbar({ table, isLoading }) {
               <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4 text-zinc-300" />
               <Input
                 placeholder="Buscar..."
-                value={getFilterValue("name") || getFilterValue("tagName") || getFilterValue("user") || getFilterValue("frontLabor")}
+                value={getFilterValue()}
                 onChange={(event) => handleSearchChange(event.target.value)}
                 className="pl-8 md:w-[200px] lg:w-[250px]"
               />
@@ -74,13 +81,8 @@ export function DataTableToolbar({ table, isLoading }) {
 
           {/* Filtros con Motion */}
           <div className="flex items-center gap-1">
-            <AnimatePresence mode="wait">
-              {renderFacetedFilter("role", "Rol", statuses)}
-              {renderFacetedFilter("cargo", "Cargo", cargo)}
-              {renderFacetedFilter("shift", "Turno", turn)}
-              {renderFacetedFilter("type", "Vehiculo", dataTypeVehicle)}
-              {renderFacetedFilter("material", "Material", dataMaterial)}
-              {renderFacetedFilter("vehicleType", "Vehiculo", dataTypeVehicle)}
+            <AnimatePresence >
+              {filters.map(renderFacetedFilter)}
 
               {isFiltered && (
                 <motion.div

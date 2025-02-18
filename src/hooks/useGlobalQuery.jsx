@@ -1,5 +1,5 @@
 import { getDataRequest } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useFetchData(queryKey, endpoint) {
   return useQuery({
@@ -17,13 +17,25 @@ export function useFetchData(queryKey, endpoint) {
   });
 }
 
-export function useFetchDashboardData(queryKey, endpoint) {
-  return useQuery({
+export function useFetchInfinityScroll(queryKey, endpoint, limit = 12) {
+  return useInfiniteQuery({
     queryKey: [queryKey],
-    queryFn: () => getDataRequest(endpoint),
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await getDataRequest(`${endpoint}?page=${pageParam}&limit=${limit}`);
+      return response;
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.data.page < lastPage.data.total_pages ? lastPage.data.page + 1 : undefined;
+    },
     networkMode: "always",
-    select: (response) => {
-      return response.data;
+    refetchOnReconnect: true,
+    retry: 2,
+    retryDelay: 2000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    select: (data) => {
+      // Aquí aplanamos los datos correctamente con el doble `.data`
+      return data.pages.map(page => page.data.data).flat() || [];
     },
   });
 }

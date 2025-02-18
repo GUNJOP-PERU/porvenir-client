@@ -10,7 +10,7 @@ import { io } from "socket.io-client";
 
 export function useProductionWebSocket() {
   useEffect(() => {
-    const socket = io(`${import.meta.env.VITE_URL}`);
+    const socket = io(import.meta.env.VITE_URL);
 
     useGlobalStore.getState().subscribeToSocketUpdates(socket);
     useTruckStore.getState().subscribeToSocketUpdates(socket);

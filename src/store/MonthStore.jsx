@@ -41,7 +41,6 @@ export const useMonthStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("monthly-progress", (newData) => {
-      // console.log("monthly-progress", newData);
        if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -53,7 +52,6 @@ export const useMonthStore = create((set) => ({
       }
     });
     socket.on("monthly-chart-tonnes", (newData) => {
-      // console.log("tonnes mensual", newData);
        if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -65,8 +63,34 @@ export const useMonthStore = create((set) => ({
       }
     });
     socket.on("monthly-average-journals", (newData) => {
-      console.log("monthly-average-journals", newData);
      
+      if (!newData || Object.keys(newData).length === 0) {
+        console.log("Datos vacíos");
+      } else {
+        if(newData.equipment === "truck"){
+          console.log("truck");
+          set({ dataRangeTruck: newData });
+          productionSubject.next({
+            ...productionSubject.getValue(),
+            dataRangeTruck: newData,
+          });
+        }else{
+          console.log("scoop");
+          set({ dataRangeScoop: newData });
+          productionSubject.next({
+            ...productionSubject.getValue(),
+            dataRangeScoop: newData,
+          });
+        }
+
+       
+      }
     });
   },
 }));
+
+ // set({ dataChartToness: newData });
+        // productionSubject.next({
+        //   ...productionSubject.getValue(),
+        //   dataChartToness: newData,
+        // });

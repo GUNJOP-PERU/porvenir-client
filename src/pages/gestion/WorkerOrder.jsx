@@ -3,25 +3,28 @@ import { ModalWorkOrder } from "../../components/Gestion/WorkOrder/ModalWorkOrde
 import { columns } from "../../components/Gestion/WorkOrder/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import {useFetchData} from "../../hooks/useGlobalQuery";
+import { useFetchData } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
 
 function WorkerOrder() {
-  const { data = [],  isFetching,
+  const {
+    data = [],
+    isFetching,
     isError,
-    refetch } = useFetchData("workOrder", "workOrder");
+    refetch,
+  } = useFetchData("workOrder", "workOrder");
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  console.log(data,"order");
 
   return (
     <>
-     <div className="flex flex-wrap gap-2 justify-between">
+      <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2 leading-6">
-            <h1 className="text-xl font-bold leading-6">Gestión Orden de Trabajo </h1>
+            <h1 className="text-xl font-bold leading-6">
+              Gestión Orden de Trabajo{" "}
+            </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
@@ -32,27 +35,37 @@ function WorkerOrder() {
           </p>
         </div>
         <div className="flex gap-2">
-        <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            size="icon"
+            disabled={isFetching}
+          >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button className="w-fit" variant="outline">
-            <IconMore className="w-5 h-5 fill-zinc-400" /> Importar
-          </Button>
-          <Button className="w-fit" variant="outline">
-            <IconMore className="w-5 h-5 fill-zinc-400" /> Exportar
-          </Button>
-          <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
+          
+          <Button
+            onClick={() => setDialogOpen(true)}
+            className="w-fit"
+            disabled={isFetching || isError}
+          >
             <IconMore className="w-5 h-5 fill-white" />
             Añadir nuevo
           </Button>
         </div>
       </div>
-      <DataTable data={data} columns={columns}  isLoading={isFetching}
-        isError={isError} />
+      <DataTable
+        data={data}
+        columns={columns}
+        isFetching={isFetching}
+        isError={isError}
+        tableType={"workerOrders"}
+      />
       <ModalWorkOrder
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
+        
       />
     </>
   );

@@ -14,7 +14,7 @@ function PlanMonth() {
     refetch,
   } = useFetchData("planMonth", "planMonth");
 
-  console.log(data, "plan");
+  
   return (
     <>
      <div className="flex flex-wrap gap-2 justify-between">
@@ -33,12 +33,7 @@ function PlanMonth() {
           <Button onClick={() => refetch()} disabled={isFetching} variant="outline" size="icon">
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button className="w-fit" variant="outline">
-            <FileUp className="w-5 h-5 text-zinc-400" /> Importar
-          </Button>
-          <Button className="w-fit" variant="outline">
-            <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
-          </Button>
+         
           <Link to={`/newPlanMonth`}>
             <Button className="w-fit">
               <CircleFadingPlus className="w-5 h-5 text-white" />
@@ -50,8 +45,9 @@ function PlanMonth() {
       <DataTable
         data={data}
         columns={columns}
-        isLoading={isFetching}
+        isFetching={isFetching}
         isError={isError}
+        
       />
     </>
   );

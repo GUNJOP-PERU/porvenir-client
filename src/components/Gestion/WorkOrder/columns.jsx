@@ -9,12 +9,10 @@ import IconNight from "@/icons/IconNight";
 
 export const columns = [
   {
-    accessorKey: "idWorkOrder",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idWorkOrder")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,

@@ -64,7 +64,7 @@ export const useParetoTruckStore = create((set) => ({
       }
     });
     socket.on("pareto-truck-no-productive-activities", (newData) => {
-      // console.log("pareto-truck-no-productive-activities ", newData);
+      
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -76,6 +76,7 @@ export const useParetoTruckStore = create((set) => ({
       }
     });
     socket.on("pareto-truck-improductive-activities", (newData) => {
+    
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -87,6 +88,7 @@ export const useParetoTruckStore = create((set) => ({
       }
     });
     socket.on("pareto-truck-impact-diagram", (newData) => {
+     
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {

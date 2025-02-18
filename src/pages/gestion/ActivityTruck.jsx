@@ -14,8 +14,6 @@ function PageActivity() {
     refetch } = useFetchData("activity", "activity");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log("activity", data);
-
   return (
     <>
      <div className="flex flex-wrap gap-2 justify-between">
@@ -37,28 +35,25 @@ function PageActivity() {
           <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button className="w-fit" variant="outline">
-            <FileUp className="w-5 h-5 text-zinc-400" /> Importar
-          </Button>
-          <Button className="w-fit" variant="outline">
-            <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
-          </Button>
-          <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
+         
+          {/* <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
             <CircleFadingPlus className="w-5 h-5 text-white" />
             Añadir nuevo
-          </Button>
+          </Button> */}
         </div>
       </div>
       <DataTable
         data={data}
         columns={columns}
-        isLoading={isFetching}
+        isFetching={isFetching}
         isError={isError}
+        tableType={"activities"}
       />
       <ModalActivity
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
+        
       />
     </>
   );

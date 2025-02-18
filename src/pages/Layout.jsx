@@ -11,7 +11,7 @@ export default function Layout() {
       dark:bg-gray-900 dark:text-white overflow-hidden flex flex-col"
       >
         <NavUser />
-        <section className="flex-1 flex flex-col gap-x-4 gap-y-2 p-4 overflow-auto">
+        <section className="flex-1 flex flex-col gap-x-4 gap-y-2 p-4 overflow-auto relative">
           <Outlet /> {/* Renderiza las rutas anidadas aquí */}
         </section>
       </div>

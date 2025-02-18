@@ -1,43 +1,34 @@
+import { useCallback, useMemo } from "react";
 import IconWarning from "@/icons/IconWarning";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { useMemo } from "react";
 
-export default function CardRange({ data, title }) {
-  const minValue = data?.data?.averages?.length
-    ? Math.min(...data.data.averages.map(([min]) => min))
-    : null;
-  const maxValue = data?.data?.averages?.length
-    ? Math.max(...data.data.averages.map(([, max]) => max))
-    : null;
+export default function CardRange({ data }) {
 
-  const formatHours = (hours) => {
-    const h = Math.floor(hours); // Horas completas
-    const m = Math.round((hours - h) * 60); // Minutos (resto convertido a minutos)
-    return `${h}:${m < 10 ? "0" + m : m}`; // Formato hh:mm
-  };
-
-  console.log(data, "range");
-
-  const parseTimeToDecimal = (timeString) => {
-    if (!timeString) return null;
+  const parseTimeToCustomScale = useCallback((timeString) => {
+    if (!timeString || !timeString.includes(":")) return null;
     const [hours, minutes] = timeString.split(":").map(Number);
-    return hours + minutes / 60;
-  };
-
+    if (isNaN(hours) || isNaN(minutes)) return null; // Evita NaN
+    let decimalTime = hours + minutes / 60;
+    let adjustedTime = decimalTime - 19;
+    if (adjustedTime < 0) adjustedTime += 24;
+    return adjustedTime;
+  }, []);
+  
+  
   const options = useMemo(
     () => ({
       chart: {
         type: "columnrange",
         backgroundColor: "transparent",
-        height: 260,
+        height: 250,
         marginBottom: 35,
       },
       title: {
         text: null,
       },
       xAxis: {
-        categories: data?.data?.dates,
+        categories: data?.dates,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -48,61 +39,33 @@ export default function CardRange({ data, title }) {
             fontSize: "0.6em",
           },
           rotation: 0,
+          formatter: function () {
+            return this.value.substring(0, 2); // 2 caracteres
+          },
         },
       },
       yAxis: {
-        title: {
-          text: null,
-        },
-        min: 0, // Inicio del eje Y en 0 horas
-        max: 24, // Fin del eje Y en 24 horas
-        tickInterval: 2, // Intervalos cada 2 horas para mejor visualización
+        title: { text: null },
+        min: 0,   // Comienza a las 19:00 (como 0 en la escala)
+        max: 24,  // Termina a las 18:59 del día siguiente (como 24 en la escala)
+        tickInterval: 2,
         labels: {
           style: {
             color: "#A6A6A6",
             fontSize: "0.6em",
           },
           formatter: function () {
-            return formatHours(this.value); // Manteniendo el formateo de horas
+            let hour = (this.value + 19) % 24; // Volver a formato 24h
+            return hour + ":00"; 
           },
         },
         gridLineColor: "#D9D9D9",
         gridLineWidth: 0.5,
         gridLineDashStyle: "Dash",
-        plotLines: [
-          {
-            value: minValue || 0,
-            color: "#A855F7",
-            width: 1,
-            dashStyle: "Dash",
-            label: {
-              text: `Prom: ${formatHours(minValue)}`,
-              align: "right",
-              style: {
-                color: "#A855F7",
-                fontSize: "0.5em",
-              },
-            },
-          },
-          {
-            value: maxValue || 0,
-            color: "#A855F7",
-            width: 1,
-            dashStyle: "Dash",
-            label: {
-              text: `Prom: ${formatHours(maxValue)}`,
-              align: "right",
-              style: {
-                color: "#A855F7",
-                fontSize: "0.5em",
-              },
-            },
-          },
-        ],
-      },
+      },      
       tooltip: {
-        shared: true,
-        valueSuffix: " hr",
+        shared: false, // No es necesario el "shared" en columnrange
+        valueSuffix: " h",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
@@ -113,9 +76,22 @@ export default function CardRange({ data, title }) {
           fontSize: "11px",
         },
         formatter: function () {
-          return `${this.series.name}: <b>${formatHours(this.y)}</b> hr`; // Formato de 2 decimales para horas
+          const category = this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+      
+          // Obtenemos los valores originales
+          const start = this.point.start; // Usamos el valor original
+          const end = this.point.end;     // Usamos el valor original
+          
+          return `
+            <b>${category}</b><br/>
+            <span style="color:${this.series.color}">●</span> 
+            <b>${this.series.name}</b><br/>
+            Inicio: ${start} <br/>
+            Fin: ${end}
+          `;
         },
       },
+       
       plotOptions: {
         columnrange: {
           borderRadius: "50%",
@@ -128,12 +104,19 @@ export default function CardRange({ data, title }) {
       series: [
         {
           name: "Tiempos",
-          data: data?.data?.averages.map(([min, max]) => [
-            parseTimeToDecimal(min), // Convertir el mínimo
-            parseTimeToDecimal(max), // Convertir el máximo
-          ]),
+          data: data?.averages
+            ?.map(([min, max]) => {
+              const start = parseTimeToCustomScale(min);
+              const end = parseTimeToCustomScale(max);
+              return {
+                start: min, // Guardamos el valor original
+                end: max,   // Guardamos el valor original
+                y: [start, end] // Valores convertidos que se usan en la gráfica
+              };
+            })
+            .filter(Boolean), // Filtramos valores nulos
         },
-      ],
+      ],      
       legend: {
         enabled: false,
       },
@@ -152,30 +135,25 @@ export default function CardRange({ data, title }) {
 
   return (
     <>
-      <h4 className="text-xs font-bold">{title}</h4>
       <HighchartsReact highcharts={Highcharts} options={options} />
       <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
         <IconWarning className="text-red-500 w-3 h-3" />
         <div className="flex items-center">
           <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-            {/* Verificar si los datos existen antes de renderizar */}
+           
             {data?.perfomance_summary ? (
               <>
                 {data?.perfomance_summary.level_production?.high?.advice ? (
                   <li>
                     {data?.perfomance_summary.level_production.high.advice}
                   </li>
-                ) : (
-                  <li>No hay consejo para nivel alto</li> // Mensaje alternativo
-                )}
+                ) : null}
 
                 {data?.perfomance_summary.level_production?.low?.advice ? (
                   <li>
                     {data?.perfomance_summary.level_production.low.advice}
                   </li>
-                ) : (
-                  <li>No hay consejo para nivel bajo</li> // Mensaje alternativo
-                )}
+                ) : null}
 
                 {data?.perfomance_summary.best_day?.date &&
                 data?.perfomance_summary.best_day?.value ? (
@@ -186,9 +164,7 @@ export default function CardRange({ data, title }) {
                     )}{" "}
                     toneladas
                   </li>
-                ) : (
-                  <li>No hay datos para el mejor día</li> // Mensaje alternativo
-                )}
+                ) : null}
 
                 {data?.perfomance_summary.worst_day?.date &&
                 data?.perfomance_summary.worst_day?.value ? (
@@ -196,9 +172,7 @@ export default function CardRange({ data, title }) {
                     Peor día: {data?.perfomance_summary.worst_day.date} con{" "}
                     {data?.perfomance_summary.worst_day.value} toneladas
                   </li>
-                ) : (
-                  <li>No hay datos para el peor día </li> // Mensaje alternativo
-                )}
+                ) : null}
               </>
             ) : (
               <li>No hay datos disponibles</li> // Si no hay datos

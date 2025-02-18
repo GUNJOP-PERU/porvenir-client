@@ -7,7 +7,7 @@ export const useAuthStore = create(
       token: "",
       profile: [],
       mining: null,
-      isAuth: true,
+      isAuth: false,
 
       setToken: (token) => set({ token,isAuth: !!token, }),
       setProfile: (profile) => set({ profile }),
@@ -16,7 +16,7 @@ export const useAuthStore = create(
         set({
           token: "",
           profile: [],
-          isAuth:true,
+          isAuth:false,
         });
       },
     }),

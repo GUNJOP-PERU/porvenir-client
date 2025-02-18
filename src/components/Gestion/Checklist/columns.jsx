@@ -7,12 +7,10 @@ import IconNight from "@/icons/IconNight";
 
 export const columns = [
   {
-    accessorKey: "idChecklist",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idChecklist")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
@@ -40,10 +38,10 @@ export const columns = [
           ></div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {row.getValue("userName")}
+              {row.original.userName || ""}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-              {row.original?.vehicleTagName}
+              {row.original?.vehicleTagName || ""}
             </span>
           </div>
         </div>
@@ -89,7 +87,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "completedBossTime",
+    accessorKey: "vehicleTagName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Hora de firma" />
     ),
@@ -138,11 +136,11 @@ export const columns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"checklist"} row={row} />
-    ),
-    enableHiding: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions componentToShow={"checklist"} row={row} />
+  //   ),
+  //   enableHiding: false,
+  // },
 ];

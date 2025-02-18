@@ -3,23 +3,29 @@ import { ModalChecklist } from "../../components/Gestion/Checklist/ModalChecklis
 import { columns } from "../../components/Gestion/Checklist/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import {useFetchData} from "../../hooks/useGlobalQuery";
+import { useFetchData } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
+import { RefreshCcw } from "lucide-react";
 
 function Checklist() {
-  const { data = [],  isFetching,
+  const {
+    data = [],
+    isFetching,
     isError,
-    refetch } = useFetchData("checklist", "checklist");
+    refetch,
+  } = useFetchData("checklist", "checklist");
   const [dialogOpen, setDialogOpen] = useState(false);
-  console.log("datav",data);
+  console.log("datav", data);
 
   return (
     <>
-     <div className="flex flex-wrap gap-2 justify-between">
+      <div className="flex flex-wrap gap-2 justify-between">
         <div>
-        <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold leading-6">Gestión de Checklist </h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold leading-6">
+              Gestión de Checklist{" "}
+            </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
@@ -30,27 +36,38 @@ function Checklist() {
           </p>
         </div>
         <div className="flex gap-2">
-        <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
-            <IconMore className="w-5 h-5 fill-zinc-400" /> Importar
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            size="icon"
+            disabled={isFetching}
+          >
+            <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button  className="w-fit" variant="outline">
-            <IconMore className="w-5 h-5 fill-zinc-400" /> Exportar
-          </Button>
-          <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
+
+          {/* <Button
+            onClick={() => setDialogOpen(true)}
+            className="w-fit"
+            disabled={isFetching || isError}
+          >
             <IconMore className="w-5 h-5 fill-white" />
             Añadir nuevo
-          </Button>
+          </Button> */}
         </div>
       </div>
-     
-      <DataTable data={data} columns={columns}  isLoading={isFetching}
-        isError={isError} />
+
+      <DataTable
+        data={data}
+        columns={columns}
+        isFetching={isFetching}
+        isError={isError}
+        tableType={"checklists"}
+      />
       <ModalChecklist
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
       />
-    
     </>
   );
 }

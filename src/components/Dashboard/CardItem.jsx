@@ -58,7 +58,7 @@ const CardItem = React.memo(
                   getColorClass(change)
                 )}
               >
-                {`${(100 - change).toFixed(0)}%`}
+                {`${(100 - change).toFixed(2)}%`}
               </span>
             </div>
 

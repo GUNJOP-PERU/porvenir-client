@@ -43,13 +43,7 @@ function HomeUsers() {
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button
-            className="w-fit"
-            variant="outline"
-            disabled={isFetching || isError}
-          >
-            <FileDown className="w-5 h-5 text-zinc-400" /> Exportar
-          </Button>
+          
           <Button
             onClick={() => setDialogOpen(true)}
             className="w-fit"
@@ -63,8 +57,9 @@ function HomeUsers() {
       <DataTable
         data={data}
         columns={columns}
-        isLoading={isFetching}
+        isFetching={isFetching}
         isError={isError}
+        tableType={"users"}
       />
       <ModalUser
         isOpen={dialogOpen}

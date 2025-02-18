@@ -6,10 +6,10 @@ import clsx from "clsx";
 
 export const columns = [
   {
-    accessorKey: "",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.getValue("")}</div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,

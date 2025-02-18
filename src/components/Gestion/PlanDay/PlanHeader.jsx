@@ -25,8 +25,6 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./FilterItems";
-import IconToggle from "@/icons/IconToggle";
-import IconMore from "@/icons/IconMore";
 import IconEdit from "@/icons/IconEdit";
 
 export const PlanHeader = ({

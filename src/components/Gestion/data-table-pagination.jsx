@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-export function DataTablePagination({ table, isLoading }) {
+export function DataTablePagination({ table, isLoading ,fetchNextPage,hasNextPage}) {
   return (
     <div className="flex items-center justify-between gap-2">
       {isLoading ? (
@@ -43,6 +43,7 @@ export function DataTablePagination({ table, isLoading }) {
             transition={{ duration: 0.2 }}
             className="flex text-xs text-zinc-400"
           >
+            {/* Mostrar la cantidad de filas seleccionadas y el total */}
             {table.getFilteredSelectedRowModel().rows.length} de{" "}
             {table.getFilteredRowModel().rows.length} fila(s).
           </motion.div>
@@ -57,6 +58,7 @@ export function DataTablePagination({ table, isLoading }) {
             className="flex items-center space-x-3"
           >
             <div className="flex items-center justify-center text-xs font-medium">
+              {/* Mostrar la página actual */}
               Pag. {table.getState().pagination.pageIndex + 1} de{" "}
               {table.getPageCount()}
             </div>
@@ -79,11 +81,12 @@ export function DataTablePagination({ table, isLoading }) {
                 <span className="sr-only">Ir a la página anterior</span>
                 <ChevronLeft />
               </Button>
+              {/* Aquí estamos usando el fetchNextPage para cargar más */}
               <Button
                 variant="outline"
                 className="h-7 w-7 p-0"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isLoading}
               >
                 <span className="sr-only">Ir a la siguiente página</span>
                 <ChevronRight />

@@ -23,6 +23,7 @@ function ProductionMonth() {
   }, [fetchDataMonth]);
 
   useProductionWebSocket();
+  console.log("dataRangeScoop",dataRangeScoop)
   return (
     <>
        <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(140px,1fr))]">
@@ -111,10 +112,10 @@ function ProductionMonth() {
             subtitle="Horario de operación del Camión."
             icon={IconDash1}
           />
-          {/* <CardRange
-            data={dataRangeTruck}
+          <CardRange
+           data={dataRangeTruck}
             title="Rango de horario de trabajo Camiones"
-          /> */}
+          />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
         <CardTitle
@@ -122,10 +123,10 @@ function ProductionMonth() {
             subtitle="Horario de operación del Scooptram."
             icon={IconDash1}
           />
-          {/* <CardRange
+          <CardRange
             data={dataRangeScoop}
             title="Rango de horario de trabajo Scooptram"
-          /> */}
+          />
         </div>
       </div>
     </>

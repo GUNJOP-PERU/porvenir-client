@@ -175,5 +175,16 @@ export const dataMaterial = [
     value: "Desmonte",
   },
 ]
+export const dataPhase = [
+  {
+    label: "Avance",
+    value: "Avance",
+
+  },
+  {
+    label: "Extracción / Producción",
+    value: "Extracción / Producción",
+  },
+]
 
 

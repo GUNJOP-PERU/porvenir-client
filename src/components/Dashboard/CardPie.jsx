@@ -63,7 +63,7 @@ const CardPie = React.memo(({ data }) => {
             enabled: true,
             format:
               '<b><span style="color:{point.color}">{point.name}</span></b><br>' +
-              '<span style="color:#347AE2; font-size:14px">{point.percentage:.2f}%</span>',
+              '<span style=" font-size:14px">{point.percentage:.2f}%</span>',
             distance: 15,
             style: {
               fontSize: "10px",
@@ -75,11 +75,11 @@ const CardPie = React.memo(({ data }) => {
               width: "80px", // Define un ancho para el ajuste automático
               textAlign: "center", // Centra el texto
             },
-            filter: {
-              operator: ">",
-              property: "percentage",
-              value: 0.5,
-            },
+            // filter: {
+            //   operator: ">",
+            //   property: "percentage",
+            //   value: 0.0,
+            // },
           },
           showInLegend: true,
         },

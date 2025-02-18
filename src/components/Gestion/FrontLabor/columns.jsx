@@ -4,12 +4,10 @@ import { DataTableRowActions } from "../data-table-row-actions";
 
 export const columns = [
   {
-    accessorKey: "idFrontLabor",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idFrontLabor")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,

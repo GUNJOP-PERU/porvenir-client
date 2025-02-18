@@ -6,42 +6,6 @@ import { useMemo } from "react";
 
 export default function CardColum({ data }) {
 
-  const dataTemporal = {
-    dates: [
-      "01:02",
-      "02:02",
-      "03:02",
-      "04:02",
-      "06:02",
-      "07:02",
-      "08:02",
-      "09:02",
-      "10:02",
-      "11:02",
-      "12:02",
-      "13:02",
-      "14:02",
-      "15:02",
-      "16:02",
-      "17:02",
-      "18:02",
-      "19:02",
-      "20:02",
-      "21:02",
-      "22:02",
-      "23:02",
-      "24:02",
-      "25:02",
-      "26:02",
-      "27:02",
-      "28:02",
-    ],
-    values_day: [
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0,0
-    ],
-  };
-
   const options = useMemo(
     () => ({
       chart: {
@@ -55,7 +19,7 @@ export default function CardColum({ data }) {
         text: null,
       },
       xAxis: {
-        categories: data?.dates || dataTemporal.dates ,
+        categories: data?.dates ,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -95,7 +59,7 @@ export default function CardColum({ data }) {
         formatter: function () {
           const category =
             this.series.chart.xAxis[0].categories[this.point.x] || this.x;
-          let tooltipText = `<b>${category}</b><br/>`; // Mostrar la fecha/hora correcta
+          let tooltipText = `<b>${category}</b><br/>`; 
           this.points.forEach((point) => {
             tooltipText += `<span style="color:${point.color}">●</span> <b>${point.series.name}</b>: ${Number(point.y).toFixed(1)}tn<br/>`;
           });
@@ -130,7 +94,7 @@ export default function CardColum({ data }) {
         {
           type: "column",
           name: "Día",
-          data: data?.values_day || dataTemporal.values_day,
+          data: data?.values_day ,
           color: "#FAC34C",
           stack: "Tiempo",
         },

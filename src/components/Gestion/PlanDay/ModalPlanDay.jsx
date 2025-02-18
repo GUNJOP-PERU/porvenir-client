@@ -30,7 +30,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const { data: dataLaborList } = useFetchData("frontLabor", "frontLabor");
+  const { data: dataLaborList } = useFetchData("frontLabor-General", "frontLabor");
 
   const form = useForm({
     resolver: zodResolver(FormSchema),

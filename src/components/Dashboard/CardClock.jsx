@@ -30,7 +30,7 @@ function CardClock() {
         <span className="text-zinc-400">
           :{formattedTime.minutes}:{formattedTime.seconds}
         </span>
-        <small className="text-[12px] text-zinc-400 leading-[8px]">H</small>
+        {/* <small className="text-[12px] text-zinc-400 leading-[8px]">H</small> */}
       </h1>
     </div>
   );

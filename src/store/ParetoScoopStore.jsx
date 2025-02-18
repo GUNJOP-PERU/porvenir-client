@@ -59,7 +59,7 @@ export const useParetoScoopStore = create((set) => ({
 
   subscribeToSocketUpdates: (socket) => {
     socket.on("pareto-scoop-progress-monthly", (newData) => {
-      // console.log("Datos evento ", newData);
+
        if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -71,7 +71,7 @@ export const useParetoScoopStore = create((set) => ({
       }
     });
     socket.on("pareto-scoop-no-productive-activities", (newData) => {
-    
+     
       if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -83,7 +83,7 @@ export const useParetoScoopStore = create((set) => ({
       }
     });
     socket.on("pareto-scoop-improductive-activities", (newData) => {
-      // console.log("Improdutive ", newData);
+    
        if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
@@ -95,7 +95,7 @@ export const useParetoScoopStore = create((set) => ({
       }
     });
     socket.on("pareto-scoop-impact-diagram", (newData) => {
-      // console.log("Impact ", newData);
+     
        if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {

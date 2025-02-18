@@ -22,7 +22,7 @@ export default function CardTable({ data }) {
   const memoizedRows = useMemo(() => {
     return hasData ? (
       data.data.map((row, index) => (
-        <tr key={index} className="even:bg-zinc-200/5">
+        <tr key={index} className="even:bg-zinc-100/50">
           {data.headers.map((header) => {
             if (header.id === "id" || header.id === "code_activity")
               return null;
@@ -52,7 +52,7 @@ export default function CardTable({ data }) {
   return (
     <div className="overflow-y-auto h-[170px]">
       <table className="min-w-full table-auto border-collapse rounded-lg">
-        <thead className="text-[10px] bg-zinc-200 text-zinc-400 sticky top-0">
+        <thead className="text-[10px] bg-zinc-100 text-zinc-400 sticky top-0">
           <tr>
             {data?.headers?.map((header) => {
               if (header.id === "id" || header.id === "code_activity")

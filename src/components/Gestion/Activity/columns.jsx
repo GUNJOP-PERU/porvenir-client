@@ -13,12 +13,10 @@ import IconClearance from "@/icons/IconClearance";
 
 export const columns = [
   {
-    accessorKey: "idActivity",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idActivity")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
@@ -198,11 +196,11 @@ export const columns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"activity"} row={row} />
-    ),
-    enableHiding: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions componentToShow={"activity"} row={row} />
+  //   ),
+  //   enableHiding: false,
+  // },
 ];

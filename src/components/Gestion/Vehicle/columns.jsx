@@ -5,12 +5,10 @@ import clsx from "clsx";
 
 export const columns = [
   {
-    accessorKey: "idVehicle",
+    accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">
-        #{row.getValue("idVehicle")}
-      </div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
@@ -49,7 +47,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "type",
+    accessorKey: "plate",
     header: "Placa",
     cell: ({ row }) => {
       return (
@@ -88,15 +86,14 @@ export const columns = [
       );
     },
   },
-
   {
-    accessorKey: "color",
+    accessorKey: "type",
     header: "Color",
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("color")}
+            {row.original.color || ""}
           </span>
         </div>
       );
