@@ -40,7 +40,7 @@ export const NewPlanMonth = () => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
-  const { data: dataLaborList } = useFetchData("frontLabor", "frontLabor");
+  const { data: dataLaborList } = useFetchData("frontLabor-General", "frontLabor");
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -259,8 +259,8 @@ export const NewPlanMonth = () => {
           )}
         </div>
       </div>
-      <div className="flex gap-3 justify-between items-end">
-        <div className="bg-sky-100/50 w-fit rounded-xl px-6 py-2.5 flex gap-1 text-zinc-600 text-[11px] leading-4 mt-4 border-t border-blue-500">
+      <div className="flex flex-wrap gap-3 justify-between items-end">
+        <div className="bg-sky-100/50 w-full md:w-fit rounded-xl px-6 py-2.5 flex gap-1 text-zinc-600 text-[11px] leading-4 mt-4 border-t border-blue-500">
           <IconWarning className="text-blue-500  w-5 h-5 mr-1.5" />
           <div className="flex items-center">
             <ul className="list-disc ml-3 gap-x-6 ">
@@ -279,18 +279,19 @@ export const NewPlanMonth = () => {
             </ul>
           </div>
         </div>
-        <div className="flex gap-3 justify-center items-center">
+        <div className="flex gap-3 justify-center items-center w-full md:w-auto">
           <Button
             variant="secondary"
             onClick={handleCancel}
             disabled={loadingGlobal}
+             className="w-full md:w-fit"
           >
             <IconClose className="fill-zinc-400/50 w-4 h-4" />
             Cancelar
           </Button>
           <Button
             onClick={handleSendData}
-            disabled={dataHotTable.length === 0 || loadingGlobal} // 🔥 Deshabilitar el botón si no hay datos
+            disabled={dataHotTable.length === 0 || loadingGlobal}   className="w-full md:w-fit"
           >
             {loadingGlobal ? (
               <>

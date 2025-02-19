@@ -4,7 +4,6 @@ import { ModalUser } from "../../components/Gestion/Users/ModalUser";
 import { columns } from "../../components/Gestion/Users/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
@@ -22,7 +21,7 @@ function HomeUsers() {
       <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">
+            <h1 className="text-lg lg:text-xl font-bold leading-6">
               Gestión de Usuarios{" "}
             </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
@@ -50,7 +49,9 @@ function HomeUsers() {
             disabled={isFetching || isError}
           >
             <CircleFadingPlus className="w-5 h-5 text-white" />
-            Añadir nuevo
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Añadir nuevo
+            </span>
           </Button>
         </div>
       </div>

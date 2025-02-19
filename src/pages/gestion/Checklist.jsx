@@ -3,7 +3,7 @@ import { ModalChecklist } from "../../components/Gestion/Checklist/ModalChecklis
 import { columns } from "../../components/Gestion/Checklist/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import { useFetchData } from "../../hooks/useGlobalQuery";
+import { useFetchData, useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
@@ -12,9 +12,12 @@ function Checklist() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
-  } = useFetchData("checklist", "checklist");
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("checklist", "checklist/items");
   const [dialogOpen, setDialogOpen] = useState(false);
   console.log("datav", data);
 
@@ -59,8 +62,11 @@ function Checklist() {
       <DataTable
         data={data}
         columns={columns}
+        isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
         tableType={"checklists"}
       />
       <ModalChecklist

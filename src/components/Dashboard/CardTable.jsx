@@ -23,7 +23,7 @@ export default function CardTable({ data }) {
     return hasData ? (
       data.data.map((row, index) => (
         <tr key={index} className="even:bg-zinc-100/50">
-          {data.headers.map((header) => {
+          {data?.headers?.map((header) => {
             if (header.id === "id" || header.id === "code_activity")
               return null;
             return (

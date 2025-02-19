@@ -101,23 +101,23 @@ export function DataTableRowActions({ componentToShow, row }) {
             <MoreHorizontal className="rotate-90 text-zinc-400" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[200px]">
-          <DropdownMenuItem>
+        <DropdownMenuContent align="end" className="w-[150px]">
+          {/* <DropdownMenuItem>
             <IconDetails className="h-5 w-5 text-gray-500" />
             Ver detalles
-          </DropdownMenuItem>
-          <DropdownMenuItem>
+          </DropdownMenuItem> */}
+          {/* <DropdownMenuItem>
             <IconMore className="h-5 w-5 fill-gray-500" />
             Crear nuevo
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem onClick={() => handleClick(row.original)}>
             <IconEdit className="h-5 w-5 stroke-black" />
             Editar detalles
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <IconDuplicate className="h-5 w-5 text-gray-500" />
             Duplicar
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="text-red-500 focus:text-red-500"

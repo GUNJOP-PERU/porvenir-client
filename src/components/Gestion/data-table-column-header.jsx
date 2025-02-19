@@ -1,4 +1,3 @@
-
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -10,12 +9,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export function DataTableColumnHeader({ column, title, className }) {
+export function DataTableColumnHeader({
+  column,
+  title,
+  className,
+}) {
+
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
-
   return (
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
@@ -25,7 +30,7 @@ export function DataTableColumnHeader({ column, title, className }) {
             size="sm"
             className="-ml-3 h-8 data-[state=open]:bg-accent"
           >
-            <span>{title}</span>
+            <span className="text-[10px]">{title}</span>
             {column.getIsSorted() === "desc" ? (
               <ArrowDown />
             ) : column.getIsSorted() === "asc" ? (
@@ -44,11 +49,11 @@ export function DataTableColumnHeader({ column, title, className }) {
             <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+          {/* <DropdownMenuSeparator /> */}
+          {/* <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
             <EyeOff className="h-3.5 w-3.5 text-muted-foreground/70" />
             Ocultar
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

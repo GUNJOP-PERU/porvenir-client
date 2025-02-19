@@ -4,7 +4,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -17,21 +16,15 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DataTableToolbar } from "./data-table-toolbar";
 import SkeletonWrapper from "../SkeletonWrapper";
 import IconWarning from "@/icons/IconWarning";
 import IconLoader from "@/icons/IconLoader";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  cargo,
-  dataMaterial,
-  dataTypeVehicle,
-  statuses,
-  turn,
-} from "@/lib/data";
 import { tableConfigs } from "./data-table-config";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function DataTable({
   columns,
@@ -41,7 +34,7 @@ export function DataTable({
   isError,
   fetchNextPage,
   hasNextPage,
-  tableType
+  tableType,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -99,6 +92,47 @@ export function DataTable({
     filters: [],
   };
 
+  const isMobile = useIsMobile(); // Detecta si es móvil
+
+  // Definir columnas que se ocultarán en móviles
+  const hiddenColumnsOnMobile = [
+    "address",
+    "updatedAt",
+    "description",
+    "role",
+    "cargo",
+    "guard",
+    "plate",
+    "horometer",
+    "odometer",
+    "year",
+    "type",
+    "nro_volquetes",
+    "state",
+    "id",
+    "reasonNoPlanned",
+    "statusOperator",
+    "statusSupervisor",
+    "workOrderOk",
+    "checkListOk",
+    "vehicleType",
+    "vehicleTagName",
+    "tagName",
+    "start",
+    "duration",
+    "material",
+    "activityName",
+    "tonnage"
+  ];
+
+  useEffect(() => {
+    table.getAllColumns().forEach((column) => {
+      if (hiddenColumnsOnMobile.includes(column.id)) {
+        column.toggleVisibility(!isMobile); // Oculta en móviles, muestra en desktop
+      }
+    });
+  }, [isMobile, table]);
+
   return (
     <>
       <DataTableToolbar
@@ -107,10 +141,10 @@ export function DataTable({
         searchColumns={searchColumns}
         filters={filters}
       />
-      <div ref={parentRef} style={{ overflowY: "auto" }}>
+      <div ref={parentRef} style={{ overflowY: "auto", height: "80vh" }}>
         <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
           <Table>
-            <TableHeader>
+            <TableHeader className="">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -182,25 +216,33 @@ export function DataTable({
           </Table>
         </div>
       </div>
-      <div className="w-full flex items-center justify-center absolute left-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent">
-        {hasNextPage && (
-          <>
-            {isFetching ? (
-              <div className="text-center flex items-center justify-center gap-2 py-1 px-3 text-xs text-zinc-400">
-                <IconLoader className="w-3 h-3 text-zinc-300 fill-primary animate-spin" />
-                Cargando más...
-              </div>
-            ) : (
-              <button
-                onClick={() => fetchNextPage()}
-                disabled={isFetching}
-                className="bg-zinc-100 mx-auto text-xs text-zinc-400 rounded-xl py-1 px-3 flex items-center justify-center gap-2"
-              >
-                Cargar más items
-              </button>
-            )}
-          </>
-        )}
+      <div>
+        <div className="w-full flex items-start justify-center h-10 mb-2">
+          {hasNextPage && (
+            <>
+              {isFetching ? (
+                <div className="text-center flex items-center justify-center gap-2 py-1 px-3 text-sm text-zinc-400">
+                  <IconLoader className="w-3 h-3 text-zinc-300 fill-primary animate-spin" />
+                  Cargando más...
+                </div>
+              ) : (
+                <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetching}
+                  className="bg-zinc-100 mx-auto text-xs text-zinc-400 rounded-xl h-8 px-3 flex items-center justify-center gap-2 hover:bg-zinc-200/80 transition-colors ease-in-out duration-300"
+                >
+                  Cargar más items
+                </button>
+              )}
+            </>
+          )}
+        </div>
+        <div className="flex-1 text-[11px] flex flex-col md:flex-row justify-center md:justify-between text-zinc-400">
+          <span className="text-center">
+            © 2025 Gunjop Terms Privacy Cookies
+          </span>
+          <span className="text-center">Scoop Truck Tags Places Resources</span>
+        </div>
       </div>
     </>
   );

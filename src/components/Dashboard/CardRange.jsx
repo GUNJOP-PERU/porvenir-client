@@ -5,6 +5,7 @@ import HighchartsReact from "highcharts-react-official";
 
 export default function CardRange({ data }) {
 
+  console.log("dataRange",data)
   const parseTimeToCustomScale = useCallback((timeString) => {
     if (!timeString || !timeString.includes(":")) return null;
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -14,7 +15,6 @@ export default function CardRange({ data }) {
     if (adjustedTime < 0) adjustedTime += 24;
     return adjustedTime;
   }, []);
-  
   
   const options = useMemo(
     () => ({

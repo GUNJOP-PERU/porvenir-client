@@ -16,7 +16,7 @@ export const columns = [
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -24,7 +24,12 @@ export const columns = [
   {
     accessorKey: "activityName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Actividad" />
+      <DataTableColumnHeader
+        column={column}
+        title="Actividad"
+        accessorKey="activityName"
+       
+      />
     ),
     cell: ({ row }) => {
       return (
@@ -63,14 +68,19 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div  className={clsx(
+          <div>
+            <div
+            className={clsx(
               "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center ",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]": row.original?.equipment === "Scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]": row.original?.equipment === "Volquete",
+                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                  row.original?.equipment === "Scoop",
+                "bg-[url('/src/assets/vehicle/truck.png')]":
+                  row.original?.equipment === "Volquete",
               }
             )}
           ></div>
+          </div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("user")}

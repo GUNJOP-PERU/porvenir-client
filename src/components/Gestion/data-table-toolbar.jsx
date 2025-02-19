@@ -13,45 +13,28 @@ export function DataTableToolbar({
 }) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  // Función para renderizar un filtro solo si la columna existe
   const renderFacetedFilter = ({ columnId, title, options }) => {
     const column = table.getColumn(columnId);
     return column ? (
-      <motion.div
-        key={columnId}
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-      >
-        <DataTableFacetedFilter
-          column={column}
-          title={title}
-          options={options}
-        />
-      </motion.div>
+      <DataTableFacetedFilter column={column} title={title} options={options} />
     ) : null;
   };
 
-  // Obtener el valor de búsqueda de las columnas permitidas
   const getFilterValue = () => {
-    for (const columnId of searchColumns) {
-      const column = table.getColumn(columnId);
-      if (column?.getFilterValue()) return column.getFilterValue();
-    }
-    return "";
+    return searchColumns
+      .map((col) => table.getColumn(col)?.getFilterValue() || "")
+      .find((value) => value !== "");
   };
 
-  // Aplicar el valor de búsqueda a las columnas permitidas
   const handleSearchChange = (value) => {
-    searchColumns.forEach((columnId) => {
-      const column = table.getColumn(columnId);
+    searchColumns.forEach((col) => {
+      const column = table.getColumn(col);
       if (column) column.setFilterValue(value);
     });
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-2">
       {isFetching ? (
         <motion.div
           key="loading"
@@ -68,21 +51,25 @@ export function DataTableToolbar({
         <>
           {/* Buscador */}
           <div className="flex flex-1 items-center space-x-2">
-            <div className="relative">
+            <div className="relative w-full">
               <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4 text-zinc-300" />
               <Input
                 placeholder="Buscar..."
                 value={getFilterValue()}
                 onChange={(event) => handleSearchChange(event.target.value)}
-                className="pl-8 md:w-[200px] lg:w-[250px]"
+                className="pl-8 w-full lg:w-[250px]"
               />
             </div>
           </div>
 
           {/* Filtros con Motion */}
           <div className="flex items-center gap-1">
-            <AnimatePresence >
-              {filters.map(renderFacetedFilter)}
+            <AnimatePresence>
+              {filters.map((filter) => (
+                <motion.div key={filter.columnId}>
+                  {renderFacetedFilter(filter)}
+                </motion.div>
+              ))}
 
               {isFiltered && (
                 <motion.div

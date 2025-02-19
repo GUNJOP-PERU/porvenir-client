@@ -47,7 +47,7 @@ export const ModalWorkOrder = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const { data: dataUser } = useFetchData("user", "user");
   const { data: dataVehicle } = useFetchData("vehicle", "vehicle");
-  const { data: dataFrontLabor } = useFetchData("frontLabor", "frontLabor");
+  const { data: dataFrontLabor } = useFetchData("frontLabor-General", "frontLabor");
 
   const form = useForm({
     resolver: zodResolver(FormSchema),

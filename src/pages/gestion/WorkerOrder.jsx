@@ -3,19 +3,22 @@ import { ModalWorkOrder } from "../../components/Gestion/WorkOrder/ModalWorkOrde
 import { columns } from "../../components/Gestion/WorkOrder/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import { useFetchData } from "../../hooks/useGlobalQuery";
+import { useFetchData, useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
 
 function WorkerOrder() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
-  } = useFetchData("workOrder", "workOrder");
-  const [dialogOpen, setDialogOpen] = useState(false);
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("workOrder", "workOrder/items");
 
   return (
     <>
@@ -57,8 +60,11 @@ function WorkerOrder() {
       <DataTable
         data={data}
         columns={columns}
+        isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
         tableType={"workerOrders"}
       />
       <ModalWorkOrder

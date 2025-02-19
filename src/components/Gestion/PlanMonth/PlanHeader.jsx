@@ -46,7 +46,7 @@ export const PlanHeader = ({ form, onSubmit, dataLaborList, hasData ,loadingGlob
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 justify-between">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-wrap gap-2 justify-between">
         <div className="flex gap-2">
           {/* Selección de Mes y Año */}
           <FormField

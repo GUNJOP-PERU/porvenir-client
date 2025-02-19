@@ -46,7 +46,6 @@ function HomeFrontLabor() {
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-         
           <Button
             disabled={isFetching || isError}
             onClick={() => setDialogOpen(true)}
@@ -68,7 +67,20 @@ function HomeFrontLabor() {
         hasNextPage={hasNextPage}
         tableType={"frontLabors"}
       />
-      {/* <div>
+      
+      <ModalFrontLabor
+        isOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        isEdit={false}
+      />
+    </>
+  );
+}
+
+export default HomeFrontLabor;
+
+
+{/* <div>
         {data.map((item, index) => (
           <div key={index}>
             <h3>{item.name}</h3>
@@ -84,13 +96,3 @@ function HomeFrontLabor() {
 
         {isError && <p>Error al cargar los datos</p>}
       </div> */}
-      <ModalFrontLabor
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
-      />
-    </>
-  );
-}
-
-export default HomeFrontLabor;

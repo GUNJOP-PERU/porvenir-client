@@ -74,27 +74,30 @@ export default function PageLogin() {
         token,
       };
       console.log(userLogued);
-        setToken(userLogued.token);
-        setProfile(userLogued.user);
-        navigate("/");
-      
-    } catch (error) {
-      console.error("Error :", error);
-      resetForm();
-        setLoading(false);
+
+      if (!["Admin", "SuperAdmin"].includes(userLogued.user.rol)) {
         setShowError(true);
         setTimeout(() => {
           setShowError(false);
         }, 3000);
-      if (
-        ["Bad credentials", "User not found locally"].includes(error.message)
-      ) {
-        console.log("error");
+        setLoading(false);
+        resetForm();
+        console.error("Acceso denegado: No tienes permisos.");
+        return;
       }
-    } finally {
-    }
-
-    // navigate("/");
+      setToken(userLogued.token);
+      setProfile(userLogued.user);
+      navigate("/");
+    } catch (error) {
+      resetForm();
+      setLoading(false);
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
+      console.error("Error :", error);
+      
+    } 
   };
 
   useEffect(() => {
@@ -105,7 +108,7 @@ export default function PageLogin() {
 
   return (
     <>
-      <section className="h-dvh flex flex-col justify-center items-center bg-[#121316] relative">
+      <section className="h-dvh flex flex-col justify-center items-center bg-[#121316] relative bg-cover bg-center bg-[url('/src/assets/backLogin.png')]">
         <form
           className="flex flex-col justify-center items-center gap-2 max-w-[400px]"
           action=""
@@ -137,7 +140,7 @@ export default function PageLogin() {
                   ref={(ref) => (inputReferences.current[index] = ref)}
                   pattern="[0-9]*"
                   inputMode="numeric"
-                  className="w-9 md:w-10 h-10 md:h-11 p-0 text-center text-2xl text-zinc-400 rounded-[10px] bg-zinc-800 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/20 focus:shadow-primary  transition ease-in-out duration-300"
+                  className="w-10 md:w-10 h-11 md:h-11 p-0 text-center text-2xl text-zinc-400 rounded-[10px] bg-zinc-800 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/20 focus:shadow-primary  transition ease-in-out duration-300"
                   required
                 />
               ))}
@@ -186,34 +189,36 @@ export default function PageLogin() {
             </font>
           </div>
         </form>
-      <div
-        className={`absolute left-1/2 -translate-x-1/2 bottom-40 bg-[#212226] rounded-xl flex gap-1 py-2 px-3 shadow-2xl ${
+        <div
+         className={`absolute inset-x-1/2 -translate-x-1/2 top-20 md:top-auto md:bottom-40 bg-[#1d1d20] rounded-xl flex items-center gap-1 py-2 px-3 shadow-2xl w-60 h-8 ${
           showError ? "error-visible" : "error-hidden"
         }`}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15Z"
-            fill="#FD5B5D"
-            fillOpacity="0.18"
-          ></path>
-          <path
-            d="M8 5V9"
-            stroke="#FD5B5D"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          ></path>
-          <path
-            d="M8 11H8.01"
-            stroke="#FD5B5D"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          ></path>
-        </svg>
-        <h4 className="text-xs text-zinc-300">Código inválido, inténtelo de nuevo</h4>
-      </div>
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16">
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15Z"
+              fill="#FD5B5D"
+              fillOpacity="0.18"
+            ></path>
+            <path
+              d="M8 5V9"
+              stroke="#FD5B5D"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>
+            <path
+              d="M8 11H8.01"
+              stroke="#FD5B5D"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>
+          </svg>
+          <h4 className="text-xs text-zinc-300">
+            Código inválido, inténtelo de nuevo
+          </h4>
+        </div>
       </section>
     </>
   );
