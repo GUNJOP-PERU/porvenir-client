@@ -23,7 +23,6 @@ function ProductionMonth() {
   }, [fetchDataMonth]);
 
   useProductionWebSocket();
-  console.log("dataRangeScoop",dataRangeScoop)
   return (
     <>
        <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(140px,1fr))]">

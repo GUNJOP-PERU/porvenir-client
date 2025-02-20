@@ -5,7 +5,7 @@ import HighchartsReact from "highcharts-react-official";
 
 export default function CardRange({ data }) {
 
-  console.log("dataRange",data)
+
   const parseTimeToCustomScale = useCallback((timeString) => {
     if (!timeString || !timeString.includes(":")) return null;
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -64,7 +64,7 @@ export default function CardRange({ data }) {
         gridLineDashStyle: "Dash",
       },      
       tooltip: {
-        shared: false, // No es necesario el "shared" en columnrange
+        shared: false,
         valueSuffix: " h",
         backgroundColor: "#111214",
         borderWidth: 0,
@@ -78,19 +78,20 @@ export default function CardRange({ data }) {
         formatter: function () {
           const category = this.series.chart.xAxis[0].categories[this.point.x] || this.x;
       
-          // Obtenemos los valores originales
-          const start = this.point.start; // Usamos el valor original
-          const end = this.point.end;     // Usamos el valor original
-          
+          // 📌 Usamos los valores originales guardados
+          const start = this.point.originalStart || "N/A";
+          const end = this.point.originalEnd || "N/A";
+      
           return `
             <b>${category}</b><br/>
             <span style="color:${this.series.color}">●</span> 
             <b>${this.series.name}</b><br/>
-            Inicio: ${start} <br/>
-            Fin: ${end}
+            Inicio: <b>${start}</b> <br/>
+            Fin: <b>${end}</b>
           `;
         },
       },
+      
        
       plotOptions: {
         columnrange: {
