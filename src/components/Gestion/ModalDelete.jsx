@@ -22,7 +22,7 @@ export const ModalDelete = ({ isOpen, onClose, urlDelete }) => {
     try {
       setLoadingGlobal(true);
       const response = await deleteDataRequest(urlDelete);
-      console.log(response);
+     
       queryClient.invalidateQueries(urlDelete);
       onClose();
     } catch (error) {

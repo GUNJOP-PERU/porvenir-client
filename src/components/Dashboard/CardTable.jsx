@@ -50,7 +50,7 @@ export default function CardTable({ data }) {
   }, [data, hasData, getCellValue]);
 
   return (
-    <div className="overflow-y-auto h-[170px]">
+    <div className="overflow-y-auto h-[170px] md:h-[170px]">
       <table className="min-w-full table-auto border-collapse rounded-lg">
         <thead className="text-[10px] bg-zinc-100 text-zinc-400 sticky top-0">
           <tr>

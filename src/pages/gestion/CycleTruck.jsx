@@ -1,24 +1,26 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
 import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
-import { useFetchData } from "../../hooks/useGlobalQuery";
-import { countItems } from "../../lib/utilsGeneral";
 import { columns } from "../../components/Gestion/CycleTruck/columns";
-import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
+import { countItems } from "../../lib/utilsGeneral";
 
 function PageCycle() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
-  } = useFetchData("cycleTruck", "cycle");
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("cycleTruck", "cycle/truck/items");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
+ 
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
@@ -48,10 +50,13 @@ function PageCycle() {
         </div>
       </div>
       <DataTable
-        data={data}
-        columns={columns}
-        isFetching={isFetching}
-        isError={isError}
+         data={data}
+         columns={columns}
+         isLoading={isLoading}
+         isFetching={isFetching}
+         isError={isError}
+         fetchNextPage={fetchNextPage}
+         hasNextPage={hasNextPage}
         tableType={"cycles"}
       />
       <ModalCycle

@@ -1,22 +1,24 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
 import { ModalActivity } from "../../components/Gestion/Activity/ModalActivity";
 import { columns } from "../../components/Gestion/Activity/columns";
-import { useFetchData } from "../../hooks/useGlobalQuery";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
 function PageActivityScoop() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
-  } = useFetchData("activityScoop", "activity/scoop");
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("activityScoop", "activity/scoop/items");
   const [dialogOpen, setDialogOpen] = useState(false);
-  console.log("activity", data);
 
   return (
     <>
@@ -47,10 +49,13 @@ function PageActivityScoop() {
         </div>
       </div>
       <DataTable
-        data={data}
-        columns={columns}
-        isFetching={isFetching}
-        isError={isError}
+         data={data}
+         columns={columns}
+         isLoading={isLoading}
+         isFetching={isFetching}
+         isError={isError}
+         fetchNextPage={fetchNextPage}
+         hasNextPage={hasNextPage}
         tableType={"activities"}
       />
       <ModalActivity

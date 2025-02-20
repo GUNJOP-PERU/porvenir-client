@@ -34,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { ComboBoxSearch } from "../ComboBoxSearch";
 import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
@@ -108,7 +107,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
       ...data,
       name,
     };
-    console.log(responseData);
+
     await handleFormSubmit({
       isEdit,
       endpoint: "frontLabor",
@@ -184,10 +183,19 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>OB</FormLabel>
-                        <ComboBoxSearch
-                          data={dataOB}
-                          field={field}
-                          filterKey={"name"}
+                        <Input
+                          type="text"
+                          placeholder="Ej. OB9, OBX1"
+                          className="w-[80px]"
+                          disabled={loadingGlobal}
+                          {...field}
+                          onChange={(e) => {
+                            let value = e.target.value.toUpperCase();
+                            if (!value.startsWith("OB")) {
+                              value = "OB" + value.replace(/OB/gi, ""); // Asegura que siempre inicie con "OB"
+                            }
+                            field.onChange(value);
+                          }}
                         />
                         <FormMessage />
                       </FormItem>
@@ -286,7 +294,6 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 <FormField
                   control={form.control}
                   name="status"
-                 
                   render={({ field }) => (
                     <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
                       <div className="flex flex-col  justify-center ">

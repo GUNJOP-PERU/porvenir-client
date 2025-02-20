@@ -17,7 +17,7 @@ const CardItem = React.memo(
     };
 
     return (
-      <div className="flex flex-col justify-center relative  border border-[#F0F0F0] shadow-sm rounded-xl py-2 px-4 h-[90px] ">
+      <div className="flex flex-col justify-center relative  border border-[#ededed] shadow rounded-xl py-2 px-4 h-[100px] md:h-[90px] ">
         <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[100px] mb-2">
           {title}
         </span>

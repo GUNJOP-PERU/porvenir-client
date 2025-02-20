@@ -92,7 +92,7 @@ export const NewPlanMonth = () => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-    console.log(data);
+   
     setShowLoader(true);
 
     setTimeout(() => {
@@ -179,8 +179,6 @@ export const NewPlanMonth = () => {
     console.log("Datos Finales:", dataFinal);
     try {
       const response = await postDataRequest("planMonth/many", dataFinal);
-
-      console.log(response);
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
       } else {

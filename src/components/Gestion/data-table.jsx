@@ -85,6 +85,7 @@ export function DataTable({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 50,
     overscan: 5,
+    measureElement: (el) => el?.getBoundingClientRect().height || 50,
   });
 
   const { searchColumns, filters } = tableConfigs[tableType] || {
@@ -141,7 +142,7 @@ export function DataTable({
         searchColumns={searchColumns}
         filters={filters}
       />
-      <div ref={parentRef} style={{ overflowY: "auto", height: "80vh" }}>
+      <div ref={parentRef} style={{ overflowY: "auto", height: "80vh", padding:"10px" }}>
         <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
           <Table>
             <TableHeader className="">
@@ -221,7 +222,7 @@ export function DataTable({
           {hasNextPage && (
             <>
               {isFetching ? (
-                <div className="text-center flex items-center justify-center gap-2 py-1 px-3 text-sm text-zinc-400">
+                <div className="text-center flex items-center justify-center gap-2 py-1 px-3 h-8 text-xs text-zinc-400">
                   <IconLoader className="w-3 h-3 text-zinc-300 fill-primary animate-spin" />
                   Cargando más...
                 </div>

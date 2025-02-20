@@ -1,21 +1,22 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { ModalPlanDay } from "@/components/Gestion/PlanDay/ModalPlanDay";
+import { countItems } from "@/lib/utilsGeneral";
+import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
+import { columns } from "../../components/Gestion/PlanDay/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import { countItems } from "@/lib/utilsGeneral";
-import { columns } from "../../components/Gestion/PlanDay/columns";
-import { useFetchData } from "../../hooks/useGlobalQuery";
-import { ModalPlanDay } from "@/components/Gestion/PlanDay/ModalPlanDay";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 
 function PlanDay() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
-    refetch,
-  } = useFetchData("planDay", "planDay");
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("planDay", "planDay/items");
   const [dialogOpen, setDialogOpen] = useState(false);
-
 
   return (
     <>
@@ -56,8 +57,11 @@ function PlanDay() {
       <DataTable
         data={data}
         columns={columns}
+        isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
         tableType={"planDays"}
       />
       <ModalPlanDay

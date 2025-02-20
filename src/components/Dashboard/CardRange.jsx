@@ -104,19 +104,20 @@ export default function CardRange({ data }) {
       series: [
         {
           name: "Tiempos",
-          data: data?.averages
-            ?.map(([min, max]) => {
-              const start = parseTimeToCustomScale(min);
-              const end = parseTimeToCustomScale(max);
-              return {
-                start: min, // Guardamos el valor original
-                end: max,   // Guardamos el valor original
-                y: [start, end] // Valores convertidos que se usan en la gráfica
-              };
-            })
-            .filter(Boolean), // Filtramos valores nulos
+          data: data?.dates?.map((date, index) => {
+            const min = data.averages?.[index]?.[0] || null;
+            const max = data.averages?.[index]?.[1] || null;
+      
+            // Convertir solo si hay valores
+            const start = min && min !== "" ? parseTimeToCustomScale(min) : null;
+            const end = max && max !== "" ? parseTimeToCustomScale(max) : null;
+      
+            return [index, start, end]; // Mantenemos el índice para asegurar todas las fechas en X
+          }),
         },
-      ],      
+      ],
+      
+      
       legend: {
         enabled: false,
       },

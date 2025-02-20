@@ -58,7 +58,7 @@ export default function PageLogin() {
     const initialData = { code: combinedValue };
     try {
       const response = await loginRequest(initialData);
-      console.log("respuesta", response);
+     
       const token = response.data.token;
       const payload = token.split(".")[1];
       const decodedPayload = JSON.parse(
@@ -73,7 +73,7 @@ export default function PageLogin() {
         },
         token,
       };
-      console.log(userLogued);
+     
 
       if (!["Admin", "SuperAdmin"].includes(userLogued.user.rol)) {
         setShowError(true);

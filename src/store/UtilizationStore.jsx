@@ -67,14 +67,14 @@ export const useUtilizationStore = create((set) => ({
         console.log("Datos vacíos");
       } else {
         if (newData.destiny === "parrilla") {
-          console.log("parrilla");
+       
           set({ velocityParrilla: newData });
           productionSubject.next({
             ...productionSubject.getValue(),
             velocityParrilla: newData,
           });
         } else {
-          console.log("cancha");
+         
           set({ velocityCancha: newData });
           productionSubject.next({
             ...productionSubject.getValue(),

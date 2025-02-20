@@ -88,7 +88,7 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
   
 
   const onSubmit = (data) => {
-    console.log(data);
+   
     setShowLoader(true); 
 
     setTimeout(() => {

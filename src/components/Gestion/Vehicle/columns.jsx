@@ -132,7 +132,7 @@ export const columns = [
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Actualización" />
+      <DataTableColumnHeader column={column} title="Fecha actualización" />
     ),
     cell: ({ row }) => {
       return (
@@ -150,7 +150,7 @@ export const columns = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Actualización" />
+      <DataTableColumnHeader column={column} title="Feccha de creación" />
     ),
     cell: ({ row }) => {
       return (

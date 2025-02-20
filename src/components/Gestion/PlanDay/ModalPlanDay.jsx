@@ -101,7 +101,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-    console.log(data);
+   
     setShowLoader(true);
 
     setTimeout(() => {

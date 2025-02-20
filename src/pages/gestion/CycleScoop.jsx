@@ -1,27 +1,33 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 
-import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
-import {useFetchData} from "../../hooks/useGlobalQuery";
-import { countItems } from "../../lib/utilsGeneral";
 import { columns } from "@/components/Gestion/CycleScoop/columns";
-
+import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
+import { countItems } from "../../lib/utilsGeneral";
 
 function PageCycleScoop() {
-  const { data = [],  isFetching,
+  const {
+    data = [],
+    isFetching,
+    isLoading,
     isError,
-    refetch } = useFetchData("cycleScoop", "cycle/scoop");
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = useFetchInfinityScroll("cycleScoop", "cycle/scoop/items");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-console.log("ciclo", data);
   return (
     <>
-     <div className="flex flex-wrap gap-2 justify-between">
+      <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">Gestión de Ciclos / Scoop </h1>
+            <h1 className="text-xl font-bold leading-6">
+              Gestión de Ciclos / Scoop{" "}
+            </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
@@ -32,23 +38,35 @@ console.log("ciclo", data);
           </p>
         </div>
         <div className="flex gap-2">
-        <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            size="icon"
+            disabled={isFetching}
+          >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-         
+
           {/* <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
             <CircleFadingPlus className="w-5 h-5 text-white" />
             Añadir nuevo
           </Button> */}
         </div>
       </div>
-      <DataTable data={data} columns={columns}  isFetching={isFetching}
-        isError={isError}  tableType={"cycles"}/>
+      <DataTable
+        data={data}
+        columns={columns}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        tableType={"cycles"}
+      />
       <ModalCycle
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
-        
       />
     </>
   );

@@ -107,7 +107,6 @@ function GenerateTable() {
       }));
   };
 
-  console.log("data",data)
   return (
     <div className="flex flex-col flex-1 gap-4">
       <div className="flex justify-between ">

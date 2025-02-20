@@ -19,7 +19,6 @@ function Checklist() {
     hasNextPage,
   } = useFetchInfinityScroll("checklist", "checklist/items");
   const [dialogOpen, setDialogOpen] = useState(false);
-  console.log("datav", data);
 
   return (
     <>

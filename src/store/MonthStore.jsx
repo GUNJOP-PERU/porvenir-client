@@ -68,14 +68,14 @@ export const useMonthStore = create((set) => ({
         console.log("Datos vacíos");
       } else {
         if(newData.equipment === "truck"){
-          console.log("truck");
+         
           set({ dataRangeTruck: newData });
           productionSubject.next({
             ...productionSubject.getValue(),
             dataRangeTruck: newData,
           });
         }else{
-          console.log("scoop");
+        
           set({ dataRangeScoop: newData });
           productionSubject.next({
             ...productionSubject.getValue(),

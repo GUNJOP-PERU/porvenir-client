@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { ComboBoxSearch } from "../ComboBoxSearch";
+import ComboboxInput from "../ComboBoxInput";
 
 // Schema de validación
 const FormSchema = z.object({
@@ -74,6 +75,7 @@ export const ModalWorkOrder = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
   // Función de envío del formulario
   async function onSubmit(data) {
+    console.log("data",data)
     await handleFormSubmit({
       isEdit,
       endpoint: "workOrder",
@@ -107,6 +109,7 @@ export const ModalWorkOrder = ({ isOpen, onClose, isEdit, dataCrud }) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
               {/* Usuario */}
+              
               <FormField
                 control={control}
                 name="userId"
