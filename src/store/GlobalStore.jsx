@@ -7,37 +7,37 @@ const productionSubject = new BehaviorSubject({
 });
 
 export const useGlobalStore = create((set, get) => ({
-  ...productionSubject.getValue(),
+  // ...productionSubject.getValue(),
 
-  subscribeToUpdates: () => {
-    productionSubject.subscribe((newData) => set(newData));
-  },
+  // subscribeToUpdates: () => {
+  //   productionSubject.subscribe((newData) => set(newData));
+  // },
 
-  fetchDataGauge: async () => {
-    try {
-      const accumulated = await getDataRequest("dashboard/progress-shift");
-      set({ dataGuage: accumulated.data });
-      // 🔹 Actualiza RXJS para que otros subscriptores reciban la data
-      productionSubject.next({
-        ...productionSubject.getValue(),
-        dataGuage: accumulated.data,
-      });
-    } catch (error) {
-      console.error("Error cargando datos de Gauge", error);
-    }
-  },
+  // fetchDataGauge: async () => {
+  //   try {
+  //     const accumulated = await getDataRequest("dashboard/progress-shift");
+  //     set({ dataGuage: accumulated.data });
+  //     // Actualiza RXJS para que otros subscriptores reciban la data
+  //     productionSubject.next({
+  //       ...productionSubject.getValue(),
+  //       dataGuage: accumulated.data,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error cargando datos de Gauge", error);
+  //   }
+  // },
 
-  subscribeToSocketUpdates: (socket) => {
-    socket.on("progress-shift", (newData) => {
-      if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
-      } else {
-        set({ dataGuage: newData });
-        productionSubject.next({
-          ...productionSubject.getValue(),
-          dataGuage: newData,
-        });
-      }
-    });
-  },
+  // subscribeToSocketUpdates: (socket) => {
+  //   socket.on("progress-shift", (newData) => {
+  //     if (!newData || Object.keys(newData).length === 0) {
+  //       console.log("Datos vacíos");
+  //     } else {
+  //       set({ dataGuage: newData });
+  //       productionSubject.next({
+  //         ...productionSubject.getValue(),
+  //         dataGuage: newData,
+  //       });
+  //     }
+  //   });
+  // },
 }));

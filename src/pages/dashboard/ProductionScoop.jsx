@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 function ProductionScoop() {
   const fetchDataScoop = useScoopStore((state) => state.fetchDataScoop);
-  const { scoopProgressDay, scoopTonnagHour, scoopActivityHour, scoopEvents } =
+  const { scoopProgressDay, scoopTonnagHour,scoopEvents } =
     useScoopStore();
 
   useEffect(() => {
@@ -20,13 +20,12 @@ function ProductionScoop() {
   }, [fetchDataScoop]);
 
   useProductionWebSocket();
-
   
   return (
     <>
-      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_150px_repeat(auto-fit,minmax(125px,1fr))]">
+      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(125px,1fr))]">
         <CardGauge />
-        <CardClock />
+      
         <CardItem
           value={
             scoopProgressDay?.mineral?.productive?.value?.toLocaleString(
@@ -95,7 +94,7 @@ function ProductionScoop() {
           unid={"%"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-3 gap-2 grid-cols-1">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1">
         <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
           <CardTitle
             title="Tonelaje Mineral / Avance"
@@ -104,14 +103,7 @@ function ProductionScoop() {
           />
           <CardColumScoop data={scoopTonnagHour} />
         </div>
-        <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
-        <CardTitle
-            title="Eventos por vehiculo y labor"
-            subtitle="Eventos por vehículo y tipo de labor.."
-            icon={IconDash1}
-          />
-          <CardTimeline data={scoopActivityHour} />
-        </div>
+       
         <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3 ">
         <CardTitle
             title="Eventos "

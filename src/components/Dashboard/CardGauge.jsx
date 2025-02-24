@@ -1,24 +1,20 @@
-import { useEffect, useMemo } from "react";
-import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import { memo, useMemo, useRef } from "react";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
-import { useGlobalStore } from "@/store/GlobalStore";
+import { useStockData } from "@/hooks/useStockData";
 
 if (typeof solidGauge === "function") {
   solidGauge(Highcharts);
 }
 
-export default function CardGauge() {
-  useProductionWebSocket();
-  const fetchDataGauge = useGlobalStore((state) => state.fetchDataGauge);
-  const { dataGuage } = useGlobalStore();
-
-  useEffect(() => {
-    fetchDataGauge();
-  }, [fetchDataGauge]);
+const CardGauge = memo(() => {
+  const { data, isLoading, isError } = useStockData(
+    "dashboard/progress-shift",
+    "progress-shift"
+  );
 
   const options = useMemo(
     () => ({
@@ -53,7 +49,7 @@ export default function CardGauge() {
       },
       yAxis: {
         min: 0,
-        max: dataGuage?.goal_tonnages?.value || 0, // Meta
+        max: data?.goal_tonnages?.value || 0, // Meta
         stops: [[0.1, "#22C2C5"]],
         lineWidth: 0,
         tickWidth: 0,
@@ -72,7 +68,7 @@ export default function CardGauge() {
       series: [
         {
           name: "toneladas",
-          data: [dataGuage?.total_tonnages_accumulated?.value || 0], // Tonelada
+          data: [data?.total_tonnages_accumulated?.value || 0], // Tonelada
           innerRadius: "75%",
           enableMouseTracking: false,
           states: {
@@ -84,13 +80,13 @@ export default function CardGauge() {
             useHTML: true,
             formatter: function () {
               return `
-                  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
-                    <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
-                    <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
-                      ${formatThousands(this.y) || `${0}`}
-                    </span>
-                  </div>
-                `;
+                          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
+                            <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
+                            <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
+                              ${formatThousands(this.y) || `${0}`}
+                            </span>
+                          </div>
+                        `;
             },
           },
         },
@@ -118,12 +114,25 @@ export default function CardGauge() {
         },
       },
     }),
-    [dataGuage]
+    [data]
   );
 
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl h-[100px] md:h-[90px] animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+
   return (
-    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center ">
+    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px]">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
-}
+});
+CardGauge.displayName = "CardGauge";
+export default CardGauge;

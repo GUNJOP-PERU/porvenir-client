@@ -13,6 +13,7 @@ function PageCompany() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
   } = useFetchData("enterprise", "enterprise");
@@ -60,6 +61,7 @@ function PageCompany() {
         isFetching={isFetching}
         isError={isError}
         tableType={"enterprises"}
+        isLoading={isLoading}
       />
       <ModalCompany
         isOpen={dialogOpen}

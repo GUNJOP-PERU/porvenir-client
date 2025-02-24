@@ -1,5 +1,4 @@
 import { deleteDataRequest } from "@/lib/api";
-import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -13,18 +12,33 @@ import { useQueryClient } from "@tanstack/react-query";
 import IconLoader from "@/icons/IconLoader";
 import { IconDelete } from "@/icons/IconDelete";
 
-export const ModalDelete = ({ isOpen, onClose, urlDelete }) => {
+export const ModalDelete = ({
+  isOpen,
+  onClose,
+  urlDelete,
+  queryKeyToUpdate,
+  itemId,
+}) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const queryClient = useQueryClient();
   async function onSubmit() {
-    if (!urlDelete) return;
+    if (!urlDelete || !itemId) return;
 
     try {
       setLoadingGlobal(true);
       const response = await deleteDataRequest(urlDelete);
-     
-      queryClient.invalidateQueries(urlDelete);
-      onClose();
+      console.log(response);
+      if (response?.status === 200) {
+        queryClient.setQueryData([queryKeyToUpdate], (oldData) => {
+          if (!oldData || !oldData.data) return oldData; // Si no hay datos, no hacer nada   
+          return {
+            ...oldData, // Mantiene el resto de las propiedades (status, headers, etc.)
+            data: oldData.data.filter((item) => item._id !== itemId), // Filtra el array 
+          };
+        });
+        
+        onClose();
+      }
     } catch (error) {
       console.error("Error deleting", error);
     } finally {
@@ -35,7 +49,11 @@ export const ModalDelete = ({ isOpen, onClose, urlDelete }) => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(onClose) => !loadingGlobal && setDeleteModal(onClose)}
+      onOpenChange={(open) => {
+        if (!loadingGlobal) {
+          onClose(open);
+        }
+      }}
     >
       <DialogContent className="w-[250px]">
         <DialogHeader>

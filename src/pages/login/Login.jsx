@@ -97,7 +97,8 @@ export default function PageLogin() {
       }, 3000);
       console.error("Error :", error);
       
-    } 
+    }
+    
   };
 
   useEffect(() => {
@@ -108,7 +109,7 @@ export default function PageLogin() {
 
   return (
     <>
-      <section className="h-dvh flex flex-col justify-center items-center bg-[#121316] relative bg-cover bg-center bg-[url('/src/assets/backLogin.png')]">
+      <section className="h-dvh flex flex-col justify-center items-center bg-[#000000] relative bg-cover bg-center bg-[url('/src/assets/backLogin.png')]">
         <form
           className="flex flex-col justify-center items-center gap-2 max-w-[400px]"
           action=""
@@ -140,7 +141,7 @@ export default function PageLogin() {
                   ref={(ref) => (inputReferences.current[index] = ref)}
                   pattern="[0-9]*"
                   inputMode="numeric"
-                  className="w-10 md:w-10 h-11 md:h-11 p-0 text-center text-2xl text-zinc-400 rounded-[10px] bg-zinc-800 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/20 focus:shadow-primary  transition ease-in-out duration-300"
+                  className="w-10 md:w-10 h-11 md:h-11 p-0 text-center text-2xl text-zinc-400 rounded-[10px] bg-[#1D1D1D] border border-[#1D1D1D] focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/20 focus:shadow-primary  transition ease-in-out duration-300"
                   required
                 />
               ))}

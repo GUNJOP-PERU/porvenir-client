@@ -1,42 +1,25 @@
-import { motion, AnimatePresence } from "motion/react";
-
 const SkeletonWrapper = ({ children, isLoading }) => {
   return (
-    <AnimatePresence mode="wait">
+    <div className="relative flex-1 overflow-auto">
       {isLoading ? (
-        <motion.div
-          key="loading"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex-1 flex flex-col gap-1 overflow-auto"
-        >
-          <div className="h-[40px] bg-zinc-200 animate-pulse rounded-lg w-full"></div>
+        <div className="flex flex-col gap-1 animate-fade-in">
+         <div className="w-full flex justify-between mb-4 gap-2">
+         <div className="h-[34px] w-full md:w-[250px] bg-zinc-200 animate-pulse rounded-lg "></div>
+         <div className="h-[34px] w-[94px] bg-zinc-200 animate-pulse rounded-lg  "></div>
+         </div>
+         
           {Array.from({ length: 11 }).map((_, index) => (
-            <motion.div
+            <div
               key={index}
               className="h-[55px] bg-zinc-200 animate-pulse rounded-lg w-full"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.15, delay: index * 0.03 }}
-            ></motion.div>
+            
+            ></div>
           ))}
-        </motion.div>
+        </div>
       ) : (
-        <motion.div
-          key="content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex-1 overflow-auto"
-        >
-          {children}
-        </motion.div>
+        <div className="transition-opacity duration-500 opacity-100">{children}</div>
       )}
-    </AnimatePresence>
+    </div>
   );
 };
 

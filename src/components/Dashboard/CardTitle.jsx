@@ -18,3 +18,5 @@ const CardTitle = React.memo(({ title, subtitle, icon: Icon }) => {
 
 CardTitle.displayName = "CardTitle";
 export default CardTitle;
+
+// "group pointer-events-auto relative flex w-full max-w-xs items-center gap-3 overflow-hidden rounded-xl p-4 pr-6 shadow-lg transition-all ",

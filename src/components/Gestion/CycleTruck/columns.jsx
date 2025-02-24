@@ -112,6 +112,17 @@ export const columns = [
     },
   },
   {
+    accessorKey: "isNewLabor",
+    header: "Estado/Labor",
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-col gap-1">
+          {row.original?.isNewLabor === true ? <>n</> : <>nuevo</>} 
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "updatedAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha actualización" />
@@ -156,7 +167,7 @@ export const columns = [
   // {
   //   id: "actions",
   //   cell: ({ row }) => (
-  //     <DataTableRowActions componentToShow={"enterprise"} row={row} />
+  //     <DataTableRowActions componentToShow={"cycle"} row={row} />
   //   ),
   //   enableHiding: false,
   // },

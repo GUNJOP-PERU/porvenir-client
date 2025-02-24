@@ -3,7 +3,6 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
 import DayPage from "./pages/Day";
-import EditPage from "./pages/Edit";
 import Layout from "./pages/Layout";
 
 import ParetoScoop from "./pages/dashboard/ParetoScoop";
@@ -27,8 +26,14 @@ import HomeUsers from "./pages/gestion/Users";
 import HomeVehicles from "./pages/gestion/Vehicle";
 import WorkerOrder from "./pages/gestion/WorkerOrder";
 
+import 'handsontable/styles/handsontable.min.css';
+import 'handsontable/styles/ht-theme-main.min.css';
+
+
 import PageLogin from "./pages/login/Login";
 import { useAuthStore } from "./store/AuthStore";
+import TimelineScoop from "./pages/dashboard/TimlineScoop";
+import { ToastProvider } from "./hooks/useToaster";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +42,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+       <ToastProvider>
       <Router>
         <Routes>
           {/* Ruta pública para Login */}
@@ -65,6 +71,7 @@ function App() {
               {/* Dashboard */}
               <Route index element={<ProductionTruck />} />
               <Route path="/dashboard/productionScoop" element={<ProductionScoop />} />
+              <Route path="/dashboard/timelineScoop" element={<TimelineScoop />} />
               <Route path="/dashboard/paretoTruck" element={<ParetoTruck />} />
               <Route path="/dashboard/paretoScoop" element={<ParetoScoop />} />
               <Route path="/dashboard/productionMonth" element={<ProductionMonth />} />
@@ -73,6 +80,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      </ToastProvider>
     </QueryClientProvider>
   );
 }

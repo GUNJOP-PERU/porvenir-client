@@ -1,7 +1,5 @@
 /* Importar fuentes después de los estilos de Tailwind */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
-
 /*//////////////////////////////////////////////////////////////////
 [ SCROLLBAR ]*/
 
@@ -126,31 +124,6 @@ html[dir] .dark ::-webkit-scrollbar-track {
   }
 }
 
-/* th:first-child {
-  border-radius: 8px 0 0 8px;
-}
-
-th:last-child {
-  border-radius: 0 8px 8px 0;
-} */
-
-/* table th:first-child {
-
-  text-align: center;
-}
-table td:first-child {
-
-  text-align: center;
-}
-table th:last-child {
-  text-align: center;
-}
-
-table td:last-child {
-  text-align: center;
-
-} */
-
 #handsontable-example .handsontable td {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -179,7 +152,6 @@ table td:last-child {
   animation: spin-once 1s ease-in-out
 }
 
-
 .error-login {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 12px 16px -4px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
@@ -196,7 +168,14 @@ table td:last-child {
   visibility: visible;
   transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
 }
+.toast-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
 
-
-
-
+.toast-visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}

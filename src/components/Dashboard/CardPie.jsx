@@ -1,10 +1,12 @@
+import { useStockData } from "@/hooks/useStockData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { Subtitles } from "lucide-react";
 import React, { Suspense, useMemo } from "react";
 
-const CardPie = React.memo(({ data }) => {
+const CardPie = React.memo(({ symbol, socketEvent }) => {
+  const { data =[], isLoading, isError } = useStockData(symbol, socketEvent);
   const options = useMemo(
     () => ({
       chart: {
@@ -23,9 +25,7 @@ const CardPie = React.memo(({ data }) => {
       series: [
         {
           enableMouseTracking: false,
-          animation: {
-            duration: 2000,
-          },
+          
           colorByPoint: true,
           innerSize: "45%",
           data: data?.data_chart?.map((item) => ({
@@ -99,7 +99,16 @@ const CardPie = React.memo(({ data }) => {
     }),
     [data]
   );
-
+  if (isLoading)
+  return (
+    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+  );
+if (isError)
+  return (
+    <div className="flex items-center justify-center h-full w-full ">
+      <span className="text-[10px] text-red-500">Ocurrió un error</span>
+    </div>
+  );
   return (
     <div className="w-full flex flex-1 justify-center items-center gap-2">
       <div style={{ width: "100%", overflowX: "auto" }}>

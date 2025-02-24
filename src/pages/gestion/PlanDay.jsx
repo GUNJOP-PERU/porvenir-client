@@ -13,6 +13,7 @@ function PlanDay() {
     isFetching,
     isLoading,
     isError,
+    refetch,
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("planDay", "planDay/items");

@@ -52,16 +52,18 @@ export const columns = [
     },
   },
   {
-    accessorKey: "description",
+    accessorKey: "isNewLabor",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripcion" />
+      <DataTableColumnHeader column={column} title="isNewLabor" />
     ),
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("description") || (
-            <span className="text-zinc-400 ">... </span>
-          )}
+          {row.getValue("isNewLabor") === true ? (
+            <span className="text-zinc-400 ">Nuevo </span>
+          ) : (
+            <span className="text-zinc-400 ">No </span>
+          ) }
         </>
       );
     },

@@ -1,8 +1,33 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postDataRequest, putDataRequest } from "@/lib/api";
+import { useToast } from "./useToaster";
 
 export function useHandleFormSubmit() {
-  const queryClient = useQueryClient(); // Hook disponible aquí
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+  const mutation = useMutation({
+    mutationFn: async ({ isEdit, endpoint, id, data }) => {
+      return isEdit
+        ? await putDataRequest(`${endpoint}/${id}`, data)
+        : await postDataRequest(endpoint, data);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [variables.endpoint] });
+      addToast({
+        title: variables.isEdit ? "Editado correctamente" : "Creado correctamente",
+        message: variables.isEdit ? "Los cambios se han guardado con éxito." : "Dato creado con éxito.",
+        variant: "success", // Si usas variantes de color en el addToaster
+      });
+    },
+    onError: (error,variables) => {
+      console.error("Error en la solicitud:", error);
+      addToast({
+        title: variables.isEdit ? "Error al editar" : "Error al crear",
+        message: "Revise la información e intente nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
 
   return async function handleFormSubmit({
     isEdit,
@@ -15,26 +40,12 @@ export function useHandleFormSubmit() {
   }) {
     try {
       setLoadingGlobal(true);
-      let response;
+      await mutation.mutateAsync({ isEdit, endpoint, id, data });
 
-      if (isEdit) {
-        response = await putDataRequest(`${endpoint}/${id}`, data); 
-      } else {
-        response = await postDataRequest(endpoint, data);
-      }
-
-      console.log("Respuesta del servidor:", response.data);
-
-      // Invalidar la consulta específica
-      queryClient.invalidateQueries(endpoint);
-
-      // Cerrar el modal y resetear formulario si se proporcionan
       if (onClose) onClose();
       if (reset) reset();
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
     } finally {
-      setLoadingGlobal(false); // Detener indicador de carga
+      setLoadingGlobal(false);
     }
   };
 }

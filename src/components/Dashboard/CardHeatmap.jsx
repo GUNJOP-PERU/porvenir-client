@@ -1,35 +1,31 @@
-import React, { Suspense, useMemo } from "react";
-import * as Highcharts from "highcharts";
+import React, { useRef, useEffect, useMemo } from "react";
+import Highcharts from "highcharts/highcharts.src.js";
 import HighchartsReact from "highcharts-react-official";
 import highchartsHeatmap from "highcharts/modules/heatmap";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
-import { MoreHorizontal, MoreVertical } from "lucide-react";
+import { useStockData } from "@/hooks/useStockData";
 
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
   highchartsHeatmap(Highcharts);
 }
 
-const HighchartsHeatmap = React.memo(({ data }) => {
-  const dataTemporal = {
-    xCategories: ["Cancha 100", "Faja 4", "Pocket 3"],
-    yCategories: ["CX-097"],
-    heatmapData: [
-      {
-        y: "CX-097",
-        x: "Cancha 100",
-        value: 100,
-      },
-    ],
-  };
+const CardHeatMap = React.memo(() => {
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useStockData("dashboard/truck/heatmap", "truck-heatmap");
 
-  const xCategories = useMemo(() => {
-    return [...new Set(data?.map((item) => item?.destiny))];
-  }, [data]);
+  const chartRef = useRef(null); // Referencia al gráfico
 
-  const yCategories = useMemo(() => {
-    return [...new Set(data?.map((item) => item?.origin))];
-  }, [data]);
+  const xCategories = useMemo(
+    () => [...new Set(data?.map((item) => item?.destiny))],
+    [data]
+  );
+  const yCategories = useMemo(
+    () => [...new Set(data?.map((item) => item?.origin))],
+    [data]
+  );
 
   const heatmapData = useMemo(() => {
     return data?.map((item) => {
@@ -49,11 +45,9 @@ const HighchartsHeatmap = React.memo(({ data }) => {
         marginTop: 0,
         marginBottom: 30,
       },
-      title: {
-        text: "",
-      },
+      title: { text: null },
       xAxis: {
-        categories: xCategories || dataTemporal.xCategories,
+        categories: xCategories,
         title: {
           text: "",
         },
@@ -74,9 +68,8 @@ const HighchartsHeatmap = React.memo(({ data }) => {
         gridLineWidth: 1,
         // gridLineColor: "#A1A1AA",
       },
-
       yAxis: {
-        categories: yCategories || dataTemporal.yCategories,
+        categories: yCategories,
         title: {
           text: "",
         },
@@ -89,7 +82,6 @@ const HighchartsHeatmap = React.memo(({ data }) => {
         },
         gridLineWidth: 1,
       },
-
       colorAxis: {
         min: 0,
         stops: [
@@ -99,11 +91,10 @@ const HighchartsHeatmap = React.memo(({ data }) => {
           [1, "#4575b4"], // Azul oscuro
         ],
       },
-
       series: [
         {
           name: "Valores",
-          data: heatmapData || dataTemporal.heatmapData,
+          data: heatmapData,
           borderWidth: 2,
           borderColor: "#F4F4F580",
           dataLabels: {
@@ -118,18 +109,12 @@ const HighchartsHeatmap = React.memo(({ data }) => {
           },
         },
       ],
-
-      legend: {
-        enabled: false,
-      },
-      credits: {
-        enabled: false,
-      },
-      exporting: {
-        enabled: false,
-      },
-      accessibility: {
-        enabled: false,
+      tooltip: {
+        formatter: function () {
+          return `<b>${
+            this.series.xAxis.categories[this.point.x]
+          }</b> tiene un valor de <b>${this.point.value}</b>`;
+        },
       },
       tooltip: {
         valueSuffix: " toneladas",
@@ -155,16 +140,42 @@ const HighchartsHeatmap = React.memo(({ data }) => {
           );
         },
       },
+      legend: {
+        enabled: false,
+      },
+      credits: {
+        enabled: false,
+      },
+      exporting: {
+        enabled: false,
+      },
+
+      accessibility: {
+        enabled: false,
+      },
     }),
     [heatmapData, xCategories, yCategories]
   );
-  return (
-        
-      <div style={{ width: "100%", overflowX: "auto" }}>
-        <HighchartsReact highcharts={Highcharts} options={options} />
-      </div>
   
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+  return (
+    <div style={{ width: "100%", overflowX: "auto" }}>
+      <HighchartsReact
+        ref={chartRef}
+        highcharts={Highcharts}
+        options={options}
+      />
+    </div>
   );
 });
-HighchartsHeatmap.displayName = "HighchartsHeatmap";
-export default HighchartsHeatmap;
+
+export default CardHeatMap;

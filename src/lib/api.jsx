@@ -18,4 +18,8 @@ export const putDataRequest = (endpoint, data) =>
 // Eliminar datos
 export const deleteDataRequest = (endpoint) => authApi.delete(`api/v1/${endpoint}`);
 
-
+// Obtener datos Dashboard
+export const getDataGraphicRequest = async (endpoint) => {
+  const response = await authApi.get(`api/v1/${endpoint}`);
+  return response.data; 
+};

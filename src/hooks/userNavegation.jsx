@@ -118,6 +118,12 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/productionScoop",
           },
           {
+            name: "TImeline Scoop",
+            href: "/dashboard/timelineScoop",
+            icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/timelineScoop",
+          },
+          {
             name: "Pareto Truck",
             href: "/dashboard/paretoTruck",
             icon: <IconDash3 className="w-4 h-4 fill-zinc-300" />,

@@ -7,10 +7,11 @@ export function useFetchData(queryKey, endpoint) {
     queryFn: () => getDataRequest(endpoint),
     networkMode: "always",
     refetchOnReconnect: true,
-    retry: 2, // Intentará 2 veces antes de fallar
+    retry: 1, // Intentará 2 veces antes de fallar
     retryDelay: 2000, // Espera 2s entre intentos
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
     select: (response) => {
       return response.data;
     },
@@ -29,10 +30,11 @@ export function useFetchInfinityScroll(queryKey, endpoint, limit = 12) {
     },
     networkMode: "always",
     refetchOnReconnect: true,
-    retry: 2,
+    retry: 1,
     retryDelay: 2000,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
     select: (data) => {
       // Aquí aplanamos los datos correctamente con el doble `.data`
       return data.pages.map(page => page.data.data).flat() || [];

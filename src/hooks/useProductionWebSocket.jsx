@@ -12,7 +12,6 @@ export function useProductionWebSocket() {
   useEffect(() => {
     const socket = io(import.meta.env.VITE_URL);
 
-    useGlobalStore.getState().subscribeToSocketUpdates(socket);
     useTruckStore.getState().subscribeToSocketUpdates(socket);
     useScoopStore.getState().subscribeToSocketUpdates(socket);
     useParetoTruckStore.getState().subscribeToSocketUpdates(socket);

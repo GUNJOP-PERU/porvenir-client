@@ -18,6 +18,7 @@ function HomeFrontLabor() {
     isFetching,
     isLoading,
     isError,
+    refetch,
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("frontLabor", "frontLabor/items");

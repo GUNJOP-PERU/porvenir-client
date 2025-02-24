@@ -21,6 +21,10 @@ import { Link } from "react-router-dom";
 import clsx from "clsx";
 import React, { useState } from "react";
 import IconClose from "@/icons/IconClose";
+import IconArrowUp from "@/icons/IconArrowUp";
+import IconLeft from "@/icons/IconLeft";
+import GlobalSearch from "./nav-global-search";
+import CardClock from "../Dashboard/CardClock";
 
 export function NavUser() {
   const paths = useNavigation();
@@ -36,21 +40,32 @@ export function NavUser() {
     // disconnectSocket();
   };
 
+  const activeItem = paths
+    .flatMap((section) => section.items) // Convertir en un solo array de items
+    .find((item) => item.active); // Buscar el que tiene `active: true`
+
   return (
     <>
       <div className="w-full h-14 flex items-center justify-between p-4 border-b border-zinc-100 bg-zinc-50">
-        <div className="">
-          <div className="flex gap-4 items-center ">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="flex md:hidden h-8 w-8 p-2 bg-zinc-50 text-white rounded-[8px] cursor-pointer hover:bg-zinc-200 transition-colors ease-out duration-500 "
-            >
-              <IconMenu className="w-4 h-4 text-zinc-400" />
-            </button>
-            <img src="/src/assets/logo.svg" alt="" className="h-7 flex md:hidden" />
-          </div>
+        <div className="hidden md:flex items-center gap-1 ">
+          <span className="text-xs font-semibold text-zinc-400">Gunjop</span>
+          <IconLeft className="w-4 h-4 text-zinc-400" />
+          <span className="text-xs font-semibold ">
+            {activeItem ? activeItem.name : "Página desconocida"}
+          </span>
         </div>
-        <div>
+        <div className="flex gap-4 items-center md:hidden">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex h-8 w-8 p-2 bg-zinc-50 text-white rounded-[8px] cursor-pointer hover:bg-zinc-200 transition-colors ease-out duration-500 "
+          >
+            <IconMenu className="w-4 h-4 text-zinc-400" />
+          </button>
+          <img src="/src/assets/logo.svg" alt="" className="h-7 " />
+        </div>
+        <div className="flex items-center gap-2">
+          <CardClock/>
+          <GlobalSearch />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center justify-center gap-2 hover:bg-zinc-200 p-2 py-1 rounded-lg cursor-pointer transition-colors ease-out duration-500">
@@ -124,41 +139,45 @@ export function NavUser() {
       {isOpen && (
         <div
           className="fixed inset-0 z-[9999] bg-black/70 transition-opacity duration-300 animate-fade-in"
-          onClick={() => setIsOpen(false)} 
+          onClick={() => setIsOpen(false)}
         ></div>
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-full w-64 bg-zinc-100 transition-transform duration-300 z-[9999] ${
+        className={`fixed left-0 top-0 h-full w-64 bg-[#000000] transition-transform duration-300 z-[9999] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="h-screen relative">
-          <div className="w-full px-4 py-4 flex gap-4 items-center h-14 border-b border-zinc-200">
+          <div className="w-full px-4 py-4 flex gap-4 items-center h-14 border-b border-zinc-900">
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 bg-zinc-100 hover:bg-zinc-200 cursor-pointer rounded-[8px] w-8 h-8 transition-colors ease-out duration-500"
+              className="p-2 bg-[#000000] hover:bg-zinc-800 cursor-pointer rounded-[8px] w-8 h-8 transition-colors ease-out duration-500"
             >
-              <IconClose className="w-4 h-4 fill-zinc-400" />
+              <IconClose className="w-4 h-4 fill-zinc-600" />
             </button>
-            <img src="/src/assets/logo.svg" alt="" className="h-7" />
+            <img src="/src/assets/logo-white.svg" alt="" className="h-7" />
           </div>
           <div className="w-full flex-1 overflow-y-auto px-3 md:px-6 py-4 ">
             {paths.map((section) => (
               <div key={section.title} className="mb-4">
-                <span className="text-[10px] text-zinc-400 uppercase font-semibold inline">
+                <span className="text-[8px] text-zinc-500 uppercase font-semibold inline">
                   {section.title}
                 </span>
                 <ul className="w-full flex flex-col ">
                   {section.items.map((item, index) => (
-                     <Link to={item.href} key={index} onClick={() => setIsOpen(false)}>
+                    <Link
+                      to={item.href}
+                      key={index}
+                      onClick={() => setIsOpen(false)}
+                    >
                       <li
                         className={clsx(
-                          "w-full h-8 flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-white hover:text-zinc-600 transition ease-in-out duration-200 ",
+                          "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200 ",
                           item.active
-                            ? "bg-white text-zinc-600 shadow-sm"
-                            : "text-zinc-400"
+                            ? "bg-[#1D1D1D] text-zinc-200 shadow-sm"
+                            : "text-zinc-600"
                         )}
                       >
                         {React.cloneElement(item.icon, {
@@ -166,7 +185,7 @@ export function NavUser() {
                             "w-4 h-4",
                             item.active
                               ? "text-primary animate-spin-once"
-                              : "text-zinc-400"
+                              : "text-zinc-600"
                           ),
                         })}
                         <span className="flex leading-3 mt-0.5">

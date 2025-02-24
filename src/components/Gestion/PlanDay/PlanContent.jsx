@@ -1,9 +1,8 @@
-import { HotTable } from "@handsontable/react";
-import { Button } from "@/components/ui/button";
-import { registerAllModules } from "handsontable/registry";
-import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import { dataFase } from "@/lib/data";
+import { HotTable } from "@handsontable/react";
 import clsx from "clsx";
+import { esMX, registerLanguageDictionary } from "handsontable/i18n";
+import { registerAllModules } from "handsontable/registry";
 registerAllModules();
 registerLanguageDictionary(esMX);
 
@@ -13,18 +12,6 @@ export const PlanContent = ({
   dataLaborList,
   loadingGlobal,
 }) => {
-  // ✅ Filtrar opciones disponibles en la columna "labor"
-  const getAvailableLabors = (currentRowIndex) => {
-    const selectedLabors = new Set(
-      dataHotTable
-        .map((row, index) => (index !== currentRowIndex ? row.labor : null))
-        .filter(Boolean)
-    );
-
-    return dataLaborList
-      ?.map((item) => item.name)
-      .filter((name) => !selectedLabors.has(name)); // Excluye los ya seleccionados
-  };
 
   // ✅ Actualizar la tabla después de un cambio
   const handleAfterChange = (changes) => {
@@ -39,19 +26,6 @@ export const PlanContent = ({
 
       return newData;
     });
-  };
-
-  // ✅ Calcular el total de toneladas
-  const calculateTotal = () => {
-    if (!dataHotTable || dataHotTable.length === 0) return 0;
-
-    return dataHotTable.reduce((total, row) => {
-      const tonnageValues = Object.keys(row)
-        .filter((key) => key.match(/^\d{4}-\d{2}-\d{2}$/))
-        .map((fecha) => row[fecha] || 0);
-
-      return total + tonnageValues.reduce((sum, tonnage) => sum + tonnage, 0);
-    }, 0);
   };
 
 

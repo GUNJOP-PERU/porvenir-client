@@ -1,9 +1,14 @@
 import IconArrowUp from "@/icons/IconArrowUp";
 import clsx from "clsx";
-import React, { Suspense, useMemo } from "react";
+import { memo, useRef } from "react";
 
-const CardItem = React.memo(
+const CardItem = memo(
   ({ value, title, change, valueColor, unid, subtitle }) => {
+
+    // const renderCount = useRef(0);
+    // renderCount.current += 1;
+    // console.log("CardItem render count:", renderCount.current);
+
     const getColorClass = (value) => {
       if (value >= 85) return "text-green-500";
       if (value >= 60) return "text-yellow-500";

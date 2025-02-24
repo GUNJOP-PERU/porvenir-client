@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#84CC16",
+          DEFAULT: "#EE3E2C",
           foreground: "hsl(var(--primary-foreground))",
         },
         custom: {
@@ -68,6 +68,15 @@ export default {
       gridTemplateColumns: {
         "auto-fill-100": "repeat(auto-fill, minmax(100px, 1fr))",
         "auto-fit-100": "repeat(auto-fit, minmax(100px, 1fr))",
+      },
+      animation: {
+        "fade-in": "fadeIn 0.5s ease-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
       },
     },
   },

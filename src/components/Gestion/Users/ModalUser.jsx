@@ -94,14 +94,14 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
   return (
     <Dialog open={isOpen}   onOpenChange={(onClose) => !loadingGlobal && onClose}  modal={true}>
-      <DialogContent className="w-[350px] p-0">
-        <DialogHeader className="p-5 pb-0">
+      <DialogContent className="w-[380px] p-0">
+        <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
             <div>
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
             </div>
             <div>
-              <DialogTitle>{isEdit ? "Editar" : "Crear"} usuario</DialogTitle>
+              <DialogTitle>{isEdit ? "Editar" : "Crear nuevo"} usuario</DialogTitle>
               <DialogDescription>
                 Agregue un nuevo usuario al sistema
               </DialogDescription>
@@ -110,7 +110,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} >
-            <div className="grid grid-cols-2 gap-4 px-5">
+            <div className="grid grid-cols-2 gap-4 px-6">
               <FormField
                 control={control}
                 name="name"
@@ -212,7 +212,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
               />
             </div>
             <Separator className="my-4"/>
-            <div className="flex gap-3 justify-end pt-0 p-5">
+            <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
               <Button
                 type="button"               
                 onClick={() => onClose()}

@@ -1,4 +1,4 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { ModalUser } from "../../components/Gestion/Users/ModalUser";
 import { columns } from "../../components/Gestion/Users/columns";
@@ -11,10 +11,12 @@ function HomeUsers() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
   } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
+
 
   return (
     <>
@@ -46,7 +48,7 @@ function HomeUsers() {
           <Button
             onClick={() => setDialogOpen(true)}
             className="w-fit"
-            disabled={isFetching || isError}
+            // disabled={isFetching || isError}
           >
             <CircleFadingPlus className="w-5 h-5 text-white" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -61,6 +63,7 @@ function HomeUsers() {
         isFetching={isFetching}
         isError={isError}
         tableType={"users"}
+        isLoading={isLoading}
       />
       <ModalUser
         isOpen={dialogOpen}

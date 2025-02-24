@@ -4,8 +4,6 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 export default function CardRange({ data }) {
-
-
   const parseTimeToCustomScale = useCallback((timeString) => {
     if (!timeString || !timeString.includes(":")) return null;
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -134,6 +132,8 @@ export default function CardRange({ data }) {
     }),
     [data]
   );
+
+  console.log(data)
 
   return (
     <>

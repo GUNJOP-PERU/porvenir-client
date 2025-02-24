@@ -10,6 +10,7 @@ function PlanMonth() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
   } = useFetchData("planMonth", "planMonth");
@@ -47,7 +48,7 @@ function PlanMonth() {
         columns={columns}
         isFetching={isFetching}
         isError={isError}
-        
+        isLoading={isLoading}
       />
     </>
   );

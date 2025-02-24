@@ -39,10 +39,12 @@ import {
 import IconClose from "@/icons/IconClose";
 import IconToggle from "@/icons/IconToggle";
 import IconLoader from "@/icons/IconLoader";
+import { useFetchData } from "@/hooks/useGlobalQuery";
 
 dayjs.locale("es");
 
 const FormSchema = z.object({
+  empresaId: z.string().min(1, { message: "*Cargo requerido" }),
   tagName: z.string().min(1, { message: "*Nombre requerido" }),
   plate: z.string().min(1, { message: "*Cargo requerido" }),
   model: z.string().optional(),
@@ -58,6 +60,7 @@ const FormSchema = z.object({
 });
 
 export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
+  const { data } = useFetchData("enterprise", "enterprise");
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const handleFormSubmit = useHandleFormSubmit();
 
@@ -65,6 +68,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       tagName: dataCrud?.tagName || "",
+      empresaId: dataCrud?.empresaId || "",
       plate: dataCrud?.plate || "",
       model: dataCrud?.model || "",
       odometer: dataCrud?.odometer || 1500,
@@ -81,6 +85,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
   useEffect(() => {
     if (dataCrud) {
       reset({
+        empresaId: dataCrud?.empresaId || "",
         tagName: dataCrud?.tagName || "",
         plate: dataCrud?.plate || "",
         model: dataCrud?.model || "",
@@ -93,6 +98,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
       });
     } else {
       reset({
+        empresaId:"",
         tagName: "",
         plate: "",
         model: "",
@@ -107,16 +113,28 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
+    const formData = new FormData();
+    // Convertimos los datos a JSON y los agregamos al FormData
+    formData.append("data", JSON.stringify(data));
+  
+    // Si hay imagen, la agregamos; si no, enviamos null
+    if (data.image) {
+      formData.append("image", data.image);
+    } else {
+      formData.append("image", "null"); // Lo enviamos como "null" 
+    }
+  
     await handleFormSubmit({
       isEdit,
       endpoint: "vehicle",
       id: dataCrud?._id,
-      data,
+      data: formData,  // Enviamos formData 
       setLoadingGlobal,
       onClose,
       reset,
     });
   }
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={(onClose) => !loadingGlobal && onClose}  modal={true}>
@@ -140,6 +158,34 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
+            <FormField
+                control={control}
+                name="empresaId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Seleccionar Empresa</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione Empresa" className="capitalize" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {data?.map((i) => (
+                          <SelectItem key={i._id} value={i._id} className="capitalize">
+                            {i.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={control}
                 name="tagName"

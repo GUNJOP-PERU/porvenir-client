@@ -12,6 +12,7 @@ function HomeVehicles() {
   const {
     data = [],
     isFetching,
+    isLoading,
     isError,
     refetch,
   } = useFetchData("vehicle", "vehicle");
@@ -60,6 +61,7 @@ function HomeVehicles() {
         isFetching={isFetching}
         isError={isError}
         tableType={"vehicles"}
+        isLoading={isLoading}
       />
       <ModalVehicle isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
     </>

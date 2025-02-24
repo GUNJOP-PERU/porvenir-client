@@ -133,6 +133,8 @@ export function DataTableRowActions({ componentToShow, row }) {
         isOpen={deleModal}
         onClose={() => setDeleteModal(false)}
         urlDelete={`${componentToShow}/${rowData?._id}`}
+        itemId={rowData?._id} 
+        queryKeyToUpdate={componentToShow}
       />
     </>
   );
