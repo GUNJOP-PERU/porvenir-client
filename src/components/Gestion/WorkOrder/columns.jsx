@@ -6,13 +6,14 @@ import IconCheck from "@/icons/IconCheck";
 import IconClose from "@/icons/IconClose";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
+import IconPDF from "@/icons/IconPdf";
 
 export const columns = [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -61,24 +62,31 @@ export const columns = [
     accessorKey: "shift",
     header: "Turno",
     cell: ({ row }) => {
-      return   < >
-      {row.getValue("shift") === "dia" ? (
-        <IconDay className="h-5 w-5 fill-orange-400" />
-      ) : (
-        <IconNight className="h-5 w-5 fill-sky-400" />
-      )}
-    </>;
+      return (
+        <>
+          {row.getValue("shift") === "dia" ? (
+            <IconDay className="h-5 w-5 fill-orange-400" />
+          ) : (
+            <IconNight className="h-5 w-5 fill-sky-400" />
+          )}
+        </>
+      );
     },
   },
- 
-  {
-    accessorKey: "reasonNoPlanned",
-    header: "Razon",
-    cell: ({ row }) => {
-      return <>{row.getValue("reasonNoPlanned") || <span className="text-zinc-400 text-[11px]">... </span>}</>;
 
-    },
-  },
+  // {
+  //   accessorKey: "reasonNoPlanned",
+  //   header: "Razon",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <>
+  //         {row.getValue("reasonNoPlanned") || (
+  //           <span className="text-zinc-400 text-[11px]">... </span>
+  //         )}
+  //       </>
+  //     );
+  //   },
+  // },
 
   {
     accessorKey: "statusOperator",
@@ -107,21 +115,20 @@ export const columns = [
     header: "Estado/Supervisor",
     cell: ({ row }) => {
       return (
-      
-         <div
-         className={clsx(
-           "w-5 h-5 rounded-full flex items-center justify-center border",
-           row.getValue("statusSupervisor") === "accepted"
-             ? "border-green-500"
-             : "border-red-500"
-         )}
-       >
-         {row.getValue("statusSupervisor") === "accepted" ? (
-           <IconCheck className="w-3.5 h-3.5 fill-green-500" />
-         ) : (
-           <IconClose className="w-3.5 h-3.5 fill-red-500" />
-         )}
-       </div>
+        <div
+          className={clsx(
+            "w-5 h-5 rounded-full flex items-center justify-center border",
+            row.getValue("statusSupervisor") === "accepted"
+              ? "border-green-500"
+              : "border-red-500"
+          )}
+        >
+          {row.getValue("statusSupervisor") === "accepted" ? (
+            <IconCheck className="w-3.5 h-3.5 fill-green-500" />
+          ) : (
+            <IconClose className="w-3.5 h-3.5 fill-red-500" />
+          )}
+        </div>
       );
     },
   },
@@ -129,14 +136,70 @@ export const columns = [
     accessorKey: "workOrderOk",
     header: "Order T",
     cell: ({ row }) => {
-      return <> {row.getValue("workOrderOk")}</>;
+      return (
+        
+          <button
+            className={`py-1 px-2 rounded-[5px] text-sm border ${
+              row?.original?.workorderFile?.path
+                ? "text-green-500 border-green-500"
+                : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+            }`}
+            disabled={!row?.original?.workorderFile?.path}
+            onClick={() => {
+              const filePath = row?.original?.workorderFile?.path;
+              if (filePath) {
+                window.open(
+                  `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }
+            }}
+          >
+            <IconPDF
+              className={`w-5 h-5 ${
+                row?.original?.workorderFile?.path
+                  ? "fill-green-500"
+                  : "fill-zinc-300"
+              }`}
+            />
+          </button>
+       
+      );
     },
   },
   {
-    accessorKey: "checkListOk",
+    accessorKey: "checklistFile",
     header: "Checklist",
     cell: ({ row }) => {
-      return <> {row.getValue("checkListOk")}</>;
+      return (
+        <button
+            className={`py-1 px-2 rounded-[5px] text-sm border ${
+              row?.original?.checklistFile?.path
+                ? "text-green-500 border-green-500"
+                : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+            }`}
+            disabled={!row?.original?.checklistFile?.path}
+            onClick={() => {
+              const filePath = row?.original?.checklistFile?.path;
+              if (filePath) {
+                window.open(
+                  `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }
+            }}
+          >
+            <IconPDF
+              className={`w-5 h-5 ${
+                row?.original?.checklistFile?.path
+                  ? "fill-green-500"
+                  : "fill-zinc-300"
+              }`}
+            />
+          </button>
+      );
     },
   },
 

@@ -48,7 +48,7 @@ function PageCompany() {
           <Button
             onClick={() => setDialogOpen(true)}
             className="w-fit"
-            disabled={isFetching || isError}
+            disabled={isFetching}
           >
             <CircleFadingPlus className="w-5 h-5 text-white" />
             Añadir nuevo

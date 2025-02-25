@@ -16,7 +16,7 @@ export default function CardColumScoop({ data }) {
       chart: {
         type: "column",
         backgroundColor: "transparent",
-        height: 170,
+        height: 300,
         marginTop: 35,
         marginBottom: 30,
       },

@@ -29,45 +29,50 @@ function Utilization() {
         <CardGauge />
      
         <CardItem
-          value={progressVelocity?.total_tonnages?.toLocaleString("es-MX") || 0}
+          value={progressVelocity?.total_tonnages || 0}
           title="Total de toneladas"
           valueColor="text-[#6399C7]"
           unid={"tn"}
+          decimals={0}
         />
         <CardItem
-          value={progressVelocity?.percentage_success?.toFixed(1) || 0}
+          value={progressVelocity?.percentage_success || 0}
           title="%Cumplimiento"
           change={progressVelocity?.percentage_success || 0}
           valueColor="text-red-500"
           unid={"%"}
         />
         <CardItem
-          value={progressVelocity?.velocities?.max_empty?.value?.toFixed(1) || 0}
+          value={progressVelocity?.velocities?.max_empty?.value || 0}
           title="Velocidad máxima vacío"         
           valueColor="text-red-500"
           unid={"km/h"}
+          decimals={0}
         />
         <CardItem
-          value={progressVelocity?.velocities?.max_loaded?.value?.toFixed(1) || 0}
+          value={progressVelocity?.velocities?.max_loaded?.value || 0}
           title="Velocidad máxima cargado"         
           valueColor="text-red-500"
           unid={"km/h"}
+          decimals={0}
         />
         <CardItem
-          value={progressVelocity?.velocities?.min_empty?.value?.toFixed(1) || 0}
+          value={progressVelocity?.velocities?.min_empty?.value || 0}
           title="Velocidad mínima vacío"         
           valueColor="text-red-500"
           unid={"km/h"}
+          decimals={0}
         />
         <CardItem
-          value={progressVelocity?.velocities?.min_loaded?.value?.toFixed(1) || 0}
+          value={progressVelocity?.velocities?.min_loaded?.value || 0}
           title="Velocidad mínima cargado"         
           valueColor="text-red-500"
           unid={"km/h"}
+          decimals={0}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
-        <div className="md:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+        <div className="xl:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
         <CardTitle
             title="Produccion (Ton) / Utilizacion (%)"
             subtitle="Relación entre tonelaje producido y porcentaje de uso."

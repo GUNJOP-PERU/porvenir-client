@@ -26,62 +26,89 @@ import HomeUsers from "./pages/gestion/Users";
 import HomeVehicles from "./pages/gestion/Vehicle";
 import WorkerOrder from "./pages/gestion/WorkerOrder";
 
-import 'handsontable/styles/handsontable.min.css';
-import 'handsontable/styles/ht-theme-main.min.css';
-
+import "handsontable/styles/handsontable.min.css";
+import "handsontable/styles/ht-theme-main.min.css";
 
 import PageLogin from "./pages/login/Login";
 import { useAuthStore } from "./store/AuthStore";
-import TimelineScoop from "./pages/dashboard/TimlineScoop";
+import TimelineScoop from "./pages/dashboard/TimelineScoop";
 import { ToastProvider } from "./hooks/useToaster";
+import TimelineTruck from "./pages/dashboard/TimelineTruck";
+import { SocketProvider } from "./context/SocketContext";
 
-const queryClient = new QueryClient();
+import { useEffect } from "react";
+import { useDailyQueryCleanup } from "./hooks/useDailyQueryCleanup";
 
 function App() {
+
   const isAuth = useAuthStore((state) => state.isAuth);
 
   return (
-    <QueryClientProvider client={queryClient}>
-       <ToastProvider>
-      <Router>
-        <Routes>
-          {/* Ruta pública para Login */}
-          <Route path="/login" element={<PageLogin />} />
-          <Route path="*" element={<PageError />} />
+   
+      <SocketProvider>
+      <ToastProvider>
+        <Router>
+          <Routes>
+            {/* Ruta pública para Login */}
+            <Route path="/login" element={<PageLogin />} />
+            <Route path="*" element={<PageError />} />
 
-          {/* Rutas protegidas dentro de Layout */}
-          <Route element={<ProtectedRoute isAllowed={isAuth} />}>
-            <Route element={<Layout />}>
-              <Route  path="/users"  element={<HomeUsers />} />
-              {/* <Route path="/edit/:id" element={<EditPage />} /> */}
-              <Route path="/day" element={<DayPage />} />
-              <Route path="/frontLabor" element={<HomeFrontLabor />} />
-              <Route path="/vehicle" element={<HomeVehicles />} />
-              <Route path="/workOrder" element={<WorkerOrder />} />
-              <Route path="/checklist" element={<Checklist />} />
-              <Route path="/planDay" element={<PlanDay />} />
-              <Route path="/planMonth" element={<PlanMonth />} />
-              <Route path="/newPlanMonth" element={<NewPlanMonth />} />
-              <Route path="/company" element={<PageCompany />} />
-              <Route path="/cycleTruck" element={<PageCycle />} />
-              <Route path="/cycleScoop" element={<PageCycleScoop />} />
-              <Route path="/activityTruck" element={<PageActivity />} />
-              <Route path="/activityScoop" element={<PageActivityScoop />} />
+            {/* Rutas protegidas dentro de Layout */}
+            <Route element={<ProtectedRoute isAllowed={isAuth} />}>
+              <Route element={<Layout />}>
+                <Route path="/users" element={<HomeUsers />} />
+                {/* <Route path="/edit/:id" element={<EditPage />} /> */}
+                <Route path="/day" element={<DayPage />} />
+                <Route path="/frontLabor" element={<HomeFrontLabor />} />
+                <Route path="/vehicle" element={<HomeVehicles />} />
+                <Route path="/workOrder" element={<WorkerOrder />} />
+                <Route path="/checklist" element={<Checklist />} />
+                <Route path="/planDay" element={<PlanDay />} />
+                <Route path="/planMonth" element={<PlanMonth />} />
+                <Route path="/newPlanMonth" element={<NewPlanMonth />} />
+                <Route path="/company" element={<PageCompany />} />
+                <Route path="/cycleTruck" element={<PageCycle />} />
+                <Route path="/cycleScoop" element={<PageCycleScoop />} />
+                <Route path="/activityTruck" element={<PageActivity />} />
+                <Route path="/activityScoop" element={<PageActivityScoop />} />
 
-              {/* Dashboard */}
-              <Route index element={<ProductionTruck />} />
-              <Route path="/dashboard/productionScoop" element={<ProductionScoop />} />
-              <Route path="/dashboard/timelineScoop" element={<TimelineScoop />} />
-              <Route path="/dashboard/paretoTruck" element={<ParetoTruck />} />
-              <Route path="/dashboard/paretoScoop" element={<ParetoScoop />} />
-              <Route path="/dashboard/productionMonth" element={<ProductionMonth />} />
-              <Route path="/dashboard/productionUV" element={<Utilization />} />
+                {/* Dashboard */}
+                <Route index element={<ProductionTruck />} />
+                <Route
+                  path="/dashboard/productionScoop"
+                  element={<ProductionScoop />}
+                />
+                <Route
+                  path="/dashboard/timelineScoop"
+                  element={<TimelineScoop />}
+                />
+                <Route
+                  path="/dashboard/timelineTruck"
+                  element={<TimelineTruck />}
+                />
+                <Route
+                  path="/dashboard/paretoTruck"
+                  element={<ParetoTruck />}
+                />
+                <Route
+                  path="/dashboard/paretoScoop"
+                  element={<ParetoScoop />}
+                />
+                <Route
+                  path="/dashboard/productionMonth"
+                  element={<ProductionMonth />}
+                />
+                <Route
+                  path="/dashboard/productionUV"
+                  element={<Utilization />}
+                />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
       </ToastProvider>
-    </QueryClientProvider>
+      </SocketProvider>
+    
   );
 }
 

@@ -1,102 +1,127 @@
 import IconArrowUp from "@/icons/IconArrowUp";
-import clsx from "clsx";
-import { memo, useRef } from "react";
+import { memo } from "react";
+import CountUp from "react-countup";
+import { cva } from "class-variance-authority";
+
+// Definir estilos con variantes
+const textColorStyles = cva("text-[10px] leading-[8px] font-semibold", {
+  variants: {
+    change: {
+      high: "text-green-500",
+      medium: "text-yellow-500",
+      low: "text-red-500",
+    },
+  },
+});
+
+const cardStyles = cva(
+  "mt-0.5 flex items-center px-1 py-[2px] w-fit rounded-[5px]",
+  {
+    variants: {
+      change: {
+        high: "bg-green-100",
+        medium: "bg-yellow-100",
+        low: "bg-red-100",
+      },
+    },
+  }
+);
+
+const iconStyles = cva("w-3.5 h-3.5", {
+  variants: {
+    change: {
+      high: "fill-green-500",
+      medium: "fill-yellow-500",
+      low: "fill-red-500 rotate-180",
+    },
+  },
+});
+
+const tooltipStyles = cva(
+  "min-w-max flex-col rounded-md text-[8px] leading-[8px] font-bold text-white px-2 py-[4px] uppercase flex items-center justify-center",
+  {
+    variants: {
+      change: {
+        high: "bg-green-500",
+        medium: "bg-yellow-500",
+        low: "bg-red-500",
+      },
+    },
+  }
+);
+
+const tooltipArrowStyles = cva(
+  "h-2 w-2 origin-bottom-right rotate-45 transform",
+  {
+    variants: {
+      change: {
+        high: "bg-green-500",
+        medium: "bg-yellow-500",
+        low: "bg-red-500",
+      },
+    },
+  }
+);
 
 const CardItem = memo(
-  ({ value, title, change, valueColor, unid, subtitle }) => {
-
-    // const renderCount = useRef(0);
-    // renderCount.current += 1;
-    // console.log("CardItem render count:", renderCount.current);
-
-    const getColorClass = (value) => {
-      if (value >= 85) return "text-green-500";
-      if (value >= 60) return "text-yellow-500";
-      return "text-red-500";
-    };
-
-    const getTooltipText = (value) => {
-      if (value >= 85) return "Excelente";
-      if (value >= 60) return "Bien";
-      return "a mejorar";
-    };
+  ({ value, title, change, valueColor, unid, subtitle,decimals = 2 }) => {
+    const getChangeVariant = (val) =>
+      val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
     return (
-      <div className="flex flex-col justify-center relative  border border-[#ededed] shadow rounded-xl py-2 px-4 h-[100px] md:h-[90px] ">
+      <div className="flex flex-col justify-center relative border border-[#ededed] shadow rounded-xl py-2 px-4 h-[100px] md:h-[90px]">
         <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[100px] mb-2">
           {title}
         </span>
+
         <div className="flex items-center justify-between gap-1">
           <h1 className={`${valueColor} font-extrabold text-2xl leading-5`}>
-            {value}
+            <CountUp start={0} end={value} duration={1.5} decimals={decimals}/>
             <small>{unid}</small>
           </h1>
         </div>
 
         {change !== undefined && (
           <>
-            <div
-              data-tooltip-target="tooltip-default"
-              className={clsx(
-                "mt-0.5 flex items-center px-1 py-[2px] w-fit rounded-[5px]",
-                change >= 85
-                  ? "bg-green-100"
-                  : change >= 60
-                  ? "bg-yellow-100"
-                  : "bg-red-100" // Colores basados en el valor de change
-              )}
-            >
+            <div className={cardStyles({ change: getChangeVariant(change) })}>
               <IconArrowUp
-                className={clsx(
-                  "w-3.5 h-3.5",
-                  change >= 85
-                    ? "fill-green-500"
-                    : change >= 60
-                    ? "fill-yellow-500"
-                    : "fill-red-500 rotate-180" // Colores basados en el valor de change
-                )}
+                className={iconStyles({ change: getChangeVariant(change) })}
               />
-
               <span
-                className={clsx(
-                  "text-[10px] leading-[8px] font-semibold",
-                  getColorClass(change)
-                )}
+                className={textColorStyles({
+                  change: getChangeVariant(change),
+                })}
               >
                 {`${(100 - change).toFixed(2)}%`}
               </span>
             </div>
 
-            <div className=" absolute -top-2 left-0 flex flex-col group-focus-within:visible group-active:visible">
+            <div className="absolute -top-2 left-0 flex flex-col group-focus-within:visible group-active:visible">
               <div
-                className={clsx(
-                  "min-w-max flex-col rounded-md  text-[8px] leading-[8px] font-bold text-white px-2 py-[4px] uppercase flex items-center justify-center",
-                  change >= 85
-                    ? "bg-green-500"
-                    : change >= 60
-                    ? "bg-yellow-500"
-                    : "bg-red-500" // Colores basados en el valor de change
-                )}
+                className={tooltipStyles({ change: getChangeVariant(change) })}
               >
-               <span className="mt-[1px]"> {getTooltipText(change)}!</span>
+                <span className="mt-[1px]">
+                  {change >= 85
+                    ? "Excelente"
+                    : change >= 60
+                    ? "Bien"
+                    : "A mejorar"}
+                  !
+                </span>
               </div>
               <div className="ml-1 -mt-[4px] inline-block overflow-hidden">
                 <div
-                  className={clsx(
-                    "h-2 w-2 origin-bottom-right rotate-45 transform",
-                    change >= 85
-                      ? "bg-green-500"
-                      : change >= 60
-                      ? "bg-yellow-500"
-                      : "bg-red-500" // Colores basados en el valor de change
-                  )}
+                  className={tooltipArrowStyles({
+                    change: getChangeVariant(change),
+                  })}
                 ></div>
               </div>
             </div>
           </>
         )}
+
         {subtitle !== undefined && (
-          <span className="mt-0.5 text-[10px] leading-[8px] font-semiboldt text-zinc-600 text- ">
+          <span className="mt-0.5 text-[10px] leading-[8px] font-semibold text-zinc-600">
             {subtitle}
           </span>
         )}
@@ -104,5 +129,6 @@ const CardItem = memo(
     );
   }
 );
+
 CardItem.displayName = "CardItem";
 export default CardItem;

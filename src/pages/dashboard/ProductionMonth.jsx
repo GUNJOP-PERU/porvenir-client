@@ -23,65 +23,52 @@ function ProductionMonth() {
   }, [fetchDataMonth]);
 
   useProductionWebSocket();
+
   return (
     <>
-       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(140px,1fr))]">
+      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(140px,1fr))]">
         <CardGauge />
-       
+
         <CardItem
-          value={
-            dataAccumulatedProgress?.monthly_goal?.value?.toLocaleString(
-              "es-MX"
-            ) || 0
-          }
+          value={dataAccumulatedProgress?.monthly_goal?.value || 0}
           title="Meta del mes"
           valueColor="text-[#134E4A]"
           unid="tn"
+          decimals={0}
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.total_monthly?.value?.toLocaleString(
-              "es-MX"
-            ) || 0
-          }
+          value={dataAccumulatedProgress?.total_monthly?.value || 0}
           title="Total Toneladas Mes"
           valueColor="text-[#84CC16]"
           unid="tn"
+          decimals={0}
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.percentage_succeded?.value?.toFixed(1) || 0
-          }
+          value={dataAccumulatedProgress?.percentage_succeded?.value || 0}
           title="% Cumplimiento"
-          change={
-            dataAccumulatedProgress?.percentage_succeded?.value?.toFixed(1) || 0
-          }
+          change={dataAccumulatedProgress?.percentage_succeded?.value || 0}
           valueColor="text-[#FBB723]"
           unid="%"
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.total_shift_day?.value?.toLocaleString(
-              "es-MX"
-            ) || 0
-          }
+          value={dataAccumulatedProgress?.total_shift_day?.value || 0}
           title="Total Toneladas Dia"
           valueColor="text-[#EB8F26]"
           unid="tn"
+          decimals={0}
         />
         <CardItem
           value={
-            dataAccumulatedProgress?.total_shift_night?.value?.toLocaleString(
-              "es-MX"
-            ) || 0
+            dataAccumulatedProgress?.total_shift_night?.value || 0
           }
           title="Total Toneladas Noche"
           valueColor="text-[#65558F]"
           unid="tn"
+          decimals={0}
         />
         <CardItem
           value={
-            dataAccumulatedProgress?.average_journal?.value?.toFixed(1) || 0
+            dataAccumulatedProgress?.average_journal?.value || 0
           }
           title="Tiempo Prom. Truck"
           valueColor="text-[#1E64FA]"
@@ -89,16 +76,16 @@ function ProductionMonth() {
         />
         <CardItem
           value={
-            dataAccumulatedProgress?.average_time_scoop?.value.toFixed(2) || 0
+            dataAccumulatedProgress?.average_time_scoop?.value || 0
           }
           title="Tiempo Prom. Scoop"
           valueColor="text-[#A855F7]"
           unid="h"
         />
       </div>
-      <div className="flex-1 grid grid-cols-1 gap-2 md:grid-cols-2">
-        <div className="md:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-        <CardTitle
+      <div className="flex-1 grid grid-cols-1 gap-2 xl:grid-cols-2">
+        <div className="xl:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+          <CardTitle
             title=" Tonelaje / Planificado vs Ejecutado"
             subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
             icon={IconDash1}
@@ -106,18 +93,18 @@ function ProductionMonth() {
           <CardColum data={dataChartToness} />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-        <CardTitle
+          <CardTitle
             title=" Rango de horario de trabajo Camiones"
             subtitle="Horario de operación del Camión."
             icon={IconDash1}
           />
           <CardRange
-           data={dataRangeTruck}
+            data={dataRangeTruck}
             title="Rango de horario de trabajo Camiones"
           />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-        <CardTitle
+          <CardTitle
             title=" Rango de horario de trabajo Scooptram"
             subtitle="Horario de operación del Scooptram."
             icon={IconDash1}

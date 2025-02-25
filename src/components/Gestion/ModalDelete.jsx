@@ -30,7 +30,7 @@ export const ModalDelete = ({
       console.log(response);
       if (response?.status === 200) {
         queryClient.setQueryData([queryKeyToUpdate], (oldData) => {
-          if (!oldData || !oldData.data) return oldData; // Si no hay datos, no hacer nada   
+          if (!oldData || !oldData.data) return oldData; // Si no hay datos,
           return {
             ...oldData, // Mantiene el resto de las propiedades (status, headers, etc.)
             data: oldData.data.filter((item) => item._id !== itemId), // Filtra el array 

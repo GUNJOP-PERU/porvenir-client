@@ -1,5 +1,4 @@
 import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
-import CardClock from "@/components/Dashboard/CardClock";
 import CardColumImpact from "@/components/Dashboard/CardColumImpact";
 
 import CardColumParetoTruck from "@/components/Dashboard/CardColumParetoTruck";
@@ -39,16 +38,17 @@ function ParetoTruck() {
           title="Total de eventos"
           valueColor="text-[#6399C7]"
           unid={"evt"}
+          decimals={0}
         />
         <CardItem
-          value={truckParetoProgress?.data?.total_lost?.toFixed(1) || 0}
+          value={truckParetoProgress?.data?.total_lost || 0}
           title="Tiempo total perdido"
           valueColor="text-[#6399C7]"
           unid={"h"}
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_planned_activities?.toFixed(1) || 0
+            truckParetoProgress?.data?.avg_planned_activities || 0
           }
           title="Prom. Hora de Parada Planificada"
           valueColor="text-[#22C2C5]"
@@ -56,7 +56,7 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_unplanned_activities?.toFixed(1) || 0
+            truckParetoProgress?.data?.avg_unplanned_activities || 0
           }
           title="Prom. Horas Perdidas"
           valueColor="text-[#F43F5E]"
@@ -64,7 +64,7 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_maintenance_activities?.toFixed(1) ||
+            truckParetoProgress?.data?.avg_maintenance_activities ||
             0
           }
           title="Prom. Mantenimiento"
@@ -73,15 +73,15 @@ function ParetoTruck() {
         />
         <CardItem
           value={
-            truckParetoProgress?.data?.avg_service_activities?.toFixed(1) || 0
+            truckParetoProgress?.data?.avg_service_activities || 0
           }
           title="Prom. Otros"
           valueColor="text-[#347AE2]"
           unid={"h"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 md:grid-cols-2">
-        <div className="md:col-span-2 border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+        <div className="xl:col-span-2 border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
         <CardTitle
             title="Actividades Improductivas Mes"
             subtitle="Resumen de las actividades improductivas durante el mes."

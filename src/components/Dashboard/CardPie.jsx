@@ -15,7 +15,7 @@ const CardPie = React.memo(({ symbol, socketEvent }) => {
         marginRight: 0,
         marginLeft: 0,
         marginTop: 0,
-        marginBottom: 0,
+        marginBottom: 10,
         height: 280,
         // width: 280,
       },

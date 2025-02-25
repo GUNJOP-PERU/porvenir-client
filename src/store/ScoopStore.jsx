@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { getDataRequest } from "@/lib/api";
 import { BehaviorSubject } from "rxjs";
-import { hoursDay, hoursNight } from "@/lib/dataDashboard";
 
 const productionSubject = new BehaviorSubject({
   scoopProgressDay: [],
@@ -21,17 +20,17 @@ export const useScoopStore = create((set) => ({
 
   fetchDataScoop: async () => {
     try {
-      const [progress, tonnagHour, activityHour, events] = await Promise.all([
+      const [progress, tonnagHour, events] = await Promise.all([
         getDataRequest("dashboard/scoop/progress-day"),
         getDataRequest("dashboard/scoop/tonnage-per-hour"),
-        getDataRequest("dashboard/scoop/activities-per-hour"),
+        // getDataRequest("dashboard/scoop/activities-per-hour"),
         getDataRequest("dashboard/scoop/events"),
       ]);
 
       set({
         scoopProgressDay: progress.data,
         scoopTonnagHour: tonnagHour.data,
-        scoopActivityHour: activityHour.data,
+        // scoopActivityHour: activityHour.data,
         scoopEvents: events.data,
       });
     } catch (error) {
@@ -64,34 +63,19 @@ export const useScoopStore = create((set) => ({
       }
     });
 
-    socket.on("scoop-activities-per-hour", (newData) => {
-       if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
-      } else {
-        set((state) => {
-          const prevData = state.scoopActivityHour.data || [];
-          const prevRows = state.scoopActivityHour.rows || [];
-
-          // Nuevo dato a agregar
-          const newDataItem = newData.data;
-          const newShift = newData.shift;
-
-          // Si el y (row) ya existe, no lo duplicamos
-          const updatedRows = prevRows.includes(newDataItem.y)
-            ? prevRows
-            : [...prevRows, newDataItem.y];
-
-          return {
-            ...state,
-            scoopActivityHour: {
-              data: [...prevData, newDataItem],
-              rows: updatedRows, // Mantenemos las filas únicas
-              shift: newShift, // Actualizamos el shift
-            },
-          };
-        });
-      }
-    });
+    // socket.on("scoop-activities-per-hour", (newData) => {
+    //   console.log("Datos vacíos",newData);
+    //    if (!newData || Object.keys(newData).length === 0) {
+    //     console.log("Datos vacíos");
+    //   } else {
+        
+    //     set({ scoopActivityHour: newData });
+    //     productionSubject.next({
+    //       ...productionSubject.getValue(),
+    //       scoopActivityHour: newData,
+    //     });
+    //   }
+    // });
 
     socket.on("scoop-events-table", (newData) => {
        if (!newData || Object.keys(newData).length === 0) {

@@ -1,27 +1,26 @@
 import { getDataGraphicRequest } from "@/lib/api";
 import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-const socket = io(import.meta.env.VITE_URL, { autoConnect: false });
+import { useSocket } from "@/context/SocketContext";
 
 export const useStockData = (symbol, socketEvent) => {
   const queryClient = useQueryClient();
+  const socket = useSocket();
   const eventRef = useRef(socketEvent); // Evita que cambie la referencia en cada render
 
   // Consulta inicial con React Query
   const { data, isLoading, isError } = useQuery({
     queryKey: ["stocks", symbol],
     queryFn: () => getDataGraphicRequest(symbol),
-    staleTime: Infinity,
+    staleTime: 0,
     refetchOnReconnect: true,
     keepPreviousData: true,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
-    eventRef.current = socketEvent; // Asegura que el evento siempre esté actualizado
+    eventRef.current = socketEvent; // Asegura que el evento 
   }, [socketEvent]);
 
   useEffect(() => {
@@ -37,12 +36,14 @@ export const useStockData = (symbol, socketEvent) => {
       queryClient.setQueryData(["stocks", symbol], newData);
     };
 
-    socket.on(eventRef.current, handleNewData); // Usa la referencia para evitar re-suscripciones
+    if (!socket.hasListeners(eventRef.current)) {
+      socket.on(eventRef.current, handleNewData);
+    }
 
     return () => {
       socket.off(eventRef.current, handleNewData);
     };
-  }, [symbol, queryClient]);
+  }, [symbol]);
 
   return { data, isLoading, isError };
 };
