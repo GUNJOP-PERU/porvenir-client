@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useMemo } from "react";
-import Highcharts from "highcharts/highcharts.src.js";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import HighchartsReact from "highcharts-react-official";
+import Highcharts from "highcharts/highcharts.src.js";
 import highchartsHeatmap from "highcharts/modules/heatmap";
-import { useStockData } from "@/hooks/useStockData";
+import React, { useMemo, useRef } from "react";
 
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
@@ -14,7 +14,7 @@ const CardHeatMap = React.memo(() => {
     data = [],
     isLoading,
     isError,
-  } = useStockData("dashboard/truck/heatmap", "truck-heatmap");
+  } = useGraphicData("truck-heatmap","dashboard/truck/heatmap" );
 
   const chartRef = useRef(null); // Referencia al gráfico
 
@@ -109,13 +109,7 @@ const CardHeatMap = React.memo(() => {
           },
         },
       ],
-      tooltip: {
-        formatter: function () {
-          return `<b>${
-            this.series.xAxis.categories[this.point.x]
-          }</b> tiene un valor de <b>${this.point.value}</b>`;
-        },
-      },
+      
       tooltip: {
         valueSuffix: " toneladas",
         backgroundColor: "#111214",

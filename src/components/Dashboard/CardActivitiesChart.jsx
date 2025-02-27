@@ -1,8 +1,11 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardActivitiesChart({ data }) {
+export default function CardActivitiesChart({ symbol, endpoint }) {
+  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
+
   const options = useMemo(
     () => ({
       chart: {
@@ -179,6 +182,17 @@ export default function CardActivitiesChart({ data }) {
     [data]
   );
 
+  if (isLoading)
+  return (
+    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+  );
+if (isError)
+  return (
+    <div className="flex items-center justify-center h-full w-full ">
+      <span className="text-[10px] text-red-500">Ocurrió un error</span>
+    </div>
+  );
+  
   return (
     <>
       <HighchartsReact highcharts={Highcharts} options={options} />

@@ -74,19 +74,22 @@ export const columns = [
     },
   },
 
-  // {
-  //   accessorKey: "reasonNoPlanned",
-  //   header: "Razon",
-  //   cell: ({ row }) => {
-  //     return (
-  //       <>
-  //         {row.getValue("reasonNoPlanned") || (
-  //           <span className="text-zinc-400 text-[11px]">... </span>
-  //         )}
-  //       </>
-  //     );
-  //   },
-  // },
+  {
+    accessorKey: "reasonNoPlanned",
+    header: "HS/K",
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="max-w-[500px] truncate font-medium leading-3">
+           {row.original?.hodometerFinal || 0} <small>hs</small>
+          </span>
+          <span className="max-w-[500px] truncate font-medium leading-3">
+            {row.original?.kmFinal || 0} <small>km</small>
+          </span>
+        </div>
+      );
+    },
+  },
 
   {
     accessorKey: "statusOperator",
@@ -137,34 +140,32 @@ export const columns = [
     header: "Order T",
     cell: ({ row }) => {
       return (
-        
-          <button
-            className={`py-1 px-2 rounded-[5px] text-sm border ${
+        <button
+          className={`py-1 px-2 rounded-[5px] text-sm border ${
+            row?.original?.workorderFile?.path
+              ? "text-green-500 border-green-500"
+              : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+          }`}
+          disabled={!row?.original?.workorderFile?.path}
+          onClick={() => {
+            const filePath = row?.original?.workorderFile?.path;
+            if (filePath) {
+              window.open(
+                `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }
+          }}
+        >
+          <IconPDF
+            className={`w-5 h-5 ${
               row?.original?.workorderFile?.path
-                ? "text-green-500 border-green-500"
-                : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+                ? "fill-green-500"
+                : "fill-zinc-300"
             }`}
-            disabled={!row?.original?.workorderFile?.path}
-            onClick={() => {
-              const filePath = row?.original?.workorderFile?.path;
-              if (filePath) {
-                window.open(
-                  `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }
-            }}
-          >
-            <IconPDF
-              className={`w-5 h-5 ${
-                row?.original?.workorderFile?.path
-                  ? "fill-green-500"
-                  : "fill-zinc-300"
-              }`}
-            />
-          </button>
-       
+          />
+        </button>
       );
     },
   },
@@ -174,37 +175,37 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <button
-            className={`py-1 px-2 rounded-[5px] text-sm border ${
+          className={`py-1 px-2 rounded-[5px] text-sm border ${
+            row?.original?.checklistFile?.path
+              ? "text-green-500 border-green-500"
+              : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+          }`}
+          disabled={!row?.original?.checklistFile?.path}
+          onClick={() => {
+            const filePath = row?.original?.checklistFile?.path;
+            if (filePath) {
+              window.open(
+                `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }
+          }}
+        >
+          <IconPDF
+            className={`w-5 h-5 ${
               row?.original?.checklistFile?.path
-                ? "text-green-500 border-green-500"
-                : "text-zinc-300 border-zinc-300 cursor-not-allowed"
+                ? "fill-green-500"
+                : "fill-zinc-300"
             }`}
-            disabled={!row?.original?.checklistFile?.path}
-            onClick={() => {
-              const filePath = row?.original?.checklistFile?.path;
-              if (filePath) {
-                window.open(
-                  `${import.meta.env.VITE_URL}/api/v1/${filePath}`,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }
-            }}
-          >
-            <IconPDF
-              className={`w-5 h-5 ${
-                row?.original?.checklistFile?.path
-                  ? "fill-green-500"
-                  : "fill-zinc-300"
-              }`}
-            />
-          </button>
+          />
+        </button>
       );
     },
   },
 
   {
-    accessorKey: "updatedAt",
+    accessorKey: "updatedLastTime",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha actualización" />
     ),
@@ -214,7 +215,7 @@ export const columns = [
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.updatedAt)}
+              {formatFecha(row.original.updatedLastTime)}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización

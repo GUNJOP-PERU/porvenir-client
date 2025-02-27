@@ -1,10 +1,16 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumUtilization({ data }) {
+export default function CardColumUtilization() {
   // console.log(data, "Utilization");
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData("production-chart-utility","dashboard/production/chart-utility");
 
   const options = useMemo(
     () => ({
@@ -179,5 +185,15 @@ export default function CardColumUtilization({ data }) {
     [data]
   );
 
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

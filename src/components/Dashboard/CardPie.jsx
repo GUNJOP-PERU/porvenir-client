@@ -1,12 +1,10 @@
-import { useStockData } from "@/hooks/useStockData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { Subtitles } from "lucide-react";
 import React, { Suspense, useMemo } from "react";
 
-const CardPie = React.memo(({ symbol, socketEvent }) => {
-  const { data =[], isLoading, isError } = useStockData(symbol, socketEvent);
+const CardPie = React.memo(({  symbol,endpoint}) => {
+  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint );
   const options = useMemo(
     () => ({
       chart: {
@@ -25,7 +23,7 @@ const CardPie = React.memo(({ symbol, socketEvent }) => {
       series: [
         {
           enableMouseTracking: false,
-          
+
           colorByPoint: true,
           innerSize: "45%",
           data: data?.data_chart?.map((item) => ({
@@ -36,21 +34,7 @@ const CardPie = React.memo(({ symbol, socketEvent }) => {
         },
       ],
       tooltip: {
-        // pointFormat:
-        //   "{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})",
-        // backgroundColor: "#111214",
-        // borderWidth: 0,
-        // shadow: false,
-        // borderRadius: 10,
-        // padding: 10,
-        // style: {
-        //   color: "#FFFFFF",
-        //   fontSize: "11px",
-        //   fontWeight: "",
-        // },
-        // headerFormat:
-        //   '<span style="font-size: 11px; color: #A6A6A6; padding:10px">{point.key}</span><br>',
-        // valueDecimals: 1,
+       
         enabled: false,
       },
       plotOptions: {
@@ -99,16 +83,18 @@ const CardPie = React.memo(({ symbol, socketEvent }) => {
     }),
     [data]
   );
+
   if (isLoading)
-  return (
-    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
-  );
-if (isError)
-  return (
-    <div className="flex items-center justify-center h-full w-full ">
-      <span className="text-[10px] text-red-500">Ocurrió un error</span>
-    </div>
-  );
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+    
   return (
     <div className="w-full flex flex-1 justify-center items-center gap-2">
       <div style={{ width: "100%", overflowX: "auto" }}>

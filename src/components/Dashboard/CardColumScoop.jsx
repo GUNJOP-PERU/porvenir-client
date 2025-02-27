@@ -1,11 +1,16 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import { hoursDay, hoursNight } from "@/lib/dataDashboard";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumScoop({ data }) {
-
+export default function CardColumScoop() {
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData( "scoop-tonnage-per-hour","dashboard/scoop/tonnage-per-hour",);
 
   const selectedData = useMemo(() => {
     return data?.shift === "noche" ? hoursNight : data;
@@ -149,7 +154,16 @@ export default function CardColumScoop({ data }) {
     }),
     [data]
   );
-
+  if (isLoading)
+  return (
+    <div className="bg-zinc-200 rounded-2xl h-full w-full animate-pulse"></div>
+  );
+if (isError)
+  return (
+    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] ">
+      <span className="text-[10px] text-red-500">Ocurrió un error</span>
+    </div>
+  );
   return (
     <>
       <HighchartsReact highcharts={Highcharts} options={options} />

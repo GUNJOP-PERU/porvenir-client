@@ -1,8 +1,10 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumParetoScoop({ data }) {
+export default function CardColumParetoScoop() {
+  const { data = [], isLoading, isError } = useGraphicData("pareto-scoop-no-productive-activities","dashboard/pareto/no-productive-activities?equipment=scoop" );
   const dataTemporal = {
     dates: [
       "01:02",
@@ -185,6 +187,17 @@ export default function CardColumParetoScoop({ data }) {
     }),
     [data]
   );
+
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
 
   return (
     <>

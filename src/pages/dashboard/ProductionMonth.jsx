@@ -1,83 +1,63 @@
-import CardClock from "@/components/Dashboard/CardClock";
 import CardColum from "@/components/Dashboard/CardColum";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardRange from "@/components/Dashboard/CardRange";
 import CardTitle from "@/components/Dashboard/CardTitle";
-import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
-import { useMonthStore } from "@/store/MonthStore";
-import { useEffect } from "react";
 
 function ProductionMonth() {
-  const fetchDataMonth = useMonthStore((state) => state.fetchDataMonth);
-  const {
-    dataAccumulatedProgress,
-    dataChartToness,
-    dataRangeTruck,
-    dataRangeScoop,
-  } = useMonthStore();
-
-  useEffect(() => {
-    fetchDataMonth();
-  }, [fetchDataMonth]);
-
-  useProductionWebSocket();
-
+  const { data = [] } = useGraphicData(
+    "monthly-progress",
+    "dashboard/monthly/accumulated-progress",
+  );
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(140px,1fr))]">
         <CardGauge />
-
         <CardItem
-          value={dataAccumulatedProgress?.monthly_goal?.value || 0}
+          value={data?.monthly_goal?.value || 0}
           title="Meta del mes"
           valueColor="text-[#134E4A]"
           unid="tn"
           decimals={0}
         />
         <CardItem
-          value={dataAccumulatedProgress?.total_monthly?.value || 0}
+          value={data?.total_monthly?.value || 0}
           title="Total Toneladas Mes"
           valueColor="text-[#84CC16]"
           unid="tn"
           decimals={0}
         />
         <CardItem
-          value={dataAccumulatedProgress?.percentage_succeded?.value || 0}
+          value={data?.percentage_succeded?.value || 0}
           title="% Cumplimiento"
-          change={dataAccumulatedProgress?.percentage_succeded?.value || 0}
+          change={data?.percentage_succeded?.value || 0}
           valueColor="text-[#FBB723]"
           unid="%"
         />
         <CardItem
-          value={dataAccumulatedProgress?.total_shift_day?.value || 0}
+          value={data?.total_shift_day?.value || 0}
           title="Total Toneladas Dia"
           valueColor="text-[#EB8F26]"
           unid="tn"
           decimals={0}
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.total_shift_night?.value || 0
-          }
+          value={data?.total_shift_night?.value || 0}
           title="Total Toneladas Noche"
           valueColor="text-[#65558F]"
           unid="tn"
           decimals={0}
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.average_journal?.value || 0
-          }
+          value={data?.average_journal?.value || 0}
           title="Tiempo Prom. Truck"
           valueColor="text-[#1E64FA]"
           unid="h"
         />
         <CardItem
-          value={
-            dataAccumulatedProgress?.average_time_scoop?.value || 0
-          }
+          value={data?.average_time_scoop?.value || 0}
           title="Tiempo Prom. Scoop"
           valueColor="text-[#A855F7]"
           unid="h"
@@ -90,7 +70,7 @@ function ProductionMonth() {
             subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
             icon={IconDash1}
           />
-          <CardColum data={dataChartToness} />
+          <CardColum />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
           <CardTitle
@@ -99,8 +79,8 @@ function ProductionMonth() {
             icon={IconDash1}
           />
           <CardRange
-            data={dataRangeTruck}
-            title="Rango de horario de trabajo Camiones"
+            symbol="monthly-average-journals-truck"
+            endpoint="dashboard/monthly/average-journals?equipment=truck"
           />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
@@ -110,8 +90,8 @@ function ProductionMonth() {
             icon={IconDash1}
           />
           <CardRange
-            data={dataRangeScoop}
-            title="Rango de horario de trabajo Scooptram"
+            symbol="monthly-average-journals-scoop"
+            endpoint="dashboard/monthly/average-journals?equipment=scoop"
           />
         </div>
       </div>

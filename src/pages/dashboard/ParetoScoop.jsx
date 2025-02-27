@@ -1,32 +1,17 @@
 import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
-import CardClock from "@/components/Dashboard/CardClock";
 import CardColumImpact from "@/components/Dashboard/CardColumImpact";
 import CardColumParetoScoop from "@/components/Dashboard/CardColumParetoScoop";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
-
-import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
-import { useParetoScoopStore } from "@/store/ParetoScoopStore";
-import { useEffect } from "react";
 
 function ParetoScoop() {
-  const fetchParetoScoop = useParetoScoopStore(
-    (state) => state.fetchParetoScoop
+  const { data } = useGraphicData(
+    "pareto-scoop-progress-monthly",
+    "dashboard/pareto/progress-monthly?equipment=scoop",
   );
-  const {
-    scoopParetoProgress,
-    scoopParetoNoProductive,
-    scoopParetoActivitiesChart,
-    scoopImpactDiagram,
-  } = useParetoScoopStore();
-
-  useEffect(() => {
-    fetchParetoScoop();
-  }, [fetchParetoScoop]);
-
-  useProductionWebSocket();
 
   return (
     <>
@@ -34,32 +19,32 @@ function ParetoScoop() {
         <CardGauge />
 
         <CardItem
-          value={scoopParetoProgress?.total_events || 0}
+          value={data?.total_events || 0}
           title="Total de eventos"
           valueColor="text-[#6399C7]"
           unid={"evt"}
           decimals={0}
         />
         <CardItem
-          value={scoopParetoProgress?.data?.total_lost || 0}
+          value={data?.data?.total_lost || 0}
           title="Tiempo total perdido"
           valueColor="text-[#6399C7]"
           unid={"h"}
         />
         <CardItem
-          value={scoopParetoProgress?.data?.avg_planned_activities || 0}
+          value={data?.data?.avg_planned_activities || 0}
           title="Prom. Parada por Mantenimiento"
           valueColor="text-[#FF9500]"
           unid={"h"}
         />
         <CardItem
-          value={scoopParetoProgress?.data?.avg_unplanned_activities || 0}
+          value={data?.data?.avg_unplanned_activities || 0}
           title="Prom. Horas Improductivas No Gerenciales"
           valueColor="text-[#347AE2]"
           unid={"h"}
         />
         <CardItem
-          value={scoopParetoProgress?.data?.avg_maintenance_activities || 0}
+          value={data?.data?.avg_maintenance_activities || 0}
           title="Prom. Horas Improductivas Gerenciales"
           valueColor="text-[#22C2C5]"
           unid={"h"}
@@ -72,7 +57,7 @@ function ParetoScoop() {
             subtitle="Resumen de las actividades improductivas durante el mes."
             icon={IconDash1}
           />
-          <CardColumParetoScoop data={scoopParetoNoProductive} />
+          <CardColumParetoScoop />
         </div>
         <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
           <CardTitle
@@ -80,7 +65,10 @@ function ParetoScoop() {
             subtitle="Promedio mensual vs. acumulado de actividades improductivas."
             icon={IconDash1}
           />
-          <CardActivitiesChart data={scoopParetoActivitiesChart} />
+          <CardActivitiesChart
+            endpoint="dashboard/pareto/scoop/no-productive-activities-chart?quantity=7"
+            symbol="pareto-scoop-improductive-activities"
+          />
         </div>
         <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
           <CardTitle
@@ -88,7 +76,10 @@ function ParetoScoop() {
             subtitle="Pareto con Índice de Impacto Ponderado."
             icon={IconDash1}
           />
-          <CardColumImpact data={scoopImpactDiagram} />
+          <CardColumImpact
+            endpoint="dashboard/pareto/scoop/impact-diagram?quantity=7"
+            symbol="pareto-scoop-impact-diagram"
+          />
         </div>
       </div>
     </>

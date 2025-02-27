@@ -6,7 +6,7 @@ import { useSocket } from "@/context/SocketContext";
 export const useStockData = (symbol, socketEvent) => {
   const queryClient = useQueryClient();
   const socket = useSocket();
-  const eventRef = useRef(socketEvent); // Evita que cambie la referencia en cada render
+  const eventRef = useRef(socketEvent); // Mantener la referencia estable
 
   // Consulta inicial con React Query
   const { data, isLoading, isError } = useQuery({
@@ -20,28 +20,55 @@ export const useStockData = (symbol, socketEvent) => {
   });
 
   useEffect(() => {
-    eventRef.current = socketEvent; // Asegura que el evento 
+    eventRef.current = socketEvent; // Actualizar referencia al evento cuando cambie
   }, [socketEvent]);
 
   useEffect(() => {
     if (!socket.connected) {
-      socket.connect(); // Conectar socket solo si no está conectado
+      socket.connect(); // Conectar socket si no está conectado
+    
     }
 
+    // Manejo de datos basado en el evento recibido
     const handleNewData = (newData) => {
       if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
+        console.log(`Datos vacíos en el tópico: ${eventRef.current}`);
         return;
       }
-      queryClient.setQueryData(["stocks", symbol], newData);
+
+      console.log(`Nuevo dato recibido en ${eventRef.current}:`, newData);
+
+      switch (eventRef.current) {
+        case "production-velocity-analysis":
+          if (newData.destiny === "parrilla") {
+            queryClient.setQueryData(["stocks", symbol, "dashboard/production/velocity-analysis/parrila"], newData);
+          } else {
+            queryClient.setQueryData(["stocks", symbol, "dashboard/production/velocity-analysis/cancha"], newData);
+          }
+          break;
+
+        case "monthly-average-journals":
+          if (newData.equipment === "truck") {
+            queryClient.setQueryData(["stocks", symbol, "dashboard/monthly/average-journals?equipment=truck"], newData);
+          } else {
+            queryClient.setQueryData(["stocks", symbol, "dashboard/monthly/average-journals?equipment=scoop"], newData);
+          }
+          break;
+
+        default:
+          queryClient.setQueryData(["stocks", symbol], newData);
+          break;
+      }
     };
 
     if (!socket.hasListeners(eventRef.current)) {
       socket.on(eventRef.current, handleNewData);
+      console.log(`👂 Escuchando evento: ${eventRef.current}`);
     }
 
     return () => {
       socket.off(eventRef.current, handleNewData);
+       console.log(`🚫 Dejado de escuchar evento: ${eventRef.current}`);
     };
   }, [symbol]);
 

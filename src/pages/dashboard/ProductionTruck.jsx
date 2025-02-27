@@ -1,16 +1,17 @@
 import CardCycleWork from "@/components/Dashboard/CardCycleWork";
+import CardFlotaTime from "@/components/Dashboard/CardFlotaTime";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardHeatMap from "@/components/Dashboard/CardHeatmap";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardPie from "@/components/Dashboard/CardPie";
 import CardTitle from "@/components/Dashboard/CardTitle";
-import { useStockData } from "@/hooks/useStockData";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
 function ProductionTruck() {
-  const { data} = useStockData(
-    "dashboard/truck/progress-day",
-    "truck-progress-day"
+  const { data} = useGraphicData(
+    "progress-day",
+    "dashboard/truck/progress-day"
   );
 
   return (
@@ -85,20 +86,17 @@ function ProductionTruck() {
             icon={IconDash1}
           />
           <CardPie
-            symbol="dashboard/truck/chart-productivity"
-            socketEvent="truck-chart-productivity"
+            endpoint="dashboard/truck/chart-productivity"
+            symbol="truck-chart-productivity"
           />
         </div>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-          <CardTitle
-            title="Estado de Flota"
-            subtitle="Disponibilidad y rendimiento de los vehículos."
-            icon={IconDash1}
-          />
-          <CardPie
+          
+          {/* <CardPie
             symbol="dashboard/truck/chart-fleet"
             socketEvent="truck-chart-fleet"
-          />
+          /> */}
+          <CardFlotaTime/>
         </div>
       </div>
     </>
@@ -106,20 +104,3 @@ function ProductionTruck() {
 }
 
 export default ProductionTruck;
-
-// <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-//           <CardTitle
-//             title="Tiempos productivos vs Improductivos"
-//             subtitle="Comparación entre trabajo efectivo y tiempo perdido."
-//             icon={IconDash1}
-//           />
-//           <CardPie  symbol="dashboard/truck/chart-productivity" socketEvent="truck-chart-productivity" />
-//         </div>
-//         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-//           <CardTitle
-//             title="Estado de Flota"
-//             subtitle="Disponibilidad y rendimiento de los vehículos."
-//             icon={IconDash1}
-//           />
-//           <CardPie  symbol="dashboard/truck/chart-fleet" socketEvent="truck-chart-fleet"/>
-//         </div>

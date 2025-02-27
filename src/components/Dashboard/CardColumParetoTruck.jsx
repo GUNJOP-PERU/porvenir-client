@@ -1,8 +1,15 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumParetoTruck({ data }) {
+export default function CardColumParetoTruck() {
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData("pareto-truck-no-productive-activities","dashboard/pareto/no-productive-activities?equipment=truck", );
+
   const dataTemporal = {
     dates: [
       "01:02",
@@ -192,6 +199,17 @@ export default function CardColumParetoTruck({ data }) {
     }),
     [data]
   );
+
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
 
   return (
     <>

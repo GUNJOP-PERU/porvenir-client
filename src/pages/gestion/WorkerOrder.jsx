@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { RefreshCcw } from "lucide-react";
+import { useState } from "react";
 import { ModalWorkOrder } from "../../components/Gestion/WorkOrder/ModalWorkOrder";
 import { columns } from "../../components/Gestion/WorkOrder/columns";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
-import { useFetchData, useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
-import { RefreshCcw } from "lucide-react";
-import { useStockData } from "@/hooks/useStockData";
-import { useWorkOrder } from "@/hooks/useWorkOrder";
-import { io } from "socket.io-client";
 
 function WorkerOrder() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -23,19 +20,8 @@ function WorkerOrder() {
     hasNextPage,
   } = useFetchInfinityScroll("workOrder", "workOrder/items");
 
-  useWorkOrder(); 
-  // useEffect(() => {
-  //   const socket = io(import.meta.env.VITE_URL);
-
-  //   socket.on("order-ready", (data) => {
-  //     console.log("order-ready",data)
-  //   });
-
-  //   return () => {
-  //     console.log("Desconectando socket...");
-  //     socket.disconnect();
-  //   };
-  // }, []);
+  
+ 
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">

@@ -4,7 +4,6 @@ import HighchartsReact from "highcharts-react-official";
 import highchartsXrange from "highcharts/modules/xrange";
 import dayjs from "dayjs";
 import "dayjs/plugin/timezone";
-import { useStockData } from "@/hooks/useStockData";
 
 dayjs.tz.setDefault("America/Lima");
 
@@ -117,9 +116,10 @@ const CardTimeline = memo(({data =[],isLoading, isError}) => {
       chart: {
         type: "xrange",
         backgroundColor: "transparent",
-        // height: 170,
+        height: 830,
         marginTop: 20,
         marginBottom: 30,
+        
       },
       title: {
         text: null,

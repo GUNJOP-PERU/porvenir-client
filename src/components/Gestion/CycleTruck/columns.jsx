@@ -1,4 +1,8 @@
-import { formatDurationHour, formatFecha, formatHour } from "@/lib/utilsGeneral";
+import {
+  formatDurationHour,
+  formatFecha,
+  formatHour,
+} from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { DataTableRowActions } from "../data-table-row-actions";
 import clsx from "clsx";
@@ -12,7 +16,7 @@ export const columns = [
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -94,7 +98,6 @@ export const columns = [
           <span className="max-w-[500px] truncate font-medium leading-3">
             Fin: {formatHour(row.original?.end)}
           </span>
-       
         </div>
       );
     },
@@ -105,8 +108,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-1">
-          
-          {formatDurationHour(row.original?.duration) }
+          {formatDurationHour(row.original?.duration)}
         </div>
       );
     },
@@ -116,8 +118,16 @@ export const columns = [
     header: "Estado/Labor",
     cell: ({ row }) => {
       return (
-        <div className="flex flex-col gap-1">
-          {row.original?.isNewLabor === true ? <>n</> : <>nuevo</>} 
+        <div className="">
+          <div></div>
+          <span
+            className={clsx(
+              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+              row.original?.isNewLabor ? "text-green-500 bg-green-50 before:bg-green-500" : "text-blue-500 bg-sky-50 before:bg-blue-500"
+            )}
+          >
+            {row.original?.isNewLabor ? "Nueva" : "Existe"}
+          </span>
         </div>
       );
     },

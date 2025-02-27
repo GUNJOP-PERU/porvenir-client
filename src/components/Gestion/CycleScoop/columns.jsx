@@ -113,6 +113,25 @@ export const columns = [
     },
   },
   {
+    accessorKey: "isNewLabor",
+    header: "Estado/Labor",
+    cell: ({ row }) => {
+      return (
+        <div className="">
+          <div></div>
+          <span
+            className={clsx(
+              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+              row.original?.isNewLabor ? "text-green-500 bg-green-50 before:bg-green-500" : "text-blue-500 bg-sky-50 before:bg-blue-500"
+            )}
+          >
+            {row.original?.isNewLabor ? "Nueva" : "Existe"}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "updatedAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha actualización" />

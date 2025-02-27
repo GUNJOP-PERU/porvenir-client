@@ -49,7 +49,7 @@ export const columns = [
             </span>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize truncate max-w-[100px]">
+            <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate max-w-[120px]">
               {row.getValue("activityName")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
@@ -160,6 +160,25 @@ export const columns = [
       return (
         <div className="flex flex-col gap-1">
           {formatDurationHour(row.original?.duration)}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "isNewLabor",
+    header: "Estado/Labor",
+    cell: ({ row }) => {
+      return (
+        <div className="">
+          <div></div>
+          <span
+            className={clsx(
+              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+              row.original?.isNewLabor ? "text-green-500 bg-green-50 before:bg-green-500" : "text-blue-500 bg-sky-50 before:bg-blue-500"
+            )}
+          >
+            {row.original?.isNewLabor ? "Nueva" : "Existe"}
+          </span>
         </div>
       );
     },

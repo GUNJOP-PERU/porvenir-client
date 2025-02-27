@@ -2,8 +2,12 @@ import { useCallback, useMemo } from "react";
 import IconWarning from "@/icons/IconWarning";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useGraphicData } from "@/hooks/useGraphicData";
 
-export default function CardRange({ data }) {
+export default function CardRange({ symbol, endpoint  }) {
+
+  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
+
   const parseTimeToCustomScale = useCallback((timeString) => {
     if (!timeString || !timeString.includes(":")) return null;
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -133,7 +137,16 @@ export default function CardRange({ data }) {
     [data]
   );
 
-  console.log(data)
+  if (isLoading)
+  return (
+    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+  );
+if (isError)
+  return (
+    <div className="flex items-center justify-center h-full w-full ">
+      <span className="text-[10px] text-red-500">Ocurrió un error</span>
+    </div>
+  );
 
   return (
     <>

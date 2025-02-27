@@ -1,10 +1,16 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import IconWarning from "@/icons/IconWarning";
 import { formatThousands } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColum({ data }) {
+export default function CardColum() {
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData( "monthly-chart-tonnes","dashboard/monthly/chart-tonnes",);
 
   const options = useMemo(
     () => ({
@@ -19,7 +25,7 @@ export default function CardColum({ data }) {
         text: null,
       },
       xAxis: {
-        categories: data?.dates ,
+        categories: data?.dates,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -59,11 +65,13 @@ export default function CardColum({ data }) {
         formatter: function () {
           const category =
             this.series.chart.xAxis[0].categories[this.point.x] || this.x;
-          let tooltipText = `<b>${category}</b><br/>`; 
+          let tooltipText = `<b>${category}</b><br/>`;
           this.points.forEach((point) => {
-            tooltipText += `<span style="color:${point.color}">●</span> <b>${point.series.name}</b>: ${Number(point.y).toFixed(1)}tn<br/>`;
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${
+              point.series.name
+            }</b>: ${Number(point.y).toFixed(1)}tn<br/>`;
           });
-      
+
           return tooltipText;
         },
       },
@@ -94,7 +102,7 @@ export default function CardColum({ data }) {
         {
           type: "column",
           name: "Día",
-          data: data?.values_day ,
+          data: data?.values_day,
           color: "#FAC34C",
           stack: "Tiempo",
         },
@@ -164,6 +172,17 @@ export default function CardColum({ data }) {
     [data]
   );
 
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+
   return (
     <>
       <HighchartsReact highcharts={Highcharts} options={options} />
@@ -219,18 +238,3 @@ export default function CardColum({ data }) {
     </>
   );
 }
-
-// yAxis: {
-//   title: {
-//     text: null,
-//   },
-//   labels: {
-//     style: {
-//       color: "#A6A6A6",
-//       fontSize: "0.6em",
-//     },
-//   },
-//   gridLineColor: "#D9D9D9",
-//   gridLineWidth: 0.5,
-//   gridLineDashStyle: "Dash",
-// },

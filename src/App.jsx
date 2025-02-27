@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
-import DayPage from "./pages/Day";
+
 import Layout from "./pages/Layout";
 
 import ParetoScoop from "./pages/dashboard/ParetoScoop";
@@ -57,8 +57,8 @@ function App() {
             <Route element={<ProtectedRoute isAllowed={isAuth} />}>
               <Route element={<Layout />}>
                 <Route path="/users" element={<HomeUsers />} />
-                {/* <Route path="/edit/:id" element={<EditPage />} /> */}
-                <Route path="/day" element={<DayPage />} />
+               
+            
                 <Route path="/frontLabor" element={<HomeFrontLabor />} />
                 <Route path="/vehicle" element={<HomeVehicles />} />
                 <Route path="/workOrder" element={<WorkerOrder />} />

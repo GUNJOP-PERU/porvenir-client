@@ -1,9 +1,11 @@
-import { formatThousands } from "@/lib/utilsGeneral";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
-export default function CardColumImpact({ data }) {
+export default function CardColumImpact({ symbol, endpoint }) {
+  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
+
   const options = useMemo(
     () => ({
       chart: {
@@ -75,17 +77,19 @@ export default function CardColumImpact({ data }) {
         formatter: function () {
           const category =
             this.series.chart.xAxis[0].categories[this.point.x] || this.x;
-      
+
           let tooltipText = `<b>${category}</b><br/>`;
-      
+
           this.points.forEach((point) => {
-            tooltipText += `<span style="color:${point.color}">●</span> <b>${point.series.name}</b>: ${Number(point.y).toFixed(1)}<br/>`;
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${
+              point.series.name
+            }</b>: ${Number(point.y).toFixed(1)}<br/>`;
           });
-      
+
           return tooltipText;
         },
       },
-      
+
       plotOptions: {
         column: {
           stacking: "normal", // Si usas apilamiento
@@ -193,9 +197,19 @@ export default function CardColumImpact({ data }) {
     [data]
   );
 
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-full w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+
   return (
     <>
-    
       <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );

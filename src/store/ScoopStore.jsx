@@ -3,12 +3,7 @@ import { getDataRequest } from "@/lib/api";
 import { BehaviorSubject } from "rxjs";
 
 const productionSubject = new BehaviorSubject({
-  scoopProgressDay: [],
-  scoopTonnagHour: [],
-  scoopActivityHour: [],
   scoopEvents: [],
-
-  truckLoading: false,
 });
 
 export const useScoopStore = create((set) => ({
@@ -20,17 +15,11 @@ export const useScoopStore = create((set) => ({
 
   fetchDataScoop: async () => {
     try {
-      const [progress, tonnagHour, events] = await Promise.all([
-        getDataRequest("dashboard/scoop/progress-day"),
-        getDataRequest("dashboard/scoop/tonnage-per-hour"),
-        // getDataRequest("dashboard/scoop/activities-per-hour"),
+      const [events] = await Promise.all([
         getDataRequest("dashboard/scoop/events"),
       ]);
 
       set({
-        scoopProgressDay: progress.data,
-        scoopTonnagHour: tonnagHour.data,
-        // scoopActivityHour: activityHour.data,
         scoopEvents: events.data,
       });
     } catch (error) {
@@ -39,46 +28,8 @@ export const useScoopStore = create((set) => ({
   },
 
   subscribeToSocketUpdates: (socket) => {
-    socket.on("scoop-progress-day", (newData) => {
-       if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
-      } else {
-        set({ scoopProgressDay: newData });
-        productionSubject.next({
-          ...productionSubject.getValue(),
-          scoopProgressDay: newData,
-        });
-      }
-    });
-
-    socket.on("scoop-tonnage-per-hour", (newData) => {
-      if (!newData || Object.keys(newData).length === 0) {
-        console.log("Datos vacíos");
-      } else {
-        set({ scoopTonnagHour: newData });
-        productionSubject.next({
-          ...productionSubject.getValue(),
-          scoopTonnagHour: newData,
-        });
-      }
-    });
-
-    // socket.on("scoop-activities-per-hour", (newData) => {
-    //   console.log("Datos vacíos",newData);
-    //    if (!newData || Object.keys(newData).length === 0) {
-    //     console.log("Datos vacíos");
-    //   } else {
-        
-    //     set({ scoopActivityHour: newData });
-    //     productionSubject.next({
-    //       ...productionSubject.getValue(),
-    //       scoopActivityHour: newData,
-    //     });
-    //   }
-    // });
-
     socket.on("scoop-events-table", (newData) => {
-       if (!newData || Object.keys(newData).length === 0) {
+      if (!newData || Object.keys(newData).length === 0) {
         console.log("Datos vacíos");
       } else {
         set((state) => {

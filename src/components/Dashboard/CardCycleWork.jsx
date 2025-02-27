@@ -1,12 +1,11 @@
-import { useStockData } from "@/hooks/useStockData";
-import clsx from "clsx";
+import { useGraphicData } from "@/hooks/useGraphicData";
 import React from "react";
 import CountUp from "react-countup";
 
 const CardCycleWork = React.memo(() => {
-  const { data, isLoading, isError } = useStockData(
+  const { data, isLoading, isError } = useGraphicData(
+    "truck-job-cycle",
     "dashboard/truck/job-cycle",
-    "truck-job-cycle"
   );
 
   if (isLoading)

@@ -4,16 +4,16 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
-import { useStockData } from "@/hooks/useStockData";
+import { useGraphicData } from "@/hooks/useGraphicData";
 
 if (typeof solidGauge === "function") {
   solidGauge(Highcharts);
 }
 
 const CardGauge = memo(() => {
-  const { data, isLoading, isError } = useStockData(
-    "dashboard/progress-shift",
-    "progress-shift"
+  const { data, isLoading, isError } = useGraphicData(
+    "progress-shift",
+    "dashboard/progress-shift"
   );
 
   const options = useMemo(
