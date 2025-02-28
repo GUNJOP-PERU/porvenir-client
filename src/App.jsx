@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
@@ -36,16 +35,11 @@ import { ToastProvider } from "./hooks/useToaster";
 import TimelineTruck from "./pages/dashboard/TimelineTruck";
 import { SocketProvider } from "./context/SocketContext";
 
-import { useEffect } from "react";
-import { useDailyQueryCleanup } from "./hooks/useDailyQueryCleanup";
-
 function App() {
-
   const isAuth = useAuthStore((state) => state.isAuth);
 
   return (
-   
-      <SocketProvider>
+    <SocketProvider>
       <ToastProvider>
         <Router>
           <Routes>
@@ -57,8 +51,7 @@ function App() {
             <Route element={<ProtectedRoute isAllowed={isAuth} />}>
               <Route element={<Layout />}>
                 <Route path="/users" element={<HomeUsers />} />
-               
-            
+
                 <Route path="/frontLabor" element={<HomeFrontLabor />} />
                 <Route path="/vehicle" element={<HomeVehicles />} />
                 <Route path="/workOrder" element={<WorkerOrder />} />
@@ -107,8 +100,7 @@ function App() {
           </Routes>
         </Router>
       </ToastProvider>
-      </SocketProvider>
-    
+    </SocketProvider>
   );
 }
 

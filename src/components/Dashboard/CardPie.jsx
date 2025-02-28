@@ -3,7 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import React, { Suspense, useMemo } from "react";
 
-const CardPie = React.memo(({  symbol,endpoint}) => {
+const CardPie = React.memo(({ symbol, endpoint}) => {
   const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint );
   const options = useMemo(
     () => ({

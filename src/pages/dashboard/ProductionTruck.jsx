@@ -86,8 +86,8 @@ function ProductionTruck() {
             icon={IconDash1}
           />
           <CardPie
-            endpoint="dashboard/truck/chart-productivity"
             symbol="truck-chart-productivity"
+            endpoint="dashboard/truck/chart-productivity"
           />
         </div>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">

@@ -19,6 +19,7 @@ import { z } from "zod";
 import { PlanContent } from "./PlanContent";
 import { PlanHeader } from "./PlanHeader";
 import IconWarning from "@/icons/IconWarning";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
@@ -27,6 +28,7 @@ const FormSchema = z.object({
 });
 
 export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
+  const queryClient = useQueryClient();
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -134,9 +136,10 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
 
     try {
       const response = await postDataRequest("planDay/many", datosFinales);
-
+     
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
+        queryClient.invalidateQueries(["planDay"]);
       } else {
         alert("Error al enviar los datos.");
       }

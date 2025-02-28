@@ -25,6 +25,7 @@ import IconArrowUp from "@/icons/IconArrowUp";
 import IconLeft from "@/icons/IconLeft";
 import GlobalSearch from "./nav-global-search";
 import CardClock from "../Dashboard/CardClock";
+import { useShiftIcon } from "@/hooks/useShiftIcon";
 
 export function NavUser() {
   const paths = useNavigation();
@@ -64,6 +65,7 @@ export function NavUser() {
           <img src="/src/assets/logo.svg" alt="" className="h-7 " />
         </div>
         <div className="flex items-center gap-2">
+        {useShiftIcon()}
           <CardClock/>
           <GlobalSearch />
           <DropdownMenu>

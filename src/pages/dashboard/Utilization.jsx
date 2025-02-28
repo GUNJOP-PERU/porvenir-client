@@ -7,9 +7,10 @@ import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
 function Utilization() {
-  const {
-    data = []
-  } = useGraphicData("production-progress-velocity","dashboard/production/progress-velocity", );
+  const { data = [] } = useGraphicData(
+    "production-progress-velocity",
+    "dashboard/production/progress-velocity"
+  );
 
   return (
     <>
@@ -73,8 +74,10 @@ function Utilization() {
             subtitle="Evaluación de la velocidad en rutas hacia Parrillas."
             icon={IconDash1}
           />
-          <CardVelocity endpoint="dashboard/production/velocity-analysis/parrilla"
-            symbol="production-velocity-analysis-parrila" />
+          <CardVelocity
+            symbol="production-velocity-analysis-parrila"
+            endpoint="dashboard/production/velocity-analysis/parrilla"
+          />
         </div>
         <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
           <CardTitle
@@ -82,8 +85,10 @@ function Utilization() {
             subtitle="Evaluación de la velocidad en rutas hacia Canchas."
             icon={IconDash1}
           />
-          <CardVelocity endpoint="dashboard/production/velocity-analysis/cancha"
-            symbol="production-velocity-analysis-cancha" />
+          <CardVelocity
+            symbol="production-velocity-analysis-cancha"
+            endpoint="dashboard/production/velocity-analysis/cancha"
+          />
         </div>
       </div>
     </>
