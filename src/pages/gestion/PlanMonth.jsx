@@ -1,10 +1,10 @@
+import { columns } from "@/components/Gestion/PlanMonth/columns";
 import { countItems } from "@/lib/utilsGeneral";
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DataTable } from "../../components/Gestion/data-table";
 import { Button } from "../../components/ui/button";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import { columns } from "@/components/Gestion/PlanMonth/columns";
 
 function PlanMonth() {
   const {
@@ -15,7 +15,6 @@ function PlanMonth() {
     refetch,
   } = useFetchData("planMonth", "planMonth");
 
-  
   return (
     <>
      <div className="flex flex-wrap gap-2 justify-between">

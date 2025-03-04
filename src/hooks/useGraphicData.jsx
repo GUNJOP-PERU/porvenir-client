@@ -2,15 +2,17 @@ import { getDataGraphicRequest } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGraphicData = (symbol, endpoint) => {
-  // Consulta inicial con React Query
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["dashboard", symbol],
-    queryFn: () => getDataGraphicRequest(endpoint),
+    queryFn: getDataGraphicRequest.bind(null, endpoint),
     staleTime: Infinity,
+    cacheTime: Infinity,
     refetchOnReconnect: true,
-    keepPreviousData: true,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    retry: 1, 
+    retryDelay: 2000, 
   });
 
   return { data, isLoading, isError };

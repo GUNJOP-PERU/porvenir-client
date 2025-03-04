@@ -17,7 +17,7 @@ function HomeUsers() {
   } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
+  
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
@@ -35,6 +35,7 @@ function HomeUsers() {
             aquí.
           </p>
         </div>
+        
         <div className="flex gap-2">
           <Button
             onClick={() => refetch()}

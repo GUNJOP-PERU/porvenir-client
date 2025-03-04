@@ -36,11 +36,10 @@ export function formatFecha(dateString) {
 
   const day = date.format("DD");
   const monthShort = date.format("MMM");
-  const year = date.format("YYYY");
   const formattedHours = date.format("HH");
   const formattedMinutes = date.format("mm");
 
-  return ` ${formattedHours}:${formattedMinutes}, ${day} ${monthShort} ${year}`;
+  return ` ${formattedHours}:${formattedMinutes}, ${day} ${monthShort}`;
 }
 export function formatHour(dateString) {
   const date = dayjs(dateString);

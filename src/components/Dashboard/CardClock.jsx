@@ -14,9 +14,9 @@ function CardClock() {
   useEffect(() => {
     updateClock(); // Ejecutar una vez al montar
     const timer = setInterval(updateClock, 1000);
-    
+
     return () => clearInterval(timer);
-  }, [updateClock]); 
+  }, [updateClock]);
 
   const formattedTime = useMemo(() => {
     const [hours, minutes, seconds] = time.split(":");
@@ -24,13 +24,12 @@ function CardClock() {
   }, [time]);
 
   return (
-    <div className="flex items-center justify-center px-2">
+    <div className="hidden lg:flex items-center justify-center px-2">
       <h1 className="font-extrabold text-2xl leading-8">
-        <span className="text-primary">{formattedTime.hours}</span>
-        <span className="text-zinc-400">
-          :{formattedTime.minutes}:{formattedTime.seconds}
+        <span className="text-primary">
+          {formattedTime.hours}:{formattedTime.minutes}
         </span>
-        {/* <small className="text-[12px] text-zinc-400 leading-[8px]">H</small> */}
+        <span className="text-zinc-500">:{formattedTime.seconds}</span>
       </h1>
     </div>
   );

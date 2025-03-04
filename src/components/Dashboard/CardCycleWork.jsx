@@ -1,11 +1,11 @@
 import { useGraphicData } from "@/hooks/useGraphicData";
 import React from "react";
-import CountUp from "react-countup";
+import NumberFlow from "@number-flow/react";
 
 const CardCycleWork = React.memo(() => {
   const { data, isLoading, isError } = useGraphicData(
     "truck-job-cycle",
-    "dashboard/truck/job-cycle",
+    "dashboard/truck/job-cycle"
   );
 
   if (isLoading)
@@ -27,11 +27,13 @@ const CardCycleWork = React.memo(() => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Descargando</h4>
             <span className="font-extrabold leading-4">
-              <CountUp
-                start={0}
-                end={data?.avg_time_dump?.value || 0}
-                duration={1.5} // Duración de la animación en segundos
-                decimals={2} // Número de decimales
+              <NumberFlow
+                value={data?.avg_time_dump?.value || 0}
+                format={{
+                  notation: "standard",
+                  style: "decimal",
+                  maximumFractionDigits: 2,
+                }}
               />
               min
             </span>
@@ -42,12 +44,14 @@ const CardCycleWork = React.memo(() => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Viaje vacio</h4>
             <span className="font-extrabold leading-4">
-             
-              <CountUp
+              <NumberFlow
                 start={0}
-                end={data?.avg_time_empty?.value || 0}
-                duration={1.5} // Duración de la animación en segundos
-                decimals={2} // Número de decimales
+                value={data?.avg_time_empty?.value || 0}
+                format={{
+                  notation: "standard",
+                  style: "decimal",
+                  maximumFractionDigits: 2,
+                }}
               />
               min
             </span>
@@ -58,11 +62,13 @@ const CardCycleWork = React.memo(() => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Viaje cargado</h4>
             <span className="font-extrabold leading-4">
-              <CountUp
-                start={0}
-                end={data?.avg_time_transport?.value || 0}
-                duration={1.5} // Duración de la animación en segundos
-                decimals={2} // Número de decimales
+              <NumberFlow
+                value={data?.avg_time_transport?.value || 0}
+                format={{
+                  notation: "standard",
+                  style: "decimal",
+                  maximumFractionDigits: 2,
+                }}
               />
               min
             </span>
@@ -73,11 +79,13 @@ const CardCycleWork = React.memo(() => {
           <div className="flex flex-col items-center justify-center gap-1.5">
             <h4 className="text-zinc-400 text-xs leading-3">Cargando</h4>
             <span className="font-extrabold leading-4">
-              <CountUp
-                start={0}
-                end={data?.avg_time_load?.value || 0}
-                duration={1.5} // Duración de la animación en segundos
-                decimals={2} // Número de decimales
+              <NumberFlow
+                value={data?.avg_time_load?.value || 0}
+                format={{
+                  notation: "standard",
+                  style: "decimal",
+                  maximumFractionDigits: 2,
+                }}
               />
               min
             </span>

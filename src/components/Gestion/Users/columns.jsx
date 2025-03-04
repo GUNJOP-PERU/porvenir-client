@@ -1,13 +1,14 @@
 import { formatFecha } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { DataTableRowActions } from "../data-table-row-actions";
+import clsx from "clsx";
 
 export const columns = [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -34,7 +35,7 @@ export const columns = [
               {row.getValue("name")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            {row.original.cargo || ""}
+              {row.original.cargo || ""}
             </span>
           </div>
         </div>
@@ -64,16 +65,24 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
+          <span
+            className={clsx(
+              "relative text-[10px] py-[1px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[8px] before:top-1/2 before:-translate-y-1/2 pl-4",
+              row.original?.role === "Supervisor"
+                ? "text-green-500 bg-green-50 before:bg-green-500"
+                : row.original?.role === "Operador"
+                ? "text-purple-500 bg-purple-50 before:bg-purple-500"
+                : row.original?.role === "Admin"
+                ? "text-red-500 bg-red-50 before:bg-red-500"
+                : "text-gray-500 bg-gray-50 before:bg-gray-500" // Default case
+            )}
+          >
             {row.getValue("role")}
           </span>
         </div>
       );
     },
   },
-  
-
-  
 
   {
     accessorKey: "updatedAt",

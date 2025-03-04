@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
-import IconDashboard from "../icons/IconDashboard";
 import IconCompany from "@/icons/Dashboard/IconCompany";
 import IconUsers from "@/icons/Dashboard/IconUsers";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
@@ -16,6 +15,7 @@ import IconDash3 from "@/icons/Dashboard/IconDash3";
 import IconDash4 from "@/icons/Dashboard/IconDash4";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
+import IconTimeline from "@/icons/Dashboard/IconTimeline";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -120,13 +120,13 @@ export const useNavigation = () => {
           {
             name: "TImeline Scoop",
             href: "/dashboard/timelineScoop",
-            icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/timelineScoop",
           },
           {
             name: "TImeline Truck",
             href: "/dashboard/timelineTruck",
-            icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/timelineTruck",
           },
           {

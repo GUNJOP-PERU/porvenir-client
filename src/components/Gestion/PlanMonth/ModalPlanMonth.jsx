@@ -22,6 +22,7 @@ import { postDataRequest } from "@/lib/api";
 
 import { dataLaborList } from "@/lib/data";
 import { PlanContent } from "./PlanContent";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   dob: z.object({
@@ -42,6 +43,7 @@ const FormSchema = z.object({
 });
 
 export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
+   const queryClient = useQueryClient();
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -124,6 +126,7 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
 
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
+        queryClient.invalidateQueries( {queryKey: ["crud","planDay"] });
       } else {
         alert("Error al enviar los datos.");
       }

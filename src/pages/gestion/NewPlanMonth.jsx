@@ -15,6 +15,7 @@ import { PlanContent } from "@/components/Gestion/PlanMonth/PlanContent";
 import { PlanHeader } from "@/components/Gestion/PlanMonth/PlanHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   dob: z
@@ -34,6 +35,7 @@ const FormSchema = z.object({
 });
 
 export const NewPlanMonth = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [dataHotTable, setDataHotTable] = useState([]);
   const [invalidLabors, setInvalidLabors] = useState([]);
@@ -180,6 +182,8 @@ export const NewPlanMonth = () => {
     try {
       const response = await postDataRequest("planMonth/many", dataFinal);
       if (response.status >= 200 && response.status < 300) {
+        queryClient.invalidateQueries({ queryKey: ["crud", "planMonth"] });
+        queryClient.refetchQueries({ queryKey: ["crud", "planMonth"] });
         alert("Datos enviados con éxito!");
       } else {
         alert("Error al enviar los datos.");

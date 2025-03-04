@@ -4,10 +4,11 @@ export const createRouteMap = (queryClient) => {
     //CardGuage
     "progress-shift": ["dashboard", "progress-shift"],
     //Page Truck
-    "progress-day": ["dashboard", "progress-day"],
+    "truck-progress-day": ["dashboard", "truck-progress-day"],
     "truck-heatmap": ["dashboard", "truck-heatmap"],
     "truck-job-cycle": ["dashboard", "truck-job-cycle"],
     "truck-chart-productivity": ["dashboard", "truck-chart-productivity"],
+    "truck-chart-fleet": ["dashboard", "truck-chart-fleet"],
     //Page Scoop
     "scoop-progress-day": ["dashboard", "scoop-progress-day"],
     "scoop-tonnage-per-hour": ["dashboard", "scoop-tonnage-per-hour"],
@@ -56,7 +57,7 @@ export const createRouteMap = (queryClient) => {
 
   const updateWorkOrder = (newData) => {
     console.log("📩 Datos recibidos:", newData);
-    queryClient.setQueryData(["workOrder"], (oldData) => {
+    queryClient.setQueryData(["crud", "workOrder"], (oldData) => {
       if (!oldData || !oldData.pages) return oldData;
 
       let orderExists = false;
@@ -75,8 +76,10 @@ export const createRouteMap = (queryClient) => {
       });
 
       if (!orderExists) {
-        console.log("🔄 No se encontró en cache, invalidando...");
-        queryClient.invalidateQueries(["workOrder"]);
+        console.log("🔄 No se encontró en caché, invalidando...");
+        queryClient.invalidateQueries({ queryKey: ["crud", "workOrder"], exact: false });
+        queryClient.refetchQueries({ queryKey: ["crud", "workOrder"] });
+        console.log("🔄 Ejecutado...");
         return oldData;
       }
 
@@ -111,7 +114,14 @@ export const createRouteMap = (queryClient) => {
       if (data?.status === true) {
         // ✅ Solo limpiar si `status` es `true`
         console.log("🧹 La jornada ha cambiado. Limpiando 'dashboard'...");
-        queryClient.invalidateQueries(["dashboard"]); //
+        const queries = queryClient.getQueriesData({
+          queryKey: ["dashboard"],
+          exact: false,
+        });
+
+        queries.forEach(([key]) => {
+          queryClient.setQueryData(key, []);
+        });
       } else {
         console.log("ℹ️ No se requiere limpieza de 'dashboard'");
       }

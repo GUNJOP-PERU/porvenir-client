@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import IconNight from "@/icons/IconNight";
 import IconDay from "@/icons/IconDay";
+import { MoonStar, Sun } from "lucide-react";
 export const useShiftIcon = () => {
   const [isDayShift, setIsDayShift] = useState(null);
 
@@ -26,9 +27,9 @@ export const useShiftIcon = () => {
   
   return (
     <div
-      className="inline-flex items-center justify-center w-8 h-8 bg-white rounded-[10px]"
+      className="inline-flex items-center justify-center w-8 h-8  rounded-[10px]"
     >
-      {isDayShift ? <IconDay className="h-5 w-5 fill-orange-400" /> :   <IconNight className="h-5 w-5 fill-sky-400" />}
+      {isDayShift ? <Sun className="h-5 w-5 text-zinc-200" /> :   <MoonStar className="h-5 w-5 text-zinc-200" />}
       {/* <span>{isDayShift ? "Turno de Día" : "Turno de Noche"}</span> */}
     </div>
   );

@@ -1,13 +1,13 @@
 import { useNavigation } from "@/hooks/userNavegation";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 export function NavMain() {
   const paths = useNavigation();
 
   return (
-    <nav className="h-screen hidden md:flex w-[280px] bg-[#000000] flex-col ">
+    <nav className="h-screen hidden md:flex w-[300px] bg-[#000000] flex-col ">
       <div className="w-full px-6 flex justify-center items-center h-14 ">
         <img src="/src/assets/logo-white.svg" alt="" className="h-7 " />
       </div>

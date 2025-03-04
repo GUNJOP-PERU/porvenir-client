@@ -10,7 +10,7 @@ import IconDash1 from "@/icons/Dashboard/IconDash1";
 
 function ProductionTruck() {
   const { data} = useGraphicData(
-    "progress-day",
+    "truck-progress-day",
     "dashboard/truck/progress-day"
   );
 
@@ -23,7 +23,7 @@ function ProductionTruck() {
           title="Mineral"
           valueColor="text-[#6399C7]"
           unid={"tn"}
-          subtitle={`De ${data?.travels?.mineral || 0} viajes`}
+          subtitle={data?.travels?.mineral || 0}
           decimals={0}
         />
         <CardItem
@@ -31,7 +31,7 @@ function ProductionTruck() {
           title="Desmonte"
           valueColor="text-[#B16940]"
           unid={"tn"}
-          subtitle={`De ${data?.travels?.waste || 0} viajes`}
+          subtitle={data?.travels?.waste || 0}
           decimals={0}
         />
         <CardItem
@@ -92,11 +92,11 @@ function ProductionTruck() {
         </div>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
           
-          {/* <CardPie
-            symbol="dashboard/truck/chart-fleet"
-            socketEvent="truck-chart-fleet"
-          /> */}
-          <CardFlotaTime/>
+          <CardPie
+            symbol="truck-chart-fleet"
+            endpoint="dashboard/truck/chart-fleet"
+          />
+          {/* <CardFlotaTime/> */}
         </div>
       </div>
     </>

@@ -1,4 +1,9 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
 
@@ -44,7 +49,11 @@ function App() {
         <Router>
           <Routes>
             {/* Ruta pública para Login */}
-            <Route path="/login" element={<PageLogin />} />
+            <Route
+              path="/login"
+              element={isAuth ? <Navigate to="/" replace /> : <PageLogin />}
+            />
+
             <Route path="*" element={<PageError />} />
 
             {/* Rutas protegidas dentro de Layout */}

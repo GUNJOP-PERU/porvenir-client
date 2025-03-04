@@ -12,7 +12,7 @@ export function useHandleFormSubmit() {
         : await postDataRequest(endpoint, data);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: [variables.endpoint] });
+      queryClient.invalidateQueries({ queryKey: ["crud",variables.endpoint] });
       addToast({
         title: variables.isEdit ? "Editado correctamente" : "Creado correctamente",
         message: variables.isEdit ? "Los cambios se han guardado con éxito." : "Dato creado con éxito.",

@@ -19,8 +19,6 @@ function WorkerOrder() {
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("workOrder", "workOrder/items");
-
-  
  
   return (
     <>

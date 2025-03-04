@@ -1,10 +1,11 @@
 import IconArrowUp from "@/icons/IconArrowUp";
 import { memo } from "react";
-import CountUp from "react-countup";
+import NumberFlow from "@number-flow/react";
 import { cva } from "class-variance-authority";
+import CircularChart from "./CircularChart";
 
 // Definir estilos con variantes
-const textColorStyles = cva("text-[10px] leading-[8px] font-semibold", {
+const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {
   variants: {
     change: {
       high: "text-green-500",
@@ -64,21 +65,21 @@ const tooltipArrowStyles = cva(
 );
 
 const CardItem = memo(
-  ({ value, title, change, valueColor, unid, subtitle,decimals = 2 }) => {
+  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 }) => {
     const getChangeVariant = (val) =>
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
     return (
       <div className="flex flex-col justify-center relative border border-[#ededed] shadow rounded-xl py-2 px-4 h-[100px] md:h-[90px]">
-        <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[100px] mb-2">
+        <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[150px]">
           {title}
         </span>
 
         <div className="flex items-center justify-between gap-1">
           <h1 className={`${valueColor} font-extrabold text-2xl leading-5`}>
-            <CountUp start={0} end={value} duration={1.5} decimals={decimals}/>
-            <small>{unid}</small>
+            <NumberFlow value={value}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: decimals }} suffix={unid} className="!leading-4" />            
           </h1>
+         
         </div>
 
         {change !== undefined && (
@@ -92,11 +93,11 @@ const CardItem = memo(
                   change: getChangeVariant(change),
                 })}
               >
-                {`${(100 - change).toFixed(2)}%`}
+                <NumberFlow value={(100 - change)}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} className="!leading-[8px]"/>%
               </span>
             </div>
 
-            <div className="absolute -top-2 left-0 flex flex-col group-focus-within:visible group-active:visible">
+            <div className="absolute -top-2 right-0 flex flex-col group-focus-within:visible group-active:visible z-20">
               <div
                 className={tooltipStyles({ change: getChangeVariant(change) })}
               >
@@ -121,8 +122,8 @@ const CardItem = memo(
         )}
 
         {subtitle !== undefined && (
-          <span className="mt-0.5 text-[10px] leading-[8px] font-semibold text-zinc-600">
-            {subtitle}
+          <span className=" text-[10px] leading-[8px] font-semibold text-zinc-600">
+            De <NumberFlow value={subtitle}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> viajes
           </span>
         )}
       </div>

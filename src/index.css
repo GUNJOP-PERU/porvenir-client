@@ -23,7 +23,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
 
 ::-webkit-scrollbar-track {
   background: #f4f4f5;
-  border-radius:10px;
+  border-radius: 10px;
 }
 
 
@@ -32,8 +32,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
 @tailwind utilities;
 
 
-@layer utilities {
-}
+@layer utilities {}
 
 * {
   font-family: "Nunito", sans-serif;
@@ -79,6 +78,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -119,6 +119,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -130,21 +131,23 @@ html[dir] .dark ::-webkit-scrollbar-track {
   white-space: nowrap;
 }
 
-.htCore{
+.htCore {
   z-index: 99;
 }
 
 @keyframes spin-once {
-  0%,to {
-      transform: rotate(0deg)
+
+  0%,
+  to {
+    transform: rotate(0deg)
   }
 
   25% {
-      transform: rotate(-30deg)
+    transform: rotate(-30deg)
   }
 
   75% {
-      transform: rotate(30deg)
+    transform: rotate(30deg)
   }
 }
 
@@ -157,6 +160,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
   animation: 0.3s ease-in 0s 1 normal none running fadeIn;
 }
+
 .error-hidden {
   opacity: 0;
   visibility: hidden;
@@ -168,6 +172,7 @@ html[dir] .dark ::-webkit-scrollbar-track {
   visibility: visible;
   transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
 }
+
 .toast-hidden {
   opacity: 0;
   visibility: hidden;
@@ -180,3 +185,33 @@ html[dir] .dark ::-webkit-scrollbar-track {
   transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
 }
 
+number-flow-react::part(suffix) {
+  margin-left: .0625em;
+  font-size: 0.75em;
+  color: var(--muted);
+}
+
+
+/*==========================================*/
+/*--------------LEYENDA-------------*/
+/*==========================================*/
+
+
+.circle-bg {
+  fill: none;
+  stroke: #d4d4d8;
+  stroke-width: 6;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
