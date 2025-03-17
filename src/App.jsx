@@ -39,6 +39,7 @@ import TimelineScoop from "./pages/dashboard/TimelineScoop";
 import { ToastProvider } from "./hooks/useToaster";
 import TimelineTruck from "./pages/dashboard/TimelineTruck";
 import { SocketProvider } from "./context/SocketContext";
+import Configuration from "./pages/Configuration";
 
 function App() {
   const isAuth = useAuthStore((state) => state.isAuth);
@@ -103,6 +104,10 @@ function App() {
                 <Route
                   path="/dashboard/productionUV"
                   element={<Utilization />}
+                />
+                <Route
+                  path="/configuration"
+                  element={<Configuration />}
                 />
               </Route>
             </Route>

@@ -13,18 +13,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const formatRelativeTime = (updatedAt) => {
-  // Configura la localización en español
-  dayjs.locale("es");
-
-  // Obtiene el tiempo relativo desde la fecha proporcionada
-  return dayjs(updatedAt)
-    .fromNow(true)
-    .replace("minuto", "min")
-    .replace("minutos", "mins")
-    .replace("segundos", "seg")
-    .replace("horas", "hrs")
-    .replace("unos segundos", "ahora")
-    .replace("dias", "ds");
+  return dayjs(updatedAt).fromNow(); // Mostrará "hace 4 horas", "hace 10 minutos", etc.
 };
 
 export function getMonthName(monthNumber) {

@@ -10,13 +10,13 @@ const CardCycleWork = React.memo(() => {
 
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl py-2 px-4 flex items-center justify-center w-full h-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl py-2 px-4 flex items-center justify-center w-full h-[280px] animate-pulse"></div>
     );
 
   if (isError)
     return (
-      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] animate-pulse">
-        <span className="text-[8px] text-red-500">Ocurrió un error</span>
+      <div className="flex items-center justify-center h-[280px]">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
       </div>
     );
 

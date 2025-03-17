@@ -32,28 +32,28 @@ function Utilization() {
         />
         <CardItem
           value={data?.velocities?.max_empty?.value || 0}
-          title="Velocidad máxima vacío"
-          valueColor="text-red-500"
-          unid={"km/h"}
-          decimals={0}
-        />
-        <CardItem
-          value={data?.velocities?.max_loaded?.value || 0}
-          title="Velocidad máxima cargado"
+          title="Velocidad máxima vacío Supercie"
           valueColor="text-red-500"
           unid={"km/h"}
           decimals={0}
         />
         <CardItem
           value={data?.velocities?.min_empty?.value || 0}
-          title="Velocidad mínima vacío"
+          title="Velocidad máxima lleno en Superfie"
+          valueColor="text-red-500"
+          unid={"km/h"}
+          decimals={0}
+        />
+        <CardItem
+          value={data?.velocities?.max_loaded?.value || 0}
+          title="Velocidad máxima vacío interior Mina"
           valueColor="text-red-500"
           unid={"km/h"}
           decimals={0}
         />
         <CardItem
           value={data?.velocities?.min_loaded?.value || 0}
-          title="Velocidad mínima cargado"
+          title="Velocidad máxima lleno interior Mina"
           valueColor="text-red-500"
           unid={"km/h"}
           decimals={0}

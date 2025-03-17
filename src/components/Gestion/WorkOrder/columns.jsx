@@ -1,4 +1,4 @@
-import { formatFecha } from "@/lib/utilsGeneral";
+import { formatFecha, formatRelativeTime } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { DataTableRowActions } from "../data-table-row-actions";
 import clsx from "clsx";
@@ -215,7 +215,7 @@ export const columns = [
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.updatedLastTime)}
+              {formatRelativeTime(row.original.updatedLastTime)}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización

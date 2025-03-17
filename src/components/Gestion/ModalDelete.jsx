@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import IconLoader from "@/icons/IconLoader";
 import { IconDelete } from "@/icons/IconDelete";
+import { useToast } from "@/hooks/useToaster";
 
 export const ModalDelete = ({
   isOpen,
@@ -19,6 +20,7 @@ export const ModalDelete = ({
   queryKeyToUpdate,
   itemId,
 }) => {
+  const { addToast } = useToast();
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const queryClient = useQueryClient();
   async function onSubmit() {
@@ -27,20 +29,29 @@ export const ModalDelete = ({
     try {
       setLoadingGlobal(true);
       const response = await deleteDataRequest(urlDelete);
-      console.log(response);
+      console.log("delete",response);
       if (response?.status === 200) {
-        queryClient.setQueryData([queryKeyToUpdate], (oldData) => {
+        queryClient.setQueryData(["crud",queryKeyToUpdate], (oldData) => {
           if (!oldData || !oldData.data) return oldData; // Si no hay datos,
           return {
             ...oldData, // Mantiene el resto de las propiedades (status, headers, etc.)
             data: oldData.data.filter((item) => item._id !== itemId), // Filtra el array 
           };
         });
-        
+        addToast({
+          title:  "Eliminado correctamente",
+          message:  "Los cambios se han guardado con éxito." ,
+          variant: "success", // Si usas variantes de color en el addToaster
+        });
         onClose();
       }
     } catch (error) {
       console.error("Error deleting", error);
+      addToast({
+        title: "Error al eliminar",
+        message: "Revise la información e intente nuevamente.",
+        variant: "destructive",
+      });
     } finally {
       setLoadingGlobal(false);
     }

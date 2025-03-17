@@ -1,11 +1,13 @@
 import { useNavigation } from "@/hooks/userNavegation";
+import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
 import clsx from "clsx";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export function NavMain() {
   const paths = useNavigation();
-
+  const location = useLocation();
+  const pathname = location.pathname;
   return (
     <nav className="h-screen hidden md:flex w-[300px] bg-[#000000] flex-col ">
       <div className="w-full px-6 flex justify-center items-center h-14 ">
@@ -46,6 +48,31 @@ export function NavMain() {
           </div>
         ))}
       </div>
+      <div className="py-5 px-4">
+      <ul>
+        <Link to="/configuration">
+          <li
+            className={clsx(
+              "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200",pathname === "/configuration"
+              ? "bg-[#1D1D1D] text-zinc-200 "
+              : "text-zinc-600"
+            )}
+          >
+            <IconConfiguration
+              className={clsx(
+                "w-4 h-4 ",
+                pathname === "/configuration"
+                  ? "text-primary animate-spin-once"
+                  : "text-zinc-600"
+              )}
+            />
+            <span className="flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5">
+              Configuración
+            </span>
+          </li>
+        </Link>
+      </ul>
+    </div>
     </nav>
   );
 }

@@ -26,7 +26,6 @@ export function AppSidebar() {
       <NavMenu />
       <div className="flex items-center gap-2">
         {useShiftIcon()}
-
         <NavUser />
       </div>
     </div>

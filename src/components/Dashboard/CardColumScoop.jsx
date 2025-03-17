@@ -156,7 +156,7 @@ export default function CardColumScoop() {
   );
   if (isLoading)
   return (
-    <div className="bg-zinc-200 rounded-2xl h-full w-full animate-pulse"></div>
+    <div className="bg-zinc-200 rounded-2xl h-[300px] w-full animate-pulse"></div>
   );
 if (isError)
   return (

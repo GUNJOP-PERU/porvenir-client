@@ -126,9 +126,9 @@ const CardHeatMap = React.memo(() => {
           return (
             "<b><span style='color:#abd9e9;'>" +
             this.series.xAxis.categories[this.point.x] +
-            "</span></b> tiene un valor de <br><b><span style='color:#F59E0B;'>" +
-            this.point.value +
-            "</span></b> en <b><span style='color:#10B981;'>" +
+            "</span></b> <br/> <b><span style='color:#F59E0B;'>" +
+            this.point.value.toLocaleString("en-US", { maximumFractionDigits: 0 }) +"tn"+
+            "</span></b> <br/> <b><span style='color:#10B981;'>" +
             this.series.yAxis.categories[this.point.y] +
             "</span></b>"
           );
@@ -153,11 +153,11 @@ const CardHeatMap = React.memo(() => {
   
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl h-full w-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl h-[280px] w-full animate-pulse"></div>
     );
   if (isError)
     return (
-      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] ">
+      <div className="py-2 px-4 flex items-center justify-center h-[280px] w-full ">
         <span className="text-[10px] text-red-500">Ocurrió un error</span>
       </div>
     );

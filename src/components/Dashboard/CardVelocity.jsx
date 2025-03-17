@@ -29,6 +29,9 @@ export default function CardVelocity({ symbol, endpoint }) {
             fontSize: "0.6em",
           },
           rotation: 0,
+          formatter: function () {
+            return this.value.substring(0, 2); // 2 caracteres
+          },
         },
       },
       yAxis: {
@@ -57,6 +60,18 @@ export default function CardVelocity({ symbol, endpoint }) {
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
+        },
+        formatter: function () {
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+          let tooltipText = `<b>${category}</b><br/>`; // Mostrar la fecha/hora correcta
+          this.points.forEach((point) => {
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${
+              point.series.name
+            }</b>: ${Number(point.y).toFixed(1)}km/h<br/>`;
+          });
+
+          return tooltipText;
         },
       },
       plotOptions: {
@@ -125,11 +140,11 @@ export default function CardVelocity({ symbol, endpoint }) {
   );
   if (isLoading)
   return (
-    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
   );
 if (isError)
   return (
-    <div className="flex items-center justify-center h-full w-full ">
+    <div className="flex items-center justify-center h-[280px] w-full ">
       <span className="text-[10px] text-red-500">Ocurrió un error</span>
     </div>
   );

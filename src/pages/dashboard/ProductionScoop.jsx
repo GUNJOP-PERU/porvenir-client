@@ -1,4 +1,5 @@
 import CardColumScoop from "@/components/Dashboard/CardColumScoop";
+import CardFlotaTime from "@/components/Dashboard/CardFlotaTime";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/CardTable";
@@ -19,9 +20,9 @@ function ProductionScoop() {
 
   useProductionWebSocket();
 
-  const { data} = useGraphicData(
+  const { data } = useGraphicData(
     "scoop-progress-day",
-    "dashboard/scoop/progress-day",
+    "dashboard/scoop/progress-day"
   );
   return (
     <>
@@ -68,9 +69,7 @@ function ProductionScoop() {
         <CardItem
           value={data?.mineral?.percentageDisponibility?.value || 0}
           title="Disponiblidad"
-          change={
-            data?.mineral?.percentageDisponibility?.value || 0
-          }
+          change={data?.mineral?.percentageDisponibility?.value || 0}
           valueColor="text-purple-600"
           unid={"%"}
         />
@@ -82,8 +81,8 @@ function ProductionScoop() {
           unid={"%"}
         />
       </div>
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1">
-        <div className=" border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+        <div className="xl:col-span-2 border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col gap-1 px-4 p-3">
           <CardTitle
             title="Tonelaje Mineral / Avance"
             subtitle="Relación entre tonelaje mineral y avance."
@@ -99,6 +98,12 @@ function ProductionScoop() {
             icon={IconDash1}
           />
           <CardTable data={scoopEvents} />
+        </div>
+        <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
+          <CardFlotaTime
+            symbol="list-fleet-scoop"
+            endpoint="dashboard/list-fleet?equipment=scoop"
+          />
         </div>
       </div>
     </>

@@ -2,7 +2,6 @@ import IconArrowUp from "@/icons/IconArrowUp";
 import { memo } from "react";
 import NumberFlow from "@number-flow/react";
 import { cva } from "class-variance-authority";
-import CircularChart from "./CircularChart";
 
 // Definir estilos con variantes
 const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {

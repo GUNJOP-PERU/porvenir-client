@@ -20,10 +20,12 @@ import IconDuplicate from "@/icons/IconDuplicate";
 import IconDetails from "@/icons/IconDetails";
 import IconMore from "@/icons/IconMore";
 import { ModalCompany } from "./Company/ModalCompany";
+import { DetailsUser } from "./Users/DetailsUser";
 
 export function DataTableRowActions({ componentToShow, row }) {
   const [open, setOpen] = useState(false);
   const [deleModal, setDeleteModal] = useState(false);
+  const [detailsModal, setDetailsModal] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,6 +38,11 @@ export function DataTableRowActions({ componentToShow, row }) {
   const handleDeleteModal = (rowData) => {
     setRowData(rowData);
     setDeleteModal(true);
+    setMenuOpen(false); // Cerrar menú
+  };
+  const handleDetailsModal = (rowData) => {
+    setRowData(rowData);
+    setDetailsModal(true);
     setMenuOpen(false); // Cerrar menú
   };
 
@@ -102,15 +109,15 @@ export function DataTableRowActions({ componentToShow, row }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[150px]">
-          {/* <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleDetailsModal(row.original)}>
             <IconDetails className="h-5 w-5 text-gray-500" />
             Ver detalles
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
           {/* <DropdownMenuItem>
             <IconMore className="h-5 w-5 fill-gray-500" />
             Crear nuevo
           </DropdownMenuItem> */}
-          <DropdownMenuItem onClick={() => handleClick(row.original)}>
+         <DropdownMenuItem onClick={() => handleClick(row.original)}>
             <IconEdit className="h-5 w-5 stroke-black" />
             Editar detalles
           </DropdownMenuItem>
@@ -135,6 +142,11 @@ export function DataTableRowActions({ componentToShow, row }) {
         urlDelete={`${componentToShow}/${rowData?._id}`}
         itemId={rowData?._id} 
         queryKeyToUpdate={componentToShow}
+      />
+      <DetailsUser
+        isOpen={detailsModal}
+        onClose={() => setDetailsModal(false)}
+        dataCrud={rowData}
       />
     </>
   );

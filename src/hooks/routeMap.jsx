@@ -9,6 +9,7 @@ export const createRouteMap = (queryClient) => {
     "truck-job-cycle": ["dashboard", "truck-job-cycle"],
     "truck-chart-productivity": ["dashboard", "truck-chart-productivity"],
     "truck-chart-fleet": ["dashboard", "truck-chart-fleet"],
+
     //Page Scoop
     "scoop-progress-day": ["dashboard", "scoop-progress-day"],
     "scoop-tonnage-per-hour": ["dashboard", "scoop-tonnage-per-hour"],
@@ -77,7 +78,10 @@ export const createRouteMap = (queryClient) => {
 
       if (!orderExists) {
         console.log("🔄 No se encontró en caché, invalidando...");
-        queryClient.invalidateQueries({ queryKey: ["crud", "workOrder"], exact: false });
+        queryClient.invalidateQueries({
+          queryKey: ["crud", "workOrder"],
+          exact: false,
+        });
         queryClient.refetchQueries({ queryKey: ["crud", "workOrder"] });
         console.log("🔄 Ejecutado...");
         return oldData;
@@ -124,6 +128,39 @@ export const createRouteMap = (queryClient) => {
         });
       } else {
         console.log("ℹ️ No se requiere limpieza de 'dashboard'");
+      }
+    },
+    "list-fleet": (data) => {
+      console.log("fleet", data);
+      if (data.type === "truck") {
+        console.log("truck");
+        queryClient.setQueryData(
+          ["dashboard", "list-fleet-truck"],
+          (oldData) => {
+            if (!oldData) return oldData; // Si no hay datos previos, no hacer nada
+            // Buscar y reemplazar el objeto con el mismo id
+            const updatedData = oldData.map((item) =>
+              item.id === data.id ? { ...item, ...data } : item
+            );
+            return updatedData;
+          }
+        );
+      }
+      if (data.type === "scoop") {
+        console.log("scoop")
+        queryClient.setQueryData(
+          ["dashboard", "list-fleet-scoop"],
+          (oldData) => {
+            if (!oldData) return oldData; // Si no hay datos previos, no hacer nada
+            // Buscar y reemplazar el objeto con el mismo id
+            const updatedData = oldData.map((item) =>
+              item.id === data.id ? { ...item, ...data } : item
+            );
+            return updatedData;
+          }
+        );
+      } else {
+        console.log("ℹ️ No se encuentra'");
       }
     },
   };

@@ -139,11 +139,11 @@ export default function CardRange({ symbol, endpoint  }) {
 
   if (isLoading)
   return (
-    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[250px] w-full animate-pulse"></div>
   );
 if (isError)
   return (
-    <div className="flex items-center justify-center h-full w-full ">
+    <div className="flex items-center justify-center h-[250px] w-full ">
       <span className="text-[10px] text-red-500">Ocurrió un error</span>
     </div>
   );

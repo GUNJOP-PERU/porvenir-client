@@ -10,13 +10,13 @@ if (typeof highchartsTilemap === "function") {
   highchartsTilemap(Highcharts);
 }
 
-const CardFlotaTime = memo(() => {
+const CardFlotaTime = memo(({symbol, endpoint}) => {
   const chartRef = useRef(null);
   const {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData("list-fleet", "dashboard/list-fleet");
+  } = useGraphicData(symbol, endpoint);
 
   const fleetData = useMemo(() => {
     return data
@@ -24,14 +24,14 @@ const CardFlotaTime = memo(() => {
         const regex = /([A-Za-z-]+)(\d+)/;
         const matchA = a.name.match(regex);
         const matchB = b.name.match(regex);
-  
+
         if (!matchA || !matchB) return 0;
-  
+
         const prefixA = matchA[1];
         const numA = parseInt(matchA[2], 10);
         const prefixB = matchB[1];
         const numB = parseInt(matchB[2], 10);
-  
+
         return prefixA.localeCompare(prefixB) || numA - numB;
       })
       .map((item, index) => ({
@@ -40,7 +40,7 @@ const CardFlotaTime = memo(() => {
         y: Math.floor(index / 10),
       }));
   }, [data]); // Solo se recalcula si `data` cambia
-  
+
   const fleetCounts = useMemo(() => {
     return fleetData.reduce(
       (acc, item) => {
@@ -50,8 +50,7 @@ const CardFlotaTime = memo(() => {
       { 1: 0, 2: 0, 3: 0 }
     );
   }, [fleetData]); // Se recalcula solo si `fleetData` cambia
-  
-  
+
   const options = useMemo(
     () => ({
       chart: {
@@ -83,7 +82,7 @@ const CardFlotaTime = memo(() => {
         labels: { enabled: false },
         gridLineWidth: 0,
       },
-       // yAxis: {
+      // yAxis: {
       //   plotLines: [
       //     {
       //       color: "blue",
@@ -96,7 +95,6 @@ const CardFlotaTime = memo(() => {
 
       colorAxis: {
         dataClasses: [
-      
           { from: 1, to: 1, color: "#81c784", name: "Operativo" }, // Amarillo
           { from: 2, to: 2, color: "#fff176", name: "Mantenimiento" }, // Rojo
           { from: 3, to: 3, color: "#ff9999", name: "Inoperativo" }, // Gris o cualquier otro color para 3
@@ -137,23 +135,21 @@ const CardFlotaTime = memo(() => {
         },
 
         formatter: function () {
-          const info = this.point.info;
           return `
                 <b>${this.point.name}</b><br>
-                <b>Conductor:</b> ${info?.conductor}<br>
-                <b>Capacidad:</b> ${info?.capacidad}<br>
-                <b>Check List:</b> ${info?.checklist}<br>
-                <b>Orden de Trabajo:</b> ${info?.ordenTrabajo}<br>
-                <b>Área de trabajo:</b> ${info?.areaTrabajo}<br>
-             
-                <b>Producción:</b> ${info?.produccion}<br>
-                <b>Kilómetros:</b> ${info?.kilometros}<br>
-                <b>Hora de inicio:</b> ${info?.horaInicio}
+                <b>Conductor:</b> ${this.point?.conductor || "--"}<br>
+                <b>Capacidad:</b> ${this.point?.capacidad || "--"}<br>
+                <b>Check List:</b> ${this.point?.checklist || "--"}<br>
+                <b>Orden de Trabajo:</b> ${this.point?.ordenTrabajo || "--"}<br>
+                <b>Área de trabajo:</b> ${this.point?.areaTrabajo || "--"}<br>
+                <b>Producción:</b> ${this.point?.produccion || "--"}<br>
+                <b>Kilómetros:</b> ${this.point?.kilometros || "0"} km<br>
+                <b>Hora de inicio:</b> ${this.point?.horaInicio || "--"}
             `;
         },
       },
       legend: {
-        enabled:false,
+        enabled: false,
       },
 
       credits: {
@@ -171,11 +167,11 @@ const CardFlotaTime = memo(() => {
 
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl h-full w-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl h-[330px] w-full animate-pulse"></div>
     );
   if (isError)
     return (
-      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] ">
+      <div className="flex items-center justify-center h-[330px] w-full ">
         <span className="text-[10px] text-red-500">Ocurrió un error</span>
       </div>
     );
@@ -195,7 +191,10 @@ const CardFlotaTime = memo(() => {
           <div className="flex gap-2 items-center">
             <div className="w-1 rounded-[5px] h-7 bg-[#81c784]"></div>
             <div className="flex flex-col ">
-              <h4 className="text-xs leading-3 font-semibold">{fleetCounts[1]}<small>veh</small></h4>
+              <h4 className="text-xs leading-3 font-semibold">
+                {fleetCounts[1]}
+                <small>veh</small>
+              </h4>
               <span className="text-[9px] text-[#A6A6A6] leading-3">
                 Operativo
               </span>
@@ -204,7 +203,10 @@ const CardFlotaTime = memo(() => {
           <div className="flex gap-2 items-center">
             <div className="w-1 rounded-[5px] h-7 bg-[#fff176]"></div>
             <div className="flex flex-col ">
-             <h4 className="text-xs leading-3 font-semibold">{fleetCounts[2]}<small>veh</small></h4>
+              <h4 className="text-xs leading-3 font-semibold">
+                {fleetCounts[2]}
+                <small>veh</small>
+              </h4>
               <span className="text-[9px] text-[#A6A6A6] leading-3">
                 Mantenimiento
               </span>
@@ -213,7 +215,10 @@ const CardFlotaTime = memo(() => {
           <div className="flex gap-2 items-center">
             <div className="w-1 rounded-[5px] h-7 bg-[#ff9999]"></div>
             <div className="flex flex-col ">
-             <h4 className="text-xs leading-3 font-semibold">{fleetCounts[3]}<small>veh</small></h4>
+              <h4 className="text-xs leading-3 font-semibold">
+                {fleetCounts[3]}
+                <small>veh</small>
+              </h4>
               <span className="text-[9px] text-[#A6A6A6] leading-3">
                 Inoperativo
               </span>

@@ -69,7 +69,7 @@ export default function CardColum() {
           this.points.forEach((point) => {
             tooltipText += `<span style="color:${point.color}">●</span> <b>${
               point.series.name
-            }</b>: ${Number(point.y).toFixed(1)}tn<br/>`;
+            }</b>: ${Number(point.y).toLocaleString("en-US", { maximumFractionDigits: 0 })}tn<br/>`;
           });
 
           return tooltipText;
@@ -174,7 +174,7 @@ export default function CardColum() {
 
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
     );
   if (isError)
     return (

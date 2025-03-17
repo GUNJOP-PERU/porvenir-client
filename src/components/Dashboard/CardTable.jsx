@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 
 export default function CardTable({ data }) {
   const hasData = useMemo(() => data?.data?.length > 0, [data]);

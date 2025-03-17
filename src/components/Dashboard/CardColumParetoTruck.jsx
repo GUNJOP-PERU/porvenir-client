@@ -202,7 +202,7 @@ export default function CardColumParetoTruck() {
 
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
     );
   if (isError)
     return (

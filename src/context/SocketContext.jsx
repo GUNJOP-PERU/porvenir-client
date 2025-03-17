@@ -44,7 +44,7 @@ export const SocketProvider = ({ children }) => {
         return;
       }
 
-      console.log(`📡 Nuevo dato en ${topic}:`, newData);
+      // console.log(`📡 Nuevo dato en ${topic}:`, newData);
 
       // Acumulamos en el buffer
       batchUpdatesRef.updates.push({ topic, newData });

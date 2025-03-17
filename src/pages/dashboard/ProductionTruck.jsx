@@ -91,12 +91,7 @@ function ProductionTruck() {
           />
         </div>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-          
-          <CardPie
-            symbol="truck-chart-fleet"
-            endpoint="dashboard/truck/chart-fleet"
-          />
-          {/* <CardFlotaTime/> */}
+          <CardFlotaTime symbol="list-fleet-truck" endpoint="dashboard/list-fleet?equipment=truck"/>
         </div>
       </div>
     </>

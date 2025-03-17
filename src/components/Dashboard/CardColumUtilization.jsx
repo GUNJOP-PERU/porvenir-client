@@ -80,6 +80,18 @@ export default function CardColumUtilization() {
           fontSize: "11px",
           fontWeight: "",
         },
+        formatter: function () {
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+          let tooltipText = `<b>${category}</b><br/>`; // Mostrar la fecha/hora correcta
+          this.points.forEach((point) => {
+            tooltipText += `<span style="color:${point.color}">●</span> <b>${
+              point.series.name
+            }</b>: ${Number(point.y).toLocaleString("en-US", { maximumFractionDigits: 0 })}tn<br/>`;
+          });
+
+          return tooltipText;
+        },
       },
       plotOptions: {
         column: {
@@ -187,7 +199,7 @@ export default function CardColumUtilization() {
 
   if (isLoading)
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-full w-full animate-pulse"></div>
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[300px] w-full animate-pulse"></div>
     );
   if (isError)
     return (
