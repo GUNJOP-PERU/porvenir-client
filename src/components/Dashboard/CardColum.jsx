@@ -86,14 +86,17 @@ export default function CardColum() {
           dataLabels: {
             enabled: true,
             style: {
-              fontSize: "9px",
+              fontSize: "8px",
               color: "#000",
-              fontWeight: "",
+              fontWeight: "bold",
               textOutline: "none",
             },
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderRadius: 3,
+            padding: 3,
             borderWidth: 0,
             formatter: function () {
-              return formatThousands(this.y);
+              return this.y != 0 ? formatThousands(this.y) : null;
             },
           },
         },

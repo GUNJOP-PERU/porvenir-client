@@ -2,21 +2,22 @@ export const createRouteMap = (queryClient) => {
   // 🛠️ Definir tópicos que solo actualizan la caché sin lógica extra
   const simpleTopics = {
     //CardGuage
-    "progress-shift": ["dashboard", "progress-shift"],
+    "progress-shift": ["shift-variable", "progress-shift"],
     //Page Truck
-    "truck-progress-day": ["dashboard", "truck-progress-day"],
-    "truck-heatmap": ["dashboard", "truck-heatmap"],
-    "truck-job-cycle": ["dashboard", "truck-job-cycle"],
-    "truck-chart-productivity": ["dashboard", "truck-chart-productivity"],
-    "truck-chart-fleet": ["dashboard", "truck-chart-fleet"],
+    "truck-progress-day": ["shift-variable", "truck-progress-day"],
+    "truck-heatmap": ["shift-variable", "truck-heatmap"],
+    "truck-job-cycle": ["shift-variable", "truck-job-cycle"],
+    "truck-chart-productivity": ["shift-variable", "truck-chart-productivity"],
+    "truck-chart-fleet": ["shift-variable", "truck-chart-fleet"],
 
     //Page Scoop
-    "scoop-progress-day": ["dashboard", "scoop-progress-day"],
-    "scoop-tonnage-per-hour": ["dashboard", "scoop-tonnage-per-hour"],
+    "scoop-progress-day": ["shift-variable", "scoop-progress-day"],
+    "scoop-tonnage-per-hour": ["shift-variable", "scoop-tonnage-per-hour"],
     //Page Timeline-Truck
-    "truck-activities-per-hour": ["dashboard", "truck-activities-per-hour"],
+    "truck-activities-per-hour": ["shift-variable", "truck-activities-per-hour"],
     //Page Timeline-Scoop
-    "scoop-activities-per-hour": ["dashboard", "scoop-activities-per-hour"],
+    "scoop-activities-per-hour": ["shift-variable", "scoop-activities-per-hour"],
+    
     //Page Pareto-Truck
     "pareto-truck-progress-monthly": [
       "dashboard",
@@ -97,7 +98,6 @@ export const createRouteMap = (queryClient) => {
         (data) => queryClient.setQueryData(path, data),
       ])
     ),
-
     "order-ready": updateWorkOrder,
     "checklist-ready": updateWorkOrder,
     "monthly-average-journals": (data) => {
@@ -117,17 +117,18 @@ export const createRouteMap = (queryClient) => {
     "journal-changed": (data) => {
       if (data?.status === true) {
         // ✅ Solo limpiar si `status` es `true`
-        console.log("🧹 La jornada ha cambiado. Limpiando 'dashboard'...");
+        console.log("🧹 La jornada ha cambiado. Limpiando 'shift-variable'...");
         const queries = queryClient.getQueriesData({
-          queryKey: ["dashboard"],
+          queryKey: ["shift-variable"],
           exact: false,
         });
 
         queries.forEach(([key]) => {
           queryClient.setQueryData(key, []);
         });
+        queryClient.refetchQueries({ queryKey: ["shift-variable", "list-fleet-truck"] });
       } else {
-        console.log("ℹ️ No se requiere limpieza de 'dashboard'");
+        console.log("ℹ️ No se requiere limpieza de 'shift-variable'");
       }
     },
     "list-fleet": (data) => {
@@ -135,9 +136,9 @@ export const createRouteMap = (queryClient) => {
       if (data.type === "truck") {
         console.log("truck");
         queryClient.setQueryData(
-          ["dashboard", "list-fleet-truck"],
+          ["shift-variable", "list-fleet-truck"],
           (oldData) => {
-            if (!oldData) return oldData; // Si no hay datos previos, no hacer nada
+            if (!oldData) return oldData; 
             // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
@@ -149,9 +150,9 @@ export const createRouteMap = (queryClient) => {
       if (data.type === "scoop") {
         console.log("scoop")
         queryClient.setQueryData(
-          ["dashboard", "list-fleet-scoop"],
+          ["shift-variable", "list-fleet-scoop"],
           (oldData) => {
-            if (!oldData) return oldData; // Si no hay datos previos, no hacer nada
+            if (!oldData) return oldData; 
             // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
@@ -162,6 +163,32 @@ export const createRouteMap = (queryClient) => {
       } else {
         console.log("ℹ️ No se encuentra'");
       }
+    },
+    "scoop-events-table": (newData) => {
+      queryClient.setQueryData(["shift-variable", "scoop-events"], (oldState) => {
+        console.log("📊 Estado previo:", oldState);
+    
+        const prevData = oldState?.data || []; 
+        const newEventItem = newData.data; 
+    
+        // Buscar si el id ya existe en `data`
+        const existingIndex = prevData.findIndex((item) => item.id === newEventItem.id);
+    
+        let updatedData;
+        if (existingIndex !== -1) {
+          // Si ya existe, reemplazamos el objeto en su posición
+          updatedData = [...prevData];
+          updatedData[existingIndex] = newEventItem;
+        } else {
+          // Si no existe, lo agregamos al final
+          updatedData = [...prevData, newEventItem];
+        }
+    
+        return {
+          ...oldState,
+          data: updatedData, // Solo actualizamos `data`, dejando `headers` intacto
+        };
+      });
     },
   };
 };

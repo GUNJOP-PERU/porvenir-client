@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import IconNight from "@/icons/IconNight";
-import IconDay from "@/icons/IconDay";
 import { MoonStar, Sun } from "lucide-react";
 export const useShiftIcon = () => {
   const [isDayShift, setIsDayShift] = useState(null);

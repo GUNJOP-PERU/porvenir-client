@@ -103,11 +103,14 @@ export default function CardColumUtilization() {
           dataLabels: {
             enabled: true,
             style: {
-              fontSize: "9px",
+              fontSize: "8px",
               color: "#000",
-              fontWeight: "",
+              fontWeight: "bold",
               textOutline: "none",
             },
+            backgroundColor: "rgba(255, 255, 255, 0.3)",
+            borderRadius: 3,
+            padding: 3,
             borderWidth: 0,
             formatter: function () {
               return formatThousands(this.y); // Asegúrate de formatear correctamente

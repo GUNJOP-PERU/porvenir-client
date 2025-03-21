@@ -130,7 +130,7 @@ export default function CardColumParetoTruck() {
             padding: 3,
             borderWidth: 0,
             formatter: function () {
-              return this.y !== 0 ? Number(this.y).toFixed(1) : "";
+              return this.y !== 0 ? Number(this.y).toFixed(1) : null;
             },
           },
         },

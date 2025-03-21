@@ -14,7 +14,7 @@ const CardHeatMap = React.memo(() => {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData("truck-heatmap","dashboard/truck/heatmap" );
+  } = useGraphicData("truck-heatmap","dashboard/truck/heatmap", "shift-variable" );
 
   const chartRef = useRef(null); // Referencia al gráfico
 

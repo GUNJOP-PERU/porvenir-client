@@ -1,6 +1,9 @@
+import { useGraphicData } from "@/hooks/useGraphicData";
 import { useMemo, useCallback } from "react";
 
-export default function CardTable({ data }) {
+export default function CardTable({ symbol, endpoint }) {
+  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint, "shift-variable");
+
   const hasData = useMemo(() => data?.data?.length > 0, [data]);
 
   const getCellValue = useCallback((row, header) => {
@@ -49,6 +52,16 @@ export default function CardTable({ data }) {
     );
   }, [data, hasData, getCellValue]);
 
+  if (isLoading)
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-[280px] w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
   return (
     <div className="overflow-y-auto h-[280px] md:h-[280px]">
       <table className="min-w-full table-auto border-collapse rounded-lg">

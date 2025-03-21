@@ -1,14 +1,14 @@
 import { getDataGraphicRequest } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGraphicData = (symbol, endpoint) => {
+export const useGraphicData = (symbol, endpoint,keyPrefix = "dashboard") => {
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboard", symbol],
+    queryKey: [keyPrefix, symbol],
     queryFn: getDataGraphicRequest.bind(null, endpoint),
     staleTime: Infinity,
     cacheTime: Infinity,
-    refetchOnReconnect: true,
+    refetchOnReconnect: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: 1, 
@@ -17,3 +17,4 @@ export const useGraphicData = (symbol, endpoint) => {
 
   return { data, isLoading, isError };
 };
+ 

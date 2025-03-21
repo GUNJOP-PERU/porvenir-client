@@ -10,14 +10,14 @@ if (typeof highchartsTilemap === "function") {
   highchartsTilemap(Highcharts);
 }
 
-const CardFlotaTime = memo(({symbol, endpoint}) => {
+const CardFlotaTime = memo(({ symbol, endpoint }) => {
   const chartRef = useRef(null);
   const {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData(symbol, endpoint);
-
+  } = useGraphicData(symbol, endpoint, "shift-variable");
+  // console.log("flota", data);
   const fleetData = useMemo(() => {
     return data
       .sort((a, b) => {
@@ -92,7 +92,6 @@ const CardFlotaTime = memo(({symbol, endpoint}) => {
       //     },
       //   ],
       // },
-
       colorAxis: {
         dataClasses: [
           { from: 1, to: 1, color: "#81c784", name: "Operativo" }, // Amarillo
@@ -100,7 +99,6 @@ const CardFlotaTime = memo(({symbol, endpoint}) => {
           { from: 3, to: 3, color: "#ff9999", name: "Inoperativo" }, // Gris o cualquier otro color para 3
         ],
       },
-
       series: [
         {
           name: "Estado de Vehículos",
@@ -120,34 +118,69 @@ const CardFlotaTime = memo(({symbol, endpoint}) => {
           },
         },
       ],
-
       tooltip: {
+        useHTML: true, // Habilita HTML dentro del tooltip
         valueSuffix: " toneladas",
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
         borderRadius: 10,
-        padding: 15,
+        padding: 20,
         style: {
           color: "#FFFFFF",
           fontSize: "11px",
-          fontWeight: "",
         },
-
         formatter: function () {
           return `
-                <b>${this.point.name}</b><br>
-                <b>Conductor:</b> ${this.point?.conductor || "--"}<br>
-                <b>Capacidad:</b> ${this.point?.capacidad || "--"}<br>
-                <b>Check List:</b> ${this.point?.checklist || "--"}<br>
-                <b>Orden de Trabajo:</b> ${this.point?.ordenTrabajo || "--"}<br>
-                <b>Área de trabajo:</b> ${this.point?.areaTrabajo || "--"}<br>
-                <b>Producción:</b> ${this.point?.produccion || "--"}<br>
-                <b>Kilómetros:</b> ${this.point?.kilometros || "0"} km<br>
-                <b>Hora de inicio:</b> ${this.point?.horaInicio || "--"}
+                <div style="width: 180px; display: flex; flex-direction: column; gap: 0.05rem;">
+                    <h4 style="text-align: center; margin-bottom: 5px; font-weight: bold; font-size: 1.2em;">${
+                      this.point.name
+                    }</h4>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Conductor</b> <span>${
+                          this.point?.conductor || "--"
+                        }</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Capacidad</b> <span>${  
+                          this.point?.capacidad || "--"
+                        }</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Check List</b> <span>${
+                          this.point?.checklist === "COMPLETADA"
+                            ? "✅ COMPLETADA"
+                            : "--"
+                        }</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%; ">
+                    <b style="color: #aeaeae;">Orden de Trabajo</b> <span>${
+                      this.point?.ordenTrabajo === "ACEPTADA"
+                        ? "✅ ACEPTADA"
+                        : "--"
+                    }</span>                        
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Área de trabajo</b> <span>${
+                          this.point?.areaTrabajo || "--"
+                        }</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Kilómetros</b> <span>${
+                          this.point?.kilometros || "0"
+                        } km</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: #aeaeae;">Hora de inicio</b> <span>${
+                          this.point?.horaInicio || "--"
+                        }</span>
+                    </div>
+                </div>
             `;
         },
       },
+
       legend: {
         enabled: false,
       },

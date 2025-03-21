@@ -4,7 +4,14 @@ import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 
 export default function CardColumParetoScoop() {
-  const { data = [], isLoading, isError } = useGraphicData("pareto-scoop-no-productive-activities","dashboard/pareto/no-productive-activities?equipment=scoop" );
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData(
+    "pareto-scoop-no-productive-activities",
+    "dashboard/pareto/no-productive-activities?equipment=scoop"
+  );
   const dataTemporal = {
     dates: [
       "01:02",
@@ -125,7 +132,7 @@ export default function CardColumParetoScoop() {
             padding: 3,
             borderWidth: 0,
             formatter: function () {
-              return this.y !== 0 ? Number(this.y).toFixed(1) : "";
+              return this.y !== 0 ? Number(this.y).toFixed(1) : null;
             },
           },
         },
@@ -199,9 +206,5 @@ export default function CardColumParetoScoop() {
       </div>
     );
 
-  return (
-    <>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
-  );
+  return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

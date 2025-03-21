@@ -5,7 +5,8 @@ import NumberFlow from "@number-flow/react";
 const CardCycleWork = React.memo(() => {
   const { data, isLoading, isError } = useGraphicData(
     "truck-job-cycle",
-    "dashboard/truck/job-cycle"
+    "dashboard/truck/job-cycle",
+    "shift-variable"
   );
 
   if (isLoading)

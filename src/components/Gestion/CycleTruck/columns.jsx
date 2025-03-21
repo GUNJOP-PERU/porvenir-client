@@ -2,6 +2,7 @@ import {
   formatDurationHour,
   formatFecha,
   formatHour,
+  useRelativeTime,
 } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { DataTableRowActions } from "../data-table-row-actions";
@@ -46,7 +47,16 @@ export const columns = [
     accessorKey: "frontLabor",
     header: "Labor",
     cell: ({ row }) => {
-      return <>{row.getValue("frontLabor")}</>;
+      return (
+        <div className="flex flex-col gap-1 text-xs">
+           <span className="max-w-[500px] truncate font-medium leading-3">
+            <strong>Origen: </strong> {row.getValue("frontLabor")}
+          </span>
+           <span className="max-w-[500px] truncate font-medium leading-3">
+           <strong> Destino:</strong>  {row.original?.destiny}
+          </span>      
+        </div>
+      );
     },
   },
   {
@@ -118,16 +128,16 @@ export const columns = [
     header: "Estado/Labor",
     cell: ({ row }) => {
       return (
-        
-          <span
-            className={clsx(
-              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
-              row.original?.isNewLabor ? "text-green-500 bg-green-50 before:bg-green-500" : "text-blue-500 bg-sky-50 before:bg-blue-500"
-            )}
-          >
-            {row.original?.isNewLabor ? "Nueva" : "Existe"}
-          </span>
-        
+        <span
+          className={clsx(
+            "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+            row.original?.isNewLabor
+              ? "text-green-500 bg-green-50 before:bg-green-500"
+              : "text-blue-500 bg-sky-50 before:bg-blue-500"
+          )}
+        >
+          {row.original?.isNewLabor ? "Nueva" : "Existe"}
+        </span>
       );
     },
   },
@@ -141,8 +151,8 @@ export const columns = [
         <div className="flex items-center gap-2">
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.updatedAt)}
+            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
+              {useRelativeTime(row.original.updatedAt)}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización

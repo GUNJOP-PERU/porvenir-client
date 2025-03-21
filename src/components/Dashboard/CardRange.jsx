@@ -4,8 +4,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useGraphicData } from "@/hooks/useGraphicData";
 
-export default function CardRange({ symbol, endpoint  }) {
-
+export default function CardRange({ symbol, endpoint }) {
   const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
 
   const parseTimeToCustomScale = useCallback((timeString) => {
@@ -17,7 +16,7 @@ export default function CardRange({ symbol, endpoint  }) {
     if (adjustedTime < 0) adjustedTime += 24;
     return adjustedTime;
   }, []);
-  
+
   const options = useMemo(
     () => ({
       chart: {
@@ -48,8 +47,8 @@ export default function CardRange({ symbol, endpoint  }) {
       },
       yAxis: {
         title: { text: null },
-        min: 0,   // Comienza a las 19:00 (como 0 en la escala)
-        max: 24,  // Termina a las 18:59 del día siguiente (como 24 en la escala)
+        min: 0, // Comienza a las 19:00 (como 0 en la escala)
+        max: 24, // Termina a las 18:59 del día siguiente (como 24 en la escala)
         tickInterval: 2,
         labels: {
           style: {
@@ -58,13 +57,13 @@ export default function CardRange({ symbol, endpoint  }) {
           },
           formatter: function () {
             let hour = (this.value + 19) % 24; // Volver a formato 24h
-            return hour + ":00"; 
+            return hour + ":00";
           },
         },
         gridLineColor: "#D9D9D9",
         gridLineWidth: 0.5,
         gridLineDashStyle: "Dash",
-      },      
+      },
       tooltip: {
         shared: false,
         valueSuffix: " h",
@@ -78,12 +77,13 @@ export default function CardRange({ symbol, endpoint  }) {
           fontSize: "11px",
         },
         formatter: function () {
-          const category = this.series.chart.xAxis[0].categories[this.point.x] || this.x;
-      
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+
           // 📌 Usamos los valores originales guardados
           const start = this.point.originalStart || "N/A";
           const end = this.point.originalEnd || "N/A";
-      
+
           return `
             <b>${category}</b><br/>
             <span style="color:${this.series.color}">●</span> 
@@ -93,8 +93,7 @@ export default function CardRange({ symbol, endpoint  }) {
           `;
         },
       },
-      
-       
+
       plotOptions: {
         columnrange: {
           borderRadius: "50%",
@@ -110,17 +109,17 @@ export default function CardRange({ symbol, endpoint  }) {
           data: data?.dates?.map((date, index) => {
             const min = data.averages?.[index]?.[0] || null;
             const max = data.averages?.[index]?.[1] || null;
-      
+
             // Convertir solo si hay valores
-            const start = min && min !== "" ? parseTimeToCustomScale(min) : null;
+            const start =
+              min && min !== "" ? parseTimeToCustomScale(min) : null;
             const end = max && max !== "" ? parseTimeToCustomScale(max) : null;
-      
+
             return [index, start, end]; // Mantenemos el índice para asegurar todas las fechas en X
           }),
         },
       ],
-      
-      
+
       legend: {
         enabled: false,
       },
@@ -138,24 +137,23 @@ export default function CardRange({ symbol, endpoint  }) {
   );
 
   if (isLoading)
-  return (
-    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[250px] w-full animate-pulse"></div>
-  );
-if (isError)
-  return (
-    <div className="flex items-center justify-center h-[250px] w-full ">
-      <span className="text-[10px] text-red-500">Ocurrió un error</span>
-    </div>
-  );
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[250px] w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-[250px] w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
 
   return (
     <>
       <HighchartsReact highcharts={Highcharts} options={options} />
-      <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
+      {/* <div className="border-[1px] border-red-500/50 bg-red-50 w-fit rounded-lg px-2.5 py-1 flex gap-1 text-red-500 text-[10px] leading-3">
         <IconWarning className="text-red-500 w-3 h-3" />
         <div className="flex items-center">
           <ul className="list-disc ml-3 flex flex-wrap gap-x-6 ">
-           
             {data?.perfomance_summary ? (
               <>
                 {data?.perfomance_summary.level_production?.high?.advice ? (
@@ -194,7 +192,7 @@ if (isError)
             )}
           </ul>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

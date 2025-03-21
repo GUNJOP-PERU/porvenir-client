@@ -5,24 +5,13 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/CardTable";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import { useProductionWebSocket } from "@/hooks/useProductionWebSocket";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
-import { useScoopStore } from "@/store/ScoopStore";
-import { useEffect } from "react";
 
 function ProductionScoop() {
-  const fetchDataScoop = useScoopStore((state) => state.fetchDataScoop);
-  const { scoopEvents } = useScoopStore();
-
-  useEffect(() => {
-    fetchDataScoop();
-  }, [fetchDataScoop]);
-
-  useProductionWebSocket();
-
   const { data } = useGraphicData(
     "scoop-progress-day",
-    "dashboard/scoop/progress-day"
+    "dashboard/scoop/progress-day",
+    "shift-variable"
   );
   return (
     <>
@@ -97,7 +86,7 @@ function ProductionScoop() {
             subtitle="Registro y análisis de eventos."
             icon={IconDash1}
           />
-          <CardTable data={scoopEvents} />
+          <CardTable symbol="scoop-events" endpoint="dashboard/scoop/events" />
         </div>
         <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
           <CardFlotaTime

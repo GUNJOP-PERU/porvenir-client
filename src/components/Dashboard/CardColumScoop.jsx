@@ -10,7 +10,7 @@ export default function CardColumScoop() {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData( "scoop-tonnage-per-hour","dashboard/scoop/tonnage-per-hour",);
+  } = useGraphicData( "scoop-tonnage-per-hour","dashboard/scoop/tonnage-per-hour", "shift-variable");
 
   const selectedData = useMemo(() => {
     return data?.shift === "noche" ? hoursNight : data;
@@ -92,11 +92,14 @@ export default function CardColumScoop() {
           dataLabels: {
             enabled: true,
             style: {
-              fontSize: "9px",
+              fontSize: "8px",
+              fontWeight:"bold",
               color: "#000",
-              fontWeight: "",
               textOutline: "none",
             },
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderRadius: 3,
+            padding: 3,
             borderWidth: 0,
             formatter: function () {
               return formatThousands(this.y);

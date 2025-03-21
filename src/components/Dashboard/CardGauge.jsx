@@ -13,7 +13,8 @@ if (typeof solidGauge === "function") {
 const CardGauge = memo(() => {
   const { data, isLoading, isError } = useGraphicData(
     "progress-shift",
-    "dashboard/progress-shift"
+    "dashboard/progress-shift",
+    "shift-variable"
   );
 
   const options = useMemo(

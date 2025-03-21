@@ -5,6 +5,7 @@ import calendar from "dayjs/plugin/calendar";
 import relativeTime from "dayjs/plugin/relativeTime";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { useEffect, useState } from "react";
 
 dayjs.extend(relativeTime);
 dayjs.locale("es");
@@ -15,6 +16,20 @@ dayjs.extend(timezone);
 export const formatRelativeTime = (updatedAt) => {
   return dayjs(updatedAt).fromNow(); // Mostrará "hace 4 horas", "hace 10 minutos", etc.
 };
+
+export function useRelativeTime(updatedAt) {
+  const [relativeTime, setRelativeTime] = useState(dayjs(updatedAt).fromNow());
+
+  useEffect(() => {
+    const updateInterval = setInterval(() => {
+      setRelativeTime(dayjs(updatedAt).fromNow());
+    }, 60000); // Actualiza cada 60 segundos
+
+    return () => clearInterval(updateInterval); // Limpieza al desmontar
+  }, [updatedAt]);
+
+  return relativeTime;
+}
 
 export function getMonthName(monthNumber) {
   return dayjs().month(monthNumber - 1).format("MMMM");

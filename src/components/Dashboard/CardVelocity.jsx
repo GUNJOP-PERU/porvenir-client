@@ -68,7 +68,7 @@ export default function CardVelocity({ symbol, endpoint }) {
           this.points.forEach((point) => {
             tooltipText += `<span style="color:${point.color}">●</span> <b>${
               point.series.name
-            }</b>: ${Number(point.y).toFixed(1)}km/h<br/>`;
+            }</b>: ${Number(point.y).toFixed(2)}km/h<br/>`;
           });
 
           return tooltipText;
@@ -90,7 +90,7 @@ export default function CardVelocity({ symbol, endpoint }) {
               textOutline: "none",
             },
             formatter: function () {
-              return this.y ? this.y.toFixed(1) : ""; // Oculta etiquetas en 0
+              return this.y ? this.y.toFixed(3) : null; // Oculta etiquetas en 0
             },
           },
         },
@@ -139,14 +139,14 @@ export default function CardVelocity({ symbol, endpoint }) {
     [data]
   );
   if (isLoading)
-  return (
-    <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
-  );
-if (isError)
-  return (
-    <div className="flex items-center justify-center h-[280px] w-full ">
-      <span className="text-[10px] text-red-500">Ocurrió un error</span>
-    </div>
-  );
+    return (
+      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
+    );
+  if (isError)
+    return (
+      <div className="flex items-center justify-center h-[280px] w-full ">
+        <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

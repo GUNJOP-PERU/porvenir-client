@@ -11,7 +11,8 @@ import IconDash1 from "@/icons/Dashboard/IconDash1";
 function ProductionTruck() {
   const { data} = useGraphicData(
     "truck-progress-day",
-    "dashboard/truck/progress-day"
+    "dashboard/truck/progress-day",
+    "shift-variable"
   );
 
   return (
@@ -87,7 +88,7 @@ function ProductionTruck() {
           />
           <CardPie
             symbol="truck-chart-productivity"
-            endpoint="dashboard/truck/chart-productivity"
+            endpoint="dashboard/truck/chart-productivity"            
           />
         </div>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">

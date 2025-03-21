@@ -9,7 +9,7 @@ import IconDash1 from "@/icons/Dashboard/IconDash1";
 function ProductionMonth() {
   const { data = [] } = useGraphicData(
     "monthly-progress",
-    "dashboard/monthly/accumulated-progress",
+    "dashboard/monthly/accumulated-progress"
   );
   return (
     <>

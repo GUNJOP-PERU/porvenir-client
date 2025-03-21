@@ -56,7 +56,7 @@ export const columns = [
     accessorKey: "totalTonnage",
     header: "Tonelaje",
     cell: ({ row }) => {
-      return <>{row.getValue("totalTonnage").toLocaleString("es-MX")} TN</>;
+      return <>{row.getValue("totalTonnage")?.toLocaleString("es-MX")} TN</>;
     },
   },
 

@@ -42,7 +42,14 @@ export const columns = [
     accessorKey: "frontLabor",
     header: "Labor",
     cell: ({ row }) => {
-      return <>{row.getValue("frontLabor")}</>;
+      return  <div className="flex flex-col gap-1 text-xs">
+      <span className="max-w-[500px] truncate font-medium leading-3">
+       <strong>Origen: </strong> {row.getValue("frontLabor")}
+     </span>
+      <span className="max-w-[500px] truncate font-medium leading-3">
+      <strong> Destino:</strong>  {row.original?.destiny}
+     </span>      
+   </div>;
     },
   },
   {
