@@ -1,5 +1,6 @@
 import DonutChart from "@/components/Dashboard/DonutChart"
-import DonutAndHistoChart from "@/components/Dashboard/DonutAndHistoChart"
+import DonutAndSplineChart from "@/components/Dashboard/DonutAndSplineChart"
+import LineAndBarChart from "@/components/Dashboard/LineAndBarChart"
 
 const ShortIntercalControl = () => {
   return (
@@ -81,8 +82,8 @@ const ShortIntercalControl = () => {
       </div>
 
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-[1fr_1fr] shadow-lg rounded-lg p-4 gap-4">
-          <DonutAndHistoChart
+        <div className="grid grid-cols-[1fr_1fr] rounded-lg p-4 gap-4 card-shadow">
+          <DonutAndSplineChart
             title="OVERALL PLAN EXECUTION, kM³"
             donutData={{
               total: 100,
@@ -99,7 +100,7 @@ const ShortIntercalControl = () => {
             }}
           />
 
-          <DonutAndHistoChart
+          <DonutAndSplineChart
             title="EXTRACTION PLAN EXECUTION, kT"
             donutData={{
               total: 100,
@@ -115,6 +116,19 @@ const ShortIntercalControl = () => {
               forecastText: "Shiftend Forecast"
             }}
           />
+        </div>
+
+        <div className="grid grid-cols-[1fr_1fr] gap-4">
+          <div className="card-shadow rounded-lg p-4 ">
+            <LineAndBarChart
+              title="SHOVELS ON SHIFT, MachShift"
+            />
+          </div>
+          <div className="card-shadow rounded-lg p-4">
+            <LineAndBarChart
+              title="SHOVELS ON SHIFT, MachShift"
+            />
+          </div>
         </div>
       </div>
     </div>

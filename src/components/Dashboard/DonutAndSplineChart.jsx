@@ -30,7 +30,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
           categories: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2],
           tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6, 7]; },
           opposite: false,
-          lineColor: 'transparent', // Opcional: Cambia color para diferenciar
+          lineColor: 'transparent',
           labels: {
             y: 0,
             style: {
@@ -66,30 +66,30 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
       }
     },
     series: [
-        {
-            name: "Fact",
-            data: [0.6, 1.8, 8.8, 9.4, 12.8, 13.2, "",""],
-            color: "#000000",
-            xAxis: 0,
-            fillColor: "#bfefe1",
-            marker: {
-              fillColor: 'white',
-              lineWidth: 2,
-              lineColor: '#000000'
-            }
-        },
-        {
-            name: "Plan",
-            data: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2],
-            color: "#9696ab",
-            xAxis: 1,
-            fillColor: "#ffd0d63d",
-            marker: {
-              fillColor: 'white',
-              lineWidth: 2,
-              lineColor: '#9696ab'
-            }
-        },
+      {
+          name: "Fact",
+          data: [0.6, 1.8, 8.8, 9.4, 12.8, 13.2, "",""],
+          color: "#000000",
+          xAxis: 0,
+          fillColor: "#bfefe1",
+          marker: {
+            fillColor: 'white',
+            lineWidth: 2,
+            lineColor: '#000000'
+          }
+      },
+      {
+          name: "Plan",
+          data: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2],
+          color: "#9696ab",
+          xAxis: 1,
+          fillColor: "#ffd0d63d",
+          marker: {
+            fillColor: 'white',
+            lineWidth: 2,
+            lineColor: '#9696ab'
+          }
+      },
     ],
     legend: {
       layout: "vertical",
