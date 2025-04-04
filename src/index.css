@@ -216,3 +216,74 @@ number-flow-react::part(suffix) {
     stroke-dasharray: 0 100;
   }
 }
+
+/* Progress Bar for Donut Chart */
+.progress-bar--container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 30px;
+  margin: 0px 20px;
+  padding: 10px 10px;
+  border: 1px solid #dfe0e6;
+  .currentValue-bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    height: 100%;
+    background-color: #d5d5de;
+  }
+  .progress-bar-label {
+    z-index: 2;
+    font-size: 13px;
+    color: #48484b;
+    b {
+      color: #000000
+    }
+  }
+  .progress-bar-label-difference {
+    position: absolute;
+    left: 0px;
+    bottom: 100%;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.35px;
+    margin: 2px 0px;
+  }
+  .progress-bar-prediction-bar {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    z-index: 2;
+  }
+  .progress-bar-prediction-label {
+    position: absolute;
+    z-index: 3;
+    width: 0px;
+    height: 35px;
+    bottom: 0px;
+    border-style: dotted;
+    p {
+      position: absolute;
+      bottom: 100%;
+      right: -20px;
+      text-wrap: nowrap;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      gap: 5px;
+      span {
+        line-height: 13px;
+        border-radius: 10px;
+        padding: 3px 5px;
+        color: #FFFFFF;
+        font-weight: 600;
+      }
+    }
+  }
+}

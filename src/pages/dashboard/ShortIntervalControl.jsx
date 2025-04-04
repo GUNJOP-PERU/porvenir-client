@@ -1,0 +1,124 @@
+import DonutChart from "@/components/Dashboard/DonutChart"
+import DonutAndHistoChart from "@/components/Dashboard/DonutAndHistoChart"
+
+const ShortIntercalControl = () => {
+  return (
+    <div className="grid grid-cols-[1fr_4fr] h-full gap-10">
+      <div className="flex flex-col justify-between">
+        <DonutChart
+          title="OVERALL PLAN, kM³"
+          donutData={{
+            total: 100,
+            currentValue: 21,
+            currentValueColor: "#04c285",
+          }}
+          progressBar= {{
+            total: 1600,
+            currentValue: 340,
+            prediction: 1620,
+            currentValueColor: "#04c285",
+          }}
+        />
+
+        <DonutChart
+          title="EXTRACTION, kT"
+          donutData={{
+            total: 100,
+            currentValue: 21,
+            currentValueColor: "#ff7989"
+          }}
+          progressBar= {{
+            total: 1080,
+            currentValue: 224,
+            prediction: 1064,
+            currentValueColor: "#ff7989"
+          }}
+        />
+
+        <div className="flex flex-col gap-1">
+          <h3 className="font-bold text-center">
+            SHOVELS AND TRUCK
+          </h3>
+          <h3 className="font-bold text-center">
+            AVAILABILITY
+          </h3>
+          <div className="grid grid-cols-[1fr_1fr]">
+            <DonutChart
+              donutData={{
+                total: 100,
+                currentValue: 65,
+                currentValueColor: "#04c285"
+              }}
+            />
+            <DonutChart
+              donutData={{
+                total: 100,
+                currentValue: 72,
+                currentValueColor: "#04c285"
+              }}
+            />
+          </div>
+          <h3 className="font-bold text-center">
+            USABILITY
+          </h3>
+          <div className="grid grid-cols-[1fr_1fr]">
+            <DonutChart
+              donutData={{
+                total: 100,
+                currentValue: 58,
+                currentValueColor: "#ff7989"
+              }}
+            />
+            <DonutChart
+              donutData={{
+                total: 100,
+                currentValue: 64,
+                currentValueColor: "#04c285"
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-[1fr_1fr] shadow-lg rounded-lg p-4 gap-4">
+          <DonutAndHistoChart
+            title="OVERALL PLAN EXECUTION, kM³"
+            donutData={{
+              total: 100,
+              currentValue: 68,
+              currentValueColor: "#04c285",
+            }}
+            progressBarData= {{
+              total: 18.2,
+              currentValue: 13.2,
+              prediction: 18.4,
+              currentValueColor: "#04c285",
+              showDifference: true,
+              forecastText: "Shiftend Forecast"
+            }}
+          />
+
+          <DonutAndHistoChart
+            title="EXTRACTION PLAN EXECUTION, kT"
+            donutData={{
+              total: 100,
+              currentValue: 67,
+              currentValueColor: "#ff7989",
+            }}
+            progressBarData= {{
+              total: 12.0,
+              currentValue: 8.2,
+              prediction: 11.6,
+              currentValueColor: "#ff7989",
+              showDifference: true,
+              forecastText: "Shiftend Forecast"
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ShortIntercalControl

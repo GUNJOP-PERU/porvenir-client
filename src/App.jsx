@@ -15,6 +15,7 @@ import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionScoop from "./pages/dashboard/ProductionScoop";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
 import Utilization from "./pages/dashboard/Utilization";
+import ShortIntercalControl from "./pages/dashboard/ShortIntervalControl";
 
 import PageActivityScoop from "./pages/gestion/ActivityScoop";
 import PageActivity from "./pages/gestion/ActivityTruck";
@@ -104,6 +105,10 @@ function App() {
                 <Route
                   path="/dashboard/productionUV"
                   element={<Utilization />}
+                />
+                <Route
+                  path="/dashboard/shortIntervalControl"
+                  element={<ShortIntercalControl />}
                 />
                 <Route
                   path="/configuration"

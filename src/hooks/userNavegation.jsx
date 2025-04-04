@@ -153,6 +153,12 @@ export const useNavigation = () => {
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/productionUV",
           },
+          {
+            name: "Control Intervalos Cortos",
+            href: "/dashboard/shortIntervalControl",
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/shortIntervalControl",
+          }
         ],
       },
     ],
