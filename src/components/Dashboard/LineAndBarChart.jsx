@@ -5,7 +5,10 @@ import PropTypes from 'prop-types'
 const LineAndBarChart = ({ title }) => {
   const plan = [5, 6.7, 6.7, 6.7, 6.7, 6.7, 6.7, 5];
   const fact = [3.4, 5.5, 7.1, 6.7, 7.7, 7.3, 0, 0]; 
-  const diff = plan.map((exp, i) => Math.abs(exp - fact[i]));
+  const diff = plan.map((exp, i) => {
+    const e = Math.abs(exp - fact[i]);
+    return e.toFixed(1);
+  });
 
   const diffColor = plan.map((exp, i) =>
     fact[i] >= exp ? "#04c286" : "#fe7887"
@@ -13,7 +16,7 @@ const LineAndBarChart = ({ title }) => {
 
   const averageData = (array) => {
     if (array.length === 0) {
-      return 0; // Evitar la división por cero
+      return 0;
     }
     const suma = array.reduce((acumulador, valor) => acumulador + valor, 0);
     return suma / array.length;
@@ -88,12 +91,12 @@ const LineAndBarChart = ({ title }) => {
         data: diff,
         colorByPoint: true,
         colors: diffColor,
-        dataLabels: {
-          enabled: true,
-          formatter: function () {
-            return diff[this.point.index].toFixed(1);
-          },
-        },
+        // dataLabels: {
+        //   enabled: true,
+        //   formatter: function () {
+        //     return diff[this.point.index].toFixed(1);
+        //   },
+        // },
       },
       {
         name: "Base",
