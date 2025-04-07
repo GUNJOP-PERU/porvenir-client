@@ -7,7 +7,7 @@ const LineAndBarChart = ({ title }) => {
   const fact = [3.4, 5.5, 7.1, 6.7, 7.7, 7.3, 0, 0]; 
   const diff = plan.map((exp, i) => {
     const e = Math.abs(exp - fact[i]);
-    return e.toFixed(1);
+    return +e.toFixed(1);
   });
 
   const diffColor = plan.map((exp, i) =>
@@ -91,12 +91,12 @@ const LineAndBarChart = ({ title }) => {
         data: diff,
         colorByPoint: true,
         colors: diffColor,
-        // dataLabels: {
-        //   enabled: true,
-        //   formatter: function () {
-        //     return diff[this.point.index].toFixed(1);
-        //   },
-        // },
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return diff[this.point.index].toFixed(1);
+          },
+        },
       },
       {
         name: "Base",

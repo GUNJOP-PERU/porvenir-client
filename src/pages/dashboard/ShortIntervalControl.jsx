@@ -1,6 +1,7 @@
-import DonutChart from "@/components/Dashboard/DonutChart"
-import DonutAndSplineChart from "@/components/Dashboard/DonutAndSplineChart"
-import LineAndBarChart from "@/components/Dashboard/LineAndBarChart"
+import DonutChart from "@/components/Dashboard/DonutChart";
+import DonutAndSplineChart from "@/components/Dashboard/DonutAndSplineChart";
+import LineAndBarChart from "@/components/Dashboard/LineAndBarChart";
+import DonutAndTableChart from "@/components/Dashboard/DonutAndTableChart"
 
 const ShortIntercalControl = () => {
   return (
@@ -124,9 +125,111 @@ const ShortIntercalControl = () => {
               title="SHOVELS ON SHIFT, MachShift"
             />
           </div>
-          <div className="card-shadow rounded-lg p-4">
+          <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChart
               title="SHOVELS ON SHIFT, MachShift"
+            />
+          </div>
+
+          <div className="card-shadow rounded-lg p-4">
+            <DonutAndTableChart
+              title="PLAN REJECTING REASONS, %"
+              donutData={[
+                { title: "AVAILABILITY",
+                  total: 100,
+                  currentValue: 66,
+                  currentValueColor: "#04c285"
+                },
+                { title: "USABILITY",
+                  total: 100,
+                  currentValue: 58,
+                  currentValueColor: "#ff7989"
+                }
+              ]}
+              tableData={[{
+                title: "PLAN",
+                currentValue: 66.9,
+                total: 100,
+                subData: [
+                  { title: "Bucket Load",
+                    currentValue: 7,
+                    total: 50
+                  },
+                  { title: "Duration of truck load",
+                    currentValue: 3.9,
+                    total: 50
+                  },
+                  { title: "No truck for load",
+                    currentValue: 0.9,
+                    total: 50
+                  },
+                  { title: "Material idles",
+                    currentValue: 0.7,
+                    total: 50
+                  },
+                  { title: "Production idles",
+                    currentValue: 0.4,
+                    total: 50
+                  }
+                ]},
+                {
+                  title: "FACT",
+                  currentValue: 68,
+                  total: 100,
+                  subData: []
+                }
+              ]}
+            />
+          </div>
+          <div className="card-shadow rounded-lg p-4 ">
+            <DonutAndTableChart
+              title="PLAN REJECTING REASONS, %"
+              donutData={[
+                { title: "AVAILABILITY",
+                  total: 100,
+                  currentValue: 72,
+                  currentValueColor: "#04c285"
+                },
+                { title: "USABILITY",
+                  total: 100,
+                  currentValue: 64,
+                  currentValueColor: "#04c285"
+                }
+              ]}
+              tableData={[{
+                  title: "PLAN",
+                  currentValue: 66.9,
+                  total: 100,
+                  subData: [
+                    { title: "Bucket Load",
+                      currentValue: 7,
+                      total: 50
+                    },
+                    { title: "Duration of truck load",
+                      currentValue: 3.9,
+                      total: 50
+                    },
+                    { title: "No truck for load",
+                      currentValue: 0.9,
+                      total: 50
+                    },
+                    { title: "Material idles",
+                      currentValue: 0.7,
+                      total: 50
+                    },
+                    { title: "Production idles",
+                      currentValue: 0.4,
+                      total: 50
+                    }
+                  ]
+                },
+                {
+                  title: "FACT",
+                  currentValue: 68,
+                  total: 100,
+                  subData: []
+                }
+              ]}
             />
           </div>
         </div>

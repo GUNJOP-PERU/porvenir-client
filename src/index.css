@@ -231,6 +231,21 @@ number-flow-react::part(suffix) {
   margin: 0px 20px;
   padding: 10px 10px;
   border: 1px solid #dfe0e6;
+  &.small {
+    margin: 0px;
+    height: 20px;
+    .progress-bar-label {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      z-index: 2;
+      font-size: 13px;
+      color: #48484b;
+      b {
+        color: #000000
+      }
+    }
+  }
   .currentValue-bar {
     position: absolute;
     top: 0px;
@@ -240,7 +255,7 @@ number-flow-react::part(suffix) {
     background-color: #d5d5de;
   }
   .progress-bar-label {
-    z-index: 2;
+    z-index: 3;
     font-size: 13px;
     color: #48484b;
     b {

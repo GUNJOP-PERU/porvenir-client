@@ -3,12 +3,12 @@ import ProgressBar from "@/components/Dashboard/ProgressBar"
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-const DonutChart = ({ title, donutData, progressBar }) => {
+const DonutChart = ({ title, donutData, progressBar, showSmall }) => {
   const options = {
     chart: {
       type: "pie",
-      width: 120,
-      height: 120, 
+      width: showSmall ? 100:120,
+      height: showSmall ? 100:120, 
       events: {
         load() {
           const chart = this;
@@ -20,7 +20,7 @@ const DonutChart = ({ title, donutData, progressBar }) => {
             )
             .css({
               color: "#000",
-              fontSize: "20px",
+              fontSize: showSmall ? "16px":"20px",
               fontWeight: "bold",
               textAlign: "center",
             })
@@ -86,7 +86,12 @@ const DonutChart = ({ title, donutData, progressBar }) => {
         callback={(chart) => updateCenterText(chart)}
       />
       {progressBar ?
-        <ProgressBar progressBarData={progressBar}/>
+        <ProgressBar
+          progressBarData={{
+            ...progressBar,
+            showDifference: true
+          }}
+        />
         :<></>
       }
     </div>
@@ -95,6 +100,7 @@ const DonutChart = ({ title, donutData, progressBar }) => {
 
 DonutChart.propTypes = {
   title: PropTypes.string,
+  showSmall: PropTypes.bool,
   donutData: PropTypes.shape({
     total: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,

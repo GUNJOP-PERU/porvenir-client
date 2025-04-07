@@ -8,7 +8,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
   const options = {
     chart: {
         type: "areaspline",
-        height: 300
+        height: 250
     },
     title: "",
     xAxis: [
@@ -111,6 +111,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
       <div className="flex flex-row items-center">
         <DonutChart
           donutData={donutData}
+          showSmall={true}
         />
         <ProgressBar
           progressBarData= {progressBarData}
