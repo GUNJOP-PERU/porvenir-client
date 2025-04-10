@@ -1,14 +1,26 @@
 import PropTypes from "prop-types";
-import ProgressBar from "@/components/Dashboard/ProgressBar"
+import ProgressBar from "@/components/Dashboard/Charts/ProgressBar"
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-const DonutChart = ({ title, donutData, progressBar, showSmall }) => {
+const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
+  const sizeMap = {
+    mini: 60,
+    small: 80,
+    medium: 100
+  };
+  const fontSizeMap = {
+    mini: "11px",
+    small: "15px",
+    medium: "20px"
+  };
+
   const options = {
     chart: {
       type: "pie",
-      width: showSmall ? 100:120,
-      height: showSmall ? 100:120, 
+      width: sizeMap[size] ,
+      height: sizeMap[size], 
+      spacing: [0, 0, 0, 0],
       events: {
         load() {
           const chart = this;
@@ -16,11 +28,11 @@ const DonutChart = ({ title, donutData, progressBar, showSmall }) => {
             .text(
               `${donutData?.currentValue || 0}%`,
               chart.plotWidth / 2 + chart.plotLeft,
-              chart.plotHeight / 2 + chart.plotTop + 6
+              chart.plotHeight / 2 + chart.plotTop + 5
             )
             .css({
               color: "#000",
-              fontSize: showSmall ? "16px":"20px",
+              fontSize: fontSizeMap[size],
               fontWeight: "bold",
               textAlign: "center",
             })
@@ -76,7 +88,7 @@ const DonutChart = ({ title, donutData, progressBar, showSmall }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       {title &&
-        <h3 className="font-bold text-center">
+        <h3 className={`font-bold text-center text-[${fontSizeMap[size]}]`}>
           {title}
         </h3>
       }
@@ -100,7 +112,7 @@ const DonutChart = ({ title, donutData, progressBar, showSmall }) => {
 
 DonutChart.propTypes = {
   title: PropTypes.string,
-  showSmall: PropTypes.bool,
+  size: "mini" | "small" | "medium",
   donutData: PropTypes.shape({
     total: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,

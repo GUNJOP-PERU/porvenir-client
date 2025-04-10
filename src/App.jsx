@@ -8,7 +8,7 @@ import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
 
 import Layout from "./pages/Layout";
-
+// Dashboard
 import ParetoScoop from "./pages/dashboard/ParetoScoop";
 import ParetoTruck from "./pages/dashboard/ParetoTruck";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
@@ -16,6 +16,7 @@ import ProductionScoop from "./pages/dashboard/ProductionScoop";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
 import Utilization from "./pages/dashboard/Utilization";
 import ShortIntercalControl from "./pages/dashboard/ShortIntervalControl";
+import ShortIntervalControlV2 from "./pages/dashboard/ShortIntervalControlV2";
 
 import PageActivityScoop from "./pages/gestion/ActivityScoop";
 import PageActivity from "./pages/gestion/ActivityTruck";
@@ -107,8 +108,12 @@ function App() {
                   element={<Utilization />}
                 />
                 <Route
-                  path="/dashboard/shortIntervalControl"
+                  path="/dashboard/short-interval-control"
                   element={<ShortIntercalControl />}
+                />
+                <Route
+                  path="/dashboard/short-interval-control-v2"
+                  element={<ShortIntervalControlV2 />}
                 />
                 <Route
                   path="/configuration"

@@ -111,7 +111,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
       <div className="flex flex-row items-center">
         <DonutChart
           donutData={donutData}
-          showSmall={true}
+          size="small"
         />
         <ProgressBar
           progressBarData= {progressBarData}

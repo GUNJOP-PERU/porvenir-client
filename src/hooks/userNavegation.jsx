@@ -155,9 +155,15 @@ export const useNavigation = () => {
           },
           {
             name: "Control Intervalos Cortos",
-            href: "/dashboard/shortIntervalControl",
+            href: "/dashboard/short-interval-control",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/shortIntervalControl",
+            active: pathname === "/dashboard/short-interval-control",
+          },
+          {
+            name: "Control Intervalos Cortos v2",
+            href: "/dashboard/short-interval-control-v2",
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/short-interval-control-v2",
           }
         ],
       },

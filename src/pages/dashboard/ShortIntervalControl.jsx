@@ -1,7 +1,7 @@
-import DonutChart from "@/components/Dashboard/DonutChart";
-import DonutAndSplineChart from "@/components/Dashboard/DonutAndSplineChart";
-import LineAndBarChart from "@/components/Dashboard/LineAndBarChart";
-import DonutAndTableChart from "@/components/Dashboard/DonutAndTableChart"
+import DonutChart from "@/components/Dashboard/Charts/DonutChart";
+import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChart";
+import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChart";
+import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
 
 const ShortIntercalControl = () => {
   return (

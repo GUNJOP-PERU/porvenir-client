@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import "./styles.css"
 
 const ProgressBar = ({progressBarData}) => {
   const differenceStatus = progressBarData.prediction - progressBarData.total
