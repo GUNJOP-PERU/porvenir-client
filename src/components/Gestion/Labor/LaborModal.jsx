@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { Switch } from "@/components/ui/switch";
+import LaborImport from "./LaborImport";
 
 const FormSchema = z.object({
   firstPart: z.string().refine((value) => /^\d{4}$/.test(value), {
@@ -42,16 +43,14 @@ const FormSchema = z.object({
   }),
   secondPart: z.string().min(1, { message: "*Requerida" }),
   thirdPart: z.string().min(1, { message: "*Requerida" }),
-  quarterPart: z.string().refine((value) => /^\d{2,4}$/.test(value), {
-    message: "*Debe tener entre 2 y 4 dígitos.",
-  }),
+  quarterPart: z.string().optional(),
 
   description: z.string().optional(),
   type: z.string().optional(),
   status: z.boolean().optional(),
 });
 
-export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
+export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
   const handleFormSubmit = useHandleFormSubmit();
@@ -65,7 +64,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
       quarterPart: dataCrud?.name?.split("_")[2]?.split("-")[1] || "",
       description: dataCrud?.description || "",
       type: dataCrud?.type || "",
-      status: dataCrud?.status || false,
+      status: dataCrud?.status ?? true,
     },
   });
 
@@ -76,6 +75,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const thirdPart = watch("thirdPart");
   const quarterPart = watch("quarterPart");
 
+  console.log(dataCrud);
   useEffect(() => {
     if (dataCrud) {
       reset({
@@ -85,7 +85,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
         quarterPart: dataCrud?.name?.split("_")[2]?.split("-")[1] || "",
         description: dataCrud?.description || "",
         type: dataCrud?.type || "",
-        status: dataCrud?.status || false,
+        status: dataCrud?.status ?? true,
       });
     } else {
       reset({
@@ -95,13 +95,15 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
         quarterPart: "",
         description: "",
         type: "",
-        status: false,
+        status: true,
       });
     }
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
-    const name = `${data.firstPart}_${data.secondPart}_${data.thirdPart}-${data.quarterPart}`;
+    const name = `${data.firstPart}_${data.secondPart}_${data.thirdPart}${
+      data.quarterPart ? `-${data.quarterPart}` : ""
+    }`;
 
     const responseData = {
       ...data,
@@ -148,7 +150,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   <span>
                     {`${firstPart || ""}_${secondPart || ""}_${
                       thirdPart || ""
-                    }-${quarterPart || ""}`}
+                    }${quarterPart ? `-${quarterPart}` : ""}`}
                   </span>
                 </div>
                 <div className="flex gap-1 justify-center">
@@ -239,15 +241,11 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                           type="text"
                           placeholder="Ej. 370"
                           className="w-[100px]"
-                          maxLength={3}
+                          maxLength={6}
                           disabled={loadingGlobal}
                           {...field}
                           onChange={(e) => {
-                            const numericValue = e.target.value.replace(
-                              /\D/g,
-                              ""
-                            );
-                            field.onChange(numericValue);
+                            field.onChange(e.target.value);
                           }}
                         />
                         <FormMessage />
@@ -259,39 +257,6 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
               {/* Campos de descripción y tipo */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <FormField
-                  control={control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Descripción</FormLabel>
-                      <Input
-                        type="text"
-                        disabled={loadingGlobal}
-                        placeholder="Ej. Cargo"
-                        {...field}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Tipo</FormLabel>
-                      <Input
-                        type="text"
-                        disabled={loadingGlobal}
-                        placeholder="Ej. Tipo"
-                        {...field}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (
@@ -299,7 +264,7 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       <div className="flex flex-col  justify-center ">
                         <FormLabel>Activar/Desactivar</FormLabel>
                         <FormDescription className="pt-0">
-                          Permanecerá el modal siempre abierto.
+                          Se deshabilitará el labor.
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -314,7 +279,6 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   )}
                 />
               </div>
-
               <div className="pt-6 flex gap-2 ">
                 <Button
                   type="button"
@@ -346,6 +310,9 @@ export const ModalFrontLabor = ({ isOpen, onClose, isEdit, dataCrud }) => {
               </div>
             </form>
           </Form>
+        </div>
+        <div>
+          <LaborImport />
         </div>
       </DialogContent>
     </Dialog>

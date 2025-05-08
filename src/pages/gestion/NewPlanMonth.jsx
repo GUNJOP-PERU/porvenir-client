@@ -2,20 +2,20 @@ import { useFetchData } from "@/hooks/useGlobalQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CircleFadingPlus, SendHorizontal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
-import { postDataRequest } from "@/lib/api";
 
 import { PlanContent } from "@/components/Gestion/PlanMonth/PlanContent";
 import { PlanHeader } from "@/components/Gestion/PlanMonth/PlanHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { postDataRequest } from "@/api/api";
 
 const FormSchema = z.object({
   dob: z
@@ -42,7 +42,18 @@ export const NewPlanMonth = () => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
-  const { data: dataLaborList } = useFetchData("frontLabor-General", "frontLabor");
+  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
+    "frontLabor-General",
+    "frontLabor",
+    {
+      enabled: false,
+    }
+  );
+  useEffect(() => {
+    refetchLaborList();
+  }, [refetchLaborList]);
+  
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -94,7 +105,7 @@ export const NewPlanMonth = () => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-   
+
     setShowLoader(true);
 
     setTimeout(() => {
@@ -155,12 +166,12 @@ export const NewPlanMonth = () => {
     });
 
     const totalTonnage = datosFinales.reduce(
-      (sum, item) => sum + item.tonnage,
+      (sum, item) => sum + (Number(item.tonnage) || 0),
       0
     );
 
     const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
-      name: labor,  // El nombre del labor
+      name: labor, // El nombre del labor
       status: true, // El status que le quieres asignar
     }));
     console.log("Labors en rojo:", invalidLaborsWithStatus);
@@ -286,14 +297,15 @@ export const NewPlanMonth = () => {
             variant="secondary"
             onClick={handleCancel}
             disabled={loadingGlobal}
-             className="w-full md:w-fit"
+            className="w-full md:w-fit"
           >
             <IconClose className="fill-zinc-400/50 w-4 h-4" />
             Cancelar
           </Button>
           <Button
             onClick={handleSendData}
-            disabled={dataHotTable.length === 0 || loadingGlobal}   className="w-full md:w-fit"
+            disabled={dataHotTable.length === 0 || loadingGlobal}
+            className="w-full md:w-fit"
           >
             {loadingGlobal ? (
               <>

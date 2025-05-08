@@ -46,9 +46,9 @@ export const useNavigation = () => {
           },
           {
             name: "Frente de Labor",
-            href: "/frontLabor",
+            href: "/labor",
             icon: <IconLabor className="w-4 h-4 " />,
-            active: pathname === "/frontLabor",
+            active: pathname === "/labor",
           },
           {
             name: "Plan Diario",

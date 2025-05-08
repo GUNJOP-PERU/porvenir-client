@@ -1,8 +1,6 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 
 export const columns = [
   {
@@ -15,7 +13,7 @@ export const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "frontLabor",
+    accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
@@ -23,39 +21,24 @@ export const columns = [
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {row.getValue("frontLabor")}
+            {row.getValue("name")}
           </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.phase || ""}
+          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+            {row.original?.type}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "shift",
-    header: "Turno",
-    cell: ({ row }) => {
-      return (
-        <>
-          {row.getValue("shift") === "dia" ? (
-            <IconDay className="h-5 w-5 fill-orange-400" />
-          ) : (
-            <IconNight className="h-5 w-5 fill-sky-400" />
-          )}
-        </>
-      );
-    },
-  },
-  {
-    accessorKey: "state",
+    accessorKey: "status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("state") === "close" ? (
+          {row.getValue("status") === true ? (
             <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
               activo
             </span>
@@ -69,17 +52,20 @@ export const columns = [
     },
   },
   {
-    accessorKey: "phase",
-    header: "Tonelaje",
+    accessorKey: "isNewLabor",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="isNewLabor" />
+    ),
     cell: ({ row }) => {
-      return <>{row.original.tonnage || ""} TN</>;
-    },
-  },
-  {
-    accessorKey: "nro_volquetes",
-    header: "#Volquete",
-    cell: ({ row }) => {
-      return <>{row.getValue("nro_volquetes")} und</>;
+      return (
+        <>
+          {row.getValue("isNewLabor") === true ? (
+            <span className="text-zinc-400 ">Nuevo </span>
+          ) : (
+            <span className="text-zinc-400 ">No </span>
+          ) }
+        </>
+      );
     },
   },
 
@@ -128,7 +114,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planDay"} row={row} />
+      <DataTableRowActions componentToShow={"frontLabor"} row={row} />
     ),
     enableHiding: false,
   },

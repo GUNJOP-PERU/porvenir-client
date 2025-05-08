@@ -12,7 +12,7 @@ import {
 
 import { Button } from "../ui/button";
 import { ModalUser } from "../Gestion/Users/ModalUser";
-import { ModalCompany } from "../Gestion/Company/ModalCompany";
+import { ModalCompany } from "../Gestion/Company/CompanyModal";
 import { Search } from "lucide-react";
 import IconMore from "@/icons/IconMore";
 

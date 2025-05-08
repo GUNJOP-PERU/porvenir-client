@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import IconLoader from "@/icons/IconLoader";
-import { loginRequest } from "@/lib/api";
+import { loginRequest } from "@/api/api";
 import { useAuthStore } from "@/store/AuthStore";
 import { Button } from "@/components/ui/button";
 import IconSubmit from "@/icons/IconSubmit";
 
-export default function PageLogin() {
+export default function Login() {
   const setToken = useAuthStore.getState().setToken;
   const setProfile = useAuthStore.getState().setProfile;
 

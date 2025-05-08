@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import { ProtectedRoute } from "./hooks/ProtectedRoute";
 import PageError from "./pages/404";
-
 import Layout from "./pages/Layout";
 
 import ParetoScoop from "./pages/dashboard/ParetoScoop";
@@ -22,18 +21,18 @@ import Checklist from "./pages/gestion/Checklist";
 import PageCompany from "./pages/gestion/Company";
 import PageCycleScoop from "./pages/gestion/CycleScoop";
 import PageCycle from "./pages/gestion/CycleTruck";
-import HomeFrontLabor from "./pages/gestion/FrontLabor";
+import HomeLabor from "./pages/gestion/Labor";
 import { NewPlanMonth } from "./pages/gestion/NewPlanMonth";
 import PlanDay from "./pages/gestion/PlanDay";
 import PlanMonth from "./pages/gestion/PlanMonth";
 import HomeUsers from "./pages/gestion/Users";
-import HomeVehicles from "./pages/gestion/Vehicle";
-import WorkerOrder from "./pages/gestion/WorkerOrder";
+import HomeVehicles from "./pages/gestion/Vehicles";
+import WorkerOrder from "./pages/gestion/WorkerOrders";
 
 import "handsontable/styles/handsontable.min.css";
 import "handsontable/styles/ht-theme-main.min.css";
 
-import PageLogin from "./pages/login/Login";
+import Login from "./pages/login/Login";
 import { useAuthStore } from "./store/AuthStore";
 import TimelineScoop from "./pages/dashboard/TimelineScoop";
 import { ToastProvider } from "./hooks/useToaster";
@@ -52,7 +51,7 @@ function App() {
             {/* Ruta pública para Login */}
             <Route
               path="/login"
-              element={isAuth ? <Navigate to="/" replace /> : <PageLogin />}
+              element={isAuth ? <Navigate to="/" replace /> : <Login />}
             />
 
             <Route path="*" element={<PageError />} />
@@ -62,7 +61,7 @@ function App() {
               <Route element={<Layout />}>
                 <Route path="/users" element={<HomeUsers />} />
 
-                <Route path="/frontLabor" element={<HomeFrontLabor />} />
+                <Route path="/labor" element={<HomeLabor />} />
                 <Route path="/vehicle" element={<HomeVehicles />} />
                 <Route path="/workOrder" element={<WorkerOrder />} />
                 <Route path="/checklist" element={<Checklist />} />

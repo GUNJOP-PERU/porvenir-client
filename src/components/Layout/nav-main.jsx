@@ -1,4 +1,4 @@
-import { useNavigation } from "@/hooks/userNavegation";
+import { useNavigation } from "@/hooks/useNavegation";
 import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
 import clsx from "clsx";
 import React from "react";

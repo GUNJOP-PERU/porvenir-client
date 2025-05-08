@@ -112,8 +112,8 @@ export const PlanContent = ({
 
             // El texto será verde si está en la lista, rojo si no lo está
             const textColor = isLaborInList(laborName)
-              ? "text-green-600"
-              : "text-red-600";
+              ? "!text-green-600"
+              : "!text-red-600";
 
             return {
               className: ` font-semibold ${backgroundColor} ${textColor}`,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ModalFrontLabor } from "../../components/Gestion/FrontLabor/ModalFrontLabor";
-import { columns } from "../../components/Gestion/FrontLabor/columns";
-import { DataTable } from "../../components/Gestion/data-table";
+import { LaborModal } from "../../components/Gestion/Labor/LaborModal";
+import { columns } from "@/components/Gestion/Labor/LaborTableColumns";
+import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import {
   useFetchData,
@@ -9,10 +9,12 @@ import {
 } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
-import { RefreshCcw } from "lucide-react";
+import { FileUp, RefreshCcw } from "lucide-react";
+import LaborImport from "@/components/Gestion/Labor/LaborImport";
 
-function HomeFrontLabor() {
+function HomeLabor() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const {
     data = [],
     isFetching,
@@ -49,6 +51,15 @@ function HomeFrontLabor() {
           </Button>
           <Button
             disabled={isFetching || isError}
+            onClick={() => setImportOpen(true)}
+            className="w-fit"
+            variant="outline"
+          >
+            <FileUp className="w-5 h-5 text-zinc-400" />
+            Importar
+          </Button>
+          <Button
+            disabled={isFetching || isError}
             onClick={() => setDialogOpen(true)}
             className="w-fit"
           >
@@ -57,7 +68,7 @@ function HomeFrontLabor() {
           </Button>
         </div>
       </div>
-
+    
       <DataTable
         data={data}
         columns={columns}
@@ -69,16 +80,20 @@ function HomeFrontLabor() {
         tableType={"frontLabors"}
       />
       
-      <ModalFrontLabor
+      <LaborModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
+      />
+      <LaborImport
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
       />
     </>
   );
 }
 
-export default HomeFrontLabor;
+export default HomeLabor;
 
 
 {/* <div>

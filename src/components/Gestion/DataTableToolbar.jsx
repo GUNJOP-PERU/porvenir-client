@@ -3,7 +3,7 @@ import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
 
 export function DataTableToolbar({
   table,

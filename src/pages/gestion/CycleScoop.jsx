@@ -1,10 +1,8 @@
 import { RefreshCcw } from "lucide-react";
-import { useState } from "react";
-import { DataTable } from "../../components/Gestion/data-table";
+import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 
-import { columns } from "@/components/Gestion/CycleScoop/columns";
-import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
+import { columns } from "@/components/Gestion/CycleScoop/CycleScoopTableColumns";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
@@ -18,7 +16,6 @@ function PageCycleScoop() {
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("cycleScoop", "cycle/scoop/items");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
@@ -47,10 +44,7 @@ function PageCycleScoop() {
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
 
-          {/* <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
-            <CircleFadingPlus className="w-5 h-5 text-white" />
-            Añadir nuevo
-          </Button> */}
+      
         </div>
       </div>
       <DataTable
@@ -63,11 +57,7 @@ function PageCycleScoop() {
         hasNextPage={hasNextPage}
         tableType={"cycles"}
       />
-      <ModalCycle
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
-      />
+     
     </>
   );
 }

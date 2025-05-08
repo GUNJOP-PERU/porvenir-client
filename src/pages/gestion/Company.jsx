@@ -1,18 +1,17 @@
-import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
+import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { ModalUser } from "../../components/Gestion/Users/ModalUser";
-import { DataTable } from "../../components/Gestion/data-table";
-import { Button } from "../../components/ui/button";
+import { DataTable } from "@/components/Gestion/DataTable";
+import { Button } from "@/components/ui/button";
 
-import { useFetchData } from "../../hooks/useGlobalQuery";
-import { countItems } from "../../lib/utilsGeneral";
-import { columns } from "../../components/Gestion/Company/columns";
-import { ModalCompany } from "../../components/Gestion/Company/ModalCompany";
+import { useFetchData } from "@/hooks/useGlobalQuery";
+import { countItems } from "@/lib/utilsGeneral";
+import { columns } from "@/components/Gestion/Company/CompanyTableColumns";
+import { ModalCompany } from "@/components/Gestion/Company/CompanyModal";
 
 function PageCompany() {
   const {
     data = [],
-    isFetching,
+    isFetching, 
     isLoading,
     isError,
     refetch,

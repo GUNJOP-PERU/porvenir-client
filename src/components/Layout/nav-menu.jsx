@@ -1,4 +1,4 @@
-import { useNavigation } from "@/hooks/userNavegation";
+import { useNavigation } from "@/hooks/useNavegation";
 import IconClose from "@/icons/IconClose";
 import IconMenu from "@/icons/IconMenu";
 import clsx from "clsx";

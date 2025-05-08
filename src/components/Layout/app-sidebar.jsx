@@ -1,5 +1,5 @@
 import { useShiftIcon } from "@/hooks/useShiftIcon";
-import { useNavigation } from "@/hooks/userNavegation";
+import { useNavigation } from "@/hooks/useNavegation";
 import IconLeft from "@/icons/IconLeft";
 import CardClock from "../Dashboard/CardClock";
 import { NavMenu } from "./nav-menu";

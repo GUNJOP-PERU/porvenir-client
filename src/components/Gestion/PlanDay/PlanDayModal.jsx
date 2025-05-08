@@ -9,15 +9,15 @@ import {
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
-import { postDataRequest } from "@/lib/api";
+import { postDataRequest } from "@/api/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CircleFadingPlus, SendHorizontal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PlanContent } from "./PlanContent";
-import { PlanHeader } from "./PlanHeader";
+import { PlanContent } from "./PlanDayContent";
+import { PlanHeader } from "./PlanDayHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -32,8 +32,18 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const { data: dataLaborList } = useFetchData("frontLabor-General", "frontLabor");
-
+  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
+    "frontLabor-General",
+    "frontLabor",
+    {
+      enabled: false,
+    }
+  );
+  useEffect(() => {
+    if (isOpen) {
+      refetchLaborList();
+    }
+  }, [isOpen, refetchLaborList]);
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -103,7 +113,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-   
+
     setShowLoader(true);
 
     setTimeout(() => {
@@ -136,7 +146,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
 
     try {
       const response = await postDataRequest("planDay/many", datosFinales);
-     
+
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
         queryClient.invalidateQueries({ queryKey: ["crud", "planDay"] });

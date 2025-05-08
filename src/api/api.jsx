@@ -1,4 +1,4 @@
-import authApi from "./axios";
+import authApi from "../lib/axios";
 
 // Login
 export const loginRequest = async (data) =>
