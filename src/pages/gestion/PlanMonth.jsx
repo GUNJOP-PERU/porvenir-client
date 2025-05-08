@@ -2,7 +2,7 @@ import { columns } from "@/components/Gestion/PlanMonth/columns";
 import { countItems } from "@/lib/utilsGeneral";
 import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { DataTable } from "../../components/Gestion/data-table";
+import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 

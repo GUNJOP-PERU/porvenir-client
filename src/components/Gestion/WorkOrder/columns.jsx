@@ -1,6 +1,6 @@
 import { formatFecha, formatRelativeTime, useRelativeTime } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
 import IconCheck from "@/icons/IconCheck";
 import IconClose from "@/icons/IconClose";
@@ -246,11 +246,11 @@ export const columns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"workOrder"} row={row} />
-    ),
-    enableHiding: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions componentToShow={"workOrder"} row={row} />
+  //   ),
+  //   enableHiding: false,
+  // },
 ];

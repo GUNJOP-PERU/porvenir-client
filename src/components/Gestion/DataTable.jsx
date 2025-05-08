@@ -18,12 +18,12 @@ import {
 } from "../ui/table";
 import { useEffect, useRef, useState } from "react";
 
-import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTableToolbar } from "./DataTableToolbar";
 
 import IconWarning from "@/icons/IconWarning";
 import IconLoader from "@/icons/IconLoader";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { tableConfigs } from "./data-table-config";
+import { tableConfigs } from "./DataTableConfig";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SkeletonWrapper from "../SkeletonWrapper";
 

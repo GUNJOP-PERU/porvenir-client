@@ -1,14 +1,14 @@
 import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { DataTable } from "../../components/Gestion/data-table";
-import { Button } from "../../components/ui/button";
+import { DataTable } from "@/components/Gestion/DataTable";
+import { Button } from "@/components/ui/button";
 
-import { ModalActivity } from "../../components/Gestion/Activity/ModalActivity";
-import { columns } from "../../components/Gestion/Activity/columns";
+import { ModalActivity } from "@/components/Gestion/Activity/ActivityModal";
+import { columns } from "@/components/Gestion/Activity/ActivityTableColumns";
 import {
   useFetchInfinityScroll
-} from "../../hooks/useGlobalQuery";
-import { countItems } from "../../lib/utilsGeneral";
+} from "@/hooks/useGlobalQuery";
+import { countItems } from "@/lib/utilsGeneral";
 
 function PageActivity() {
   const {

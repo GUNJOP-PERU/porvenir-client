@@ -1,4 +1,4 @@
-import { getDataGraphicRequest } from "@/lib/api";
+import { getDataGraphicRequest } from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGraphicData = (symbol, endpoint,keyPrefix = "dashboard") => {

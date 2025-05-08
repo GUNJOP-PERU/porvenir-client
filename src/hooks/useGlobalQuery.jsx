@@ -1,4 +1,4 @@
-import { getDataRequest } from "@/lib/api";
+import { getDataRequest } from "@/api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useFetchData(queryKey, endpoint) {

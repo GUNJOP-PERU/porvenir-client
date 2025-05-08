@@ -1,4 +1,4 @@
-import { Delete, Edit, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { ModalDelete } from "./ModalDelete";
 import { Button } from "../ui/button";
@@ -11,16 +11,15 @@ import {
 } from "../ui/dropdown-menu";
 import { ModalUser } from "./Users/ModalUser";
 import { ModalVehicle } from "./Vehicle/ModalVehicle";
-import { ModalFrontLabor } from "./FrontLabor/ModalFrontLabor";
+
 import { ModalWorkOrder } from "./WorkOrder/ModalWorkOrder";
-import { ModalChecklist } from "./Checklist/ModalChecklist";
+import { ModalChecklist } from "./Checklist/ChecklistModal";
 import { IconDelete } from "@/icons/IconDelete";
 import IconEdit from "@/icons/IconEdit";
-import IconDuplicate from "@/icons/IconDuplicate";
-import IconDetails from "@/icons/IconDetails";
-import IconMore from "@/icons/IconMore";
-import { ModalCompany } from "./Company/ModalCompany";
+
+import { ModalCompany } from "./Company/CompanyModal";
 import { DetailsUser } from "./Users/DetailsUser";
+import { LaborModal } from "./Labor/LaborModal";
 
 export function DataTableRowActions({ componentToShow, row }) {
   const [open, setOpen] = useState(false);
@@ -64,7 +63,7 @@ export function DataTableRowActions({ componentToShow, row }) {
       />
     ),
     frontLabor: (
-      <ModalFrontLabor
+      <LaborModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
@@ -109,22 +108,15 @@ export function DataTableRowActions({ componentToShow, row }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[150px]">
-          <DropdownMenuItem onClick={() => handleDetailsModal(row.original)}>
+          {/* <DropdownMenuItem onClick={() => handleDetailsModal(row.original)}>
             <IconDetails className="h-5 w-5 text-gray-500" />
             Ver detalles
-          </DropdownMenuItem>
-          {/* <DropdownMenuItem>
-            <IconMore className="h-5 w-5 fill-gray-500" />
-            Crear nuevo
           </DropdownMenuItem> */}
+         
          <DropdownMenuItem onClick={() => handleClick(row.original)}>
             <IconEdit className="h-5 w-5 stroke-black" />
             Editar detalles
-          </DropdownMenuItem>
-          {/* <DropdownMenuItem>
-            <IconDuplicate className="h-5 w-5 text-gray-500" />
-            Duplicar
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>         
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="text-red-500 focus:text-red-500"

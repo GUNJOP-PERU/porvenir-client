@@ -4,8 +4,8 @@ import {
   formatHour,
   useRelativeTime,
 } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import clsx from "clsx";

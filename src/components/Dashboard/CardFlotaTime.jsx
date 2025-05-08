@@ -108,7 +108,9 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
           tileShape: "square", // Cambiar a 'square', 'circle' o 'diamond'
           dataLabels: {
             enabled: true,
-            format: "{point.name}",
+            formatter: function(){
+              return this.point.name.toUpperCase();
+            },
             style: {
               fontSize: "0.6em",
               color: "#000",

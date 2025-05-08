@@ -1,7 +1,6 @@
-
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
 
 export const columns = [
@@ -9,7 +8,7 @@ export const columns = [
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -22,21 +21,26 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div className={clsx(
-            "w-8 h-8 rounded-[10px] flex items-center justify-center",
-            {
-              "bg-orange-500 ": row.original.name === "nexa",
-              "bg-blue-500 ": row.original.name === "saturno",
-            }
-          )}>
-            <span className="text-zinc-50 font-bold"> {row.getValue("name")?.substring(0, 2).toUpperCase()}</span>
+          <div
+            className={clsx(
+              "w-8 h-8 rounded-[10px] flex items-center justify-center",
+              row.original?.name === "nexa"
+                ? "bg-cyan-500"
+                : row.original?.name === "saturno"
+                ? "bg-orange-500"
+                : "bg-gray-500"
+            )}
+          >
+            <span className="text-zinc-50 font-bold">
+              {row.getValue("name")?.substring(0, 2).toUpperCase()}
+            </span>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("name")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            {row.original?.ruc}
+              {row.original?.ruc}
             </span>
           </div>
         </div>
@@ -117,7 +121,9 @@ export const columns = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions componentToShow={"enterprise"} row={row} />,
+    cell: ({ row }) => (
+      <DataTableRowActions componentToShow={"enterprise"} row={row} />
+    ),
     enableHiding: false,
   },
 ];

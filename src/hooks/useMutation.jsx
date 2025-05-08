@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postDataRequest, putDataRequest } from "@/lib/api";
+import { postDataRequest, putDataRequest } from "@/api/api";
 import { useToast } from "./useToaster";
 
 export function useHandleFormSubmit() {

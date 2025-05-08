@@ -18,6 +18,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,6 +36,7 @@ import IconToggle from "@/icons/IconToggle";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import { Separator } from "@ariakit/react";
+import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
@@ -93,7 +95,11 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }
 
   return (
-    <Dialog open={isOpen}   onOpenChange={(onClose) => !loadingGlobal && onClose}  modal={true}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(onClose) => !loadingGlobal && onClose}
+      modal={true}
+    >
       <DialogContent className="w-[380px] p-0">
         <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
@@ -101,7 +107,9 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
             </div>
             <div>
-              <DialogTitle>{isEdit ? "Editar" : "Crear nuevo"} usuario</DialogTitle>
+              <DialogTitle>
+                {isEdit ? "Editar" : "Crear nuevo"} usuario
+              </DialogTitle>
               <DialogDescription>
                 Agregue un nuevo usuario al sistema
               </DialogDescription>
@@ -109,7 +117,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
           </div>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4 px-6">
               <FormField
                 control={control}
@@ -211,10 +219,34 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 )}
               />
             </div>
-            <Separator className="my-4"/>
+            <div className="grid grid-cols-2 gap-4 mt-8 px-6">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
+                    <div className="flex flex-col  justify-center ">
+                      <FormLabel>Activar/Desactivar</FormLabel>
+                      <FormDescription className="pt-0">
+                        Se deshabilitará el usuario.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        aria-readonly
+                        disabled={loadingGlobal}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Separator className="my-4" />
             <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
               <Button
-                type="button"               
+                type="button"
                 onClick={() => onClose()}
                 variant="secondary"
                 disabled={loadingGlobal}
@@ -239,7 +271,6 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
           </form>
         </Form>
       </DialogContent>
-     
     </Dialog>
   );
 };

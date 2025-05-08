@@ -18,7 +18,7 @@ import IconLoader from "@/icons/IconLoader";
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
 import IconToggle from "@/icons/IconToggle";
-import { postDataRequest } from "@/lib/api";
+import { postDataRequest } from "@/api/api";
 
 import { dataLaborList } from "@/lib/data";
 import { PlanContent } from "./PlanContent";

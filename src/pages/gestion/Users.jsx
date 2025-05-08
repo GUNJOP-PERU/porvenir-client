@@ -1,8 +1,8 @@
 import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { ModalUser } from "../../components/Gestion/Users/ModalUser";
-import { columns } from "../../components/Gestion/Users/columns";
-import { DataTable } from "../../components/Gestion/data-table";
+import { columns } from "@/components/Gestion/Users/columns";
+import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";

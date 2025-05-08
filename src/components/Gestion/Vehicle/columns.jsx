@@ -1,6 +1,6 @@
 import { formatFecha, getYearFromFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
 
 export const columns = [
