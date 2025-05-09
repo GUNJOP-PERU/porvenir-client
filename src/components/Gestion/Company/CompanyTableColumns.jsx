@@ -2,6 +2,7 @@ import { formatFecha } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
+import TimeAgo from "timeago-react";
 
 export const columns = [
   {
@@ -85,10 +86,9 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.updatedAt)}
+            <h4 className="text-[12.5px] font-semibold leading-4">
+              <TimeAgo datetime={row.original.updatedAt} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización
@@ -106,7 +106,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}

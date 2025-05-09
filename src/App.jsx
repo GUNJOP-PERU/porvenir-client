@@ -39,6 +39,9 @@ import { ToastProvider } from "./hooks/useToaster";
 import TimelineTruck from "./pages/dashboard/TimelineTruck";
 import { SocketProvider } from "./context/SocketContext";
 import Configuration from "./pages/Configuration";
+import { register } from "timeago.js";
+import es from "timeago.js/lib/lang/es";
+register("es", es);
 
 function App() {
   const isAuth = useAuthStore((state) => state.isAuth);

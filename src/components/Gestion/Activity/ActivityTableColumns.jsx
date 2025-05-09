@@ -2,7 +2,6 @@ import {
   formatDurationHour,
   formatFecha,
   formatHour,
-  useRelativeTime,
 } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import { DataTableRowActions } from "../DataTableRowActions";
@@ -11,6 +10,7 @@ import IconNight from "@/icons/IconNight";
 import clsx from "clsx";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
+import TimeAgo from "timeago-react";
 
 export const columns = [
   {
@@ -205,7 +205,7 @@ export const columns = [
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex">
-              {useRelativeTime(row.original.updatedAt)}
+              <TimeAgo datetime={row.original.updatedAt} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización

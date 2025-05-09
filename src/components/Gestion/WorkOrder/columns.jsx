@@ -1,12 +1,12 @@
-import { formatFecha, formatRelativeTime, useRelativeTime } from "@/lib/utilsGeneral";
+import { formatFecha } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
-import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
 import IconCheck from "@/icons/IconCheck";
 import IconClose from "@/icons/IconClose";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import IconPDF from "@/icons/IconPdf";
+import TimeAgo from "timeago-react";
 
 export const columns = [
   {
@@ -40,9 +40,15 @@ export const columns = [
             )}
           ></div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              {row.getValue("userName")}
-            </h4>
+            {row.original?.userName ? (
+              <h4 className="text-[12.5px] font-semibold leading-4 flex ">
+                {row.original?.userName}
+              </h4>
+            ) : (
+              <h4 className="text-[12.5px] leading-4 flex text-zinc-300">
+                en proceso...
+              </h4>
+            )}
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
               {row.original?.vehicleData?.tagName}
             </span>
@@ -212,10 +218,9 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              {useRelativeTime(row.original.updatedLastTime)}
+              <TimeAgo datetime={row.original.updatedLastTime} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización
@@ -233,7 +238,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
