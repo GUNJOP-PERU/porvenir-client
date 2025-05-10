@@ -1,17 +1,16 @@
+import { useFetchData } from "@/hooks/useGlobalQuery";
 import { useHandleFormSubmit } from "@/hooks/useMutation";
+import IconClose from "@/icons/IconClose";
+import IconLoader from "@/icons/IconLoader";
+import IconToggle from "@/icons/IconToggle";
 import { dataTypeVehicle } from "@/lib/data";
-import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import dayjs from "dayjs";
 import "dayjs/locale/es";
-import { CalendarIcon, CircleFadingPlus } from "lucide-react";
+import { CircleFadingPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../ui/button";
-import { Calendar } from "../../ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +27,6 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import {
   Select,
   SelectContent,
@@ -36,12 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import IconClose from "@/icons/IconClose";
-import IconToggle from "@/icons/IconToggle";
-import IconLoader from "@/icons/IconLoader";
-import { useFetchData } from "@/hooks/useGlobalQuery";
-
-dayjs.locale("es");
 
 const FormSchema = z.object({
   empresaId: z.string().min(1, { message: "*Cargo requerido" }),
@@ -51,11 +43,6 @@ const FormSchema = z.object({
   odometer: z.number().optional(),
   horometer: z.number().optional(),
   type: z.string().min(1, { message: "*Rol requerido" }),
-  color: z.string().optional(),
-  year: z
-    .union([z.date(), z.string()])
-    .transform((value) => (typeof value === "string" ? new Date(value) : value))
-    .optional(),
   description: z.string().optional(),
 });
 
@@ -67,15 +54,13 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      tagName: dataCrud?.tagName || "",
       empresaId: dataCrud?.empresaId || "",
+      tagName: dataCrud?.tagName || "",
       plate: dataCrud?.plate || "",
       model: dataCrud?.model || "",
       odometer: dataCrud?.odometer || 1500,
       horometer: dataCrud?.horometer || 1500,
-      type: dataCrud?.type || "",
-      color: dataCrud?.color || "",
-      year: dataCrud?.year || new Date(),
+      type: dataCrud?.type || "",     
       description: dataCrud?.description || "",
     },
   });
@@ -91,22 +76,18 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
         model: dataCrud?.model || "",
         odometer: dataCrud?.odometer || "",
         horometer: dataCrud?.horometer || "",
-        type: dataCrud?.type || "",
-        color: dataCrud?.color || "",
-        year: dataCrud?.year ? new Date(dataCrud.year) : new Date(),
+        type: dataCrud?.type || "",        
         description: dataCrud?.description || "",
       });
     } else {
       reset({
-        empresaId:"",
+        empresaId: "",
         tagName: "",
         plate: "",
         model: "",
         odometer: 1500,
         horometer: 1500,
-        type: "",
-        color: "",
-        year: new Date(),
+        type: "",        
         description: "",
       });
     }
@@ -116,28 +97,31 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
     const formData = new FormData();
     // Convertimos los datos a JSON y los agregamos al FormData
     formData.append("data", JSON.stringify(data));
-  
+
     // Si hay imagen, la agregamos; si no, enviamos null
     if (data.image) {
       formData.append("image", data.image);
     } else {
-      formData.append("image", "null"); // Lo enviamos como "null" 
+      formData.append("image", "null"); // Lo enviamos como "null"
     }
-  
+
     await handleFormSubmit({
       isEdit,
       endpoint: "vehicle",
       id: dataCrud?._id,
-      data: formData,  // Enviamos formData 
+      data: formData, // Enviamos formData
       setLoadingGlobal,
       onClose,
       reset,
     });
   }
-  
 
   return (
-    <Dialog open={isOpen} onOpenChange={(onClose) => !loadingGlobal && onClose}  modal={true}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(onClose) => !loadingGlobal && onClose}
+      modal={true}
+    >
       <DialogContent className="w-[400px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
@@ -158,34 +142,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
-            <FormField
-                control={control}
-                name="empresaId"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Seleccionar Empresa</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={loadingGlobal}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione Empresa" className="capitalize" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {data?.map((i) => (
-                          <SelectItem key={i._id} value={i._id} className="capitalize">
-                            {i.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+             
               <FormField
                 control={control}
                 name="tagName"
@@ -240,12 +197,47 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
+               <FormField
+                control={control}
+                name="empresaId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Seleccionar Empresa</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder="Seleccione Empresa"
+                            className="capitalize"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {data?.map((i) => (
+                          <SelectItem
+                            key={i._id}
+                            value={i._id}
+                            className="capitalize"
+                          >
+                            {i.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={control}
                 name="horometer"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Horometro</FormLabel>
+                    <FormLabel>Kilometraje</FormLabel>
 
                     <Input
                       type="number"
@@ -264,7 +256,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="odometer"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Odometro</FormLabel>
+                    <FormLabel>Horómetro</FormLabel>
 
                     <Input
                       type="number"
@@ -282,7 +274,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="type"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col col-span-2">
                     <FormLabel>Tipo</FormLabel>
 
                     <Select
@@ -291,7 +283,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       disabled={loadingGlobal}
                     >
                       <FormControl>
-                        <SelectTrigger >
+                        <SelectTrigger>
                           <SelectValue placeholder="Seleccione" />
                         </SelectTrigger>
                       </FormControl>
@@ -308,67 +300,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={control}
-                name="color"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Color</FormLabel>
 
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
-                      {...field}
-                    />
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="year"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Fecha para el plan</FormLabel>
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            disabled={loadingGlobal}
-                            className={cn(
-                              " pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP",{ locale: es })
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          initialFocus
-                          locale={es}
-                          onSelect={(range) =>
-                            field.onChange(range ? new Date(range) : undefined)
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={control}
                 name="description"
