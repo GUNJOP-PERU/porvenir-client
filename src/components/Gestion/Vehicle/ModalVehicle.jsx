@@ -306,7 +306,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Descripción</FormLabel>
 
                     <Input
                       type="text"

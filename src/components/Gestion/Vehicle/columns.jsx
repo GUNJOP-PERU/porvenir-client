@@ -88,35 +88,6 @@ export const columns = [
     },
   },
   {
-    accessorKey: "type",
-    header: "Color",
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.original.color || ""}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "year",
-    header: "Año de vehiculo",
-    cell: ({ row }) => {
-      return (
-        <div className="flex flex-col justify-center">
-          <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {getYearFromFecha(row.original.year) || "0"}
-          </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            obtención
-          </span>
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "description",
     header: "Descripción",
     cell: ({ row }) => {
