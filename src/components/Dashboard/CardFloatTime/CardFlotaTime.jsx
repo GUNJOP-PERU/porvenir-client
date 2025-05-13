@@ -1,9 +1,12 @@
-import { memo, useMemo, useRef } from "react";
-import Highcharts from "highcharts/highmaps";
-import HighchartsReact from "highcharts-react-official";
-import highchartsTilemap from "highcharts/modules/tilemap";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import { useGraphicData } from "@/hooks/useGraphicData";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
+import HighchartsReact from "highcharts-react-official";
+import Highcharts from "highcharts/highmaps";
+import highchartsTilemap from "highcharts/modules/tilemap";
+import { memo, useMemo, useRef, useState } from "react";
+import { ModalFloat } from "./ModalFloat";
+import { Button } from "@/components/ui/button";
+import { Disc2 } from "lucide-react";
 
 // Inicializar los módulos
 if (typeof highchartsTilemap === "function") {
@@ -11,6 +14,7 @@ if (typeof highchartsTilemap === "function") {
 }
 
 const CardFlotaTime = memo(({ symbol, endpoint }) => {
+  const [showModal, setShowModal] = useState(false);
   const chartRef = useRef(null);
   const {
     data = [],
@@ -108,7 +112,7 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
           tileShape: "square", // Cambiar a 'square', 'circle' o 'diamond'
           dataLabels: {
             enabled: true,
-            formatter: function(){
+            formatter: function () {
               return this.point.name.toUpperCase();
             },
             style: {
@@ -144,7 +148,7 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
                         }</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; width: 100%;">
-                        <b style="color: #aeaeae;">Capacidad</b> <span>${  
+                        <b style="color: #aeaeae;">Capacidad</b> <span>${
                           this.point?.capacidad || "--"
                         }</span>
                     </div>
@@ -222,6 +226,7 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
             Disponibilidad y rendimiento de los vehículos.
           </p>
         </div>
+
         <div className="flex gap-4 items-center">
           <div className="flex gap-2 items-center">
             <div className="w-1 rounded-[5px] h-7 bg-[#81c784]"></div>
@@ -258,6 +263,12 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
                 Inoperativo
               </span>
             </div>
+          </div>{" "}
+          <div>
+            <Button onClick={() => setShowModal(true)}>
+              <Disc2 className="w-4 h-4" />
+              Estado
+            </Button>
           </div>
         </div>
       </div>
@@ -268,6 +279,13 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
           options={options}
         />
       </div>
+      {showModal && (
+        <ModalFloat
+          data={data}
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </>
   );
 });

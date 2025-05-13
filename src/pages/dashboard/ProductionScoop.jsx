@@ -1,5 +1,5 @@
 import CardColumScoop from "@/components/Dashboard/CardColumScoop";
-import CardFlotaTime from "@/components/Dashboard/CardFlotaTime";
+import CardFlotaTime from "@/components/Dashboard/CardFloatTime/CardFlotaTime";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/CardTable";

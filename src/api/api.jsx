@@ -23,3 +23,4 @@ export const getDataGraphicRequest = async (endpoint) => {
   const response = await authApi.get(`api/v1/${endpoint}`);
   return response.data; 
 };
+

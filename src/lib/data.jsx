@@ -187,4 +187,22 @@ export const dataPhase = [
   },
 ]
 
+export const dataStatusVehicle = [
+  {
+    value: 1,
+    label: "Operativo",
+    color: "#20B29F",
+  },
+  {
+    value: 2,
+    label: "Mantenimiento",
+    color: "#FFD700",
+  },
+  {
+    value: 3,
+    label: "Inoperativo",
+    color: "#ff9999",
+  },
+]
+
 
