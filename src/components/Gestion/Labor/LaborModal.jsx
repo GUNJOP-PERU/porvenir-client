@@ -47,7 +47,7 @@ const FormSchema = z.object({
 
   description: z.string().optional(),
   type: z.string().optional(),
-  status: z.boolean().optional(),
+  status: z.boolean().default(true),
 });
 
 export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {

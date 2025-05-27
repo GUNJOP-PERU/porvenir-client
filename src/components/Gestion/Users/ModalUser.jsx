@@ -45,7 +45,7 @@ const FormSchema = z.object({
   code: z.string().refine((value) => /^\d{8}$/.test(value), {
     message: "*Debe tener 8 dígitos.",
   }),
-  isActive: z.boolean().default(false),
+  isActive: z.boolean().default(true),
 });
 
 export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -60,7 +60,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
       cargo: dataCrud?.cargo || "",
       role: dataCrud?.role || "",
       code: dataCrud?.code || "",
-      isActive: dataCrud?.isActive || false,
+      isActive: dataCrud?.isActive ?? true,
     },
   });
 
@@ -73,7 +73,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: dataCrud.cargo || "",
         role: dataCrud.role || "",
         code: dataCrud.code || "",
-        isActive: dataCrud.isActive || false,
+        isActive: dataCrud.isActive ?? true,
       });
     } else {
       reset({
@@ -81,7 +81,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: "",
         role: "",
         code: "",
-        isActive: false,
+        isActive: true,
       });
     }
   }, [dataCrud, reset]);
