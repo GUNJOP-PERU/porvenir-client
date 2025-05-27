@@ -75,7 +75,7 @@ export default function Login() {
       };
      
 
-      if (!["Admin", "SuperAdmin"].includes(userLogued.user.rol)) {
+      if (!userLogued.user.rol || !["Admin", "SuperAdmin"].includes(userLogued.user.rol)) {
         setShowError(true);
         setTimeout(() => {
           setShowError(false);

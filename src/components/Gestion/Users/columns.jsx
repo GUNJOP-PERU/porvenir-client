@@ -98,7 +98,27 @@ export const columns = [
       );
     },
   },
-
+  {
+    accessorKey: "isActive",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("isActive") === true ? (
+            <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
+              activo
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 bg-red-50 rounded-[6px] text-[10px] text-red-500 leading-[10px]">
+              inactivo
+            </span>
+          )}
+        </>
+      );
+    },
+  },
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (

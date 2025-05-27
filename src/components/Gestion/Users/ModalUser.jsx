@@ -45,6 +45,7 @@ const FormSchema = z.object({
   code: z.string().refine((value) => /^\d{8}$/.test(value), {
     message: "*Debe tener 8 dígitos.",
   }),
+  isActive: z.boolean().default(false),
 });
 
 export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -59,6 +60,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
       cargo: dataCrud?.cargo || "",
       role: dataCrud?.role || "",
       code: dataCrud?.code || "",
+      isActive: dataCrud?.isActive || false,
     },
   });
 
@@ -71,6 +73,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: dataCrud.cargo || "",
         role: dataCrud.role || "",
         code: dataCrud.code || "",
+        isActive: dataCrud.isActive || false,
       });
     } else {
       reset({
@@ -78,6 +81,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: "",
         role: "",
         code: "",
+        isActive: false,
       });
     }
   }, [dataCrud, reset]);
@@ -222,7 +226,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
             <div className="grid grid-cols-2 gap-4 mt-8 px-6">
               <FormField
                 control={form.control}
-                name="status"
+                name="isActive"
                 render={({ field }) => (
                   <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
                     <div className="flex flex-col  justify-center ">
