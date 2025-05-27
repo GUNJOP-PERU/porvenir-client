@@ -95,8 +95,7 @@ export default function Login() {
       setTimeout(() => {
         setShowError(false);
       }, 3000);
-      console.error("Error :", error);
-      
+      console.error("Error :", error);      
     }
     
   };
@@ -190,36 +189,7 @@ export default function Login() {
             </font>
           </div>
         </form>
-        <div
-         className={`absolute inset-x-1/2 -translate-x-1/2 top-20 md:top-auto md:bottom-40 bg-[#1d1d20] rounded-xl flex items-center gap-1 py-2 px-3 shadow-2xl w-60 h-8 ${
-          showError ? "error-visible" : "error-hidden"
-        }`}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16">
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15Z"
-              fill="#FD5B5D"
-              fillOpacity="0.18"
-            ></path>
-            <path
-              d="M8 5V9"
-              stroke="#FD5B5D"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            ></path>
-            <path
-              d="M8 11H8.01"
-              stroke="#FD5B5D"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            ></path>
-          </svg>
-          <h4 className="text-xs text-zinc-300">
-            Código inválido, inténtelo de nuevo
-          </h4>
-        </div>
+       
       </section>
     </>
   );
