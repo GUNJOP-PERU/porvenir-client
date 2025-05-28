@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/useToaster";
 import IconClose from "@/icons/IconClose";
+import IconLoader from "@/icons/IconLoader";
 import { dataStatusVehicle } from "@/lib/data";
 import { Check, CircleFadingPlus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -50,8 +51,8 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
     setLoadingItems((prev) => ({ ...prev, [id]: true }));
 
     try {
-      const response = await putDataRequest(`vehicule/update-status/${id}`, {
-        status: value,
+      const response = await putDataRequest(`vehicle/${id}`, {
+        value: value,
       });
 
       if (response.status >= 200 && response.status < 300) {
@@ -81,8 +82,15 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
     }
   };
 
+  const anyItemLoading = useMemo(() => {
+    return Object.values(loadingItems).some(Boolean);
+  }, [loadingItems]);
+
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!anyItemLoading) onClose(open);
+    }}>
       <DialogContent className="w-[670px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
@@ -103,6 +111,7 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
             placeholder="Buscar vehiculo..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={anyItemLoading}
           />
         </div>
         <div className="grid grid-cols-4 gap-1 h-[35vh] overflow-y-auto pr-2">
@@ -117,10 +126,10 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
                 className="flex items-center justify-between gap-2 h-7 rounded-[6px] px-2"
                 style={{ backgroundColor: dataColor(item.value) }}
               >
-                <span className="text-[0.6em] leading-none font-bold uppercase">
+                <span className="text-[0.6em] leading-none font-bold uppercase truncate">
                   {item.name}
                 </span>
-                <div className="flex gap-0.5">
+                <div className="flex gap-0.5 relative">
                   {dataStatusVehicle.map((status) => {
                     const isSelected = item.value === status.value;
                     const isLoading = loadingItems[item.id];
@@ -134,8 +143,9 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
                           border: isSelected
                             ? "1px solid #333"
                             : "1px solid transparent",
-                          opacity: isLoading ? 0.5 : 1,
+                          opacity: isLoading ? 0.2 : 1,
                           pointerEvents: isLoading ? "none" : "auto",
+                          transform: isLoading ? "scale(0.9)" : "scale(1)",
                         }}
                       >
                         <input
@@ -153,6 +163,9 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
                       </label>
                     );
                   })}
+                {loadingItems[item.id] && (
+                  <IconLoader className="w-3.5 h-3.5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                )}
                 </div>
               </div>
             ))
@@ -160,7 +173,7 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="button" onClick={() => onClose()} variant="secondary">
+          <Button type="button" onClick={() => onClose()} variant="secondary" disabled={anyItemLoading}>
             <IconClose className="fill-zinc-400/50 w-4 h-4" />
             Cancelar
           </Button>
