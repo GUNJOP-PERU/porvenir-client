@@ -5,8 +5,8 @@ import IconCheck from "@/icons/IconCheck";
 import IconClose from "@/icons/IconClose";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
-import IconPDF from "@/icons/IconPdf";
 import TimeAgo from "timeago-react";
+import IconPDF from "@/icons/IconPDF";
 
 export const columns = [
   {
