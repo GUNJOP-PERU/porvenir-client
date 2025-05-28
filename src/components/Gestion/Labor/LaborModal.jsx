@@ -124,7 +124,9 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(onClose) => !loadingGlobal && setDeleteModal(onClose)}
+      onOpenChange={(open) => {
+        if (!loadingGlobal) onClose(open);
+      }}
       modal={true}
     >
       <DialogContent className="w-[450px]">

@@ -101,7 +101,9 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(onClose) => !loadingGlobal && onClose}
+      onOpenChange={(open) => {
+        if (!loadingGlobal) onClose(open);
+      }}
       modal={true}
     >
       <DialogContent className="w-[380px] p-0">

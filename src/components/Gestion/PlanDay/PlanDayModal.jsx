@@ -174,7 +174,9 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(onClose) => !loadingGlobal && onClose}
+      onOpenChange={(open) => {
+        if (!loadingGlobal) onClose(open);
+      }}
       modal={true}
     >
       <DialogContent className="w-[570px]">

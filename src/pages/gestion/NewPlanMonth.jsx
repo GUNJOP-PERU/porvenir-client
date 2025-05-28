@@ -279,15 +279,15 @@ export const NewPlanMonth = () => {
             <ul className="list-disc ml-3 gap-x-6 ">
               <li className="">
                 <strong className="font-bold text-green-500">Verde: </strong>
-                Labor existente en el sistema.
+                Labor ya existe en el sistema, por lo tanto no será creada nuevamente.
               </li>
               <li className="">
                 <strong className="font-bold text-red-600">Rojo: </strong>
-                Labor no existente en el sistema.
+                Labor no existe en el sistema. Será creada automáticamente.
               </li>
               <li>
                 <strong className="font-bold bg-yellow-300">Amarillo</strong>:
-                Labor repetida en el mes.
+                Labor ya fue registrada previamente. No se puede continuar con el envío del plan hasta resolver esta duplicación.
               </li>
             </ul>
           </div>
