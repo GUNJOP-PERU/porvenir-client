@@ -4,6 +4,7 @@ import clsx from "clsx";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
+import { DataTableRowActions } from "../DataTableRowActions";
 
 export const columns = [
   {
@@ -27,11 +28,11 @@ export const columns = [
             className={clsx(
               "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                "bg-[url('/vehicle/scoop.png')]":
                   row.original?.vehicleType === "scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]":
+                "bg-[url('/vehicle/truck.png')]":
                   row.original?.vehicleType === "truck",
-                "bg-[url('/src/assets/vehicle/drill.png')]":
+                "bg-[url('/vehicle/drill.png')]":
                   row.original?.vehicleType === "drill",
               }
             )}
@@ -154,5 +155,12 @@ export const columns = [
         </div>
       );
     },
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: ({ row }) => <DataTableRowActions componentToShow={"checklist"} row={row} />,
+    enableSorting: false,
+    enableHiding: false,
   },
 ];

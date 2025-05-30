@@ -18,7 +18,7 @@ export function NavMenu() {
         >
           <IconMenu className="w-4 h-4 text-zinc-400" />
         </button>
-        <img src="/src/assets/logo-white.svg" alt="" className="h-7 " />
+        <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
       {/* Overlay (Fondo negro semitransparente) */}
       {isOpen && (
@@ -41,7 +41,7 @@ export function NavMenu() {
             >
               <IconClose className="w-4 h-4 fill-zinc-600" />
             </button>
-            <img src="/src/assets/logo-white.svg" alt="" className="h-7" />
+            <img src="./logo-white.svg" alt="" className="h-7" />
           </div>
           <div className="flex flex-col gap-4 w-full flex-1 overflow-y-auto px-6 py-4 ">
             {paths.map((section) => (

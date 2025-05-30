@@ -108,7 +108,7 @@ export default function Login() {
 
   return (
     <>
-      <section className="h-dvh flex flex-col justify-center items-center bg-[#000000] relative bg-cover bg-center bg-[url('/src/assets/backLogin.png')]">
+      <section className="h-dvh flex flex-col justify-center items-center bg-[#000000] relative bg-cover bg-center bg-[url('./backLogin.png')]">
         <form
           className="flex flex-col justify-center items-center gap-2 max-w-[400px]"
           action=""
@@ -118,7 +118,7 @@ export default function Login() {
             pointerEvents: loading ? "none" : "auto",
           }}
         >
-          <img className="h-10" src="/src/assets/logo-white.svg" alt="" />
+          <img className="h-10" src="./logo-white.svg" alt="" />
           <font className="text-zinc-300 text-xs leading-4 text-center mt-3">
             Ingrese su clave de{" "}
             <strong className="text-[##ffffff99]">inicio de sesión</strong> para

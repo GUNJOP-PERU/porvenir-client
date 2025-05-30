@@ -27,34 +27,25 @@ function WorkerOrders() {
         <div>
           <div className="flex items-center gap-2 leading-6">
             <h1 className="text-xl font-bold leading-6">
-              Gestión Orden de Trabajo{" "}
+              Gestión de Trabajos planificados{" "}
             </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
           </div>
           <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
+            Administre los trabajos planificados de su equipo aquí.
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             onClick={() => refetch()}
             variant="outline"
-            size="icon"
+            // size="icon"
             disabled={isFetching}
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
-          </Button>
-          
-          <Button
-            onClick={() => setDialogOpen(true)}
-            className="w-fit"
-            disabled={isFetching || isError}
-          >
-            <IconMore className="w-5 h-5 fill-white" />
-            Añadir nuevo
+            Refrescar
           </Button>
         </div>
       </div>

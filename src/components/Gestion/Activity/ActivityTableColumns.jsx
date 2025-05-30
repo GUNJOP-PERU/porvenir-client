@@ -73,9 +73,9 @@ export const columns = [
               className={clsx(
                 "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center ",
                 {
-                  "bg-[url('/src/assets/vehicle/scoop.png')]":
+                  "bg-[url('/vehicle/scoop.png')]":
                     row.original?.equipment === "Scoop",
-                  "bg-[url('/src/assets/vehicle/truck.png')]":
+                  "bg-[url('/vehicle/truck.png')]":
                     row.original?.equipment === "Volquete",
                 }
               )}

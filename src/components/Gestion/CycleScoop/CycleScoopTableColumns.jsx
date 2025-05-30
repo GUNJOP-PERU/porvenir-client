@@ -26,7 +26,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/src/assets/vehicle/scoop.png')]"></div>
+          <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/vehicle/scoop.png')]"></div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("user")}

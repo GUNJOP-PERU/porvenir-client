@@ -233,7 +233,7 @@ export function DataTable({
             <>
               {isFetching ? (
                 <div className="text-center flex items-center justify-center gap-2 py-1 px-3 h-8 text-xs text-zinc-400">
-                  <IconLoader className="w-3 h-3 text-zinc-300 fill-primary animate-spin" />
+                  <IconLoader className="w-4 h-4 " />
                   Cargando más...
                 </div>
               ) : (

@@ -26,11 +26,11 @@ export const columns = [
             className={clsx(
               "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                "bg-[url('/vehicle/scoop.png')]":
                   row.original.type === "scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]":
+                "bg-[url('/vehicle/truck.png')]":
                   row.original.type === "truck",
-                "bg-[url('/src/assets/vehicle/drill.png')]":
+                "bg-[url('/vehicle/drill.png')]":
                   row.original.type === "drill",
               }
             )}

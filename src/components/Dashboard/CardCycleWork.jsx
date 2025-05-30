@@ -39,7 +39,7 @@ const CardCycleWork = React.memo(() => {
               min
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="/src/assets/truck-01.svg" />
+          <img className="w-16 md:w-24 h-auto" src="./truck-01.svg" />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row-reverse ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -57,7 +57,7 @@ const CardCycleWork = React.memo(() => {
               min
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="/src/assets/truck-02.svg" />
+          <img className="w-16 md:w-24 h-auto" src="./truck-02.svg" />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -74,7 +74,7 @@ const CardCycleWork = React.memo(() => {
               min
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="/src/assets/truck-03.svg" />
+          <img className="w-16 md:w-24 h-auto" src="./truck-03.svg" />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row-reverse  ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -93,13 +93,13 @@ const CardCycleWork = React.memo(() => {
           </div>
           <img
             className="w-16 md:w-24 h-auto"
-            src="/src/assets/truck-04.svg"
+            src="./truck-04.svg"
             loading="lazy"
           />
         </div>
         <img
           className="w-full h-[90%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"
-          src="/src/assets/lineSquare-2.svg"
+          src="./lineSquare-2.svg"
         />
       </div>
     </div>

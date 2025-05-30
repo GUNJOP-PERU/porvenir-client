@@ -64,7 +64,7 @@ export const useNavigation = () => {
             active: pathname === "/planMonth",
           },
           {
-            name: "Orden de Trabajo",
+            name: "Trabajos planificados",
             href: "/workOrder",
             icon: <IconWork className="w-4 h-4 " />,
             active: pathname === "/workOrder",

@@ -1,6 +1,9 @@
-import {useFetchData} from "@/hooks/useGlobalQuery";
+import { useFetchData } from "@/hooks/useGlobalQuery";
 import { useHandleFormSubmit } from "@/hooks/useMutation";
-import { dataTurn } from "@/lib/data";
+import IconClose from "@/icons/IconClose";
+import IconLoader from "@/icons/IconLoader";
+import IconToggle from "@/icons/IconToggle";
+import { dataDestiny, dataMaterial, dataTurn } from "@/lib/data";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleFadingPlus } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -30,30 +33,42 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { ComboBoxSearch } from "../ComboBoxSearch";
-import IconClose from "@/icons/IconClose";
-import IconToggle from "@/icons/IconToggle";
-import IconLoader from "@/icons/IconLoader";
-import CheckslistData from "./CheckslistData";
+import ComboboxInput from "../ComboBoxInput";
+import { Input } from "@/components/ui/input";
 
 // Schema de validación
 const FormSchema = z.object({
   userId: z.string().min(1, { message: "*Labor requerida" }),
+  laborId: z.string().min(1, { message: "*Front Labor requerido" }),
   vehicleId: z.string().min(1, { message: "*Front Labor requerido" }),
   shift: z.string().min(1, { message: "*Turno requerido" }),
+  tonnage: z.number().min(1, { message: "*Tonelaje requerido" }),
+  destiny: z.string().min(1, { message: "*Destino requerido" }),
+  duration: z.number().min(1, { message: "*Duración requerida" }),
+  material: z.string().min(1, { message: "*Material requerido" }),
 });
 
-export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
+export const CycleTruckModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const handleFormSubmit = useHandleFormSubmit();
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const { data: dataUser } = useFetchData("user", "user");
   const { data: dataVehicle } = useFetchData("vehicle", "vehicle");
+  const { data: dataFrontLabor } = useFetchData(
+    "frontLabor-General",
+    "frontLabor"
+  );
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       userId: dataCrud?.userId || "",
+      laborId: dataCrud?.laborId || "",
       vehicleId: dataCrud?.vehicleId || "",
       shift: dataCrud?.shift || "",
+      tonnage: dataCrud?.tonnage || "",
+      destiny: dataCrud?.destiny || "",
+      duration: dataCrud?.duration || "",
+      material: dataCrud?.material || "",
     },
   });
 
@@ -63,17 +78,23 @@ export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
     if (dataCrud) {
       reset({
         userId: dataCrud.userId || "",
+        laborId: dataCrud.laborId || "",
         vehicleId: dataCrud.vehicleId || "",
         shift: dataCrud.shift || "",
+        tonnage: dataCrud.tonnage || "",
+        destiny: dataCrud.destiny || "",
+        duration: dataCrud.duration || "",
+        material: dataCrud.material || "",
       });
     }
   }, [dataCrud, reset]);
 
   // Función de envío del formulario
   async function onSubmit(data) {
+    console.log("data", data);
     await handleFormSubmit({
       isEdit,
-      endpoint: "checklist",
+      endpoint: "cycleTruck",
       id: dataCrud?._id,
       data,
       setLoadingGlobal,
@@ -84,16 +105,18 @@ export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[400px]">
+      <DialogContent className="w-[450px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <div>
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
             </div>
             <div>
-              <DialogTitle>{isEdit ? "Editar" : "Crear"} checklist</DialogTitle>
+              <DialogTitle>
+                {isEdit ? "Editar" : "Crear"} Ciclo Truck
+              </DialogTitle>
               <DialogDescription>
-                Agregue una nuevo checklist al sistema
+                {isEdit ? "Edite" : "Agregue"} un nuevo ciclo truck al sistema
               </DialogDescription>
             </div>
           </div>
@@ -106,12 +129,9 @@ export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="userId"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col col-span-2">
+                  <FormItem className="flex flex-col">
                     <FormLabel>Usuario</FormLabel>
-                    <ComboBoxSearch
-                      data={dataUser}
-                      field={field}                     
-                    />
+                    <ComboBoxSearch data={dataUser} field={field} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -129,6 +149,19 @@ export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       field={field}
                       filterKey="tagName"
                     />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Front Labor */}
+              <FormField
+                control={control}
+                name="laborId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Labor</FormLabel>
+                    <ComboBoxSearch data={dataFrontLabor} field={field} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -163,25 +196,100 @@ export const ModalChecklist = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
-               <FormField
+              {/* Destino */}
+              <FormField
                 control={control}
-                name="vehicleId"
+                name="destiny"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Vehiculo</FormLabel>
-                    <ComboBoxSearch
-                      data={dataVehicle}
-                      field={field}
-                      filterKey="tagName"
+                    <FormLabel>Seleccionar Destino</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione Destino" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {dataDestiny?.map((i) => (
+                          <SelectItem key={i.value} value={i.value}>
+                            {i.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={control}
+                name="tonnage"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Tonelaje</FormLabel>
+                    <Input
+                      type="number"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. 10000"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Material */}
+              <FormField
+                control={control}
+                name="material"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Seleccionar Material</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione Material" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {dataMaterial?.map((i) => (
+                          <SelectItem key={i.value} value={i.value}>
+                            {i.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Duración</FormLabel>
+                    <Input
+                      type="number"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. 10000"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <div>
-            <CheckslistData data={dataCrud?.data}/>
-            </div>
+
             <div className="pt-6 flex gap-2">
               <Button
                 type="button"

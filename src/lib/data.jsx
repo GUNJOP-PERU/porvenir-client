@@ -157,7 +157,6 @@ export const turn = [
   {
     label: "Dia",
     value: "dia",
-
   },
   {
     label: "Noche",
@@ -168,7 +167,6 @@ export const dataMaterial = [
   {
     label: "Mineral",
     value: "Mineral",
-
   },
   {
     label: "Desmonte",
@@ -179,7 +177,6 @@ export const dataPhase = [
   {
     label: "Avance",
     value: "Avance",
-
   },
   {
     label: "Extracción / Producción",
@@ -204,5 +201,38 @@ export const dataStatusVehicle = [
     color: "#ff9999",
   },
 ]
-
+export const dataDestiny = [
+  {
+    label: "Pocket 3",
+    value: "Pocket 3",
+  },
+  {
+    label: "Parrilla 1",
+    value: "Parrilla 1",
+  },
+  {
+    label: "Parrilla 2",
+    value: "Parrilla 2",
+  },
+  {
+    label: "Cancha 100",
+    value: "Cancha 100",
+  },
+  {
+    label: "Faja 4",
+    value: "Faja 4",
+  },
+  {
+    label: "Pahuaypite",
+    value: "Pahuaypite",
+  },
+  {
+    label: "Labor a labor",
+    value: "Labor a labor",
+  },
+  {
+    label: "Relleno de trítico",
+    value: "Relleno de trítico",
+  },
+]
 

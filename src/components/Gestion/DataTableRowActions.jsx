@@ -20,6 +20,7 @@ import IconEdit from "@/icons/IconEdit";
 import { ModalCompany } from "./Company/CompanyModal";
 import { DetailsUser } from "./Users/DetailsUser";
 import { LaborModal } from "./Labor/LaborModal";
+import { CycleTruckModal } from "./CycleTruck/CycleTruckModal";
 
 export function DataTableRowActions({ componentToShow, row }) {
   const [open, setOpen] = useState(false);
@@ -88,6 +89,14 @@ export function DataTableRowActions({ componentToShow, row }) {
     ),
     enterprise: (
       <ModalCompany
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    cycleTruck: (
+      <CycleTruckModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}

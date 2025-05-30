@@ -254,7 +254,7 @@ export const NewPlanMonth = () => {
           {showLoader ? (
             <div className="text-center py-4 text-zinc-500 h-[60vh] flex items-center justify-center ">
               <span className="flex flex-col gap-2 items-center">
-                <IconLoader className="w-5 h-5 text-zinc-300 fill-primary animate-spin" />
+                <IconLoader className="w-5 h-5 " />
               </span>
             </div>
           ) : dataHotTable.length === 0 ? (

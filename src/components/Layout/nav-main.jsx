@@ -11,7 +11,7 @@ export function NavMain() {
   return (
     <nav className="h-screen hidden md:flex w-[300px] bg-[#000000] flex-col ">
       <div className="w-full px-6 flex justify-center items-center h-14 ">
-        <img src="/src/assets/logo-white.svg" alt="" className="h-7 " />
+        <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
       <div className="w-full flex-1 overflow-y-auto px-5 py-4 ">
         {paths.map((section) => (
