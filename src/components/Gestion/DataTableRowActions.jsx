@@ -16,6 +16,7 @@ import { ModalVehicle } from "./Vehicle/ModalVehicle";
 import { ModalCompany } from "./Company/CompanyModal";
 import { DetailsUser } from "./Users/DetailsUser";
 import { LaborModal } from "./Labor/LaborModal";
+import { DestinyModal } from "./Destiny/DestinyModal";
 
 export function DataTableRowActions({ componentToShow, row }) {
   const [open, setOpen] = useState(false);
@@ -68,6 +69,14 @@ export function DataTableRowActions({ componentToShow, row }) {
     ),
     frontLabor: (
       <LaborModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    destination: (
+      <DestinyModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}

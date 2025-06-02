@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { columns } from "@/components/Gestion/Labor/LaborTableColumns";
+import { columns } from "@/components/Gestion/Destiny/DestinyColumns";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import {

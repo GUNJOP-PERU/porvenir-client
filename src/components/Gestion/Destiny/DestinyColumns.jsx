@@ -52,23 +52,7 @@ export const columns = [
       );
     },
   },
-  {
-    accessorKey: "isNewLabor",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="isNewLabor" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <>
-          {row.getValue("isNewLabor") === true ? (
-            <span className="text-zinc-400 ">Nuevo </span>
-          ) : (
-            <span className="text-zinc-400 ">No </span>
-          ) }
-        </>
-      );
-    },
-  },
+  
 
   {
     accessorKey: "updatedAt",
@@ -115,7 +99,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"frontLabor"} row={row} />
+      <DataTableRowActions componentToShow={"destination"} row={row} />
     ),
     enableHiding: false,
   },
