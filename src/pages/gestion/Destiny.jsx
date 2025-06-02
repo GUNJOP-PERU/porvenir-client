@@ -3,7 +3,7 @@ import { columns } from "@/components/Gestion/Labor/LaborTableColumns";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import {
-  useFetchInfinityScroll,
+  useFetchData,
 } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
@@ -12,15 +12,13 @@ import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 
 function PageDestiny() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const {
-    data = [],
-    isFetching,
-    isLoading,
-    isError,
-    refetch,
-    fetchNextPage,
-    hasNextPage,
-  } = useFetchInfinityScroll("destiny", "destiny/items");
+ const {
+     data = [],
+     isFetching,
+     isLoading,
+     isError,
+     refetch,
+   } = useFetchData("destination", "destination");
   
   return (
     <>
@@ -60,12 +58,10 @@ function PageDestiny() {
       <DataTable
         data={data}
         columns={columns}
-        isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
-        fetchNextPage={fetchNextPage}
-        hasNextPage={hasNextPage}
         tableType={"destiny"}
+        isLoading={isLoading}
       />
       
       <DestinyModal

@@ -28,11 +28,6 @@ import { Input } from "../../ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
-  ruc: z.string().refine((value) => /^\d{11}$/.test(value), {
-    message: "*Debe tener 11 dígitos.",
-  }),
-  address: z.string().optional(),
-  description: z.string().optional(),
 });
 
 export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -64,7 +59,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   async function onSubmit(data) {
     await handleFormSubmit({
       isEdit,
-      endpoint: "destiny",
+      endpoint: "destination",
       id: dataCrud?._id,
       data,
       setLoadingGlobal,
@@ -107,7 +102,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Destino 1"
                       {...field}
                     />
                     <FormMessage />
@@ -135,7 +130,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 ) : (
                   <>
                     <IconToggle className="text-background w-4 h-4" />
-                    {isEdit ? "Actualizar" : "Crear"} Usuario
+                    {isEdit ? "Actualizar" : "Crear"} Destino
                   </>
                 )}
               </Button>
