@@ -6,7 +6,7 @@ import { columns } from "@/components/Gestion/CycleTruck/CycleTruckTableColumns"
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
-function PageCycle() {
+function PageCycleTruck() {
   const {
     data = [],
     isFetching,
@@ -57,4 +57,4 @@ function PageCycle() {
   );
 }
 
-export default PageCycle;
+export default PageCycleTruck;

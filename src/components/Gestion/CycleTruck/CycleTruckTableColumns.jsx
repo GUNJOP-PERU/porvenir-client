@@ -10,7 +10,6 @@ import IconNight from "@/icons/IconNight";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
-import { DataTableRowActions } from "../DataTableRowActions";
 
 export const columns = [
   {
@@ -182,12 +181,5 @@ export const columns = [
         </div>
       );
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"cycleTruck"} row={row} />
-    ),
-    enableHiding: false,
   },
 ];

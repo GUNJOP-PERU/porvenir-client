@@ -9,18 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ModalUser } from "./Users/ModalUser";
-import { ModalVehicle } from "./Vehicle/ModalVehicle";
-
-import { ModalWorkOrder } from "./WorkOrder/ModalWorkOrder";
-import { ModalChecklist } from "./Checklist/ChecklistModal";
 import { IconDelete } from "@/icons/IconDelete";
 import IconEdit from "@/icons/IconEdit";
-
+import { ModalUser } from "./Users/ModalUser";
+import { ModalVehicle } from "./Vehicle/ModalVehicle";
 import { ModalCompany } from "./Company/CompanyModal";
 import { DetailsUser } from "./Users/DetailsUser";
 import { LaborModal } from "./Labor/LaborModal";
-import { CycleTruckModal } from "./CycleTruck/CycleTruckModal";
 
 export function DataTableRowActions({ componentToShow, row }) {
   const [open, setOpen] = useState(false);
@@ -47,6 +42,14 @@ export function DataTableRowActions({ componentToShow, row }) {
   };
 
   const components = {
+    enterprise: (
+      <ModalCompany
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
     user: (
       <ModalUser
         isOpen={open}
@@ -71,38 +74,6 @@ export function DataTableRowActions({ componentToShow, row }) {
         isEdit={true}
       />
     ),
-    checklist: (
-      <ModalChecklist
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
-    workOrder: (
-      <ModalWorkOrder
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
-    enterprise: (
-      <ModalCompany
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
-    cycleTruck: (
-      <CycleTruckModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
   };
 
   return (
@@ -116,12 +87,7 @@ export function DataTableRowActions({ componentToShow, row }) {
             <MoreHorizontal className="rotate-90 text-zinc-400" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[150px]">
-          {/* <DropdownMenuItem onClick={() => handleDetailsModal(row.original)}>
-            <IconDetails className="h-5 w-5 text-gray-500" />
-            Ver detalles
-          </DropdownMenuItem> */}
-         
+        <DropdownMenuContent align="end" className="w-[150px]">         
          <DropdownMenuItem onClick={() => handleClick(row.original)}>
             <IconEdit className="h-5 w-5 stroke-black" />
             Editar detalles

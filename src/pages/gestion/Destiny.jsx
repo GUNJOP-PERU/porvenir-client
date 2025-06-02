@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
-import { LaborModal } from "../../components/Gestion/Labor/LaborModal";
+import { useState } from "react";
 import { columns } from "@/components/Gestion/Labor/LaborTableColumns";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import {
-  useFetchData,
   useFetchInfinityScroll,
 } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
-import { FileUp, RefreshCcw } from "lucide-react";
-import LaborImport from "@/components/Gestion/Labor/LaborImport";
+import { RefreshCcw } from "lucide-react";
+import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 
-function PageLabor() {
+function PageDestiny() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [importOpen, setImportOpen] = useState(false);
   const {
     data = [],
     isFetching,
@@ -23,21 +20,20 @@ function PageLabor() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = useFetchInfinityScroll("frontLabor", "frontLabor/items");
+  } = useFetchInfinityScroll("destiny", "destiny/items");
   
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">Gestión de Labor </h1>
+            <h1 className="text-xl font-bold leading-6">Gestión de Destino </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-fit  h-5 flex items-center justify-center px-1 font-bold ">
               {countItems(data || 0)}
             </span>{" "}
           </div>
           <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
+            Administre los destinos de sus vehículos aquí.
           </p>
         </div>
         <div className="flex gap-2">
@@ -49,15 +45,7 @@ function PageLabor() {
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          <Button
-            disabled={isFetching || isError}
-            onClick={() => setImportOpen(true)}
-            className="w-fit"
-            variant="outline"
-          >
-            <FileUp className="w-5 h-5 text-zinc-400" />
-            Importar
-          </Button>
+          
           <Button
             disabled={isFetching || isError}
             onClick={() => setDialogOpen(true)}
@@ -77,20 +65,16 @@ function PageLabor() {
         isError={isError}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
-        tableType={"frontLabors"}
+        tableType={"destiny"}
       />
       
-      <LaborModal
+      <DestinyModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
-      />
-      <LaborImport
-        isOpen={importOpen}
-        onClose={() => setImportOpen(false)}
-      />
+      />     
     </>
   );
 }
 
-export default PageLabor;
+export default PageDestiny;

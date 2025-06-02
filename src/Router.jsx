@@ -29,11 +29,12 @@ import PlanDay from "./pages/gestion/PlanDay";
 import { NewPlanMonth } from "./pages/gestion/NewPlanMonth";
 import PageCompany from "./pages/gestion/Company";
 import PageCycleScoop from "./pages/gestion/CycleScoop";
-import PageCycle from "./pages/gestion/CycleTruck";
+import PageCycleTruck from "./pages/gestion/CycleTruck";
 import PageActivityScoop from "./pages/gestion/ActivityScoop";
 import PageActivity from "./pages/gestion/ActivityTruck";
 import Configuration from "./pages/Configuration";
 import WorkerOrders from "./pages/gestion/WorkerOrders";
+import PageDestiny from "./pages/gestion/Destiny";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -47,10 +48,11 @@ const protectedRoutes = [
   { path: "planMonth", element: <PlanMonth /> },
   { path: "newPlanMonth", element: <NewPlanMonth /> },
   { path: "company", element: <PageCompany /> },
-  { path: "cycleTruck", element: <PageCycle /> },
+  { path: "cycleTruck", element: <PageCycleTruck /> },
   { path: "cycleScoop", element: <PageCycleScoop /> },
   { path: "activityTruck", element: <PageActivity /> },
   { path: "activityScoop", element: <PageActivityScoop /> },
+  { path: "destiny", element: <PageDestiny /> },
 
   //Dashboard
   { path: "dashboard/productionScoop", element: <ProductionScoop /> },
@@ -60,6 +62,8 @@ const protectedRoutes = [
   { path: "dashboard/paretoScoop", element: <ParetoScoop /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
   { path: "dashboard/productionUV", element: <Utilization /> },
+
+  //Configuración
   { path: "configuration", element: <Configuration /> },
 ];
 

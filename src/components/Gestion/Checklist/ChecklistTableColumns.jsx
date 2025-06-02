@@ -4,7 +4,6 @@ import clsx from "clsx";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
-import { DataTableRowActions } from "../DataTableRowActions";
 
 export const columns = [
   {
@@ -155,12 +154,5 @@ export const columns = [
         </div>
       );
     },
-  },
-  {
-    id: "actions",
-    header: "",
-    cell: ({ row }) => <DataTableRowActions componentToShow={"checklist"} row={row} />,
-    enableSorting: false,
-    enableHiding: false,
   },
 ];
