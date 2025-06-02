@@ -12,20 +12,20 @@ import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 
 function PageDestiny() {
   const [dialogOpen, setDialogOpen] = useState(false);
- const {
-     data = [],
-     isFetching,
-     isLoading,
-     isError,
-     refetch,
-   } = useFetchData("destination", "destination");
+  const {
+    data = [],
+    isFetching,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchData("destination", "destination");
   
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">Gestión de Destino </h1>
+            <h1 className="text-xl font-bold leading-6">Gestión de Destino</h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-fit  h-5 flex items-center justify-center px-1 font-bold ">
               {countItems(data || 0)}
             </span>{" "}

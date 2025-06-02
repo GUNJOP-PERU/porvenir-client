@@ -40,6 +40,7 @@ export function useHandleFormSubmit() {
   }) {
     try {
       setLoadingGlobal(true);
+      console.log(data)
       await mutation.mutateAsync({ isEdit, endpoint, id, data });
 
       if (onClose) onClose();

@@ -32,14 +32,14 @@ export const columns = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "isActive",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("status") === true ? (
+          {row.getValue("isActive") === true ? (
             <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
               activo
             </span>

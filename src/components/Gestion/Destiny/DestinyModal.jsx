@@ -28,6 +28,7 @@ import { Input } from "../../ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
+  isActive: z.boolean().optional(),
 });
 
 export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -39,6 +40,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: dataCrud?.name || "",
+      isActive: dataCrud?.isActive || true,
     },
   });
 
@@ -48,20 +50,26 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     if (dataCrud) {
       reset({
         name: dataCrud.name || "",
+        isActive: dataCrud.isActive || false,
       });
     } else {
       reset({
         name: "",
+        isActive: true,
       });
     }
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
+    console.log(data)
     await handleFormSubmit({
       isEdit,
       endpoint: "destination",
       id: dataCrud?._id,
-      data,
+      data: {
+        name: data.name,
+        isActive: data.isActive,
+      },
       setLoadingGlobal,
       onClose,
       reset,
@@ -105,6 +113,31 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       placeholder="Ej. Destino 1"
                       {...field}
                     />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="isActive"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center gap-2">
+                    <FormLabel>Habilitar</FormLabel>
+                    <button
+                      type="button"
+                      className={`relative w-10 h-6 rounded-full transition-colors duration-200 
+                        ${field.value ? 'bg-green-500' : 'bg-gray-300'}`}
+                      onClick={() => {console.log(field.value), field.onChange(!field.value)}}
+                      disabled={loadingGlobal}
+                      tabIndex={0}
+                      aria-checked={field.value}
+                      role="switch"
+                    >
+                      <span
+                        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200
+                          ${field.value ? 'translate-x-4' : ''}`}
+                      />
+                    </button>
                     <FormMessage />
                   </FormItem>
                 )}
