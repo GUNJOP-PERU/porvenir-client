@@ -8,14 +8,33 @@ const GlobalDataContext = createContext();
 
 export const GlobalDataProvider = ({ children }) => {
   const isAuth = useAuthStore((state) => state.isAuth);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({
+    globalMineral: [
+      { id: "683e2381b2f9cfb7b396170c", name: "Mineral", isActive: true, value:42 }
+    ],
+    activityAverage: [
+      { id: "6840796fb2f9cfb7b396185e", name: "Viaje Vacío", minDuration: 0, maxDuration: 3600 }
+    ]
+  });
   const lastRequest = useRef({ endpoint: null, params: null });
 
-  const fetchGlobalData = useCallback(async (endpoint, params) => {
+  const fetchMineralData = useCallback(async (endpoint, params) => {
     try {
       lastRequest.current = { endpoint, params };
       const response = await getDataRequest(endpoint, params);
-      setData(response);
+      setData((values) => ({...values, globalMineral: response.data}));
+      return response;
+    } catch (error) {
+      setData(null);
+      throw error;
+    }
+  }, []);
+
+  const fetchActivityAverageData = useCallback(async (endpoint, params) => {
+    try {
+      lastRequest.current = { endpoint, params };
+      const response = await getDataRequest(endpoint, params);
+      setData((values) => ({...values, activityAverage: response.data}));
       return response;
     } catch (error) {
       setData(null);
@@ -24,23 +43,25 @@ export const GlobalDataProvider = ({ children }) => {
   }, []);
 
   const refreshGlobalData = useCallback(async () => {
-    const { endpoint, params } = lastRequest.current;
-    if (!endpoint) return null;
-    return fetchGlobalData(endpoint, params);
-  }, [fetchGlobalData]);
+    fetchMineralData("mineral?isActive=active");
+    fetchActivityAverageData("activity-config?isActive=active");
+  }, [fetchMineralData, fetchActivityAverageData]);
 
   const clearData = useCallback(() => setData(null), []);
 
   useEffect(() => {
     if (isAuth) {
-      fetchGlobalData("mineral?isActive=active").catch((error) => {
+      fetchMineralData("mineral?isActive=active").catch((error) => {
         console.error("Error fetching global mineral data:", error);
       });
+      fetchActivityAverageData("activity-config?isActive=active").catch((error) => {
+        console.error("Error fetching activity config data:", error);
+      });
     }
-  },[isAuth, fetchGlobalData])
+  },[isAuth, fetchMineralData, fetchActivityAverageData]);
 
   return (
-    <GlobalDataContext.Provider value={{ data, setData, fetchGlobalData, refreshGlobalData, clearData }}>
+    <GlobalDataContext.Provider value={{ data, setData, fetchMineralData, refreshGlobalData, clearData }}>
       {children}
     </GlobalDataContext.Provider>
   )

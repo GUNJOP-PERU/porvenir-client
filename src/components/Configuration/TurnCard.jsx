@@ -24,8 +24,8 @@ const TurnConfiguration = () => {
   
 
   const fakeTemporalData = [
-    { id: 1, name: "Turno 1", startTime: 1749124800000, endTime: 1749168000000},
-    { id: 2, name: "Turno 2", startTime: 1749168000000, endTime: 1749124800000},
+    { id: 1, name: "Diurno", startTime: 1749124800000, endTime: 1749168000000},
+    { id: 2, name: "Nocturno", startTime: 1749168000000, endTime: 1749124800000},
   ]
 
   return (

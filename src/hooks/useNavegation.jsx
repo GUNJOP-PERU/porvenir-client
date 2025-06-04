@@ -46,12 +46,6 @@ export const useNavigation = () => {
             active: pathname === "/vehicle",
           },
           {
-            name: "Carga",
-            href: "/mineral-charge",
-            icon: <IconWeight className="w-4 h-4 " />,
-            active: pathname === "/mineral-charge",
-          },
-          {
             name: "Destino",
             href: "/destiny",
             icon: <IconActivity className="w-4 h-4 " />,

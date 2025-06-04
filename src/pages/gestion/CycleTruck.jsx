@@ -1,8 +1,9 @@
 import { RefreshCcw } from "lucide-react";
-import { DataTable } from "@/components/Gestion/DataTable";
+import { DataTable } from "@/components/Gestion/CycleTruck/DataTable";
 import { Button } from "../../components/ui/button";
 
 import { columns } from "@/components/Gestion/CycleTruck/CycleTruckTableColumns";
+import { activityColumns } from "@/components/Gestion/CycleTruck/CycleTruckActivitiesColumns";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
@@ -16,7 +17,7 @@ function PageCycleTruck() {
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("cycleTruck", "cycle/truck/items");
- 
+
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
@@ -38,21 +39,19 @@ function PageCycleTruck() {
           <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-         
-       
         </div>
       </div>
       <DataTable
-         data={data}
-         columns={columns}
-         isLoading={isLoading}
-         isFetching={isFetching}
-         isError={isError}
-         fetchNextPage={fetchNextPage}
-         hasNextPage={hasNextPage}
-        tableType={"cycles"}
+        data={data}
+        columns={columns}
+        activityColumns={activityColumns}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+      tableType={"cycles"}
       />
-     
     </>
   );
 }

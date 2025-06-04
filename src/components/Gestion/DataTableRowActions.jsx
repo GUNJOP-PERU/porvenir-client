@@ -18,8 +18,9 @@ import { DetailsUser } from "./Users/DetailsUser";
 import { LaborModal } from "./Labor/LaborModal";
 import { DestinyModal } from "./Destiny/DestinyModal";
 import { MineralChargeModal } from "../Configuration/Modal/MineralChargeModal";
+import { ActivityAverageModal } from "../Configuration/Modal/ActivityAverageModal";
 
-export function DataTableRowActions({ componentToShow, row }) {
+export function DataTableRowActions({ componentToShow, row, deleteModal = true }) {
   const [open, setOpen] = useState(false);
   const [deleModal, setDeleteModal] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
@@ -91,6 +92,14 @@ export function DataTableRowActions({ componentToShow, row }) {
         dataCrud={rowData}
         isEdit={true}
       />
+    ),
+    "activity-config": (
+      <ActivityAverageModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
     )
   };
 
@@ -111,13 +120,15 @@ export function DataTableRowActions({ componentToShow, row }) {
             Editar detalles
           </DropdownMenuItem>         
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-red-500 focus:text-red-500"
-            onClick={() => handleDeleteModal(row.original)}
-          >
-            <IconDelete className="h-5 w-5 text-red-600" />
-            Eliminar
-          </DropdownMenuItem>
+          {deleteModal && (
+            <DropdownMenuItem
+              className="text-red-500 focus:text-red-500"
+              onClick={() => handleDeleteModal(row.original)}
+            >
+              <IconDelete className="h-5 w-5 text-red-600" />
+              Eliminar
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       {open && components[componentToShow]}
