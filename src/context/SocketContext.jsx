@@ -3,10 +3,12 @@ import { io } from "socket.io-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { createRouteMap } from "@/hooks/routeMap";
 import { useAuthStore } from "@/store/AuthStore";
+import { useToast } from "@/hooks/useToaster";
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
+  const { addToast } = useToast();
   const isAuth = useAuthStore((state) => state.isAuth);
   const [socket, setSocket] = useState(null);
   const queryClient = useQueryClient();
@@ -45,7 +47,13 @@ export const SocketProvider = ({ children }) => {
       }
 
       // console.log(`📡 Nuevo dato en ${topic}:`, newData);
-
+      if (topic === "checklist/alert") {
+        addToast({
+          title: "CheckList Advertencia",
+          message: "Se ha detectado un error en el app al seleccionar un checklist.",
+          variant: "destructive",
+        });
+      }
       // Acumulamos en el buffer
       batchUpdatesRef.updates.push({ topic, newData });
 
@@ -87,7 +95,7 @@ export const SocketProvider = ({ children }) => {
     }
   }, [isAuth, topics, handleNewData]); // ✅ Ahora `handleNewData` y `topics` son estables
 
-  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
+  return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
 
 // Hook para acceder al socket en otros componentes

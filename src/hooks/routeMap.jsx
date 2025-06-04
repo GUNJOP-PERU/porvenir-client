@@ -1,6 +1,8 @@
 export const createRouteMap = (queryClient) => {
   // 🛠️ Definir tópicos que solo actualizan la caché sin lógica extra
   const simpleTopics = {
+    //CheckList Message
+    "checklist/alert": [],
     //CardGuage
     "progress-shift": ["shift-variable", "progress-shift"],
     //Page Truck

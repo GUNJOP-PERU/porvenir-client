@@ -1,4 +1,3 @@
-
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import calendar from "dayjs/plugin/calendar";
@@ -72,3 +71,9 @@ export function formatThousands(value) {
   return value >= 1000 ? (value / 1000).toFixed(1) + "<small>k</small>" : value;
 }
 
+export function getHoursBetween(start, end) {
+  const startMs = start instanceof Date ? start.getTime() : Number(start);
+  const endMs = end instanceof Date ? end.getTime() : Number(end);
+  const totalHours = Math.abs((endMs - startMs) / (1000 * 60 * 60));
+  return totalHours.toFixed(2); // Retorna las horas con dos decimales, siempre positivo
+}

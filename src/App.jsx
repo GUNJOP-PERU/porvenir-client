@@ -1,6 +1,6 @@
-
 import { ToastProvider } from "./hooks/useToaster";
 import { SocketProvider } from "./context/SocketContext";
+import { GlobalDataProvider } from "./context/GlobalDataContext";
 import Router from "./Router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
@@ -17,11 +17,13 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SocketProvider>
-        <ToastProvider>
-          <Router />
-        </ToastProvider>
-      </SocketProvider>
+      <ToastProvider>
+        <SocketProvider>
+          <GlobalDataProvider>
+            <Router />
+          </GlobalDataProvider>
+        </SocketProvider>
+      </ToastProvider>
     </QueryClientProvider>
   );
 }

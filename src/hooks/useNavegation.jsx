@@ -16,6 +16,7 @@ import IconDash4 from "@/icons/Dashboard/IconDash4";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
+import IconWeight from "@/icons/Dashboard/IconWeight";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -43,6 +44,12 @@ export const useNavigation = () => {
             href: "/vehicle",
             icon: <IconVehicle className="w-4 h-4 " />,
             active: pathname === "/vehicle",
+          },
+          {
+            name: "Carga",
+            href: "/mineral-charge",
+            icon: <IconWeight className="w-4 h-4 " />,
+            active: pathname === "/mineral-charge",
           },
           {
             name: "Destino",
