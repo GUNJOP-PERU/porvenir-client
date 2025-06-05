@@ -50,7 +50,7 @@ function PageCycleTruck() {
         isError={isError}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
-      tableType={"cycles"}
+        tableType={"cycles"}
       />
     </>
   );

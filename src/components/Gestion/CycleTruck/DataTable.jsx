@@ -27,6 +27,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { tableConfigs } from "@/components/Gestion/DataTableConfig";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SkeletonWrapper from "@/components/SkeletonWrapper";
+import { useGlobalData } from "@/context/GlobalDataContext";
 
 export function DataTable({
   columns,
@@ -44,6 +45,7 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]); // IDs de filas expandidas
+  const { data: globalData } = useGlobalData();
 
   const parentRef = useRef();
 
@@ -226,7 +228,7 @@ export function DataTable({
                         row.original.activities.map((subRow, subIdx) => (
                           <TableRow key={row.id + "-sub-" + subIdx} className="bg-zinc-50">
                             <TableCell style={{ width: 40 }} />
-                            {activityColumns.map((col, colIdx) => {
+                            {activityColumns(globalData).map((col, colIdx) => {
                               return (
                                 <TableCell key={colIdx}>
                                   {col.cell
