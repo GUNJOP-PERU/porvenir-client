@@ -13,7 +13,8 @@ export const PlanContent = ({
   setDataHotTable,
   dataLaborList,
   loadingGlobal,
-  setInvalidLabors
+  setInvalidLabors,
+  heightSize = "normal"
 }) => {
  
 
@@ -53,6 +54,9 @@ export const PlanContent = ({
       className={clsx("h-[60vh] z-0", {
         "pointer-events-none opacity-50 cursor-not-allowed": loadingGlobal,
       })}
+      style={{
+        height: heightSize === "normal" ? "60vh" : "200px",
+      }}
     >
       <HotTable
         data={dataHotTable}

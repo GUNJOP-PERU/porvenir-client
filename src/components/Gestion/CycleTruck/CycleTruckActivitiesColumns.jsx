@@ -16,26 +16,49 @@ import { getHoursBetween } from "@/lib/utilsGeneral";
 export const activityColumns = (globalData) => {
   return ([
     {
-      accessorKey: "activityName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Actividad" />
+      accessorKey: "id",
+      header: "#",
+      cell: ({ row }) => (
+        <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
       ),
-      cell: ({ row }) => (<></>),
+      enableSorting: false,
+      enableHiding: false,
     },
     {
-      accessorKey: "user",
+      accessorKey: "activityName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Nombre" />
+        <DataTableColumnHeader
+          column={column}
+          title="Actividad"
+          accessorKey="activityName"
+        />
       ),
       cell: ({ row }) => {
         return (
           <div className="flex items-center space-x-2">
+            <div
+              className={clsx(
+                "w-8 h-8 rounded-[10px]  flex items-center justify-center",
+                {
+                  "bg-green-500": row.original?.type_activity === "productive",
+                  "bg-red-500": row.original?.type_activity === "no productive",
+                }
+              )}
+            >
+              <span className="text-zinc-50 font-bold">
+                {" "}
+                {row.original?.code_activity}
+              </span>
+            </div>
             <div className="flex flex-col justify-center gap-0.5">
-              <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-                {row.original?.activityName}
+              <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate max-w-[120px]">
+                {row.getValue("activityName")}
               </h4>
+              <span className="text-[12px] leading-3 text-black md:inline ">
+                {row.original?.activityName}
+              </span>
               <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-                {row.getValue("user")}
+                {row.original?.type_activity}
               </span>
             </div>
           </div>
