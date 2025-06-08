@@ -5,14 +5,11 @@ import { Button } from "@/components/ui/button";
 import {
   useFetchData,
 } from "@/hooks/useGlobalQuery";
-import IconMore from "@/icons/IconMore";
 import { countItems } from "@/lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
-import { MineralChargeModal } from "./Modal/MineralChargeModal";
 import { useGlobalData } from "@/context/GlobalDataContext";
 
 const TurnConfiguration = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const { refreshGlobalData } = useGlobalData()
   const {
     data = [],
@@ -20,13 +17,9 @@ const TurnConfiguration = () => {
     isLoading,
     isError,
     refetch
-  } = useFetchData("mineral", "mineral");
+  } = useFetchData("shift", "shift");
   
-
-  const fakeTemporalData = [
-    { id: 1, name: "Diurno", startTime: 1749124800000, endTime: 1749168000000},
-    { id: 2, name: "Nocturno", startTime: 1749168000000, endTime: 1749124800000},
-  ]
+  console.log("shift", data)
 
   return (
     <>
@@ -57,18 +50,12 @@ const TurnConfiguration = () => {
       </div>
     
       <DataTable
-        data={fakeTemporalData}
+        data={data}
         columns={columns}
         isFetching={isFetching}
         isError={isError}
         tableType={"mineral-charge"}
         isLoading={isLoading}
-      />
-      
-      <MineralChargeModal
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
       />
     </>
   );

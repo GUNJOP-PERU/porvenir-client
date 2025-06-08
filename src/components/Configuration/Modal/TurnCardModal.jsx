@@ -28,12 +28,12 @@ import { Input } from "../../ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
-  isActive: z.boolean().optional(),
-  value: z.number({ invalid_type_error: "*Debe ser un número" })
-    .min(0, { message: "*Valor debe ser mayor o igual a 0" }),
+  hours: z.number({ invalid_type_error: "*Debe ser un número" })
+    .min(0, { message: "*Valor debe ser mayor o igual a 0" })
+    .max(23, { message: "*Valor debe ser menor o igual a 23" })
 });
 
-export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
+export const TurnCardModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
   const handleFormSubmit = useHandleFormSubmit();
@@ -42,8 +42,7 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: dataCrud?.name || "",
-      isActive: dataCrud?.isActive || true,
-      value: dataCrud?.value || 0,
+      hours: dataCrud?.hours || 0,
     },
   });
 
@@ -53,14 +52,12 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     if (dataCrud) {
       reset({
         name: dataCrud.name || "",
-        isActive: dataCrud.isActive || false,
-        value: dataCrud.value || 0
+        hours: dataCrud.hours || 0
       });
     } else {
       reset({
         name: "",
-        isActive: true,
-        value: 0
+        hours: 7
       });
     }
   }, [dataCrud, reset]);
@@ -68,12 +65,11 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   async function onSubmit(data) {
     await handleFormSubmit({
       isEdit,
-      endpoint: "mineral",
+      endpoint: "shift",
       id: dataCrud?._id,
       data: {
         name: data.name,
-        isActive: data.isActive,
-        value: data.value,
+        hours: data.hours,
       },
       setLoadingGlobal,
       onClose,
@@ -96,9 +92,9 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
             </div>
             <div>
-              <DialogTitle>{isEdit ? "Editar" : "Crear"} Mineral</DialogTitle>
+              <DialogTitle>{isEdit ? "Editar" : "Crear"} Turno</DialogTitle>
               <DialogDescription>
-                Agregue un nuevo mineral
+                Edite las horas de corte de los turnos de trabajo,
               </DialogDescription>
             </div>
           </div>
@@ -111,11 +107,11 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Nombre del Mineral</FormLabel>
+                    <FormLabel>Nombre del Turno</FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Mineral A"
+                      placeholder="Ej. Destino 1"
                       {...field}
                     />
                     <FormMessage />
@@ -124,10 +120,10 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
               />
               <FormField
                 control={control}
-                name="value"
+                name="hours"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Carga en toneladas</FormLabel>
+                    <FormLabel>Hora de inicio (corte)</FormLabel>
                     <Input
                       type="number"
                       disabled={loadingGlobal}
@@ -135,31 +131,6 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       {...field}
                       onChange={e => field.onChange(parseInt(e.target.value))}
                     />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center gap-2">
-                    <FormLabel>Habilitar</FormLabel>
-                    <button
-                      type="button"
-                      className={`relative w-10 h-6 rounded-full transition-colors duration-200 
-                        ${field.value ? 'bg-green-500' : 'bg-gray-300'}`}
-                      onClick={() => {console.log(field.value), field.onChange(!field.value)}}
-                      disabled={loadingGlobal}
-                      tabIndex={0}
-                      aria-checked={field.value}
-                      role="switch"
-                    >
-                      <span
-                        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200
-                          ${field.value ? 'translate-x-4' : ''}`}
-                      />
-                    </button>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -185,7 +156,7 @@ export const MineralChargeModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 ) : (
                   <>
                     <IconToggle className="text-background w-4 h-4" />
-                    {isEdit ? "Actualizar" : "Crear"} mineral
+                    {isEdit ? "Actualizar" : "Crear"} 
                   </>
                 )}
               </Button>

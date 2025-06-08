@@ -34,55 +34,18 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Hora de Inicio" />
     ),
     cell: ({ row }) => {
+      const hour = row.original.hours;
+      const formatted = hour.toString().padStart(2, "0") + ":00";
       return (
         <div className="flex items-center gap-2">
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatHour(row.original.startTime, "es")}
+              {formatted}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               Hora de inicio
             </span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "endTime",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Hora de Inicio" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatHour(row.original.endTime, "es")}
-            </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              Hora de fin
-            </span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "duration",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Duración" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {getHoursBetween(row.original.startTime, row.original.endTime)} hrs
-            </h4>
           </div>
         </div>
       );
@@ -112,7 +75,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"mineral"} row={row} />
+      <DataTableRowActions componentToShow={"shift"} row={row} />
     ),
     enableHiding: false,
   },

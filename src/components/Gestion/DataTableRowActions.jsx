@@ -20,6 +20,7 @@ import { DestinyModal } from "./Destiny/DestinyModal";
 import { MineralChargeModal } from "../Configuration/Modal/MineralChargeModal";
 import { ActivityAverageModal } from "../Configuration/Modal/ActivityAverageModal";
 import { EditPlanMonthModal } from "./PlanMonth/EditPlanMonthModal";
+import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
 
 export function DataTableRowActions({ componentToShow, row, deleteModal = true }) {
   const [open, setOpen] = useState(false);
@@ -104,6 +105,14 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
     ),
     planMonth: (
       <EditPlanMonthModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    shift: (
+      <TurnCardModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
