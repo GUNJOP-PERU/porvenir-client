@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/useToaster";
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
-  const { addToast } = useToast();
+  const { addToastFS } = useToast();
   const isAuth = useAuthStore((state) => state.isAuth);
   const [socket, setSocket] = useState(null);
   const queryClient = useQueryClient();
@@ -48,9 +48,12 @@ export const SocketProvider = ({ children }) => {
 
       // console.log(`📡 Nuevo dato en ${topic}:`, newData);
       if (topic === "checklist/alert") {
-        addToast({
+        addToastFS({
           title: "CheckList Advertencia",
+          subTitle: `Usuario: ${newData.user} | Vehículo: ${newData.vehicle}`,
+          date: new Date(newData.date).toLocaleString(),
           message: "Se ha detectado un error en el app al seleccionar un checklist.",
+          list: newData.badCriticalItems.map((item) => `${item.text} <br/> Estado: ${item.state} - (${item.isCritical ? "Crítico" : "No Crítico"})`),
           variant: "destructive",
         });
       }

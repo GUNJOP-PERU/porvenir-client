@@ -75,7 +75,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"shift"} row={row} />
+      <DataTableRowActions componentToShow={"shift"} row={row} deleteModal={false}/>
     ),
     enableHiding: false,
   },
