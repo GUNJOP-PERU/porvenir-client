@@ -26,13 +26,6 @@ export const activityColumns = (globalData) => {
     },
     {
       accessorKey: "activityName",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Actividad"
-          accessorKey="activityName"
-        />
-      ),
       cell: ({ row }) => {
         return (
           <div className="flex items-center space-x-2">
@@ -51,9 +44,6 @@ export const activityColumns = (globalData) => {
               </span>
             </div>
             <div className="flex flex-col justify-center gap-0.5">
-              <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate max-w-[120px]">
-                {row.getValue("activityName")}
-              </h4>
               <span className="text-[12px] leading-3 text-black md:inline ">
                 {row.original?.activityName}
               </span>

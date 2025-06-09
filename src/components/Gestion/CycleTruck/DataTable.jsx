@@ -165,8 +165,8 @@ export function DataTable({
         searchColumns={searchColumns}
         filters={filters}
       />
-      <div ref={parentRef} style={{ overflowY: "auto", height: "80vh", padding:"10px" }}>
-        <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+      <div ref={parentRef} style={{ overflowY: "hidden", height: "80vh", padding:"10px" }}>
+        <div style={{ height: "100%", overflowY: "auto" }}>
           <Table>
             <TableHeader className="">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -203,7 +203,7 @@ export function DataTable({
                         key={row.id}
                         style={{
                           height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                          // transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
                         }}
                       >
                         <TableCell style={{ width: 40 }}>
