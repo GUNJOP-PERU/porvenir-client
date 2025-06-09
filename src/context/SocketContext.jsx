@@ -48,12 +48,13 @@ export const SocketProvider = ({ children }) => {
 
       // console.log(`📡 Nuevo dato en ${topic}:`, newData);
       if (topic === "checklist/alert") {
+        const topicData = JSON.parse(newData);
         addToastFS({
           title: "CheckList Advertencia",
-          subTitle: `Usuario: ${newData.user} | Vehículo: ${newData.vehicle}`,
-          date: new Date(newData.date).toLocaleString(),
+          subTitle: `Usuario: ${topicData.user} | Vehículo: ${topicData.vehicle}`,
+          date: new Date(topicData.date).toLocaleString(),
           message: "Se ha detectado un error en el app al seleccionar un checklist.",
-          list: newData.badCriticalItems.map((item) => `${item.text} <br/> Estado: ${item.state} - (${item.isCritical ? "Crítico" : "No Crítico"})`),
+          list: topicData.badCriticalItems.map((item) => `${item.text} <br/> Estado: ${item.state} - (${item.isCritical ? "Crítico" : "No Crítico"})`),
           variant: "destructive",
         });
       }

@@ -45,15 +45,15 @@ export function ToastProvider({ children }) {
 
   const addToastFS = ({
     title,
-    subtitle,
+    subTitle,
     date,
     message,
     list,
     variant = "default"
   }) => {
-    setToastFS({ title, subtitle, date, message, list, variant });
+    setToastFS({ title, subTitle, date, message, list, variant });
     setVisible(true);
-
+    
     if (toastTimer) clearTimeout(toastTimer);
 
     toastTimer = setTimeout(() => {
@@ -102,7 +102,7 @@ export function ToastProvider({ children }) {
         </div>
       )}
       {toastFS && (
-        <div className="fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50">
+        <div className={visible ? "fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50" : "hidden"}>
           <div
             className={`${toastVariants({ variant: toastFS.variant })} max-w-[500px] ${
               visible ? "error-visible" : "error-hidden"
