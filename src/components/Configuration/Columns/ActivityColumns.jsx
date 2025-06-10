@@ -37,8 +37,8 @@ export const activityColumns = [
         <div className="flex items-center gap-2">
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {(row.original.minDuration / 3600).toFixed(2)} hrs
+            <h4 className="text-[12.5px] font-semibold leading-4 flex">
+              {(row.original.minDuration / 60).toFixed(2)} min
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               Duración Minima
@@ -50,7 +50,7 @@ export const activityColumns = [
   },
   {
     accessorKey: "maxDuration",
-    header: ({ column }) => (
+    header: ({ column }) => ( 
       <DataTableColumnHeader column={column} title="Duración maxima" />
     ),
     cell: ({ row }) => {
@@ -58,8 +58,8 @@ export const activityColumns = [
         <div className="flex items-center gap-2">
           {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {(row.original.maxDuration / 3600).toFixed(2)} hrs
+            <h4 className="text-[12.5px] font-semibold leading-4 flex">
+              {(row.original.maxDuration / 60).toFixed(2)} min
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               Duración maxima

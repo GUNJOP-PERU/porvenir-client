@@ -61,12 +61,12 @@ export const activityColumns = (globalData) => {
       cell: ({ row }) => {
         return (
           <div className="flex flex-col gap-1 text-xs">
-              <span className="max-w-[500px] truncate font-medium leading-3">
+              {/* <span className="max-w-[500px] truncate font-medium leading-3">
               <strong>Origen: </strong> {row.getValue("frontLabor")}
             </span>
               <span className="max-w-[500px] truncate font-medium leading-3">
               <strong>Destino:</strong> {row.original.destiny ? row.original.destiny : "---"}
-            </span>      
+            </span>       */}
           </div>
         );
       },

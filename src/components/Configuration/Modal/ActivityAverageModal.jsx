@@ -57,8 +57,8 @@ export const ActivityAverageModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     if (dataCrud) {
       reset({
         name: dataCrud?.name || "",
-        minDuration: parseFloat(dataCrud?.minDuration / 3600) || 0,
-        maxDuration: parseFloat(dataCrud?.maxDuration / 3600) || 0,
+        minDuration: parseFloat(dataCrud?.minDuration / 60) || 0,
+        maxDuration: parseFloat(dataCrud?.maxDuration / 60) || 0,
       });
     } else {
       reset({
@@ -76,8 +76,8 @@ export const ActivityAverageModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       id: dataCrud?._id,
       data: {
         name: data.name,
-        minDuration: data.minDuration * 3600,
-        maxDuration: data.maxDuration * 3600,
+        minDuration: data.minDuration * 60,
+        maxDuration: data.maxDuration * 60,
       },
       setLoadingGlobal,
       onClose,
@@ -131,7 +131,7 @@ export const ActivityAverageModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="minDuration"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Duración minima(hrs)</FormLabel>
+                    <FormLabel>Duración minima(min)</FormLabel>
                     <Input
                       type="number"
                       disabled={loadingGlobal}
@@ -148,7 +148,7 @@ export const ActivityAverageModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="maxDuration"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Duración maxima(hrs)</FormLabel>
+                    <FormLabel>Duración maxima(min)</FormLabel>
                     <Input
                       type="number"
                       disabled={loadingGlobal}
