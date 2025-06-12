@@ -2,19 +2,21 @@ import { useGraphicData } from "@/hooks/useGraphicData";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highcharts.src.js";
 import highchartsHeatmap from "highcharts/modules/heatmap";
-import React, { useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 
 // Inicializar los módulos
 if (typeof highchartsHeatmap === "function") {
   highchartsHeatmap(Highcharts);
 }
 
-const CardHeatMap = React.memo(() => {
+const CardHeatMap = () => {
   const {
     data = [],
     isLoading,
     isError,
   } = useGraphicData("truck-heatmap","dashboard/truck/heatmap", "shift-variable" );
+
+  console.log("heatmap", data)
 
   const chartRef = useRef(null); // Referencia al gráfico
 
@@ -170,6 +172,6 @@ const CardHeatMap = React.memo(() => {
       />
     </div>
   );
-});
+};
 
 export default CardHeatMap;

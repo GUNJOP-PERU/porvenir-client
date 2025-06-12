@@ -27,7 +27,7 @@ function PageActivity() {
     "activityTruck",
     "activity/truck/items",
     12,
-    `vehicle=${search}&shift=${shift}&date=${format(new Date(date), "yyyy-MM-dd")}`
+    `vehicle=${search}&shift=${shift}&date=${date}`
   );
 
   useEffect(() => {
