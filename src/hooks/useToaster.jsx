@@ -29,6 +29,7 @@ export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
   const [toastFS, setToastFS] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [visibleFS, setVisibleFS] = useState(false);
   let toastTimer = null;
 
   const addToast = ({ title, message, variant = "default" }) => {
@@ -52,13 +53,13 @@ export function ToastProvider({ children }) {
     variant = "default"
   }) => {
     setToastFS({ title, subTitle, date, message, list, variant });
-    setVisible(true);
+    setVisibleFS(true);
     
     if (toastTimer) clearTimeout(toastTimer);
 
     toastTimer = setTimeout(() => {
-      setVisible(false);
-      setTimeout(() => setToast(null), 300);
+      setVisibleFS(false);
+      setTimeout(() => setToastFS(null), 300);
     }, 30000);
   };
 
@@ -102,10 +103,10 @@ export function ToastProvider({ children }) {
         </div>
       )}
       {toastFS && (
-        <div className={visible ? "fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50" : "hidden"}>
+        <div className={visibleFS ? "fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50" : "hidden"}>
           <div
             className={`${toastVariants({ variant: toastFS.variant })} max-w-[500px] ${
-              visible ? "error-visible" : "error-hidden"
+              visibleFS ? "error-visible" : "error-hidden"
             } error-login`}
           >
             {/* 🔥 Aquí cambia el icono según el tipo de Toast */}

@@ -18,11 +18,11 @@ export function useFetchData(queryKey, endpoint) {
   });
 }
 
-export function useFetchInfinityScroll(queryKey, endpoint, limit = 12) {
+export function useFetchInfinityScroll(queryKey, endpoint, limit = 12, filters = "") {
   return useInfiniteQuery({
     queryKey: ["crud",queryKey],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await getDataRequest(`${endpoint}?page=${pageParam}&limit=${limit}`);
+      const response = await getDataRequest(`${endpoint}?page=${pageParam}&limit=${limit}&${filters}`);
       return response;
     },
     getNextPageParam: (lastPage) => {

@@ -225,7 +225,7 @@ export function DataTable({
                         ))}
                       </TableRow>
                       {isExpanded && Array.isArray(row.original.activities) && row.original.activities.length > 0 && (
-                        row.original.activities.map((subRow, subIdx) => (
+                        row.original.activities.filter((activity) => activity.type_activity === "productive").map((subRow, subIdx) => (
                           <TableRow key={row.id + "-sub-" + subIdx} className="bg-zinc-50">
                             <TableCell style={{ width: 40 }} />
                             {activityColumns(globalData).map((col, colIdx) => {
