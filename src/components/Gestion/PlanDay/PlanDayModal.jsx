@@ -150,6 +150,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
         queryClient.invalidateQueries({ queryKey: ["crud", "planDay"] });
+        setDataHotTable([]);
       } else {
         alert("Error al enviar los datos.");
       }
