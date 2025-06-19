@@ -3,30 +3,30 @@ import { useState } from "react";
 import { DataTable } from "../../components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { countItems } from "@/lib/utilsGeneral";
-import { columns } from "../../components/Gestion/PlanDay/PlanDayTableColumns";
+import { columns } from "@/components/Gestion/Incidence/IncidenceColumns";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
+import { IncidenceModal } from "@/components/Gestion/Incidence/IncidenceModal";
 
 
-function PlanWeek() {
+function Incidence() {
   const { data = [],  isFetching,
     isError,
-    refetch } = useFetchData("planDay", "planDay");
+    refetch } = useFetchData("vehicle-incidence", "vehicle-incidence");
   const [dialogOpen, setDialogOpen] = useState(false);
 
 
   return (
     <>
-     <div className="flex flex-wrap gap-2 justify-between">
+      <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">Gestión de Plan Semanal</h1>
+            <h1 className="text-xl font-bold leading-6">Incidencias del Truck | Scoop</h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
               {countItems(data)}
             </span>{" "}
           </div>
           <p className="text-zinc-400 text-xs">
-            Administre los planes y sus caractestisticas.
+            Administre las incidencias de los vehículos.
           </p>
         </div>
         <div className="flex gap-2">
@@ -42,7 +42,7 @@ function PlanWeek() {
       </div>
       <DataTable data={data} columns={columns}  isFetching={isFetching}
         isError={isError}/>
-      <ModalPlanMonth
+      <IncidenceModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
@@ -51,4 +51,4 @@ function PlanWeek() {
   );
 }
 
-export default PlanWeek;
+export default Incidence;

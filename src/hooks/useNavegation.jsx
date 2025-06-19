@@ -106,7 +106,12 @@ export const useNavigation = () => {
             icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/activityScoop",
           },
-         
+          {
+            name: "Incidencias Truck | Scoop",
+            href: "/incidence",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/incidence",
+          },
         ],
       },
       {

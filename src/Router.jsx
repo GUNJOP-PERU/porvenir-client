@@ -35,6 +35,8 @@ import PageActivity from "./pages/gestion/ActivityTruck";
 import Configuration from "./pages/Configuration";
 import WorkerOrders from "./pages/gestion/WorkerOrders";
 import PageDestiny from "./pages/gestion/Destiny";
+import Incidence from "./pages/gestion/Incidences";
+import PlanWeek from "./pages/gestion/PlanWeek";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -46,6 +48,7 @@ const protectedRoutes = [
   { path: "checklist", element: <Checklist /> },
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
+  { path: "planWeek", element: <PlanWeek /> },
   { path: "newPlanMonth", element: <NewPlanMonth /> },
   { path: "company", element: <PageCompany /> },
   { path: "cycleTruck", element: <PageCycleTruck /> },
@@ -53,6 +56,7 @@ const protectedRoutes = [
   { path: "activityTruck", element: <PageActivity /> },
   { path: "activityScoop", element: <PageActivityScoop /> },
   { path: "destiny", element: <PageDestiny /> },
+  { path: "incidence", element: <Incidence /> },
 
   //Dashboard
   { path: "dashboard/productionScoop", element: <ProductionScoop /> },

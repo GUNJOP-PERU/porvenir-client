@@ -21,6 +21,7 @@ import { MineralChargeModal } from "../Configuration/Modal/MineralChargeModal";
 import { ActivityAverageModal } from "../Configuration/Modal/ActivityAverageModal";
 import { EditPlanMonthModal } from "./PlanMonth/EditPlanMonthModal";
 import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
+import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
 
 export function DataTableRowActions({ componentToShow, row, deleteModal = true }) {
   const [open, setOpen] = useState(false);
@@ -113,6 +114,14 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
     ),
     shift: (
       <TurnCardModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    incidence: (
+      <IncidenceEditModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
