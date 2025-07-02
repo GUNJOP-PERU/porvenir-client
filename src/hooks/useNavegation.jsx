@@ -112,6 +112,18 @@ export const useNavigation = () => {
             icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/incidence",
           },
+          {
+            name: "Ubicaciones",
+            href: "/ubications",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/ubications",
+          },
+          {
+            name: "Beacon",
+            href: "/beacon",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/beacon",
+          },
         ],
       },
       {

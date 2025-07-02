@@ -22,6 +22,7 @@ import { ActivityAverageModal } from "../Configuration/Modal/ActivityAverageModa
 import { EditPlanMonthModal } from "./PlanMonth/EditPlanMonthModal";
 import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
 import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
+import { BeaconModal } from "./Beacon/BeaconModal";
 
 export function DataTableRowActions({ componentToShow, row, deleteModal = true }) {
   const [open, setOpen] = useState(false);
@@ -127,7 +128,15 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
         dataCrud={rowData}
         isEdit={true}
       />
-    )
+    ),
+    beacon: (
+      <BeaconModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
   };
 
   return (

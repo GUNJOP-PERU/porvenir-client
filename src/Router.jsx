@@ -37,6 +37,8 @@ import WorkerOrders from "./pages/gestion/WorkerOrders";
 import PageDestiny from "./pages/gestion/Destiny";
 import Incidence from "./pages/gestion/Incidences";
 import PlanWeek from "./pages/gestion/PlanWeek";
+import PageUbications from "./pages/gestion/Ubication";
+import PageBeacon from "./pages/gestion/Beacon";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -57,6 +59,8 @@ const protectedRoutes = [
   { path: "activityScoop", element: <PageActivityScoop /> },
   { path: "destiny", element: <PageDestiny /> },
   { path: "incidence", element: <Incidence /> },
+  { path: "ubications", element: <PageUbications /> },
+  { path: "beacon", element: <PageBeacon /> },
 
   //Dashboard
   { path: "dashboard/productionScoop", element: <ProductionScoop /> },

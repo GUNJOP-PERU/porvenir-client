@@ -43,6 +43,11 @@ export function countItems(data) {
   return Array.isArray(data) ? data.length : 0;
 }
 
+export function countItemsByType(data, selectedType) {
+  if (!data || !selectedType) return 0;
+  return data[selectedType]?.length || 0;
+}
+
 export function getYearFromFecha(dateString) {
   const date = dayjs(dateString);
 

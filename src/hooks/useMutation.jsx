@@ -23,7 +23,7 @@ export function useHandleFormSubmit() {
       console.error("Error en la solicitud:", error);
       addToast({
         title: variables.isEdit ? "Error al editar" : "Error al crear",
-        message: "Revise la información e intente nuevamente.",
+        message: error.response.data.message || "Revise la información e intente nuevamente.",
         variant: "destructive",
       });
     },
@@ -41,7 +41,6 @@ export function useHandleFormSubmit() {
   }) {
     try {
       setLoadingGlobal(true);
-      console.log(data)
       await mutation.mutateAsync({ isEdit,postId, endpoint, id, data });
 
       if (onClose) onClose();
