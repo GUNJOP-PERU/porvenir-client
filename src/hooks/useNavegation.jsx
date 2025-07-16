@@ -124,6 +124,12 @@ export const useNavigation = () => {
             icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/beacon",
           },
+          {
+            name: "WAP",
+            href: "/wap",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/wap",
+          },
         ],
       },
       {

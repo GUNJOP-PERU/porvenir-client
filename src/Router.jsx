@@ -39,6 +39,7 @@ import Incidence from "./pages/gestion/Incidences";
 import PlanWeek from "./pages/gestion/PlanWeek";
 import PageUbications from "./pages/gestion/Ubication";
 import PageBeacon from "./pages/gestion/Beacon";
+import PageWap from "./pages/gestion/Wap";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -61,6 +62,7 @@ const protectedRoutes = [
   { path: "incidence", element: <Incidence /> },
   { path: "ubications", element: <PageUbications /> },
   { path: "beacon", element: <PageBeacon /> },
+  { path: "wap", element: <PageWap /> },
 
   //Dashboard
   { path: "dashboard/productionScoop", element: <ProductionScoop /> },
