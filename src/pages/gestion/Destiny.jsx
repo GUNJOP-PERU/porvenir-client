@@ -2,9 +2,7 @@ import { useState } from "react";
 import { columns } from "@/components/Gestion/Destiny/DestinyColumns";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
-import {
-  useFetchData,
-} from "../../hooks/useGlobalQuery";
+import { useFetchData } from "../../hooks/useGlobalQuery";
 import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
@@ -12,13 +10,13 @@ import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 
 function PageDestiny() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const {
-    data = [],
-    isFetching,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetchData("destination", "destination");
+ const {
+     data = [],
+     isFetching,
+     isLoading,
+     isError,
+     refetch,
+   } = useFetchData("destination", "destination");
   
   return (
     <>
@@ -43,7 +41,7 @@ function PageDestiny() {
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-          
+
           <Button
             disabled={isFetching || isError}
             onClick={() => setDialogOpen(true)}
@@ -54,7 +52,7 @@ function PageDestiny() {
           </Button>
         </div>
       </div>
-    
+
       <DataTable
         data={data}
         columns={columns}
@@ -63,12 +61,12 @@ function PageDestiny() {
         tableType={"destiny"}
         isLoading={isLoading}
       />
-      
+
       <DestinyModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
-      />     
+      />
     </>
   );
 }
