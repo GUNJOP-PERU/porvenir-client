@@ -44,16 +44,16 @@ export const columns = [
   },
   {
     accessorKey: "frontLabor",
-    header: "Labor",
+    header: "Origen > Destino",
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-1 text-xs">
-           <span className="max-w-[500px] truncate font-medium leading-3">
-            <strong>Origen: </strong> {row.getValue("frontLabor")}
+          <span className="max-w-[500px] truncate font-medium leading-3">
+            <strong>Desde: </strong> {row.getValue("frontLabor")}
           </span>
-           <span className="max-w-[500px] truncate font-medium leading-3">
-           <strong> Destino:</strong>  {row.original?.destiny}
-          </span>      
+          <span className="max-w-[500px] truncate font-medium leading-3">
+            <strong>Hasta:</strong> {row.original?.destiny}
+          </span>
         </div>
       );
     },
@@ -147,8 +147,6 @@ export const columns = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex ">
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
@@ -157,7 +155,6 @@ export const columns = [
               fecha de actualización
             </span>
           </div>
-        </div>
       );
     },
   },
@@ -168,8 +165,6 @@ export const columns = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
@@ -178,7 +173,6 @@ export const columns = [
               fecha de creación
             </span>
           </div>
-        </div>
       );
     },
   },

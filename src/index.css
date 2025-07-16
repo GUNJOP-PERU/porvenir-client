@@ -191,17 +191,14 @@ number-flow-react::part(suffix) {
   color: var(--muted);
 }
 
-
 /*==========================================*/
 /*--------------LEYENDA-------------*/
 /*==========================================*/
-
 
 .circle-bg {
   fill: none;
   stroke: #d4d4d8;
   stroke-width: 6;
-  
 }
 
 .circle {
@@ -215,4 +212,12 @@ number-flow-react::part(suffix) {
   0% {
     stroke-dasharray: 0 100;
   }
+}
+
+.scroll-style::-webkit-scrollbar-track {
+  background-color: #ffffff00;
+}
+
+.scroll-style::-webkit-scrollbar-thumb {
+  background-color: #6c6c6c;
 }

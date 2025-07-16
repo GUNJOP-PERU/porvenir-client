@@ -17,7 +17,6 @@ function HomeUsers() {
   } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
@@ -31,8 +30,7 @@ function HomeUsers() {
             </span>{" "}
           </div>
           <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
+            Administre los miembros y los permisos de sus cuentas.
           </p>
         </div>
         
@@ -40,16 +38,17 @@ function HomeUsers() {
           <Button
             onClick={() => refetch()}
             variant="outline"
-            size="icon"
             disabled={isFetching}
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Refrescar
+            </span>
           </Button>
           
           <Button
             onClick={() => setDialogOpen(true)}
             className="w-fit"
-            // disabled={isFetching || isError}
           >
             <CircleFadingPlus className="w-5 h-5 text-white" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

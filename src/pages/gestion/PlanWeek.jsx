@@ -1,6 +1,6 @@
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { DataTable } from "../../components/Gestion/";
+import { DataTable } from "../../components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { countItems } from "@/lib/utilsGeneral";
 import { columns } from "../../components/Gestion/PlanDay/PlanDayTableColumns";

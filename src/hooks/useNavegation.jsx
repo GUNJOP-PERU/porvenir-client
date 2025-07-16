@@ -16,6 +16,7 @@ import IconDash4 from "@/icons/Dashboard/IconDash4";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
+import IconWeight from "@/icons/Dashboard/IconWeight";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -105,7 +106,24 @@ export const useNavigation = () => {
             icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/activityScoop",
           },
-         
+          {
+            name: "Incidencias Truck | Scoop",
+            href: "/incidence",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/incidence",
+          },
+          {
+            name: "Ubicaciones",
+            href: "/ubications",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/ubications",
+          },
+          {
+            name: "Beacon",
+            href: "/beacon",
+            icon: <IconActivity className="w-4 h-4 " />,
+            active: pathname === "/beacon",
+          },
         ],
       },
       {

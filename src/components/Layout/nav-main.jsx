@@ -13,7 +13,7 @@ export function NavMain() {
       <div className="w-full px-6 flex justify-center items-center h-14 ">
         <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
-      <div className="w-full flex-1 overflow-y-auto px-5 py-4 ">
+      <div className="w-full flex-1 overflow-y-auto px-5 py-4 scrollbar scroll-style">
         {paths.map((section) => (
           <div key={section.title} className="mb-4">
             <span className="text-[8px] text-zinc-500 uppercase font-semibold hidden md:inline">
@@ -49,30 +49,31 @@ export function NavMain() {
         ))}
       </div>
       <div className="py-5 px-4">
-      <ul>
-        <Link to="/configuration">
-          <li
-            className={clsx(
-              "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200",pathname === "/configuration"
-              ? "bg-[#1D1D1D] text-zinc-200 "
-              : "text-zinc-600"
-            )}
-          >
-            <IconConfiguration
+        <ul>
+          <Link to="/configuration">
+            <li
               className={clsx(
-                "w-4 h-4 ",
+                "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200",
                 pathname === "/configuration"
-                  ? "text-primary animate-spin-once"
+                  ? "bg-[#1D1D1D] text-zinc-200 "
                   : "text-zinc-600"
               )}
-            />
-            <span className="flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5">
-              Configuración
-            </span>
-          </li>
-        </Link>
-      </ul>
-    </div>
+            >
+              <IconConfiguration
+                className={clsx(
+                  "w-4 h-4 ",
+                  pathname === "/configuration"
+                    ? "text-primary animate-spin-once"
+                    : "text-zinc-600"
+                )}
+              />
+              <span className="flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5">
+                Configuración
+              </span>
+            </li>
+          </Link>
+        </ul>
+      </div>
     </nav>
   );
 }

@@ -166,7 +166,7 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
           {showLoader ? (
             <div className="text-center py-4 text-zinc-500 h-[47vh] flex items-center justify-center ">
               <span className="flex flex-col gap-2 items-center">
-                <IconLoader className="w-5 h-5 text-zinc-300 fill-primary animate-spin" />
+                <IconLoader className="w-5 h-5 " />
               </span>
             </div>
           ) : dataHotTable.length === 0 ? (
@@ -192,7 +192,7 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
           >
             {loadingGlobal ? (
               <>
-                <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                <IconLoader className="w-4 h-4" />
                 Cargando...
               </>
             ) : (

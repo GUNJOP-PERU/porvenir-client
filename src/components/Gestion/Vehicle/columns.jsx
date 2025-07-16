@@ -1,4 +1,4 @@
-import { formatFecha, getYearFromFecha } from "@/lib/utilsGeneral";
+import { formatFecha } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";

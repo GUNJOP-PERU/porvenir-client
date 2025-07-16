@@ -61,7 +61,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
-    console.log(data)
+    // console.log(data)
     await handleFormSubmit({
       isEdit,
       endpoint: "destination",

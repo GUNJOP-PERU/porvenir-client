@@ -309,7 +309,7 @@ export const NewPlanMonth = () => {
           >
             {loadingGlobal ? (
               <>
-                <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                <IconLoader className="w-4 h-4" />
                 Cargando...
               </>
             ) : (

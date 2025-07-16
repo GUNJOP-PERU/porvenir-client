@@ -36,13 +36,13 @@ import {
 } from "../../ui/select";
 
 const FormSchema = z.object({
-  empresaId: z.string().min(1, { message: "*Cargo requerido" }),
-  tagName: z.string().min(1, { message: "*Nombre requerido" }),
-  plate: z.string().min(1, { message: "*Cargo requerido" }),
-  model: z.string().optional(),
-  odometer: z.number().optional(),
-  horometer: z.number().optional(),
-  type: z.string().min(1, { message: "*Rol requerido" }),
+  empresaId: z.string().min(1, { message: "*Empresa requerida" }),
+  tagName: z.string().min(1, { message: "*Nombre requerido" }).max(30, { message: "*Maximo 30 caracteres" }),
+  plate: z.string().min(1, { message: "*Placa requerida" }).max(10, { message: "*Maximo 10 caracteres" }),
+  model: z.string().max(20, { message: "*Maximo 20 caracteres" }).optional(),
+  odometer: z.number().max(1000000, { message: "*Maximo 1000000" }).optional(),
+  horometer: z.number().max(1000000, { message: "*Maximo 1000000" }).optional(),
+  type: z.string().min(1, { message: "*Tipo requerido" }).max(20, { message: "*Maximo 20 caracteres" }),
   description: z.string().optional(),
 });
 
@@ -336,7 +336,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
               <Button type="submit" disabled={loadingGlobal} className="w-1/2">
                 {loadingGlobal ? (
                   <>
-                    <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                    <IconLoader className="w-4 h-4 " />
                     Cargando...
                   </>
                 ) : (

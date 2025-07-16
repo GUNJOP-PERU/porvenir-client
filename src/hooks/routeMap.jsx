@@ -1,6 +1,8 @@
 export const createRouteMap = (queryClient) => {
   // 🛠️ Definir tópicos que solo actualizan la caché sin lógica extra
   const simpleTopics = {
+    //CheckList Message
+    "checklist/alert": [],
     //CardGuage
     "progress-shift": ["shift-variable", "progress-shift"],
     //Page Truck
@@ -134,6 +136,44 @@ export const createRouteMap = (queryClient) => {
       return { ...oldData, pages: newPages };
     });
   };
+  const addItemsToCache = (queryKey, newItems) => {
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData || !oldData.pages) return oldData;
+  
+      const seen = new Set();
+      const existingIds = new Set();
+  
+      oldData.pages.forEach((page) => {
+        page.data?.data?.forEach((item) => {
+          if (item._id) existingIds.add(item._id);
+        });
+      });
+  
+      const filteredNewItems = newItems.filter(
+        (item) => item._id && !existingIds.has(item._id)
+      );
+  
+      if (filteredNewItems.length === 0) {
+        console.log("✅ Todas las actividades ya existen en caché.");
+        return oldData;
+      }
+  
+      const firstPage = oldData.pages[0];
+      const newFirstPage = {
+        ...firstPage,
+        data: {
+          ...firstPage.data,
+          data: [...filteredNewItems, ...firstPage.data.data],
+        },
+      };
+  
+      const newPages = [newFirstPage, ...oldData.pages.slice(1)];
+  
+      console.log(`➕ ${filteredNewItems.length} nuevas actividades agregadas al caché.`);
+      return { ...oldData, pages: newPages };
+    });
+  };
+  
 
   return {
     ...Object.fromEntries(
@@ -144,6 +184,7 @@ export const createRouteMap = (queryClient) => {
     ),
     "order-ready": updateWorkOrder,
     "checklist-ready": updateWorkOrder,
+    "activity-created": (data) => addItemsToCache(["crud", "activityTruck"], data),
     "truck-cycle": (data) => addItemToCache(["crud", "cycleTruck"], data),
     "scoop-cycle": (data) => addItemToCache(["crud", "cycleScoop"], data),
     "monthly-average-journals": (data) => {

@@ -36,6 +36,7 @@ export function DataTable({
   fetchNextPage,
   hasNextPage,
   tableType,
+  hideToolbar = false,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -146,12 +147,14 @@ export function DataTable({
   }
   return (
     <>
-      <DataTableToolbar
-        table={table}
-        isFetching={isFetching}
-        searchColumns={searchColumns}
-        filters={filters}
-      />
+      {!hideToolbar && (
+        <DataTableToolbar
+          table={table}
+          isFetching={isFetching}
+          searchColumns={searchColumns}
+          filters={filters}
+        />
+      )}
       <div ref={parentRef} style={{ overflowY: "auto", height: "80vh", padding:"10px" }}>
         <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
           <Table>
