@@ -2,7 +2,7 @@ import { RefreshCcw } from "lucide-react";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { columns } from "@/components/Gestion/Ubication/UbicationColumns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItemsByType } from "../../lib/utilsGeneral";
@@ -15,12 +15,17 @@ function PageUbications() {
     isError,
     refetch,
   } = useFetchData("ubications", "beacon/ubications");
+  const categories = Object.keys(data);
 
-  const categories = Object.keys(data || {});
+  const [selectedTab, setSelectedTab] = useState("");
 
-  const [selectedTab, setSelectedTab] = useState(
-    categories[0] || ""
-  );
+  useEffect(() => {
+    const keys = Object.keys(data || {});
+    if (keys.length > 0 && !selectedTab) {
+      setSelectedTab(keys[0]);
+    }
+  }, [data, selectedTab]);
+  
 
   return (
     <>
@@ -52,7 +57,7 @@ function PageUbications() {
           </Button>
         </div>
       </div>
-    
+      {selectedTab && (
       <Tabs
         value={selectedTab}
         onValueChange={setSelectedTab}
@@ -79,7 +84,7 @@ function PageUbications() {
           </TabsContent>
         ))}
       </Tabs>
-   
+      )}   
     </>
   );
 }

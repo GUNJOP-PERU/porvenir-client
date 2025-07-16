@@ -13,7 +13,7 @@ export function NavMain() {
       <div className="w-full px-6 flex justify-center items-center h-14 ">
         <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
-      <div className="w-full flex-1 overflow-y-auto px-5 py-4 ">
+      <div className="w-full flex-1 overflow-y-auto px-5 py-4 scrollbar scroll-style">
         {paths.map((section) => (
           <div key={section.title} className="mb-4">
             <span className="text-[8px] text-zinc-500 uppercase font-semibold hidden md:inline">

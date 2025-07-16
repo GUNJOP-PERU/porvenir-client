@@ -1,16 +1,22 @@
+import IconDay from "@/icons/IconDay";
+import IconNight from "@/icons/IconNight";
 import {
   formatDurationHour,
   formatFecha,
   formatHour,
 } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
-import { DataTableRowActions } from "../DataTableRowActions";
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
 import clsx from "clsx";
-import IconMineral from "@/icons/IconMineral";
-import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+
+const codeColorMap = {
+  1: "bg-sky-500",
+  2: "bg-[#F59E0B]",
+  3: "bg-[#AF52DE]",
+  4: "bg-[#F765A3]",
+  5: "bg-[#38BDF8]",
+  6: "bg-[#38BDF8]",
+};
 
 export const columns = [
   {
@@ -36,11 +42,11 @@ export const columns = [
         <div className="flex items-center space-x-2">
           <div
             className={clsx(
-              "w-8 h-8 rounded-[10px]  flex items-center justify-center",
-              {
-                "bg-green-500": row.original?.type_activity === "productive",
-                "bg-red-500": row.original?.type_activity === "no productive",
-              }
+              "w-8 h-8 rounded-[10px] flex items-center justify-center",
+              row.original?.type_activity === "productive"
+                ? "bg-green-500"
+                : codeColorMap[row.original?.code_activity?.charAt(0)] ||
+                    "bg-gray-300"
             )}
           >
             <span className="text-zinc-50 font-bold">
@@ -49,7 +55,7 @@ export const columns = [
             </span>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate max-w-[120px]">
+            <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate ">
               {row.getValue("activityName")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
@@ -91,44 +97,6 @@ export const columns = [
           </div>
         </div>
       );
-    },
-  },
-  {
-    accessorKey: "frontLabor",
-    header: "Labor",
-    cell: ({ row }) => {
-      return (
-        <div className="flex flex-col gap-1 text-xs">
-          <span className="max-w-[500px] truncate font-medium leading-3">
-            <strong>Origen: </strong> {row.getValue("frontLabor")}
-          </span>
-          <span className="max-w-[500px] truncate font-medium leading-3">
-            <strong> Destino:</strong> {row.original?.destiny}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "material",
-    header: "Material",
-    cell: ({ row }) => {
-      return (
-        <>
-          {row.getValue("material") === "Mineral" ? (
-            <IconMineral className="h-5 w-5 fill-[#14B8A6]" />
-          ) : (
-            <IconClearance className="h-5 w-5 fill-[#a46424]" />
-          )}
-        </>
-      );
-    },
-  },
-  {
-    accessorKey: "tonnage",
-    header: "Tonelaje",
-    cell: ({ row }) => {
-      return <>{row.getValue("tonnage")} TN</>;
     },
   },
   {
@@ -202,7 +170,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex">
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
@@ -223,7 +190,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
@@ -236,11 +202,4 @@ export const columns = [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => (
-  //     <DataTableRowActions componentToShow={"activity"} row={row} />
-  //   ),
-  //   enableHiding: false,
-  // },
 ];

@@ -24,7 +24,11 @@ import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
 import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
 import { BeaconModal } from "./Beacon/BeaconModal";
 
-export function DataTableRowActions({ componentToShow, row, deleteModal = true }) {
+export function DataTableRowActions({
+  componentToShow,
+  row,
+  deleteModal = true,
+}) {
   const [open, setOpen] = useState(false);
   const [deleModal, setDeleteModal] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
@@ -40,11 +44,6 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
   const handleDeleteModal = (rowData) => {
     setRowData(rowData);
     setDeleteModal(true);
-    setMenuOpen(false); // Cerrar menú
-  };
-  const handleDetailsModal = (rowData) => {
-    setRowData(rowData);
-    setDetailsModal(true);
     setMenuOpen(false); // Cerrar menú
   };
 
@@ -150,12 +149,14 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
             <MoreHorizontal className="rotate-90 text-zinc-400" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[150px]">         
-         <DropdownMenuItem onClick={() => handleClick(row.original)}>
-            <IconEdit className="h-5 w-5 stroke-black" />
-            Editar detalles
-          </DropdownMenuItem>         
-          <DropdownMenuSeparator />
+        <DropdownMenuContent align="end" className="w-[150px]">
+          {components[componentToShow] && (
+            <DropdownMenuItem onClick={() => handleClick(row.original)}>
+              <IconEdit className="h-5 w-5 stroke-black" />
+              Editar detalles
+            </DropdownMenuItem>
+          )}
+          {components[componentToShow] && <DropdownMenuSeparator />}
           {deleteModal && (
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
@@ -167,12 +168,12 @@ export function DataTableRowActions({ componentToShow, row, deleteModal = true }
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      {open && components[componentToShow]}
+      {open && components[componentToShow] && components[componentToShow]}
       <ModalDelete
         isOpen={deleModal}
         onClose={() => setDeleteModal(false)}
         urlDelete={`${componentToShow}/${rowData?._id}`}
-        itemId={rowData?._id} 
+        itemId={rowData?._id}
         queryKeyToUpdate={componentToShow}
       />
       <DetailsUser

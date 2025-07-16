@@ -197,7 +197,7 @@ export const ModalWorkOrder = ({ isOpen, onClose, isEdit, dataCrud }) => {
               <Button type="submit" disabled={loadingGlobal} className="w-1/2">
                 {loadingGlobal ? (
                   <>
-                    <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                    <IconLoader className="w-4 h-4" />
                     Cargando...
                   </>
                 ) : (

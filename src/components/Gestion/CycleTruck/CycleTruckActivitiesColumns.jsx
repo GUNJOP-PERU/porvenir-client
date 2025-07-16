@@ -3,24 +3,20 @@ import {
   formatFecha,
   formatHour,
 } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import clsx from "clsx";
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
-import IconMineral from "@/icons/IconMineral";
-import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
 // Utils
-import { getHoursBetween } from "@/lib/utilsGeneral";
+import IconWarning from "@/icons/IconWarning";
+import { CheckCheckIcon } from "lucide-react";
+import React from "react";
 
 export const activityColumns = (globalData) => {
-  return ([
+  return [
     {
       accessorKey: "id",
       header: "#",
-      cell: ({ row }) => (
-        <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
-      ),
+      cell: ({ row }) => <></>,
       enableSorting: false,
       enableHiding: false,
     },
@@ -59,31 +55,14 @@ export const activityColumns = (globalData) => {
       accessorKey: "destiny",
       header: "Labor",
       cell: ({ row }) => {
-        return (
-          <div className="flex flex-col gap-1 text-xs">
-              {/* <span className="max-w-[500px] truncate font-medium leading-3">
-              <strong>Origen: </strong> {row.getValue("frontLabor")}
-            </span>
-              <span className="max-w-[500px] truncate font-medium leading-3">
-              <strong>Destino:</strong> {row.original.destiny ? row.original.destiny : "---"}
-            </span>       */}
-          </div>
-        );
+        return <></>;
       },
     },
     {
       accessorKey: "shift",
       header: "Turno",
       cell: ({ row }) => {
-        return (
-          <>
-            {row.getValue("shift") === "dia" ? (
-              <IconDay className="h-5 w-5 fill-orange-400" />
-            ) : (
-              <IconNight className="h-5 w-5 fill-sky-400" />
-            )}
-          </>
-        );
+        return <></>;
       },
     },
     {
@@ -97,49 +76,63 @@ export const activityColumns = (globalData) => {
       accessorKey: "material",
       header: "Material",
       cell: ({ row }) => {
-        return (
-          <>
-            {row.getValue("material") === "Mineral" ? (
-              <IconMineral className="h-5 w-5 fill-[#14B8A6]" />
-            ) : (
-              <IconClearance className="h-5 w-5 fill-[#a46424]" />
-            )}
-          </>
-        );
+        return <></>;
       },
     },
     {
       accessorKey: "start",
       header: "Tiempo Viaje",
       cell: ({ row }) => {
-        const activityDuration = getHoursBetween(new Date(row.original?.start).getTime(), new Date(row.original?.end).getTime());
-        let activityData = {minDuration: 0, maxDuration: 0};
-        if(globalData?.activityAverage){
-          globalData.activityAverage.forEach(activity => {
-            if(activity.name === row.original?.activityName){
-              activityData = {
-                minDuration: activity.minDuration,
-                maxDuration: activity.maxDuration
-              };
-            }
-          });
+        const activityDuration = row.original?.duration;
+
+        let activityData = { minDuration: 0, maxDuration: 0 };
+
+        if (globalData?.activityAverage) {
+          const match = globalData.activityAverage.find(
+            (a) => a.name === row.original?.activityName
+          );
+          if (match) {
+            activityData = {
+              minDuration: match.minDuration,
+              maxDuration: match.maxDuration,
+            };
+          }
         }
+        let statusText = "Tiempo normal";
+        let statusColor = "green";
+        let statusIcon = CheckCheckIcon; // usa algún ícono neutro por defecto
+
+        if (activityDuration <= activityData.minDuration) {
+          statusText = "Muy rápido";
+          statusColor = "yellow";
+          statusIcon = IconWarning;
+        } else if (activityDuration >= activityData.maxDuration) {
+          statusText = "Muy lento";
+          statusColor = "red";
+          statusIcon = IconWarning;
+        }
+
         return (
           <div
             className={clsx(
-              "flex flex-col gap-1",
-              activityDuration*3600 <= activityData.minDuration
-                ? "text-green-500 bg-green-50 before:bg-green-500" :
-              activityDuration*3600 >= activityData.maxDuration ?
-                "text-red-500 bg-red-50 before:bg-red-500"
-                : "text-blue-500 bg-sky-50 before:bg-blue-500"
+              "w-fit flex flex-col gap-1",
+              `text-${statusColor}-600`
             )}
           >
             <span className="max-w-[500px] truncate font-medium leading-3">
-              Inicio: {formatHour(row.original?.start)}
+              {formatHour(row.original?.start)} -{" "}
+              {formatHour(row.original?.end)}
             </span>
-            <span className="max-w-[500px] truncate font-medium leading-3">
-              Fin: {formatHour(row.original?.end)}
+            <span
+              className={clsx(
+                "flex items-center justify-center gap-1 text-[10px] font-semibold leading-3 py-[2px] px-2 rounded-[8px]",
+                `bg-${statusColor}-50`
+              )}
+            >
+              {React.createElement(statusIcon, {
+                className: `h-3 w-3 text-${statusColor}-600`,
+              })}{" "}
+              {statusText}
             </span>
           </div>
         );
@@ -160,18 +153,7 @@ export const activityColumns = (globalData) => {
       accessorKey: "isNewLabor",
       header: "Estado/Labor",
       cell: ({ row }) => {
-        return (
-          <span
-            className={clsx(
-              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
-              row.original?.isNewLabor
-                ? "text-green-500 bg-green-50 before:bg-green-500"
-                : "text-blue-500 bg-sky-50 before:bg-blue-500"
-            )}
-          >
-            {row.original?.isNewLabor ? "Nueva" : "Existe"}
-          </span>
-        );
+        return <></>;
       },
     },
     {
@@ -181,16 +163,13 @@ export const activityColumns = (globalData) => {
       ),
       cell: ({ row }) => {
         return (
-          <div className="flex items-center gap-2">
-            {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
-            <div className="flex flex-col justify-center">
-              <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-                <TimeAgo datetime={row.original.updatedAt} locale="es" />
-              </h4>
-              <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-                fecha de actualización
-              </span>
-            </div>
+          <div className="flex flex-col justify-center">
+            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
+              <TimeAgo datetime={row.original.updatedAt} locale="es" />
+            </h4>
+            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+              fecha de actualización
+            </span>
           </div>
         );
       },
@@ -202,19 +181,16 @@ export const activityColumns = (globalData) => {
       ),
       cell: ({ row }) => {
         return (
-          <div className="flex items-center gap-2">
-            {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
-            <div className="flex flex-col justify-center">
-              <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-                {formatFecha(row.original.createdAt)}
-              </h4>
-              <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-                fecha de creación
-              </span>
-            </div>
+          <div className="flex flex-col justify-center">
+            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+              {formatFecha(row.original.createdAt)}
+            </h4>
+            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+              fecha de creación
+            </span>
           </div>
         );
       },
     },
-  ])
+  ];
 };

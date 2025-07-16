@@ -75,7 +75,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const thirdPart = watch("thirdPart");
   const quarterPart = watch("quarterPart");
 
-  console.log(dataCrud);
+
   useEffect(() => {
     if (dataCrud) {
       reset({
@@ -299,7 +299,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 >
                   {loadingGlobal ? (
                     <>
-                      <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                      <IconLoader className="w-4 h-4" />
                       Cargando...
                     </>
                   ) : (

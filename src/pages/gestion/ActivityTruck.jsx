@@ -62,11 +62,6 @@ function PageActivity() {
           >
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-
-          {/* <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
-            <CircleFadingPlus className="w-5 h-5 text-white" />
-            Añadir nuevo
-          </Button> */}
         </div>
       </div>
 

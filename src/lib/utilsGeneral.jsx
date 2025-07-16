@@ -31,13 +31,8 @@ export function formatFecha(dateString) {
   return ` ${formattedHours}:${formattedMinutes}, ${day} ${monthShort}`;
 }
 export function formatHour(dateString) {
-  const date = dayjs(dateString);
-  const formattedHours = date.format("HH");
-  const formattedMinutes = date.format("mm");
-
-  return ` ${formattedHours}:${formattedMinutes}`;
+  return dayjs(dateString).format("HH:mm:ss");
 }
-
 
 export function countItems(data) {
   return Array.isArray(data) ? data.length : 0;
@@ -55,7 +50,6 @@ export function getYearFromFecha(dateString) {
   const year = date.format("YYYY");
   return year;
 }
-
 
 export function formatDurationHour(durationInSeconds) {
   const hours = Math.floor(durationInSeconds / 3600);

@@ -14,9 +14,13 @@ const CardHeatMap = () => {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData("truck-heatmap","dashboard/truck/heatmap", "shift-variable" );
+  } = useGraphicData(
+    "truck-heatmap",
+    "dashboard/truck/heatmap",
+    "shift-variable"
+  );
 
-  console.log("heatmap", data)
+  console.log("heatmap", data);
 
   const chartRef = useRef(null); // Referencia al gráfico
 
@@ -111,7 +115,7 @@ const CardHeatMap = () => {
           },
         },
       ],
-      
+
       tooltip: {
         valueSuffix: " toneladas",
         backgroundColor: "#111214",
@@ -129,7 +133,10 @@ const CardHeatMap = () => {
             "<b><span style='color:#abd9e9;'>" +
             this.series.xAxis.categories[this.point.x] +
             "</span></b> <br/> <b><span style='color:#F59E0B;'>" +
-            this.point.value.toLocaleString("en-US", { maximumFractionDigits: 0 }) +"tn"+
+            this.point.value.toLocaleString("en-US", {
+              maximumFractionDigits: 0,
+            }) +
+            "tn" +
             "</span></b> <br/> <b><span style='color:#10B981;'>" +
             this.series.yAxis.categories[this.point.y] +
             "</span></b>"
@@ -152,7 +159,7 @@ const CardHeatMap = () => {
     }),
     [heatmapData, xCategories, yCategories]
   );
-  
+
   if (isLoading)
     return (
       <div className="bg-zinc-200 rounded-2xl h-[280px] w-full animate-pulse"></div>
@@ -161,6 +168,12 @@ const CardHeatMap = () => {
     return (
       <div className="py-2 px-4 flex items-center justify-center h-[280px] w-full ">
         <span className="text-[10px] text-red-500">Ocurrió un error</span>
+      </div>
+    );
+  if (data.length === 0)
+    return (
+      <div className="py-2 px-4 flex items-center justify-center h-[280px] w-full ">
+        <span className="text-[10px] text-zinc-500 font-semibold">Esperando datos del turno</span>
       </div>
     );
   return (

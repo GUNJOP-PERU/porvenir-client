@@ -98,8 +98,8 @@ export const ModalDelete = ({
           >
             {loadingGlobal ? (
               <>
-                <IconLoader className="w-4 h-4 text-red-200 fill-red-500 animate-spin" />
-                Carg...
+                <IconLoader className="w-4 h-4" />
+                Cargando...
               </>
             ) : (
               <>Si</>
