@@ -19,20 +19,20 @@ import {
 } from "../../ui/dialog";
 import {
   Form,
-  FormControl,
+  // FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../../ui/select";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 
 const FormSchema = z.object({
@@ -163,6 +163,40 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Tipo de ubicación</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. beacon"
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="ubication"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Ubicación</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. beacon"
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* <FormField
+                control={control}
+                name="ubicationType"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Tipo de ubicación</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -185,6 +219,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={control}
                 name="ubication"
@@ -220,7 +255,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     </FormItem>
                   );
                 }}
-              />
+              /> */}
             </div>
             <Separator className="my-6" />
             <div className="flex gap-3 justify-end">
