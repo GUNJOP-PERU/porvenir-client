@@ -173,6 +173,31 @@ export const createRouteMap = (queryClient) => {
       return { ...oldData, pages: newPages };
     });
   };
+  const updateItemToCache = (queryKey, updatedItem) => {
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData || !oldData.pages) return oldData;
+  
+      const newPages = oldData.pages.map((page) => {
+        const updatedData = page.data?.data?.map((item) => {
+          if (item._id === updatedItem._id) {
+            return { ...item, ...updatedItem }; // 🔄 fusiona con el nuevo
+          }
+          return item;
+        });
+  
+        return {
+          ...page,
+          data: {
+            ...page.data,
+            data: updatedData,
+          },
+        };
+      });
+  
+      console.log(`✏️ Actividad ${updatedItem._id} actualizada en caché.`);
+      return { ...oldData, pages: newPages };
+    });
+  };
   
 
   return {
@@ -186,6 +211,7 @@ export const createRouteMap = (queryClient) => {
     "checklist-ready": updateWorkOrder,
     "activity-created": (data) => addItemsToCache(["crud", "activityTruck"], data),
     "truck-cycle": (data) => addItemToCache(["crud", "cycleTruck"], data),
+    "truck-cycle-updated": (data) => updateItemToCache(["crud", "cycleTruck"], data),
     "scoop-cycle": (data) => addItemToCache(["crud", "cycleScoop"], data),
     "monthly-average-journals": (data) => {
       const path =
