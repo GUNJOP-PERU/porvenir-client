@@ -141,6 +141,34 @@ export const columns = [
     },
   },
   {
+    accessorKey: "isValid",
+    header: "Estado Ciclo",
+    cell: ({ row }) => {
+      const isValid = row.original?.isValid;
+  
+      if (isValid === undefined || isValid === null) {
+        return (
+          <span className="text-gray-500 bg-gray-100 text-[10px] py-[2px] px-2 rounded-[8px]">
+            Error
+          </span>
+        );
+      }
+  
+      return (
+        <span
+          className={clsx(
+            "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+            isValid
+              ? "text-green-500 bg-green-50 before:bg-green-500"
+              : "text-rose-500 bg-rose-50 before:bg-rose-500"
+          )}
+        >
+          {isValid ? "Ciclo completo" : "Ciclo interrumpido"}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "updatedAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha actualización" />
