@@ -23,6 +23,7 @@ import { EditPlanMonthModal } from "./PlanMonth/EditPlanMonthModal";
 import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
 import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
 import { BeaconModal } from "./Beacon/BeaconModal";
+import { ModalWap } from "./Wap/WapModal";
 
 export function DataTableRowActions({
   componentToShow,
@@ -130,6 +131,14 @@ export function DataTableRowActions({
     ),
     beacon: (
       <BeaconModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    wap: (
+      <ModalWap
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
