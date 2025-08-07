@@ -40,6 +40,7 @@ import PlanWeek from "./pages/gestion/PlanWeek";
 import PageUbications from "./pages/gestion/Ubication";
 import PageBeacon from "./pages/gestion/Beacon";
 import PageWap from "./pages/gestion/Wap";
+import ShortIntervalControl from "./pages/dashboard/ShortIntervalControl";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -72,6 +73,7 @@ const protectedRoutes = [
   { path: "dashboard/paretoScoop", element: <ParetoScoop /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
   { path: "dashboard/productionUV", element: <Utilization /> },
+  { path: "dashboard/short-interval-control", element: <ShortIntervalControl /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

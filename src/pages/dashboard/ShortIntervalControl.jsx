@@ -3,7 +3,7 @@ import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineCha
 import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChart";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
 
-const ShortIntercalControl = () => {
+const ShortIntervalControl = () => {
   return (
     <div className="grid grid-cols-[1fr_4fr] h-full gap-10">
       <div className="flex flex-col justify-between">
@@ -238,4 +238,4 @@ const ShortIntercalControl = () => {
   )
 }
 
-export default ShortIntercalControl
+export default ShortIntervalControl
