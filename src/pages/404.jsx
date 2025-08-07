@@ -7,15 +7,16 @@ export default function PageError() {
 
   return (
     <div className="absolute inset-0 m-auto max-w-[240px] flex flex-col items-center justify-center gap-2 text-center">
-      <img src="/src/assets/error.svg" alt="illustration" className="w-40" />
+      <img src="/error.svg" alt="illustration" className="w-40" />
       <span className="text-lg font-semibold leading-5">
         Lo sentimos, no se puede encontrar la página
       </span>
       <p className="text-xs text-zinc-500 mb-4">
-        La página que estabas buscando parece haber sido movida, eliminada o no existe.
+        La página que estabas buscando parece haber sido movida, eliminada o no
+        existe.
       </p>
       <Button onClick={() => navigate("/")}>
-      <IconGo className="w-5 h-5  fill-white rotate-180" /> Regresar al Inicio
+        <IconGo className="w-5 h-5  fill-white rotate-180" /> Regresar al Inicio
       </Button>
     </div>
   );

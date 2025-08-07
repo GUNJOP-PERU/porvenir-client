@@ -13,7 +13,8 @@ export const PlanContent = ({
   setDataHotTable,
   dataLaborList,
   loadingGlobal,
-  setInvalidLabors
+  setInvalidLabors,
+  heightSize = "normal"
 }) => {
  
 
@@ -53,6 +54,9 @@ export const PlanContent = ({
       className={clsx("h-[60vh] z-0", {
         "pointer-events-none opacity-50 cursor-not-allowed": loadingGlobal,
       })}
+      style={{
+        height: heightSize === "normal" ? "60vh" : "200px",
+      }}
     >
       <HotTable
         data={dataHotTable}
@@ -112,8 +116,8 @@ export const PlanContent = ({
 
             // El texto será verde si está en la lista, rojo si no lo está
             const textColor = isLaborInList(laborName)
-              ? "text-green-600"
-              : "text-red-600";
+              ? "!text-green-600"
+              : "!text-red-600";
 
             return {
               className: ` font-semibold ${backgroundColor} ${textColor}`,

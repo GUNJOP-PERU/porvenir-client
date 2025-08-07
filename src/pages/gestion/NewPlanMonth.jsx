@@ -2,20 +2,20 @@ import { useFetchData } from "@/hooks/useGlobalQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CircleFadingPlus, SendHorizontal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
-import { postDataRequest } from "@/lib/api";
 
 import { PlanContent } from "@/components/Gestion/PlanMonth/PlanContent";
 import { PlanHeader } from "@/components/Gestion/PlanMonth/PlanHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { postDataRequest } from "@/api/api";
 
 const FormSchema = z.object({
   dob: z
@@ -42,7 +42,18 @@ export const NewPlanMonth = () => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
-  const { data: dataLaborList } = useFetchData("frontLabor-General", "frontLabor");
+  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
+    "frontLabor-General",
+    "frontLabor",
+    {
+      enabled: false,
+    }
+  );
+  useEffect(() => {
+    refetchLaborList();
+  }, [refetchLaborList]);
+  
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -94,7 +105,7 @@ export const NewPlanMonth = () => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-   
+
     setShowLoader(true);
 
     setTimeout(() => {
@@ -155,12 +166,12 @@ export const NewPlanMonth = () => {
     });
 
     const totalTonnage = datosFinales.reduce(
-      (sum, item) => sum + item.tonnage,
+      (sum, item) => sum + (Number(item.tonnage) || 0),
       0
     );
 
     const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
-      name: labor,  // El nombre del labor
+      name: labor, // El nombre del labor
       status: true, // El status que le quieres asignar
     }));
     console.log("Labors en rojo:", invalidLaborsWithStatus);
@@ -243,7 +254,7 @@ export const NewPlanMonth = () => {
           {showLoader ? (
             <div className="text-center py-4 text-zinc-500 h-[60vh] flex items-center justify-center ">
               <span className="flex flex-col gap-2 items-center">
-                <IconLoader className="w-5 h-5 text-zinc-300 fill-primary animate-spin" />
+                <IconLoader className="w-5 h-5 " />
               </span>
             </div>
           ) : dataHotTable.length === 0 ? (
@@ -268,15 +279,15 @@ export const NewPlanMonth = () => {
             <ul className="list-disc ml-3 gap-x-6 ">
               <li className="">
                 <strong className="font-bold text-green-500">Verde: </strong>
-                Labor existente en el sistema.
+                Labor ya existe en el sistema, por lo tanto no será creada nuevamente.
               </li>
               <li className="">
                 <strong className="font-bold text-red-600">Rojo: </strong>
-                Labor no existente en el sistema.
+                Labor no existe en el sistema. Será creada automáticamente.
               </li>
               <li>
                 <strong className="font-bold bg-yellow-300">Amarillo</strong>:
-                Labor repetida en el mes.
+                Labor ya fue registrada previamente. No se puede continuar con el envío del plan hasta resolver esta duplicación.
               </li>
             </ul>
           </div>
@@ -286,18 +297,19 @@ export const NewPlanMonth = () => {
             variant="secondary"
             onClick={handleCancel}
             disabled={loadingGlobal}
-             className="w-full md:w-fit"
+            className="w-full md:w-fit"
           >
             <IconClose className="fill-zinc-400/50 w-4 h-4" />
             Cancelar
           </Button>
           <Button
             onClick={handleSendData}
-            disabled={dataHotTable.length === 0 || loadingGlobal}   className="w-full md:w-fit"
+            disabled={dataHotTable.length === 0 || loadingGlobal}
+            className="w-full md:w-fit"
           >
             {loadingGlobal ? (
               <>
-                <IconLoader className="w-4 h-4 text-zinc-200 fill-primary animate-spin" />
+                <IconLoader className="w-4 h-4" />
                 Cargando...
               </>
             ) : (

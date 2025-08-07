@@ -1,4 +1,4 @@
-import { useNavigation } from "@/hooks/userNavegation";
+import { useNavigation } from "@/hooks/useNavegation";
 import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
 import clsx from "clsx";
 import React, { useState } from "react";
@@ -11,27 +11,11 @@ export function NavMain() {
   const pathname = location.pathname;
 
   return (
-    <nav
-      className={clsx(
-        "h-screen hidden md:flex bg-[#000000] flex-col transition-all duration-1000",
-        isCollapsed ? "w-[80px]" : "w-[300px]"
-      )}
-    >
-      {/* Encabezado con el botón para colapsar */}
-      <div className="w-full px-6 flex justify-between items-center h-14">
-        {!isCollapsed && (
-          <img src="/src/assets/logo-white.svg" alt="" className="h-7" />
-        )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-zinc-400 hover:text-zinc-200 transition"
-        >
-          {isCollapsed ? "➤" : "➤"}
-        </button>
+    <nav className="h-screen hidden md:flex w-[300px] bg-[#000000] flex-col ">
+      <div className="w-full px-6 flex justify-center items-center h-14 ">
+        <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
-
-      {/* Contenido del menú */}
-      <div className="w-full flex-1 overflow-y-auto px-5 py-4">
+      <div className="w-full flex-1 overflow-y-auto px-5 py-4 scrollbar scroll-style">
         {paths.map((section) => (
           <div key={section.title} className="mb-4">
             {!isCollapsed && (
@@ -79,23 +63,21 @@ export function NavMain() {
               className={clsx(
                 "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200",
                 pathname === "/configuration"
-                  ? "bg-[#1D1D1D] text-zinc-200"
+                  ? "bg-[#1D1D1D] text-zinc-200 "
                   : "text-zinc-600"
               )}
             >
               <IconConfiguration
                 className={clsx(
-                  "w-4 h-4",
+                  "w-4 h-4 ",
                   pathname === "/configuration"
                     ? "text-primary animate-spin-once"
                     : "text-zinc-600"
                 )}
               />
-              {!isCollapsed && (
-                <span className="flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5">
-                  Configuración
-                </span>
-              )}
+              <span className="flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5">
+                Configuración
+              </span>
             </li>
           </Link>
         </ul>

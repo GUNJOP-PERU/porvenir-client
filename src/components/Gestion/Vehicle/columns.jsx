@@ -1,7 +1,8 @@
-import { formatFecha, getYearFromFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { formatFecha } from "@/lib/utilsGeneral";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
+import TimeAgo from "timeago-react";
 
 export const columns = [
   {
@@ -25,11 +26,11 @@ export const columns = [
             className={clsx(
               "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                "bg-[url('/vehicle/scoop.png')]":
                   row.original.type === "scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]":
+                "bg-[url('/vehicle/truck.png')]":
                   row.original.type === "truck",
-                "bg-[url('/src/assets/vehicle/drill.png')]":
+                "bg-[url('/vehicle/drill.png')]":
                   row.original.type === "drill",
               }
             )}
@@ -87,35 +88,6 @@ export const columns = [
     },
   },
   {
-    accessorKey: "type",
-    header: "Color",
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.original.color || ""}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "year",
-    header: "Año de vehiculo",
-    cell: ({ row }) => {
-      return (
-        <div className="flex flex-col justify-center">
-          <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {getYearFromFecha(row.original.year) || "0"}
-          </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            obtención
-          </span>
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "description",
     header: "Descripción",
     cell: ({ row }) => {
@@ -137,8 +109,8 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col justify-center">
-          <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {formatFecha(row.original.updatedAt)}
+          <h4 className="text-[12.5px] font-semibold leading-4">
+            <TimeAgo datetime={row.original.updatedAt} locale="es" />
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
             fecha de actualización

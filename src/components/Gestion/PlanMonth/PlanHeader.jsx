@@ -25,7 +25,7 @@ import { format, getDaysInMonth, getMonth, getYear } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { useState } from "react";
-import { FilterItems } from "../PlanDay/FilterItems";
+import { FilterItems } from "../PlanDay/PlanDayFilterItems";
 
 export const PlanHeader = ({ form, onSubmit, dataLaborList, hasData ,loadingGlobal}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());

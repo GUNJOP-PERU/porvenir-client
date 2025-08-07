@@ -1,14 +1,13 @@
 import { RefreshCcw } from "lucide-react";
-import { useState } from "react";
-import { DataTable } from "../../components/Gestion/data-table";
+import { DataTable } from "@/components/Gestion/CycleTruck/DataTable";
 import { Button } from "../../components/ui/button";
 
-import { ModalCycle } from "../../components/Gestion/CycleTruck/ModalCycle";
-import { columns } from "../../components/Gestion/CycleTruck/columns";
+import { columns } from "@/components/Gestion/CycleTruck/CycleTruckTableColumns";
+import { activityColumns } from "@/components/Gestion/CycleTruck/CycleTruckActivitiesColumns";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
-function PageCycle() {
+function PageCycleTruck() {
   const {
     data = [],
     isFetching,
@@ -18,9 +17,7 @@ function PageCycle() {
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("cycleTruck", "cycle/truck/items");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
- 
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
@@ -42,30 +39,21 @@ function PageCycle() {
           <Button onClick={() => refetch()} variant="outline" size="icon" disabled={isFetching }>
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
-         
-          {/* <Button onClick={() => setDialogOpen(true)} className="w-fit" disabled={isFetching || isError}>
-            <CircleFadingPlus className="w-5 h-5 text-white" />
-            Añadir nuevo
-          </Button> */}
         </div>
       </div>
       <DataTable
-         data={data}
-         columns={columns}
-         isLoading={isLoading}
-         isFetching={isFetching}
-         isError={isError}
-         fetchNextPage={fetchNextPage}
-         hasNextPage={hasNextPage}
+        data={data}
+        columns={columns}
+        activityColumns={activityColumns}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
         tableType={"cycles"}
-      />
-      <ModalCycle
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
       />
     </>
   );
 }
 
-export default PageCycle;
+export default PageCycleTruck;

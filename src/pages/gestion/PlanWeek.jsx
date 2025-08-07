@@ -1,9 +1,9 @@
 import { CircleFadingPlus, FileDown, FileUp, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { DataTable } from "../../components/Gestion/data-table";
+import { DataTable } from "../../components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { countItems } from "@/lib/utilsGeneral";
-import { columns } from "../../components/Gestion/PlanDay/columns";
+import { columns } from "../../components/Gestion/PlanDay/PlanDayTableColumns";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
 

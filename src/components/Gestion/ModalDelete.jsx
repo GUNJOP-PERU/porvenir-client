@@ -1,4 +1,4 @@
-import { deleteDataRequest } from "@/lib/api";
+import { deleteDataRequest } from "@/api/api";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -31,17 +31,11 @@ export const ModalDelete = ({
       const response = await deleteDataRequest(urlDelete);
       console.log("delete",response);
       if (response?.status === 200) {
-        queryClient.setQueryData(["crud",queryKeyToUpdate], (oldData) => {
-          if (!oldData || !oldData.data) return oldData; // Si no hay datos,
-          return {
-            ...oldData, // Mantiene el resto de las propiedades (status, headers, etc.)
-            data: oldData.data.filter((item) => item._id !== itemId), // Filtra el array 
-          };
-        });
+         queryClient.invalidateQueries({ queryKey: ["crud", queryKeyToUpdate] });
         addToast({
           title:  "Eliminado correctamente",
           message:  "Los cambios se han guardado con éxito." ,
-          variant: "success", // Si usas variantes de color en el addToaster
+          variant: "success", 
         });
         onClose();
       }
@@ -104,8 +98,8 @@ export const ModalDelete = ({
           >
             {loadingGlobal ? (
               <>
-                <IconLoader className="w-4 h-4 text-red-200 fill-red-500 animate-spin" />
-                Carg...
+                <IconLoader className="w-4 h-4" />
+                Cargando...
               </>
             ) : (
               <>Si</>

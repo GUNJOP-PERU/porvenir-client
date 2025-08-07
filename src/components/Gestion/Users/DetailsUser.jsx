@@ -11,11 +11,11 @@ export const DetailsUser = ({ isOpen, onClose, dataCrud }) => {
             className={clsx(
               "w-16 h-16 rounded-2xl bg-cover bg-center flex items-center justify-center overflow-hidden mx-auto",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                "bg-[url('/vehicle/scoop.png')]":
                   dataCrud?.type === "scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]":
+                "bg-[url('/vehicle/truck.png')]":
                   dataCrud?.type === "truck",
-                "bg-[url('/src/assets/vehicle/drill.png')]":
+                "bg-[url('/vehicle/drill.png')]":
                   dataCrud?.type === "drill",
               }
             )}

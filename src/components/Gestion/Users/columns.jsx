@@ -1,7 +1,8 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableRowActions } from "../DataTableRowActions";
 import clsx from "clsx";
+import TimeAgo from "timeago-react";
 
 export const columns = [
   {
@@ -22,12 +23,22 @@ export const columns = [
       return (
         <div className="flex items-center space-x-2">
           <div>
-            <div className="w-8 h-8 rounded-[10px] bg-blue-500 flex items-center justify-center">
-              <span className="text-zinc-50 font-bold">
-                {" "}
-                {row.getValue("name")?.substring(0, 2).toUpperCase()}
-              </span>
-              {/* <img src="/src/assets/avatars/men/13.png" /> */}
+            <div
+            className={clsx(
+              "w-8 h-8 rounded-[10px]  flex items-center justify-center text-zinc-50 font-bold leading-none",
+              row.original?.cargo === "Supervisor Truck"
+                ? "bg-cyan-500"
+                : row.original?.cargo === "Supervisor Scoop"
+                ? "bg-orange-500"
+                : row.original?.cargo === "Operador Truck"
+                ? "bg-blue-500"
+                : row.original?.cargo === "Operador Scoop"
+                ? "bg-red-500"
+                : row.original?.cargo === "Admin"
+                ? "bg-purple-500"
+                : "bg-gray-500" 
+            )}>
+                {row.getValue("name")?.split(' ')?.slice(0, 2)?.map(pl => pl.charAt(0)?.toUpperCase())?.join('')}
             </div>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
@@ -43,7 +54,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "cargo",
+    accessorKey: "code",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
@@ -58,9 +69,9 @@ export const columns = [
     },
   },
   {
-    accessorKey: "role",
+    accessorKey: "cargo",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Rol" />
+      <DataTableColumnHeader column={column} title="Cargo" />
     ),
     cell: ({ row }) => {
       return (
@@ -68,22 +79,46 @@ export const columns = [
           <span
             className={clsx(
               "relative text-[10px] py-[1px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[8px] before:top-1/2 before:-translate-y-1/2 pl-4",
-              row.original?.role === "Supervisor"
-                ? "text-green-500 bg-green-50 before:bg-green-500"
-                : row.original?.role === "Operador"
-                ? "text-purple-500 bg-purple-50 before:bg-purple-500"
-                : row.original?.role === "Admin"
+              row.original?.cargo === "Supervisor Truck"
+              ? "text-cyan-500 bg-cyan-50 before:bg-cyan-500"
+                : row.original?.cargo === "Supervisor Scoop"
+                ? "text-orange-500 bg-orange-50 before:bg-orange-500"
+                : row.original?.cargo === "Operador Truck"
+                ? "text-blue-500 bg-blue-50 before:bg-blue-500"
+                : row.original?.cargo === "Operador Scoop"
                 ? "text-red-500 bg-red-50 before:bg-red-500"
-                : "text-gray-500 bg-gray-50 before:bg-gray-500" // Default case
+                : row.original?.cargo === "Admin"
+                ? "text-purple-500 bg-purple-50 before:bg-purple-500"
+                : "text-gray-500 bg-gray-50 before:bg-gray-500" 
             )}
           >
-            {row.getValue("role")}
+            {row.getValue("cargo")}
           </span>
         </div>
       );
     },
   },
-
+  {
+    accessorKey: "isActive",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("isActive") === true ? (
+            <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
+              activo
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 bg-red-50 rounded-[6px] text-[10px] text-red-500 leading-[10px]">
+              inactivo
+            </span>
+          )}
+        </>
+      );
+    },
+  },
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (
@@ -92,10 +127,9 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.updatedAt)}
+            <h4 className="text-[12.5px] font-semibold leading-4">
+              <TimeAgo datetime={row.original.updatedAt} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización
@@ -113,7 +147,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}

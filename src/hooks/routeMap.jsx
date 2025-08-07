@@ -1,6 +1,8 @@
 export const createRouteMap = (queryClient) => {
   // 🛠️ Definir tópicos que solo actualizan la caché sin lógica extra
   const simpleTopics = {
+    //CheckList Message
+    "checklist/alert": [],
     //CardGuage
     "progress-shift": ["shift-variable", "progress-shift"],
     //Page Truck
@@ -14,10 +16,16 @@ export const createRouteMap = (queryClient) => {
     "scoop-progress-day": ["shift-variable", "scoop-progress-day"],
     "scoop-tonnage-per-hour": ["shift-variable", "scoop-tonnage-per-hour"],
     //Page Timeline-Truck
-    "truck-activities-per-hour": ["shift-variable", "truck-activities-per-hour"],
+    "truck-activities-per-hour": [
+      "shift-variable",
+      "truck-activities-per-hour",
+    ],
     //Page Timeline-Scoop
-    "scoop-activities-per-hour": ["shift-variable", "scoop-activities-per-hour"],
-    
+    "scoop-activities-per-hour": [
+      "shift-variable",
+      "scoop-activities-per-hour",
+    ],
+
     //Page Pareto-Truck
     "pareto-truck-progress-monthly": [
       "dashboard",
@@ -91,6 +99,107 @@ export const createRouteMap = (queryClient) => {
       return { ...oldData, pages: updatedPages };
     });
   };
+  const addItemToCache = (queryKey, newItem) => {
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData || !oldData.pages) return oldData;
+
+      let itemExists = false;
+
+      const updatedPages = oldData.pages.map((page) => {
+        if (!page.data?.data) return page;
+
+        if (page.data.data.some((item) => item._id === newItem._id)) {
+          itemExists = true;
+        }
+
+        return page;
+      });
+
+      if (itemExists) {
+        console.log("✅ Ya existe en caché. No se agrega.");
+        return oldData;
+      }
+
+      // Agregar al principio de la primera página
+      const firstPage = updatedPages[0];
+      const newFirstPage = {
+        ...firstPage,
+        data: {
+          ...firstPage.data,
+          data: [newItem, ...firstPage.data.data],
+        },
+      };
+
+      const newPages = [newFirstPage, ...updatedPages.slice(1)];
+
+      console.log("➕ Agregado a la caché.");
+      return { ...oldData, pages: newPages };
+    });
+  };
+  const addItemsToCache = (queryKey, newItems) => {
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData || !oldData.pages) return oldData;
+  
+      const seen = new Set();
+      const existingIds = new Set();
+  
+      oldData.pages.forEach((page) => {
+        page.data?.data?.forEach((item) => {
+          if (item._id) existingIds.add(item._id);
+        });
+      });
+  
+      const filteredNewItems = newItems.filter(
+        (item) => item._id && !existingIds.has(item._id)
+      );
+  
+      if (filteredNewItems.length === 0) {
+        console.log("✅ Todas las actividades ya existen en caché.");
+        return oldData;
+      }
+  
+      const firstPage = oldData.pages[0];
+      const newFirstPage = {
+        ...firstPage,
+        data: {
+          ...firstPage.data,
+          data: [...filteredNewItems, ...firstPage.data.data],
+        },
+      };
+  
+      const newPages = [newFirstPage, ...oldData.pages.slice(1)];
+  
+      console.log(`➕ ${filteredNewItems.length} nuevas actividades agregadas al caché.`);
+      return { ...oldData, pages: newPages };
+    });
+  };
+  const updateItemToCache = (queryKey, updatedItem) => {
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData || !oldData.pages) return oldData;
+  
+      const newPages = oldData.pages.map((page) => {
+        const updatedData = page.data?.data?.map((item) => {
+          if (item._id === updatedItem._id) {
+            return { ...item, ...updatedItem }; // 🔄 fusiona con el nuevo
+          }
+          return item;
+        });
+  
+        return {
+          ...page,
+          data: {
+            ...page.data,
+            data: updatedData,
+          },
+        };
+      });
+  
+      console.log(`✏️ Actividad ${updatedItem._id} actualizada en caché.`);
+      return { ...oldData, pages: newPages };
+    });
+  };
+  
+
   return {
     ...Object.fromEntries(
       Object.entries(simpleTopics).map(([topic, path]) => [
@@ -100,6 +209,10 @@ export const createRouteMap = (queryClient) => {
     ),
     "order-ready": updateWorkOrder,
     "checklist-ready": updateWorkOrder,
+    "activity-created": (data) => addItemsToCache(["crud", "activityTruck"], data),
+    "truck-cycle": (data) => addItemToCache(["crud", "cycleTruck"], data),
+    "truck-cycle-updated": (data) => updateItemToCache(["crud", "cycleTruck"], data),
+    "scoop-cycle": (data) => addItemToCache(["crud", "cycleScoop"], data),
     "monthly-average-journals": (data) => {
       const path =
         data.equipment === "truck"
@@ -126,7 +239,9 @@ export const createRouteMap = (queryClient) => {
         queries.forEach(([key]) => {
           queryClient.setQueryData(key, []);
         });
-        queryClient.refetchQueries({ queryKey: ["shift-variable", "list-fleet-truck"] });
+        queryClient.refetchQueries({
+          queryKey: ["shift-variable", "list-fleet-truck"],
+        });
       } else {
         console.log("ℹ️ No se requiere limpieza de 'shift-variable'");
       }
@@ -138,7 +253,7 @@ export const createRouteMap = (queryClient) => {
         queryClient.setQueryData(
           ["shift-variable", "list-fleet-truck"],
           (oldData) => {
-            if (!oldData) return oldData; 
+            if (!oldData) return oldData;
             // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
@@ -148,11 +263,11 @@ export const createRouteMap = (queryClient) => {
         );
       }
       if (data.type === "scoop") {
-        console.log("scoop")
+        console.log("scoop");
         queryClient.setQueryData(
           ["shift-variable", "list-fleet-scoop"],
           (oldData) => {
-            if (!oldData) return oldData; 
+            if (!oldData) return oldData;
             // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
@@ -165,30 +280,35 @@ export const createRouteMap = (queryClient) => {
       }
     },
     "scoop-events-table": (newData) => {
-      queryClient.setQueryData(["shift-variable", "scoop-events"], (oldState) => {
-        console.log("📊 Estado previo:", oldState);
-    
-        const prevData = oldState?.data || []; 
-        const newEventItem = newData.data; 
-    
-        // Buscar si el id ya existe en `data`
-        const existingIndex = prevData.findIndex((item) => item.id === newEventItem.id);
-    
-        let updatedData;
-        if (existingIndex !== -1) {
-          // Si ya existe, reemplazamos el objeto en su posición
-          updatedData = [...prevData];
-          updatedData[existingIndex] = newEventItem;
-        } else {
-          // Si no existe, lo agregamos al final
-          updatedData = [...prevData, newEventItem];
+      queryClient.setQueryData(
+        ["shift-variable", "scoop-events"],
+        (oldState) => {
+          console.log("📊 Estado previo:", oldState);
+
+          const prevData = oldState?.data || [];
+          const newEventItem = newData.data;
+
+          // Buscar si el id ya existe en `data`
+          const existingIndex = prevData.findIndex(
+            (item) => item.id === newEventItem.id
+          );
+
+          let updatedData;
+          if (existingIndex !== -1) {
+            // Si ya existe, reemplazamos el objeto en su posición
+            updatedData = [...prevData];
+            updatedData[existingIndex] = newEventItem;
+          } else {
+            // Si no existe, lo agregamos al final
+            updatedData = [...prevData, newEventItem];
+          }
+
+          return {
+            ...oldState,
+            data: updatedData, // Solo actualizamos `data`, dejando `headers` intacto
+          };
         }
-    
-        return {
-          ...oldState,
-          data: updatedData, // Solo actualizamos `data`, dejando `headers` intacto
-        };
-      });
+      );
     },
   };
 };

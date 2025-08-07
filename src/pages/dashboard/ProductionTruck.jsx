@@ -1,5 +1,5 @@
 import CardCycleWork from "@/components/Dashboard/CardCycleWork";
-import CardFlotaTime from "@/components/Dashboard/CardFlotaTime";
+import CardFlotaTime from "@/components/Dashboard/CardFloatTime/CardFlotaTime";
 import CardGauge from "@/components/Dashboard/CardGauge";
 import CardHeatMap from "@/components/Dashboard/CardHeatmap";
 import CardItem from "@/components/Dashboard/CardItem";

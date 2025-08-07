@@ -1,9 +1,9 @@
-import { ModalPlanDay } from "@/components/Gestion/PlanDay/ModalPlanDay";
+import { ModalPlanDay } from "@/components/Gestion/PlanDay/PlanDayModal";
 import { countItems } from "@/lib/utilsGeneral";
 import { CircleFadingPlus, RefreshCcw } from "lucide-react";
 import { useState } from "react";
-import { columns } from "../../components/Gestion/PlanDay/columns";
-import { DataTable } from "../../components/Gestion/data-table";
+import { columns } from "@/components/Gestion/PlanDay/PlanDayTableColumns";
+import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "../../components/ui/button";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 

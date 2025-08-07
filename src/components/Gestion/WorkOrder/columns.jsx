@@ -1,11 +1,11 @@
-import { formatFecha, formatRelativeTime, useRelativeTime } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { DataTableRowActions } from "../data-table-row-actions";
+import { formatFecha } from "@/lib/utilsGeneral";
+import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import clsx from "clsx";
 import IconCheck from "@/icons/IconCheck";
 import IconClose from "@/icons/IconClose";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
+import TimeAgo from "timeago-react";
 import IconPDF from "@/icons/IconPDF";
 
 export const columns = [
@@ -30,19 +30,25 @@ export const columns = [
             className={clsx(
               "w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center",
               {
-                "bg-[url('/src/assets/vehicle/scoop.png')]":
+                "bg-[url('/vehicle/scoop.png')]":
                   row.original?.vehicleData?.type === "scoop",
-                "bg-[url('/src/assets/vehicle/truck.png')]":
+                "bg-[url('/vehicle/truck.png')]":
                   row.original?.vehicleData?.type === "truck",
-                "bg-[url('/src/assets/vehicle/drill.png')]":
+                "bg-[url('/vehicle/drill.png')]":
                   row.original?.vehicleData?.type === "drill",
               }
             )}
           ></div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              {row.getValue("userName")}
-            </h4>
+            {row.original?.userName ? (
+              <h4 className="text-[12.5px] font-semibold leading-4 flex ">
+                {row.original?.userName}
+              </h4>
+            ) : (
+              <h4 className="text-[12.5px] leading-4 flex text-zinc-300">
+                en proceso...
+              </h4>
+            )}
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
               {row.original?.vehicleData?.tagName}
             </span>
@@ -212,10 +218,9 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              {useRelativeTime(row.original.updatedLastTime)}
+              <TimeAgo datetime={row.original.updatedLastTime} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización
@@ -233,7 +238,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
@@ -246,11 +250,11 @@ export const columns = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"workOrder"} row={row} />
-    ),
-    enableHiding: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions componentToShow={"workOrder"} row={row} />
+  //   ),
+  //   enableHiding: false,
+  // },
 ];

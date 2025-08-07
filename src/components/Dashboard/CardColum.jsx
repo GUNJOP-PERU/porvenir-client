@@ -10,7 +10,7 @@ export default function CardColum() {
     data = [],
     isLoading,
     isError,
-  } = useGraphicData( "monthly-chart-tonnes","dashboard/monthly/chart-tonnes",);
+  } = useGraphicData("monthly-chart-tonnes", "dashboard/monthly/chart-tonnes");
 
   const options = useMemo(
     () => ({
@@ -69,7 +69,9 @@ export default function CardColum() {
           this.points.forEach((point) => {
             tooltipText += `<span style="color:${point.color}">●</span> <b>${
               point.series.name
-            }</b>: ${Number(point.y).toLocaleString("en-US", { maximumFractionDigits: 0 })}tn<br/>`;
+            }</b>: ${Number(point.y).toLocaleString("en-US", {
+              maximumFractionDigits: 0,
+            })}tn<br/>`;
           });
 
           return tooltipText;

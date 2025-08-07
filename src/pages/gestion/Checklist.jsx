@@ -1,11 +1,8 @@
-import { useState } from "react";
-import { ModalChecklist } from "../../components/Gestion/Checklist/ModalChecklist";
-import { columns } from "../../components/Gestion/Checklist/columns";
-import { DataTable } from "../../components/Gestion/data-table";
-import { Button } from "../../components/ui/button";
-import { useFetchData, useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
-import IconMore from "../../icons/IconMore";
-import { countItems } from "../../lib/utilsGeneral";
+import { columns } from "@/components/Gestion/Checklist/ChecklistTableColumns";
+import { DataTable } from "@/components/Gestion/DataTable";
+import { Button } from "@/components/ui/button";
+import { useFetchInfinityScroll } from "@/hooks/useGlobalQuery";
+import { countItems } from "@/lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
 
 function Checklist() {
@@ -18,7 +15,6 @@ function Checklist() {
     fetchNextPage,
     hasNextPage,
   } = useFetchInfinityScroll("checklist", "checklist/items");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
@@ -47,14 +43,6 @@ function Checklist() {
             <RefreshCcw className="w-5 h-5 text-zinc-400" />
           </Button>
 
-          {/* <Button
-            onClick={() => setDialogOpen(true)}
-            className="w-fit"
-            disabled={isFetching || isError}
-          >
-            <IconMore className="w-5 h-5 fill-white" />
-            Añadir nuevo
-          </Button> */}
         </div>
       </div>
 
@@ -67,11 +55,6 @@ function Checklist() {
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         tableType={"checklists"}
-      />
-      <ModalChecklist
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
       />
     </>
   );

@@ -1,4 +1,3 @@
-
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import calendar from "dayjs/plugin/calendar";
@@ -17,20 +16,6 @@ export const formatRelativeTime = (updatedAt) => {
   return dayjs(updatedAt).fromNow(); // Mostrará "hace 4 horas", "hace 10 minutos", etc.
 };
 
-export function useRelativeTime(updatedAt) {
-  const [relativeTime, setRelativeTime] = useState(dayjs(updatedAt).fromNow());
-
-  useEffect(() => {
-    const updateInterval = setInterval(() => {
-      setRelativeTime(dayjs(updatedAt).fromNow());
-    }, 60000); // Actualiza cada 60 segundos
-
-    return () => clearInterval(updateInterval); // Limpieza al desmontar
-  }, [updatedAt]);
-
-  return relativeTime;
-}
-
 export function getMonthName(monthNumber) {
   return dayjs().month(monthNumber - 1).format("MMMM");
 }
@@ -46,16 +31,16 @@ export function formatFecha(dateString) {
   return ` ${formattedHours}:${formattedMinutes}, ${day} ${monthShort}`;
 }
 export function formatHour(dateString) {
-  const date = dayjs(dateString);
-  const formattedHours = date.format("HH");
-  const formattedMinutes = date.format("mm");
-
-  return ` ${formattedHours}:${formattedMinutes}`;
+  return dayjs(dateString).format("HH:mm:ss");
 }
-
 
 export function countItems(data) {
   return Array.isArray(data) ? data.length : 0;
+}
+
+export function countItemsByType(data, selectedType) {
+  if (!data || !selectedType) return 0;
+  return data[selectedType]?.length || 0;
 }
 
 export function getYearFromFecha(dateString) {
@@ -65,7 +50,6 @@ export function getYearFromFecha(dateString) {
   const year = date.format("YYYY");
   return year;
 }
-
 
 export function formatDurationHour(durationInSeconds) {
   const hours = Math.floor(durationInSeconds / 3600);
@@ -86,3 +70,9 @@ export function formatThousands(value) {
   return value >= 1000 ? (value / 1000).toFixed(1) + "<small>k</small>" : value;
 }
 
+export function getHoursBetween(start, end) {
+  const startMs = start instanceof Date ? start.getTime() : Number(start);
+  const endMs = end instanceof Date ? end.getTime() : Number(end);
+  const totalHours = Math.abs((endMs - startMs) / (1000 * 60 * 60));
+  return totalHours.toFixed(2); // Retorna las horas con dos decimales, siempre positivo
+}
