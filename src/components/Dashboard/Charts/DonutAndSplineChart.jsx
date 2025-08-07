@@ -4,7 +4,57 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
-const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
+const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) => {
+  console.log("chartData", chartData);
+  const sortDataByHour = (data) => {
+    if (!data?.statsByHour) return data;
+    const sortedStatsByHour = [...data.statsByHour].sort((a, b) => {
+      const hourA = parseInt(a.hour.split(':')[0]);
+      const hourB = parseInt(b.hour.split(':')[0]);
+      return hourA - hourB;
+    });
+
+    console.log("sorted1", sortedStatsByHour);
+
+    const acumulativeData = sortedStatsByHour.map((e,i) => e.totalTrips + (sortedStatsByHour[i-1] || 0));
+
+    const completedStatsByHour = [];
+
+    for (let i = 0; i < 12; i++) {
+      if (i < acumulativeData.length) {
+        completedStatsByHour.push(acumulativeData[i]);
+      } else {
+        completedStatsByHour.push(null);
+      }
+    }
+    return completedStatsByHour;
+  };
+
+  console.log("sorted",sortDataByHour(chartData));
+
+  const getHoursByShift = () => {
+    const dayShift = [];
+    const nightShift = [];
+      for (let hour = 6; hour < 18; hour++) {
+      const hourString = hour.toString().padStart(2, '0') + ':00';
+      dayShift.push(hourString);
+    }
+    
+    for (let hour = 18; hour < 24; hour++) {
+      const hourString = hour.toString().padStart(2, '0') + ':00';
+      nightShift.push(hourString);
+    }
+    for (let hour = 0; hour < 6; hour++) {
+      const hourString = hour.toString().padStart(2, '0') + ':00';
+      nightShift.push(hourString);
+    }
+    
+    return {
+      day: dayShift,
+      night: nightShift
+    };
+  };
+
   const options = {
     chart: {
         type: "areaspline",
@@ -42,7 +92,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
         },
         {
           title: "",
-          categories: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"],
+          categories: getHoursByShift().night,
           opposite: true,
           linkedTo:1,
           labels: {
@@ -68,7 +118,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
     series: [
       {
           name: "Fact",
-          data: [0.6, 1.8, 8.8, 9.4, 12.8, 13.2, "",""],
+          data: sortDataByHour(chartData),
           color: "#000000",
           xAxis: 0,
           fillColor: "#bfefe1",
@@ -80,7 +130,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData }) => {
       },
       {
           name: "Plan",
-          data: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2],
+          data: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2, "","","",""],
           color: "#9696ab",
           xAxis: 1,
           fillColor: "#ffd0d63d",
@@ -136,6 +186,14 @@ DonutAndSplineChart.propTypes = {
     currentValueColor: PropTypes.string.isRequired,
     showDifference: PropTypes.bool.isRequired,
     forecastText: PropTypes.string.isRequired,
+  }),
+  chartData: PropTypes.shape({
+    totalTrips: PropTypes.number.isRequired,
+    hourRangesWithTrips: PropTypes.number.isRequired,
+    statsByHour: PropTypes.arrayOf(PropTypes.shape({
+      hour: PropTypes.string.isRequired,
+      totalTrips: PropTypes.number.isRequired,
+    })),
   }),
 }
 

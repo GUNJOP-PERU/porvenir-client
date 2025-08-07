@@ -10,13 +10,13 @@ import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 
 function PageDestiny() {
   const [dialogOpen, setDialogOpen] = useState(false);
- const {
-     data = [],
-     isFetching,
-     isLoading,
-     isError,
-     refetch,
-   } = useFetchData("destination", "destination");
+  const {
+    data = [],
+    isFetching,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchData("destination", "destination");
   
   return (
     <>

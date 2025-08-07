@@ -1,12 +1,67 @@
+import { useEffect, useState } from "react";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChart";
 import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChart";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
+import { useFetchData } from "../../hooks/useGlobalQuery";
 
 const ShortIntervalControl = () => {
+  const [dateFilter, setDateFilter] = useState({
+    startDate: null,
+    endDate: null,
+  });
+
+  console.log("dateFilter", new Date(dateFilter.startDate), new Date(dateFilter.endDate));
+
+  const setDateFilterBasedOnTime = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    let startDate, endDate;
+
+    if (currentHour >= 6 && currentHour < 18) {
+      startDate = new Date(now.setHours(6, 0, 0, 0)).getTime();
+      endDate = new Date(now.setHours(18, 0, 0, 0)).getTime();
+    } else {
+      if (currentHour >= 18) {
+        startDate = new Date(now.setHours(18, 0, 0, 0)).getTime() - 12*60*60*1000;
+        endDate = new Date(now.setDate(now.getDate() + 1)).setHours(6, 0, 0, 0)  - 12*60*60*1000;
+      } else {
+        startDate = new Date(now.setDate(now.getDate() - 1)).setHours(18, 0, 0, 0);
+        endDate = new Date(now.setHours(6, 0, 0, 0)).getTime();
+      }
+    }
+    setDateFilter({ startDate, endDate });
+  };
+
+  const {
+    data = [],
+    isFetching,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchData(
+    "trip-group-by-hours",
+    `trip/stats-by-hours?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
+  );
+
+  useEffect(() => {
+    setDateFilterBasedOnTime();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDateFilterBasedOnTime();
+    }, 60000);
+    setDateFilterBasedOnTime();
+    return () => clearInterval(interval);
+  }, []);
+
+  if(!data) return <p>cargando</p>
+
   return (
-    <div className="grid grid-cols-[1fr_4fr] h-full gap-10">
-      <div className="flex flex-col justify-between">
+    <div className="grid grid-cols-[1fr] h-full gap-10">
+      {/* <div className="flex flex-col justify-between">
         <DonutChart
           title="OVERALL PLAN, kM³"
           donutData={{
@@ -80,11 +135,11 @@ const ShortIntervalControl = () => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-[1fr_1fr] rounded-lg p-4 gap-4 card-shadow">
-          <DonutAndSplineChart
+        <div className="grid grid-cols-[1fr] rounded-lg p-4 gap-4 card-shadow">
+          {/* <DonutAndSplineChart
             title="OVERALL PLAN EXECUTION, kM³"
             donutData={{
               total: 100,
@@ -99,7 +154,7 @@ const ShortIntervalControl = () => {
               showDifference: true,
               forecastText: "Shiftend Forecast"
             }}
-          />
+          /> */}
 
           <DonutAndSplineChart
             title="EXTRACTION PLAN EXECUTION, kT"
@@ -116,22 +171,23 @@ const ShortIntervalControl = () => {
               showDifference: true,
               forecastText: "Shiftend Forecast"
             }}
+            chartData={data}
           />
         </div>
 
-        <div className="grid grid-cols-[1fr_1fr] gap-4">
-          <div className="card-shadow rounded-lg p-4 ">
+        <div className="grid grid-cols-[1fr] gap-4">
+          {/* <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChart
               title="SHOVELS ON SHIFT, MachShift"
             />
-          </div>
+          </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChart
               title="SHOVELS ON SHIFT, MachShift"
             />
           </div>
 
-          <div className="card-shadow rounded-lg p-4">
+          {/* <div className="card-shadow rounded-lg p-4">
             <DonutAndTableChart
               title="PLAN REJECTING REASONS, %"
               donutData={[
@@ -180,7 +236,7 @@ const ShortIntervalControl = () => {
                 }
               ]}
             />
-          </div>
+          </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <DonutAndTableChart
               title="PLAN REJECTING REASONS, %"
