@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChart";
-import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChart";
+import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
+import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChartByHour";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
 import { useFetchData } from "../../hooks/useGlobalQuery";
 
-const ShortIntervalControl = () => {
+const RealTimeByHour = () => {
   const [dateFilter, setDateFilter] = useState({
     startDate: null,
     endDate: null,
@@ -52,10 +52,10 @@ const ShortIntervalControl = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setDateFilterBasedOnTime();
-    }, 60000);
-    setDateFilterBasedOnTime();
+      refetch();
+    }, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [refetch]);
 
   if(!data) return <p>cargando</p>
 
@@ -294,4 +294,4 @@ const ShortIntervalControl = () => {
   )
 }
 
-export default ShortIntervalControl
+export default RealTimeByHour

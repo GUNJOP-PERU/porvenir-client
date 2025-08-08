@@ -1,4 +1,3 @@
-import React from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -40,7 +39,8 @@ import PlanWeek from "./pages/gestion/PlanWeek";
 import PageUbications from "./pages/gestion/Ubication";
 import PageBeacon from "./pages/gestion/Beacon";
 import PageWap from "./pages/gestion/Wap";
-import ShortIntervalControl from "./pages/dashboard/ShortIntervalControl";
+import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
+import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
 
 // Array con rutas protegidas
 const protectedRoutes = [
@@ -73,7 +73,8 @@ const protectedRoutes = [
   { path: "dashboard/paretoScoop", element: <ParetoScoop /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
   { path: "dashboard/productionUV", element: <Utilization /> },
-  { path: "dashboard/short-interval-control", element: <ShortIntervalControl /> },
+  { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

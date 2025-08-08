@@ -4,55 +4,64 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
-const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) => {
-  console.log("chartData", chartData);
-  const sortDataByHour = (data) => {
-    if (!data?.statsByHour) return data;
-    const sortedStatsByHour = [...data.statsByHour].sort((a, b) => {
-      const hourA = parseInt(a.hour.split(':')[0]);
-      const hourB = parseInt(b.hour.split(':')[0]);
-      return hourA - hourB;
+const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartData }) => {
+  
+  const sortDataByDay = (data) => {
+    if (!data?.statsByDay) return {
+      data: [],
+      acumulativeData: []
+    };
+    const getCurrentWeekDates = () => {
+      const currentDate = new Date();
+      const currentDay = currentDate.getDay();
+      const thursdayOffset = currentDay >= 4 ? currentDay - 4 : currentDay + 3;
+      const thursday = new Date(currentDate);
+      thursday.setDate(currentDate.getDate() - thursdayOffset);
+      const weekDates = [];
+
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(thursday);
+        date.setDate(thursday.getDate() + i);
+        weekDates.push(date.toISOString().split("T")[0]);
+      }
+
+      return weekDates;
+    };
+    const weekDates = getCurrentWeekDates();
+    const dataMap = {};
+    data.statsByDay.forEach((item) => {
+      dataMap[item.date] = item.totalTrips;
     });
 
-    console.log("sorted1", sortedStatsByHour);
+    const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
 
-    const acumulativeData = sortedStatsByHour.map((e,i) => e.totalTrips + (sortedStatsByHour[i-1] || 0));
+    const acumulativeData = completedStatsByDays.map((day, index) => {
+      const sum = completedStatsByDays.slice(0, index + 1).reduce((acc, val) => acc + (val || 0), 0);
+      return day ? sum : "";
+    });
 
-    const completedStatsByHour = [];
-
-    for (let i = 0; i < 12; i++) {
-      if (i < acumulativeData.length) {
-        completedStatsByHour.push(acumulativeData[i]);
-      } else {
-        completedStatsByHour.push(null);
-      }
-    }
-    return completedStatsByHour;
+    return {
+      data: completedStatsByDays,
+      acumulativeData: acumulativeData
+    };
   };
 
-  console.log("sorted",sortDataByHour(chartData));
+  const getCurrentWeekDates = () => {
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+    
+    const thursdayOffset = (currentDay >= 4) ? currentDay - 4 : currentDay + 3;
+    const thursday = new Date(currentDate);
+    thursday.setDate(currentDate.getDate() - thursdayOffset);
 
-  const getHoursByShift = () => {
-    const dayShift = [];
-    const nightShift = [];
-      for (let hour = 6; hour < 18; hour++) {
-      const hourString = hour.toString().padStart(2, '0') + ':00';
-      dayShift.push(hourString);
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(thursday);
+      date.setDate(thursday.getDate() + i);
+      weekDates.push(date.toISOString().split('T')[0]);
     }
-    
-    for (let hour = 18; hour < 24; hour++) {
-      const hourString = hour.toString().padStart(2, '0') + ':00';
-      nightShift.push(hourString);
-    }
-    for (let hour = 0; hour < 6; hour++) {
-      const hourString = hour.toString().padStart(2, '0') + ':00';
-      nightShift.push(hourString);
-    }
-    
-    return {
-      day: dayShift,
-      night: nightShift
-    };
+
+    return weekDates;
   };
 
   const options = {
@@ -64,8 +73,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
     xAxis: [
         {
           title: "",
-          categories: [0.6, 1.8, 8.8, 9.4, 12.8, 13.2],
-          tickPositioner: function () { return [0, 1, 2, 3, 4, 5]; },
+          categories: sortDataByDay(chartData).acumulativeData,
           opposite: false,
           labels: {
             style: {
@@ -77,8 +85,8 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
         },
         {
           title: "",
-          categories: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2],
-          tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6, 7]; },
+          categories: [1.8, 4.0, 6.8, 9.4, 11.2],
+          tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6]; },
           opposite: false,
           lineColor: 'transparent',
           labels: {
@@ -92,7 +100,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
         },
         {
           title: "",
-          categories: getHoursByShift().night,
+          categories: getCurrentWeekDates(),
           opposite: true,
           linkedTo:1,
           labels: {
@@ -118,7 +126,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
     series: [
       {
           name: "Fact",
-          data: sortDataByHour(chartData),
+          data: sortDataByDay(chartData).acumulativeData,
           color: "#000000",
           xAxis: 0,
           fillColor: "#bfefe1",
@@ -130,7 +138,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
       },
       {
           name: "Plan",
-          data: [1.8, 4.0, 6.8, 9.4, 11.2, 13.6, 16.4, 18.2, "","","",""],
+          data: [1.8, 4.0, 6.8, 9.4, 11.2, "",""],
           color: "#9696ab",
           xAxis: 1,
           fillColor: "#ffd0d63d",
@@ -172,7 +180,7 @@ const DonutAndSplineChart = ({ title, donutData , progressBarData, chartData }) 
   )
 }
 
-DonutAndSplineChart.propTypes = {
+DonutAndSplineChartByDay.propTypes = {
   title: PropTypes.string,
   donutData: PropTypes.shape({
     total: PropTypes.number.isRequired,
@@ -190,11 +198,11 @@ DonutAndSplineChart.propTypes = {
   chartData: PropTypes.shape({
     totalTrips: PropTypes.number.isRequired,
     hourRangesWithTrips: PropTypes.number.isRequired,
-    statsByHour: PropTypes.arrayOf(PropTypes.shape({
-      hour: PropTypes.string.isRequired,
+    statsByDays: PropTypes.arrayOf(PropTypes.shape({
+      day: PropTypes.string.isRequired,
       totalTrips: PropTypes.number.isRequired,
     })),
   }),
 }
 
-export default DonutAndSplineChart
+export default DonutAndSplineChartByDay

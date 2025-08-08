@@ -16,7 +16,6 @@ import IconDash4 from "@/icons/Dashboard/IconDash4";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
-import IconWeight from "@/icons/Dashboard/IconWeight";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -185,16 +184,22 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/productionUV",
           },
           {
-            name: "Control Intervalos Cortos",
+            name: "Acumulado por Hora",
             href: "/dashboard/short-interval-control",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/short-interval-control",
+            active: pathname === "/dashboard/real-time-by-hour",
           },
           {
-            name: "Control Intervalos Cortos v2",
+            name: "Acumulado por Dia",
             href: "/dashboard/short-interval-control-v2",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/short-interval-control-v2",
+            active: pathname === "/dashboard/real-time-by-day",
+          },
+          {
+            name: "Acumulado por Mes",
+            href: "/dashboard/short-interval-control-v2",
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/real-time-by-month",
           }
         ],
       },
