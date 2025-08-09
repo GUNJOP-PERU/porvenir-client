@@ -6,7 +6,7 @@ const ProgressBar = ({progressBarData}) => {
   return (
     <div className="progress-bar--container">
       <span className="progress-bar-label">
-        Done <b>{progressBarData.currentValue}</b> of <b>{progressBarData.total}</b>
+        Extraído <b>{progressBarData.currentValue} t</b> de <b>{progressBarData.total} t</b>
       </span>
       {progressBarData.showDifference &&
         <>
@@ -15,8 +15,8 @@ const ProgressBar = ({progressBarData}) => {
             className="progress-bar-label-difference"
           >
             { differenceStatus >0  ? 
-              `+${differenceStatus.toFixed(1)}`:
-              `${differenceStatus.toFixed(1)}`
+              `+${differenceStatus}`:
+              `${differenceStatus}`
             }
           </span>
 
@@ -39,7 +39,7 @@ const ProgressBar = ({progressBarData}) => {
         className="progress-bar-prediction-label"
       >
         <p>
-          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction}</span>
+          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction} t</span>
         </p>
       </div>
       <div className="currentValue-bar" style={{ width: `${(progressBarData.currentValue/progressBarData.total)*100}%`}}></div>

@@ -4,9 +4,13 @@ import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSpli
 import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import { set, addDays } from "date-fns";
+import { set, addDays, subDays } from "date-fns";
 
 const RealTimeByHour = () => {
+  const [ baseData, setBaseData ] =  useState({
+    mineral: 30,
+    desmonte: 29
+  }) 
   const [dateFilter, setDateFilter] = useState({
     startDate: null,
     endDate: null,
@@ -19,7 +23,7 @@ const RealTimeByHour = () => {
     const thursday = new Date(currentDate);
     thursday.setDate(currentDate.getDate() - thursdayOffset);
     const weekDate = {
-      startDate: new Date(thursday),
+      startDate: subDays(new Date(thursday), 1),
       endDate: addDays(new Date(thursday), 6)
     }
 
@@ -30,7 +34,7 @@ const RealTimeByHour = () => {
   };
 
   const {
-    data = [],
+    data,
     // isFetching,
     // isLoading,
     // isError,
@@ -39,6 +43,21 @@ const RealTimeByHour = () => {
     "trip-group-by-days",
     `trip/stats-by-days?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
   );
+
+  const {
+    data : mineralData = [],
+    // isFetching,
+    // isLoading,
+    // isError,
+    refetch : refetchMineral
+  } = useFetchData("mineral", "mineral");
+
+  useEffect(() => {
+    setBaseData({
+      mineral: mineralData.find((item) => item.name.toLowerCase() === "mineral")?.value || 30,
+      desmonte: mineralData.find((item) => item.name.toLowerCase() === "desmonte")?.value || 29
+    });
+  }, [mineralData])
 
   useEffect(() => {
     getCurrentWeekDates();
@@ -53,7 +72,7 @@ const RealTimeByHour = () => {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  if(!data) return <p>cargando</p>
+  if(!data || !mineralData) return <p>cargando</p>
 
   return (
     <div className="grid grid-cols-[1fr] h-full gap-10">
@@ -153,20 +172,21 @@ const RealTimeByHour = () => {
           /> */}
 
           <DonutAndSplineChartByDay
-            title="EXTRACTION PLAN EXECUTION, kT"
+            title="Acumulado de Extracción de mineral por dia en Toneladas"
             donutData={{
-              total: 100,
-              currentValue: 67,
+              total: 1400 * baseData.mineral,
+              currentValue: data.statsByDay ? data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0) * baseData.mineral : 0,
               currentValueColor: "#ff7989",
             }}
             progressBarData= {{
-              total: 12.0,
-              currentValue: 8.2,
-              prediction: 11.6,
+              total: 1400 * baseData.mineral,
+              currentValue: data.statsByDay ? data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0) * baseData.mineral : 0,
+              prediction: data.statsByDay ? (Math.round(data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0)/data.statsByDay.length))*7*baseData.mineral : 0,
               currentValueColor: "#ff7989",
               showDifference: true,
-              forecastText: "Shiftend Forecast"
+              forecastText: "Predicción"
             }}
+            mineralWeight={baseData.mineral}
             chartData={data}
           />
         </div>
@@ -179,8 +199,9 @@ const RealTimeByHour = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChartByDay
-              title="SHOVELS ON SHIFT, MachShift"
+              title="Extracción de mineral por dia en Toneladas"
               chartData={data}
+              mineralWeight={baseData.mineral}
             />
           </div>
 
@@ -239,36 +260,36 @@ const RealTimeByHour = () => {
               title="PLAN REJECTING REASONS, %"
               donutData={[
                 { title: "AVAILABILITY",
-                  total: 100,
-                  currentValue: 72,
+                  total: 24 * 50 * data.statsByDay.length,
+                  currentValue: Number((24 * 50 * data.statsByDay.length) - data.statsByDay.reduce((acc, day) => acc + day.totalMaintenanceTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 },
                 { title: "USABILITY",
-                  total: 100,
-                  currentValue: 64,
+                  total: 24 * 50 * data.statsByDay.length,
+                  currentValue: Number(data.statsByDay.reduce((acc, day) => acc + day.totalCycleTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 }
               ]}
               tableData={[{
                   title: "PLAN",
-                  currentValue: 48,
-                  total: 50,
+                  currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1),
+                  total: 300,
                   subData: [
                     { title: "Viaje Vació",
-                      currentValue: 12,
-                      total: 50
+                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgEmptyTime/data.statsByDay.length, 0).toFixed(1),
+                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Carga",
-                      currentValue: 7,
-                      total: 50
+                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgLoadTime/data.statsByDay.length, 0).toFixed(1),
+                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Viaje Lleno",
-                      currentValue: 20,
-                      total: 50
+                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgFullTime/data.statsByDay.length, 0).toFixed(1),
+                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Descarga",
-                      currentValue: 9,
-                      total: 50
+                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgDischargeTime/data.statsByDay.length, 0).toFixed(1),
+                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                   ]
                 },

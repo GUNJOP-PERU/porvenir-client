@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import ProgressBar from "@/components/Dashboard/Charts/ProgressBar"
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useEffect, useRef, useCallback } from "react";
 
 const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
   const sizeMap = {
@@ -15,6 +16,8 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
     medium: "20px"
   };
 
+  const chartRef = useRef(null); // Referencia al gráfico
+
   const options = {
     chart: {
       type: "pie",
@@ -26,7 +29,7 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
           const chart = this;
           chart.customLabel = chart.renderer
             .text(
-              `${donutData?.currentValue || 0}%`,
+              `${(donutData?.currentValue / donutData?.total * 100).toFixed(1) || 0}%`,
               chart.plotWidth / 2 + chart.plotLeft,
               chart.plotHeight / 2 + chart.plotTop + 5
             )
@@ -57,7 +60,7 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
     },
     series: [
       {
-        name: "Porcentaje",
+        name: "",
         data: [
           {
             name: "Valor Actual",
@@ -77,13 +80,19 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
     },
   };
 
-  const updateCenterText = (chart) => {
+  const updateCenterText = useCallback((chart) => {
     if (chart && chart.customLabel) {
       chart.customLabel.attr({
-        text: `${donutData?.currentValue || 0}`,
+        text: `${((donutData?.currentValue / donutData?.total) * 100 || 0).toFixed(1)}%`,
       });
     }
-  };
+  }, [donutData]);
+
+  useEffect(() => {
+    if (chartRef.current) {
+      updateCenterText(chartRef.current);
+    }
+  }, [donutData, updateCenterText]); // Escucha cambios en donutData y updateCenterText
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -95,7 +104,10 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
-        callback={(chart) => updateCenterText(chart)}
+        callback={(chart) => {
+          chartRef.current = chart; // Guarda la referencia al gráfico
+          updateCenterText(chart);
+        }}
       />
       {progressBar ?
         <ProgressBar

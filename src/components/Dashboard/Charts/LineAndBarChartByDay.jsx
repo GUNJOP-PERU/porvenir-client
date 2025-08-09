@@ -1,8 +1,9 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import PropTypes from 'prop-types'
+import { format } from "date-fns";
 
-const LineAndBarChartByDay = ({ title, chartData }) => {
+const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
   const sortDataByDay = (data) => {
     if (!data?.statsByDay) return {
       data: [],
@@ -19,7 +20,7 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
       for (let i = 0; i < 7; i++) {
         const date = new Date(thursday);
         date.setDate(thursday.getDate() + i);
-        weekDates.push(date.toISOString().split("T")[0]); 
+        weekDates.push(format(date, "yyyy-MM-dd"));
       }
 
       return weekDates;
@@ -38,30 +39,34 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
     });
 
     return {
-      data: completedStatsByDays,
-      acumulativeData: acumulativeData
+      data: completedStatsByDays.map(e => e ? e * mineralWeight : ""),
+      acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
+      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} t` : ""),
+      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} t` : "")
     };
   };
 
   const getCurrentWeekDates = () => {
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
-    
-    const thursdayOffset = (currentDay >= 4) ? currentDay - 4 : currentDay + 3;
+    const thursdayOffset = currentDay >= 4 ? currentDay - 4 : currentDay + 3;
     const thursday = new Date(currentDate);
     thursday.setDate(currentDate.getDate() - thursdayOffset);
 
     const weekDates = [];
+    const formatter = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric' });
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(thursday);
       date.setDate(thursday.getDate() + i);
-      weekDates.push(date.toISOString().split('T')[0]);
+      const formattedDate = formatter.format(date);
+      weekDates.push(formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1));
     }
 
     return weekDates;
   };
 
-  const plan = new Array(7).fill(200);
+  const plan = (new Array(7).fill(200)).map((e) => e * mineralWeight);
   const diff = plan.map((exp, i) => {
     const currentData = sortDataByDay(chartData).data;
     const e = Math.abs(exp - currentData[i]);
@@ -102,7 +107,7 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
         },
       },
       {
-        categories: sortDataByDay(chartData).data,
+        categories: sortDataByDay(chartData).dataText,
         opposite: false,
         linkedTo: 0,
         lineColor: 'transparent',
@@ -116,7 +121,7 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
         }
       },
       {
-        categories: plan,
+        categories: plan.map((e) => `${e} t`),
         opposite: false,
         linkedTo: 0,
         lineColor: 'transparent',
@@ -153,7 +158,7 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
         dataLabels: {
           enabled: true,
           formatter: function () {
-            return diff[this.point.index].toFixed(1);
+            return `${diff[this.point.index].toFixed(1)} t`;
           },
         },
       },
@@ -185,13 +190,13 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#000000]">
               Fact
               <b className="font-bold text-[16px] text-[#000000]">
-                {averageData(sortDataByDay(chartData).data).toFixed(0)}
+                {averageData(sortDataByDay(chartData).data).toFixed(0)} t
               </b>
             </span>
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#9696ab]">
               Plan
               <b className="font-bold text-[16px] text-[#9696ab]">
-                {averageData(plan)}
+                {averageData(plan)} t
               </b>
             </span>
           </div>
@@ -204,6 +209,7 @@ const LineAndBarChartByDay = ({ title, chartData }) => {
 
 LineAndBarChartByDay.propTypes = {
   title: PropTypes.string.isRequired,
+  mineralWeight: PropTypes.number.isRequired,
   chartData: PropTypes.shape({
     totalTrips: PropTypes.number.isRequired,
     hourRangesWithTrips: PropTypes.number.isRequired,

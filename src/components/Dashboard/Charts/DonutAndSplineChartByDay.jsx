@@ -3,8 +3,9 @@ import ProgressBar from "./ProgressBar"
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
+import { format } from "date-fns";
 
-const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartData }) => {
+const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartData, mineralWeight }) => {
   
   const sortDataByDay = (data) => {
     if (!data?.statsByDay) return {
@@ -22,16 +23,19 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
       for (let i = 0; i < 7; i++) {
         const date = new Date(thursday);
         date.setDate(thursday.getDate() + i);
-        weekDates.push(date.toISOString().split("T")[0]);
+        weekDates.push(format(date, "yyyy-MM-dd"));
       }
 
       return weekDates;
     };
+
     const weekDates = getCurrentWeekDates();
     const dataMap = {};
     data.statsByDay.forEach((item) => {
       dataMap[item.date] = item.totalTrips;
     });
+
+    console.log(weekDates,"weeks")
 
     const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
 
@@ -41,28 +45,34 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
     });
 
     return {
-      data: completedStatsByDays,
-      acumulativeData: acumulativeData
+      data: completedStatsByDays.map(e => e ? e * mineralWeight : ""),
+      acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
+      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} t` : ""),
+      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} t` : "")
     };
   };
 
   const getCurrentWeekDates = () => {
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
-    
-    const thursdayOffset = (currentDay >= 4) ? currentDay - 4 : currentDay + 3;
+    const thursdayOffset = currentDay >= 4 ? currentDay - 4 : currentDay + 3;
     const thursday = new Date(currentDate);
     thursday.setDate(currentDate.getDate() - thursdayOffset);
 
     const weekDates = [];
+    const formatter = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric' });
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(thursday);
       date.setDate(thursday.getDate() + i);
-      weekDates.push(date.toISOString().split('T')[0]);
+      const formattedDate = formatter.format(date);
+      weekDates.push(formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1));
     }
 
     return weekDates;
   };
+
+  console.log("spline",sortDataByDay(chartData))
 
   const options = {
     chart: {
@@ -73,7 +83,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
     xAxis: [
         {
           title: "",
-          categories: sortDataByDay(chartData).acumulativeData,
+          categories: sortDataByDay(chartData).acumulativeDataText,
           opposite: false,
           labels: {
             style: {
@@ -113,9 +123,14 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
         }
     ],
     yAxis: {
-      title: "",
+      title: {
+        text: "Toneladas" // Agrega la unidad al título del eje Y
+      },
       opposite: true,
       labels: {
+        formatter: function () {
+          return `${this.value} t`; // Agrega la unidad a las etiquetas del eje Y
+        },
         style: {
           color: '#9696ab',
           fontSize: '14px',
@@ -134,6 +149,11 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
             fillColor: 'white',
             lineWidth: 2,
             lineColor: '#000000'
+          },
+          tooltip: {
+            pointFormatter: function () {
+              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} t</b><br/>`; // Agrega la unidad al tooltip
+            }
           }
       },
       {
@@ -146,6 +166,11 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
             fillColor: 'white',
             lineWidth: 2,
             lineColor: '#9696ab'
+          },
+          tooltip: {
+            pointFormatter: function () {
+              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} t</b><br/>`; // Agrega la unidad al tooltip
+            }
           }
       },
     ],
@@ -182,6 +207,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
 
 DonutAndSplineChartByDay.propTypes = {
   title: PropTypes.string,
+  mineralWeight: PropTypes.number.isRequired,
   donutData: PropTypes.shape({
     total: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,
