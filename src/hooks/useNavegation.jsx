@@ -184,23 +184,29 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/productionUV",
           },
           {
-            name: "Acumulado por Hora",
-            href: "/dashboard/real-time-by-hour",
+            name: "Viajes Por Turno",
+            href: "/dashboard/real-time-trip-count",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/real-time-by-hour",
+            active: pathname === "/dashboard/real-time-trip-count",
           },
+          // {
+          //   name: "Acumulado por Hora",
+          //   href: "/dashboard/real-time-by-hour",
+          //   icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+          //   active: pathname === "/dashboard/real-time-by-hour",
+          // },
           {
             name: "Acumulado por Dia",
             href: "/dashboard/real-time-by-day",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-by-day",
           },
-          {
-            name: "Acumulado por Mes",
-            href: "/dashboard/real-time-by-month",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/real-time-by-month",
-          }
+          // {
+          //   name: "Acumulado por Mes",
+          //   href: "/dashboard/real-time-by-month",
+          //   icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+          //   active: pathname === "/dashboard/real-time-by-month",
+          // }
         ],
       },
     ],

@@ -47,8 +47,8 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
     return {
       data: completedStatsByDays.map(e => e ? e * mineralWeight : ""),
       acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
-      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} t` : ""),
-      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} t` : "")
+      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} TM` : ""),
+      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} TM` : "")
     };
   };
 
@@ -152,7 +152,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
           },
           tooltip: {
             pointFormatter: function () {
-              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} t</b><br/>`; // Agrega la unidad al tooltip
+              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} TM</b><br/>`; // Agrega la unidad al tooltip
             }
           }
       },
@@ -169,7 +169,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
           },
           tooltip: {
             pointFormatter: function () {
-              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} t</b><br/>`; // Agrega la unidad al tooltip
+              return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${this.y} TM</b><br/>`; // Agrega la unidad al tooltip
             }
           }
       },

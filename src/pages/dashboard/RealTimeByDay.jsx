@@ -172,7 +172,7 @@ const RealTimeByHour = () => {
           /> */}
 
           <DonutAndSplineChartByDay
-            title="Acumulado de Extracción de mineral por dia en Toneladas"
+            title="Acumulado de Extracción de mineral por dia en TM"
             donutData={{
               total: 554205 / 4,
               currentValue: data.statsByDay ? data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0) * baseData.mineral : 0,
@@ -199,7 +199,7 @@ const RealTimeByHour = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChartByDay
-              title="Extracción de mineral por dia en Toneladas"
+              title="Extracción de mineral por dia en TM"
               chartData={data}
               mineralWeight={baseData.mineral}
             />
@@ -275,19 +275,19 @@ const RealTimeByHour = () => {
                   currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1),
                   total: 300,
                   subData: [
-                    { title: "Viaje Vació",
+                    { title: "Viaje Vació (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgEmptyTime/data.statsByDay.length, 0).toFixed(1),
                       total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
-                    { title: "Tiempo de Carga",
+                    { title: "Tiempo de Carga (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgLoadTime/data.statsByDay.length, 0).toFixed(1),
                       total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
-                    { title: "Viaje Lleno",
+                    { title: "Viaje Lleno (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgFullTime/data.statsByDay.length, 0).toFixed(1),
                       total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
-                    { title: "Tiempo de Descarga",
+                    { title: "Tiempo de Descarga (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgDischargeTime/data.statsByDay.length, 0).toFixed(1),
                       total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },

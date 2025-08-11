@@ -7,7 +7,7 @@ const ProgressBarSmall = ({progressBarData}) => {
     <div className="progress-bar--container small">
       <span className="progress-bar-label">
         <b>{progressBarData.showTitle ? progressBarData.title : ""}</b> 
-        <b>{progressBarData.currentValue}</b> 
+        <b>{progressBarData.currentValue} min</b> 
       </span>
       <div className="currentValue-bar" style={{ width: `${(progressBarData.currentValue/progressBarData.total)*100}%`}}></div>
     </div>

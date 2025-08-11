@@ -51,8 +51,8 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
       dataByDay: completedStatsByDays.map(e => e.totalTripsDay ? e.totalTripsDay * mineralWeight : ""),
       dataByNight: completedStatsByDays.map(e => e.totalTripsNight ? e.totalTripsNight * mineralWeight : ""),
       acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
-      dataText: completedStatsByDays.map(e => e.totalTrips ? `${e.totalTrips * mineralWeight} t` : ""),
-      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} t` : "")
+      dataText: completedStatsByDays.map(e => e.totalTrips ? `${e.totalTrips * mineralWeight} TM` : ""),
+      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} TM` : "")
     };
   };
 
@@ -85,7 +85,6 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
 
   const diffColor = plan.map((exp, i) => {
     const currentData = sortDataByDay(chartData).data;
-    console.log("currentData",currentData)
     return currentData[i] >= exp ? "#04c286" : "#fe7887";
   });
 
@@ -131,7 +130,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
         }
       },
       {
-        categories: plan.map((e) => `${e} t`),
+        categories: plan.map((e) => `${e} TM`),
         opposite: false,
         linkedTo: 0,
         lineColor: 'transparent',
@@ -196,13 +195,13 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
         let tooltipText = `<b>${categoryName}</b><br/>`;
         
         this.points.forEach(function (point) {
-          tooltipText += `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y} t</b><br/>`;
+          tooltipText += `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y} TM</b><br/>`;
         });
         
         const totalSeriesData = sortDataByDay(chartData).data;
         const totalValue = totalSeriesData[this.x];
         if (totalValue !== "" && totalValue !== null && totalValue !== undefined) {
-          tooltipText += `<span style="color:#d6d6df">●</span> Total: <b>${totalValue} t</b><br/>`;
+          tooltipText += `<span style="color:#d6d6df">●</span> Total: <b>${totalValue} TM</b><br/>`;
         }
         
         return tooltipText;
