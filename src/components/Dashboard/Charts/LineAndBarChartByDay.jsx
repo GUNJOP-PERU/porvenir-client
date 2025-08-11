@@ -28,20 +28,30 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
     const weekDates = getCurrentWeekDates();
     const dataMap = {};
     data.statsByDay.forEach((item) => {
-      dataMap[item.date] = item.totalTrips;
+      dataMap[item.date] = {
+        totalTrips: item.totalTrips,
+        totalTripsDay: item.totalTripsDay,
+        totalTripsNight: item.totalTripsNight
+      };
     });
 
-    const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
+    const completedStatsByDays = weekDates.map((date) => dataMap[date] || {
+      totalTrips: "",
+      totalTripsDay: "",
+      totalTripsNight: ""
+    });
 
     const acumulativeData = completedStatsByDays.map((day, index) => {
-      const sum = completedStatsByDays.slice(0, index + 1).reduce((acc, val) => acc + (val || 0), 0);
+      const sum = completedStatsByDays.slice(0, index + 1).reduce((acc, val) => acc.totalTrips + (val || 0), 0);
       return day ? sum : "";
     });
 
     return {
-      data: completedStatsByDays.map(e => e ? e * mineralWeight : ""),
+      data: completedStatsByDays.map(e => e.totalTrips ? e.totalTrips * mineralWeight : ""),
+      dataByDay: completedStatsByDays.map(e => e.totalTripsDay ? e.totalTripsDay * mineralWeight : ""),
+      dataByNight: completedStatsByDays.map(e => e.totalTripsNight ? e.totalTripsNight * mineralWeight : ""),
       acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
-      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} t` : ""),
+      dataText: completedStatsByDays.map(e => e.totalTrips ? `${e.totalTrips * mineralWeight} t` : ""),
       acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} t` : "")
     };
   };
@@ -66,7 +76,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
     return weekDates;
   };
 
-  const plan = (new Array(7).fill(200)).map((e) => e * mineralWeight);
+  const plan = (new Array(7).fill(520)).map((e) => e * mineralWeight);
   const diff = plan.map((exp, i) => {
     const currentData = sortDataByDay(chartData).data;
     const e = Math.abs(exp - currentData[i]);
@@ -90,7 +100,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
   const options = {
     chart: {
       type: "column",
-      height: 180,
+      height: 250,
     },
     title: "",
     xAxis: [
@@ -151,7 +161,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
     },
     series: [
       {
-        name: "Diff",
+        name: "Faltante",
         data: diff,
         colorByPoint: true,
         colors: diffColor,
@@ -163,13 +173,40 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
         },
       },
       {
-        name: "Base",
+        name: "Turno Dia",
+        data: sortDataByDay(chartData).dataByDay,
+        color: "#f5f10d",
+      },
+      {
+        name: "Turno Noche",
+        data: sortDataByDay(chartData).dataByNight,
+        color: "#1a1daf",
+      },
+      {
+        name: "Total",
         data: sortDataByDay(chartData).data,
         color: "#d6d6df",
+        visible: false,
       }
     ],
     tooltip: {
       shared: true,
+      formatter: function () {
+        const categoryName = this.points[0].point.category || getCurrentWeekDates()[this.x];
+        let tooltipText = `<b>${categoryName}</b><br/>`;
+        
+        this.points.forEach(function (point) {
+          tooltipText += `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y} t</b><br/>`;
+        });
+        
+        const totalSeriesData = sortDataByDay(chartData).data;
+        const totalValue = totalSeriesData[this.x];
+        if (totalValue !== "" && totalValue !== null && totalValue !== undefined) {
+          tooltipText += `<span style="color:#d6d6df">●</span> Total: <b>${totalValue} t</b><br/>`;
+        }
+        
+        return tooltipText;
+      }
     },
     credits: {
       enabled: false
@@ -216,6 +253,8 @@ LineAndBarChartByDay.propTypes = {
     statsByDays: PropTypes.arrayOf(PropTypes.shape({
       day: PropTypes.string.isRequired,
       totalTrips: PropTypes.number.isRequired,
+      totalTripsDay: PropTypes.number.isRequired,
+      totalTripsNight: PropTypes.number.isRequired,
     })),
   }),
 }

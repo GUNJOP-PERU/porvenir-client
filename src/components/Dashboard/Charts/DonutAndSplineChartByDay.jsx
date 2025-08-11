@@ -95,7 +95,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
         },
         {
           title: "",
-          categories: [1.8, 4.0, 6.8, 9.4, 11.2],
+          categories: new Array(7).fill(18720).map((e,i) => `${e * (i+1)} t`),
           tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6]; },
           opposite: false,
           lineColor: 'transparent',
@@ -158,7 +158,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
       },
       {
           name: "Plan",
-          data: [1.8, 4.0, 6.8, 9.4, 11.2, "",""],
+          data: new Array(7).fill(18720).map((e,i) => e * (i+1)),
           color: "#9696ab",
           xAxis: 1,
           fillColor: "#ffd0d63d",

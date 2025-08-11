@@ -185,19 +185,19 @@ export const useNavigation = () => {
           },
           {
             name: "Acumulado por Hora",
-            href: "/dashboard/short-interval-control",
+            href: "/dashboard/real-time-by-hour",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-by-hour",
           },
           {
             name: "Acumulado por Dia",
-            href: "/dashboard/short-interval-control-v2",
+            href: "/dashboard/real-time-by-day",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-by-day",
           },
           {
             name: "Acumulado por Mes",
-            href: "/dashboard/short-interval-control-v2",
+            href: "/dashboard/real-time-by-month",
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-by-month",
           }
