@@ -125,7 +125,7 @@ const RealTimeTripsCount = () => {
             </TabsList>
             <TabsContent value="bocamina" className="flex-1 mt-4 overflow-hidden">
               <TripsByBocaminaTable
-                data={data.stats ? data.stats : []}
+                data={tripData ? tripData : []}
                 title="Viajes por Unidad (Truck | Scoop)"
                 isLoading={isLoading || isFetching}
               />

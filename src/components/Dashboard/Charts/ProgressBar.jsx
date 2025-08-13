@@ -39,7 +39,7 @@ const ProgressBar = ({progressBarData}) => {
         className="progress-bar-prediction-label"
       >
         <p>
-          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction} t</span>
+          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction} TM</span>
         </p>
       </div>
       <div className="currentValue-bar" style={{ width: `${(progressBarData.currentValue/progressBarData.total)*100}%`}}></div>
