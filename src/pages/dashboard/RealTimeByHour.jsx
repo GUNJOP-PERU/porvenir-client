@@ -11,8 +11,6 @@ const RealTimeByHour = () => {
     endDate: null,
   });
 
-  console.log("dateFilter", new Date(dateFilter.startDate), new Date(dateFilter.endDate));
-
   const setDateFilterBasedOnTime = () => {
     const now = new Date();
     const currentHour = now.getHours();
@@ -20,15 +18,24 @@ const RealTimeByHour = () => {
     let startDate, endDate;
 
     if (currentHour >= 6 && currentHour < 18) {
-      startDate = new Date(now.setHours(6, 0, 0, 0)).getTime();
-      endDate = new Date(now.setHours(18, 0, 0, 0)).getTime();
+      const today = new Date(now);
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0, 0).getTime();
+      endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0, 0).getTime();
     } else {
       if (currentHour >= 18) {
-        startDate = new Date(now.setHours(18, 0, 0, 0)).getTime() - 12*60*60*1000;
-        endDate = new Date(now.setDate(now.getDate() + 1)).setHours(6, 0, 0, 0)  - 12*60*60*1000;
+        const today = new Date(now);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0, 0).getTime();
+        endDate = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0, 0).getTime();
       } else {
-        startDate = new Date(now.setDate(now.getDate() - 1)).setHours(18, 0, 0, 0);
-        endDate = new Date(now.setHours(6, 0, 0, 0)).getTime();
+        const today = new Date(now);
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        
+        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 18, 0, 0, 0).getTime();
+        endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0, 0).getTime();
       }
     }
     setDateFilter({ startDate, endDate });
@@ -53,7 +60,7 @@ const RealTimeByHour = () => {
     const interval = setInterval(() => {
       setDateFilterBasedOnTime();
       refetch();
-    }, 30000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [refetch]);
 
@@ -157,7 +164,7 @@ const RealTimeByHour = () => {
           /> */}
 
           <DonutAndSplineChart
-            title="EXTRACTION PLAN EXECUTION, kT"
+            title="Acumulado de Extracción de mineral por hora en TM"
             donutData={{
               total: 100,
               currentValue: 67,
@@ -183,7 +190,8 @@ const RealTimeByHour = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <LineAndBarChart
-              title="SHOVELS ON SHIFT, MachShift"
+              title="Extracción de mineral por hora en TM"
+              chartData={data}
             />
           </div>
 

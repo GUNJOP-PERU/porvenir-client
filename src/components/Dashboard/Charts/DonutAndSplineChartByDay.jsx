@@ -35,8 +35,6 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
       dataMap[item.date] = item.totalTrips;
     });
 
-    console.log(weekDates,"weeks")
-
     const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
 
     const acumulativeData = completedStatsByDays.map((day, index) => {
@@ -95,7 +93,7 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
         },
         {
           title: "",
-          categories: new Array(7).fill(18720).map((e,i) => `${e * (i+1)} t`),
+          categories: new Array(7).fill(18720).map((e,i) => `${e * (i+1)} TM`),
           tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6]; },
           opposite: false,
           lineColor: 'transparent',

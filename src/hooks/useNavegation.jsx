@@ -189,12 +189,12 @@ export const useNavigation = () => {
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-trip-count",
           },
-          // {
-          //   name: "Acumulado por Hora",
-          //   href: "/dashboard/real-time-by-hour",
-          //   icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-          //   active: pathname === "/dashboard/real-time-by-hour",
-          // },
+          {
+            name: "Acumulado por Hora",
+            href: "/dashboard/real-time-by-hour",
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/real-time-by-hour",
+          },
           {
             name: "Acumulado por Dia",
             href: "/dashboard/real-time-by-day",
