@@ -43,7 +43,6 @@ import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
 import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
 import RealTimeTripsCount from "./pages/dashboard/RealTimeTripsCount";
 
-// Array con rutas protegidas
 const protectedRoutes = [
   //Gestion
   { path: "users", element: <HomeUsers /> },
@@ -85,19 +84,16 @@ const protectedRoutes = [
 export default function Router() {
   const isAuth = useAuthStore((state) => state.isAuth);
 
-  // Rutas protegidas
   const protectedChildren = protectedRoutes.map(({ path, element }) => ({
     path,
     element,
   }));
 
-  // Ruta index para que vaya a /users u otra por defecto
   protectedChildren.push({
     index: true,
     element: <ProductionTruck />,
   });
 
-  // Definimos el router
   const router = createBrowserRouter([
     {
       path: "/login",

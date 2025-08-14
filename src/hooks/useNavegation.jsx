@@ -87,24 +87,24 @@ export const useNavigation = () => {
             icon: <IconCycle className="w-4 h-4 " />,
             active: pathname === "/cycleTruck",
           },
-          {
-            name: "Ciclo Scoop",
-            href: "/cycleScoop",
-            icon: <IconCycle className="w-4 h-4 " />,
-            active: pathname === "/cycleScoop",
-          },
+          // {
+          //   name: "Ciclo Scoop",
+          //   href: "/cycleScoop",
+          //   icon: <IconCycle className="w-4 h-4 " />,
+          //   active: pathname === "/cycleScoop",
+          // },
           {
             name: "Actividades Truck",
             href: "/activityTruck",
             icon: <IconActivity className="w-4 h-4 " />,
             active: pathname === "/activityTruck",
           },
-          {
-            name: "Actividades Scoop",
-            href: "/activityScoop",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/activityScoop",
-          },
+          // {
+          //   name: "Actividades Scoop",
+          //   href: "/activityScoop",
+          //   icon: <IconActivity className="w-4 h-4 " />,
+          //   active: pathname === "/activityScoop",
+          // },
           {
             name: "Incidencias Truck | Scoop",
             href: "/incidence",
@@ -140,19 +140,18 @@ export const useNavigation = () => {
             icon: <IconDash1 className="w-4 h-4 " />,
             active: pathname === "/",
           },
-
-          {
-            name: "Producción Scoop",
-            href: "/dashboard/productionScoop",
-            icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/productionScoop",
-          },
-          {
-            name: "Timeline Scoop",
-            href: "/dashboard/timelineScoop",
-            icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/timelineScoop",
-          },
+          // {
+          //   name: "Producción Scoop",
+          //   href: "/dashboard/productionScoop",
+          //   icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
+          //   active: pathname === "/dashboard/productionScoop",
+          // },
+          // {
+          //   name: "Timeline Scoop",
+          //   href: "/dashboard/timelineScoop",
+          //   icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
+          //   active: pathname === "/dashboard/timelineScoop",
+          // },
           {
             name: "Timeline Truck",
             href: "/dashboard/timelineTruck",
@@ -165,12 +164,12 @@ export const useNavigation = () => {
             icon: <IconDash3 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/paretoTruck",
           },
-          {
-            name: "Pareto Scoop",
-            href: "/dashboard/paretoScoop",
-            icon: <IconDash4 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/paretoScoop",
-          },
+          // {
+          //   name: "Pareto Scoop",
+          //   href: "/dashboard/paretoScoop",
+          //   icon: <IconDash4 className="w-4 h-4 fill-zinc-300" />,
+          //   active: pathname === "/dashboard/paretoScoop",
+          // },
           {
             name: "Producción Mensual",
             href: "/dashboard/productionMonth",

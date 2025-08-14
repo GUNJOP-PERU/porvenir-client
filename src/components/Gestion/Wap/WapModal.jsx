@@ -29,9 +29,9 @@ import { Input } from "../../ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
-  description: z.string().optional(),
-  mac_ap: z.string().optional(),
-  category: z.string().optional(),
+  description: z.string().min(1, { message: "*Descripción requerida" }),
+  mac_ap: z.string().min(1, { message: "*MAC AP requerida" }),
+  category: z.string().min(1, { message: "*Categoría requerida" }),
 });
 
 export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -190,7 +190,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 ) : (
                   <>
                     <IconToggle className="text-background w-4 h-4" />
-                    {isEdit ? "Actualizar" : "Crear"} Usuario
+                    {isEdit ? "Actualizar" : "Crear"} WAP
                   </>
                 )}
               </Button>

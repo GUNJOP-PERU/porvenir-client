@@ -42,7 +42,6 @@ export const dataLabor = [
 export const dataTypeVehicle = [
   { value: "scoop", label: "Scoop" },
   { value: "truck", label: "Truck" },
-  { value: "drill", label: "Drill" },
 ];
 
 export const dataOB = [

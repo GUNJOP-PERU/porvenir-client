@@ -104,7 +104,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"vehicle"} row={row} />
+      <DataTableRowActions componentToShow={"wap"} row={row} />
     ),
     enableHiding: false,
   },
