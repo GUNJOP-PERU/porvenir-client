@@ -6,7 +6,7 @@ const ProgressBar = ({progressBarData}) => {
   return (
     <div className="progress-bar--container">
       <span className="progress-bar-label">
-        Extraído <b>{progressBarData.currentValue} t</b> de <b>{progressBarData.total} t</b>
+        Extraído <b>{progressBarData.currentValue} TM</b> de <b>{progressBarData.total} TM</b>
       </span>
       {progressBarData.showDifference &&
         <>

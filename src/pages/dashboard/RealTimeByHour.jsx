@@ -6,6 +6,10 @@ import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart
 import { useFetchData } from "../../hooks/useGlobalQuery";
 
 const RealTimeByHour = () => {
+  const [ baseData, setBaseData ] =  useState({
+    mineral: 30,
+    desmonte: 29
+  })
   const [dateFilter, setDateFilter] = useState({
     startDate: null,
     endDate: null,
@@ -42,15 +46,23 @@ const RealTimeByHour = () => {
   };
 
   const {
-    data = [],
-    isFetching,
-    isLoading,
-    isError,
-    refetch,
+    data,
+    refetch
   } = useFetchData(
     "trip-group-by-hours",
     `trip/stats-by-hours?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
   );
+
+  const {
+    data : mineralData = []
+  } = useFetchData("mineral", "mineral");
+
+  useEffect(() => {
+    setBaseData({
+      mineral: mineralData.find((item) => item.name.toLowerCase() === "mineral")?.value || 30,
+      desmonte: mineralData.find((item) => item.name.toLowerCase() === "desmonte")?.value || 29
+    });
+  }, [mineralData])
 
   useEffect(() => {
     setDateFilterBasedOnTime();
@@ -64,7 +76,7 @@ const RealTimeByHour = () => {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  if(!data) return <p>cargando</p>
+  if(!data || !mineralData) return <p>cargando</p>
 
   return (
     <div className="grid grid-cols-[1fr] h-full gap-10">
@@ -166,17 +178,17 @@ const RealTimeByHour = () => {
           <DonutAndSplineChart
             title="Acumulado de Extracción de mineral por hora en TM"
             donutData={{
-              total: 100,
-              currentValue: 67,
+              total: 770*12,
+              currentValue: data.statsByHour ? data.statsByHour.reduce((acc, hour) => acc + hour.totalTrips, 0) * baseData.mineral : 0,
               currentValueColor: "#ff7989",
             }}
             progressBarData= {{
-              total: 12.0,
-              currentValue: 8.2,
-              prediction: 11.6,
+              total: 770*12,
+              currentValue: data.statsByHour ? data.statsByHour.reduce((acc, hour) => acc + hour.totalTrips, 0) * baseData.mineral : 0,
+              prediction: data.statsByHour ? (Math.round(data.statsByHour.reduce((acc, hour) => acc + hour.totalTrips, 0)/data.statsByHour.length))*12*baseData.mineral : 0,
               currentValueColor: "#ff7989",
-              showDifference: true,
-              forecastText: "Shiftend Forecast"
+              showDifference: false,
+              forecastText: "Predicción"
             }}
             chartData={data}
           />
@@ -249,50 +261,46 @@ const RealTimeByHour = () => {
             <DonutAndTableChart
               title="PLAN REJECTING REASONS, %"
               donutData={[
-                { title: "AVAILABILITY",
-                  total: 100,
-                  currentValue: 72,
+                { title: "Tiempo Disponible",
+                  total: data.totalUnits * data.statsByHour.length,
+                  currentValue: Number((data.totalUnits * data.statsByHour.length) - data.statsByHour.reduce((acc, hour) => acc + hour.totalMaintenanceTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 },
                 { title: "USABILITY",
-                  total: 100,
-                  currentValue: 64,
+                  total: data.totalUnits * data.statsByHour.length,
+                  currentValue: Number(data.statsByHour.reduce((acc, hour) => acc + hour.totalCycleTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 }
               ]}
               tableData={[{
-                  title: "PLAN",
+                  title: "Tiempo Trabajado",
                   currentValue: 66.9,
                   total: 100,
                   subData: [
-                    { title: "Bucket Load",
-                      currentValue: 7,
-                      total: 50
+                    { title: "Viaje Vació (min)",
+                      currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgEmptyTime/data.statsByHour.length, 0).toFixed(1),
+                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
-                    { title: "Duration of truck load",
-                      currentValue: 3.9,
-                      total: 50
+                    { title: "Tiempo de Carga (min)",
+                      currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgLoadTime/data.statsByHour.length, 0).toFixed(1),
+                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
-                    { title: "No truck for load",
-                      currentValue: 0.9,
-                      total: 50
+                    { title: "Viaje Lleno (min)",
+                      currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgFullTime/data.statsByHour.length, 0).toFixed(1),
+                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
-                    { title: "Material idles",
-                      currentValue: 0.7,
-                      total: 50
+                    { title: "Tiempo de Descarga (min)",
+                      currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgDischargeTime/data.statsByHour.length, 0).toFixed(1),
+                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
-                    { title: "Production idles",
-                      currentValue: 0.4,
-                      total: 50
-                    }
                   ]
                 },
-                {
-                  title: "FACT",
-                  currentValue: 68,
-                  total: 100,
-                  subData: []
-                }
+                // {
+                //   title: "FACT",
+                //   currentValue: 68,
+                //   total: 100,
+                //   subData: []
+                // }
               ]}
             />
           </div>

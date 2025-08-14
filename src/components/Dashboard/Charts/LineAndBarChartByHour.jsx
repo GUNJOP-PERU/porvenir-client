@@ -62,8 +62,9 @@ const LineAndBarChart = ({ title, chartData }) => {
     if (array.length === 0) {
       return 0;
     }
+    // const validValues = array.filter((valor) => valor !== "");
     const suma = array.reduce((acumulador, valor) => acumulador + valor, 0);
-    return suma / array.length;
+    return suma
   }
 
   const options = {
@@ -180,17 +181,17 @@ const LineAndBarChart = ({ title, chartData }) => {
           <div className="flex items-center grow">
             Icono
           </div>
-          <div className="flex flex-col gap-0">
+          <div className="flex flex-col gap-0 mb-[-2px]">
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#000000]">
               Fact
-              <b className="font-bold text-[16px] text-[#000000]">
-                {averageData(plan).toFixed(1)}
+              <b className="font-bold text-[14px]/[15px] text-[#000000]">
+                {averageData(fact)}
               </b>
             </span>
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#9696ab]">
-              Pan
-              <b className="font-bold text-[16px] text-[#9696ab]">
-                {averageData(fact).toFixed(1)}
+              Plan
+              <b className="font-bold text-[14px]/[15px] text-[#9696ab]">
+                {averageData(plan)}
               </b>
             </span>
           </div>
@@ -203,6 +204,16 @@ const LineAndBarChart = ({ title, chartData }) => {
 
 LineAndBarChart.propTypes = {
   title: PropTypes.string.isRequired,
+  chartData: PropTypes.shape({
+    totalTrips: PropTypes.number.isRequired,
+    hourRangesWithTrips: PropTypes.number.isRequired,
+    statsByHour: PropTypes.arrayOf(PropTypes.shape({
+      hour: PropTypes.string.isRequired,
+      totalTrips: PropTypes.number.isRequired,
+      totalTripsDay: PropTypes.number.isRequired,
+      totalTripsNight: PropTypes.number.isRequired,
+    })),
+  }),
 }
 
 
