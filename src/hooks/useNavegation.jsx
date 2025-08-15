@@ -200,12 +200,12 @@ export const useNavigation = () => {
             icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
             active: pathname === "/dashboard/real-time-by-day",
           },
-          // {
-          //   name: "Acumulado por Mes",
-          //   href: "/dashboard/real-time-by-month",
-          //   icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-          //   active: pathname === "/dashboard/real-time-by-month",
-          // }
+          {
+            name: "Acumulado por Mes",
+            href: "/dashboard/real-time-by-month",
+            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            active: pathname === "/dashboard/real-time-by-month",
+          }
         ],
       },
     ],

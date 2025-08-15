@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
 import "./styles.css"
 
-const ProgressBar = ({progressBarData}) => {
+const ProgressBar = ({progressBarData, unit}) => {
   const differenceStatus = progressBarData.prediction - progressBarData.total
   return (
     <div className="progress-bar--container">
       <span className="progress-bar-label">
-        Extraído <b>{progressBarData.currentValue} TM</b> de <b>{progressBarData.total} TM</b>
+        Extraído <b>{progressBarData.currentValue} {unit}</b> de <b>{progressBarData.total} {unit ? unit:"TM"}</b>
       </span>
       {progressBarData.showDifference &&
         <>
@@ -39,7 +39,7 @@ const ProgressBar = ({progressBarData}) => {
         className="progress-bar-prediction-label"
       >
         <p>
-          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction} TM</span>
+          {progressBarData.forecastText ? progressBarData.forecastText : "Forecast"} <span style={{backgroundColor: `${progressBarData.currentValueColor || "#04c285"}`}}>{progressBarData.prediction} {unit ? unit:"TM"}</span>
         </p>
       </div>
       <div className="currentValue-bar" style={{ width: `${(progressBarData.currentValue/progressBarData.total)*100}%`}}></div>
@@ -48,6 +48,7 @@ const ProgressBar = ({progressBarData}) => {
 }
 
 ProgressBar.propTypes = {
+  unit: PropTypes.string,
   progressBarData: PropTypes.shape({
     total: PropTypes.number,
     currentValue: PropTypes.number,

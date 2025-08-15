@@ -41,6 +41,7 @@ import PageBeacon from "./pages/gestion/Beacon";
 import PageWap from "./pages/gestion/Wap";
 import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
 import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
+import RealTimeByMonth from "./pages/dashboard/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/dashboard/RealTimeTripsCount";
 
 const protectedRoutes = [
@@ -75,6 +76,7 @@ const protectedRoutes = [
   { path: "dashboard/productionUV", element: <Utilization /> },
   { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
+  { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
 
   //Configuración
