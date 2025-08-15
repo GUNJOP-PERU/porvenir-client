@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DonutChart from "@/components/Dashboard/Charts/DonutChart";
+// import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChartByMonth";
 import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChartByMonth";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
@@ -241,39 +241,43 @@ const RealTimeByMonth = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <DonutAndTableChart
-              title="PLAN REJECTING REASONS, %"
+              title="Tiempos promedio del ciclo por Mes"
               donutData={[
                 { title: "Tiempo Disponible",
                   total: data.totalUnits * data.statsByMonth.length * 8640,
                   currentValue: Number((data.totalUnits * data.statsByMonth.length * 8640) - data.statsByMonth.reduce((acc, hour) => acc + hour.totalMaintenanceTime, 0).toFixed(2)) || 0,
                   currentValueColor: "#04c285"
                 },
-                { title: "USABILITY",
+                { title: "Tiempo Trabajado",
                   total: data.totalUnits * data.statsByMonth.length * 8640,
                   currentValue: Number(data.statsByMonth.reduce((acc, hour) => acc + hour.totalCycleTime, 0).toFixed(2)) || 0,
                   currentValueColor: "#04c285"
                 }
               ]}
               tableData={[{
-                  title: "Tiempo Trabajado",
-                  currentValue: 66.9,
-                  total: 100,
+                  title: "Tiempo promedio del Ciclo",
+                  currentValue: data.statsByMonth.reduce((acc, month) => acc + month.avgCycleTime/data.statsByMonth.length, 0).toFixed(1),
+                  total: 300,
                   subData: [
                     { title: "Viaje Vació (min)",
-                      currentValue: data.statsByMonth.reduce((acc, hour) => acc + hour.avgEmptyTime/data.statsByMonth.length, 0).toFixed(1),
-                      total: data.statsByMonth.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
+                      currentValue: data.statsByMonth.reduce((acc, month) => acc + month.avgEmptyTime/data.statsByMonth.length, 0).toFixed(1),
+                      total: 300
+                      // total: data.statsByMonth.reduce((acc, month) => acc + month.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Carga (min)",
-                      currentValue: data.statsByMonth.reduce((acc, hour) => acc + hour.avgLoadTime/data.statsByMonth.length, 0).toFixed(1),
-                      total: data.statsByMonth.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
+                      currentValue: data.statsByMonth.reduce((acc, month) => acc + month.avgLoadTime/data.statsByMonth.length, 0).toFixed(1),
+                      total: 300
+                      // total: data.statsByMonth.reduce((acc, month) => acc + month.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
                     },
                     { title: "Viaje Lleno (min)",
-                      currentValue: data.statsByMonth.reduce((acc, hour) => acc + hour.avgFullTime/data.statsByMonth.length, 0).toFixed(1),
-                      total: data.statsByMonth.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
+                      currentValue: data.statsByMonth.reduce((acc, month) => acc + month.avgFullTime/data.statsByMonth.length, 0).toFixed(1),
+                      total: 300
+                      // total: data.statsByMonth.reduce((acc, month) => acc + month.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Descarga (min)",
-                      currentValue: data.statsByMonth.reduce((acc, hour) => acc + hour.avgDischargeTime/data.statsByMonth.length, 0).toFixed(1),
-                      total: data.statsByMonth.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
+                      currentValue: data.statsByMonth.reduce((acc, month) => acc + month.avgDischargeTime/data.statsByMonth.length, 0).toFixed(1),
+                      total: 300
+                      // total: data.statsByMonth.reduce((acc, month) => acc + month.avgCycleTime/data.statsByMonth.length, 0).toFixed(1)
                     },
                   ]
                 },

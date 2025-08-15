@@ -100,28 +100,15 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
     chart: {
       type: "column",
       height: 250,
+      margin: [50, 20, 50, 20]
     },
     title: "",
     xAxis: [
       {
-        categories: getCurrentWeekDates(),
-        opposite: true,
-        lineColor: 'transparent',
-        labels: {
-          style: {
-            color: '#9696ab',
-            fontSize: '14px',
-            fontWeight: 'bold'
-          }
-        },
-      },
-      {
+        title: "",
         categories: sortDataByDay(chartData).dataText,
         opposite: false,
-        linkedTo: 0,
-        lineColor: 'transparent',
         labels: {
-          y: 0,
           style: {
               color: '#000000',
               fontSize: '14px',
@@ -130,18 +117,31 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
         }
       },
       {
+        title: "",
         categories: plan.map((e) => `${e} TM`),
         opposite: false,
-        linkedTo: 0,
         lineColor: 'transparent',
         labels: {
-          y: -5,
+          y: sortDataByDay(chartData).length !== 0 ? 0 : 10,
           style: {
             color: '#9696ab',
             fontSize: '14px',
             fontWeight: 'bold'
           }
         }
+      },
+      {
+        title: "",
+        categories: getCurrentWeekDates(),
+        opposite: true,
+        linkedTo: 1,
+        labels: {
+          style: {
+            color: '#9696ab',
+            fontSize: '14px',
+            fontWeight: 'bold'
+          }
+        },
       }
     ],
     yAxis: {
@@ -164,6 +164,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
         data: diff,
         colorByPoint: true,
         colors: diffColor,
+        xAxis: 1,
         dataLabels: {
           enabled: true,
           formatter: function () {
@@ -174,12 +175,14 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
       {
         name: "Turno Dia",
         data: sortDataByDay(chartData).dataByDay,
-        color: "#f5f10d",
+        xAxis: 0,
+        color: "#FFF0C4",
       },
       {
         name: "Turno Noche",
         data: sortDataByDay(chartData).dataByNight,
-        color: "#1a1daf",
+        xAxis: 0,
+        color: "#3E0703",
       },
       {
         name: "Total",
@@ -225,13 +228,13 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
           <div className="flex flex-col gap-0">
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#000000]">
               Fact
-              <b className="font-bold text-[16px] text-[#000000]">
+              <b className="font-bold text-[14px]/[15px] text-[#000000]">
                 {averageData(sortDataByDay(chartData).data).toFixed(0)} t
               </b>
             </span>
             <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#9696ab]">
               Plan
-              <b className="font-bold text-[16px] text-[#9696ab]">
+              <b className="font-bold text-[14px]/[15px] text-[#9696ab]">
                 {averageData(plan)} t
               </b>
             </span>

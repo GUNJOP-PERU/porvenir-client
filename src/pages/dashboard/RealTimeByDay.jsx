@@ -183,7 +183,7 @@ const RealTimeByHour = () => {
               currentValue: data.statsByDay ? data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0) * baseData.mineral : 0,
               prediction: data.statsByDay ? (Math.round(data.statsByDay.reduce((acc, day) => acc + day.totalTrips, 0)/data.statsByDay.length))*7*baseData.mineral : 0,
               currentValueColor: "#ff7989",
-              showDifference: true,
+              showDifference: false,
               forecastText: "Predicción"
             }}
             mineralWeight={baseData.mineral}
@@ -257,39 +257,43 @@ const RealTimeByHour = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <DonutAndTableChart
-              title="PLAN REJECTING REASONS, %"
+              title="Tiempos promedio del ciclo por Dia"
               donutData={[
-                { title: "AVAILABILITY",
-                  total: 24 * 50 * data.statsByDay.length,
-                  currentValue: Number((24 * 50 * data.statsByDay.length) - data.statsByDay.reduce((acc, day) => acc + day.totalMaintenanceTime, 0).toFixed(1)) || 0,
+                { title: "Tiempo Disponible",
+                  total: 24 * data.totalUnits * data.statsByDay.length,
+                  currentValue: Number((24 * data.totalUnits * data.statsByDay.length) - data.statsByDay.reduce((acc, day) => acc + day.totalMaintenanceTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 },
-                { title: "USABILITY",
-                  total: 24 * 50 * data.statsByDay.length,
+                { title: "Tiempo Trabajado",
+                  total: 24 * data.totalUnits * data.statsByDay.length,
                   currentValue: Number(data.statsByDay.reduce((acc, day) => acc + day.totalCycleTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 }
               ]}
               tableData={[{
-                  title: "PLAN",
+                  title: "Tiempo promedio del Ciclo",
                   currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1),
                   total: 300,
                   subData: [
                     { title: "Viaje Vació (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgEmptyTime/data.statsByDay.length, 0).toFixed(1),
-                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Carga (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgLoadTime/data.statsByDay.length, 0).toFixed(1),
-                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Viaje Lleno (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgFullTime/data.statsByDay.length, 0).toFixed(1),
-                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Descarga (min)",
                       currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgDischargeTime/data.statsByDay.length, 0).toFixed(1),
-                      total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
                     },
                   ]
                 },

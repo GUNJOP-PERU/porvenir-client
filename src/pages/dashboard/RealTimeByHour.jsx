@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DonutChart from "@/components/Dashboard/Charts/DonutChart";
+// import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import DonutAndSplineChart from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
 import LineAndBarChart from "@/components/Dashboard/Charts/LineAndBarChartByHour";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
@@ -259,39 +259,43 @@ const RealTimeByHour = () => {
           </div> */}
           <div className="card-shadow rounded-lg p-4 ">
             <DonutAndTableChart
-              title="PLAN REJECTING REASONS, %"
+              title="Tiempos promedio del ciclo por Hora"
               donutData={[
                 { title: "Tiempo Disponible",
                   total: data.totalUnits * data.statsByHour.length,
                   currentValue: Number((data.totalUnits * data.statsByHour.length) - data.statsByHour.reduce((acc, hour) => acc + hour.totalMaintenanceTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 },
-                { title: "USABILITY",
+                { title: "Tiempo Trabajado",
                   total: data.totalUnits * data.statsByHour.length,
                   currentValue: Number(data.statsByHour.reduce((acc, hour) => acc + hour.totalCycleTime, 0).toFixed(1)) || 0,
                   currentValueColor: "#04c285"
                 }
               ]}
               tableData={[{
-                  title: "Tiempo Trabajado",
+                  title: "Tiempo promedio del Ciclo",
                   currentValue: 66.9,
-                  total: 100,
+                  total: 300,
                   subData: [
                     { title: "Viaje Vació (min)",
                       currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgEmptyTime/data.statsByHour.length, 0).toFixed(1),
-                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Carga (min)",
                       currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgLoadTime/data.statsByHour.length, 0).toFixed(1),
-                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
                     { title: "Viaje Lleno (min)",
                       currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgFullTime/data.statsByHour.length, 0).toFixed(1),
-                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
                     { title: "Tiempo de Descarga (min)",
                       currentValue: data.statsByHour.reduce((acc, hour) => acc + hour.avgDischargeTime/data.statsByHour.length, 0).toFixed(1),
-                      total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
+                      total: 300
+                      // total: data.statsByHour.reduce((acc, hour) => acc + hour.avgCycleTime/data.statsByHour.length, 0).toFixed(1)
                     },
                   ]
                 },
