@@ -208,7 +208,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      // if (!row.original?.isNewLabor) return null; 
+      if (!row.original?.isNewLabor) return null; 
       return (
         <DataTableRowActions
           componentToShow={"cycleTruck"}
