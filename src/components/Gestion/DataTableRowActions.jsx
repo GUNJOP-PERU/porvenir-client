@@ -24,6 +24,7 @@ import { TurnCardModal } from "../Configuration/Modal/TurnCardModal";
 import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
 import { BeaconModal } from "./Beacon/BeaconModal";
 import { ModalWap } from "./Wap/WapModal";
+import { CycleTruckModal } from "./CycleTruck/CycleTruckModal";
 
 export function DataTableRowActions({
   componentToShow,
@@ -145,6 +146,14 @@ export function DataTableRowActions({
         isEdit={true}
       />
     ),
+    cycleTruck: (
+      <CycleTruckModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
   };
 
   return (
@@ -165,7 +174,7 @@ export function DataTableRowActions({
               Editar detalles
             </DropdownMenuItem>
           )}
-          {components[componentToShow] && <DropdownMenuSeparator />}
+          {components[componentToShow] && deleteModal && <DropdownMenuSeparator />}
           {deleteModal && (
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"

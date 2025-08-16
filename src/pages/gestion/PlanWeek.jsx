@@ -5,15 +5,14 @@ import { Button } from "../../components/ui/button";
 import { countItems } from "@/lib/utilsGeneral";
 import { columns } from "../../components/Gestion/PlanDay/PlanDayTableColumns";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import { ModalPlanMonth } from "@/components/Gestion/PlanMonth/ModalPlanMonth";
+import { PlanWeekModal } from "@/components/Gestion/PlanWeek/PlanWeekModal";
 
 
 function PlanWeek() {
   const { data = [],  isFetching,
     isError,
-    refetch } = useFetchData("planDay", "planDay");
+    refetch } = useFetchData("planWeek", "planWeek");
   const [dialogOpen, setDialogOpen] = useState(false);
-
 
   return (
     <>
@@ -42,7 +41,7 @@ function PlanWeek() {
       </div>
       <DataTable data={data} columns={columns}  isFetching={isFetching}
         isError={isError}/>
-      <ModalPlanMonth
+      <PlanWeekModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}

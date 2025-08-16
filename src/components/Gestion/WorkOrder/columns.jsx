@@ -45,7 +45,7 @@ export const columns = [
                 {row.original?.userName}
               </h4>
             ) : (
-              <h4 className="text-[12.5px] leading-4 flex text-zinc-300">
+              <h4 className="text-[10.5px] leading-4 flex text-zinc-300">
                 en proceso...
               </h4>
             )}

@@ -92,32 +92,32 @@ const TripsByBocaminaTable = ({ data }) => {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto space-y-2 p-2">
+      <div className="flex-1 overflow-y-auto space-y-1 pt-1">
         {Object.entries(groupedData).map(([truck, unitData]) => (
-          <div key={truck} className="border border-gray-300 rounded-lg">
+          <div key={truck} className="border border-zinc-100 rounded-[10px] overflow-hidden">
             {/* Header de la unidad */}
             <div 
-              className="bg-gray-100 p-3 cursor-pointer hover:bg-gray-200 flex justify-between items-center"
+              className="bg-gray-100 p-3 py-2 cursor-pointer hover:bg-gray-200 flex justify-between items-center"
               onClick={() => toggleUnit(truck)}
             >
-              <div className="flex items-center space-x-4">
-                <span className="text-lg">
+             <div className="flex items-center space-x-1.5 ">
+              <span className="text-[8px] text-zinc-400">
                   {expandedUnits.has(truck) ? '▼' : '▶'}
                 </span>
-                <span className="font-semibold text-black">🚛 {unitData.truck}</span>
+                <span className="font-semibold text-xs">🚛 {unitData.truck}</span>
                 {/* <span className="text-gray-600 text-sm">
                   ({unitData.trips.length} viajes | Promedio: {unitData.avgCycleDuration.toFixed(2)} min)
                 </span> */}
-                <span className="text-gray-700 text-sm">
-                  ({unitData.bocaminas.length} entradas a bocamina)
+                <span className="text-zinc-400 text-[10px] font-bold">
+                  ({unitData.bocaminas.length} viajes)
                 </span>
               </div>
             </div>
             
             {/* Contenido expandido - Información de bocaminas */}
             {expandedUnits.has(truck) && (
-              <div className="p-4 bg-gray-50">
-                <h4 className="font-medium text-gray-700 mb-3">Entradas a Bocamina:</h4>
+              <div className="p-4 py-2 ">
+                <h4 className="text-[11px] font-medium text-zinc-500 mb-1">Entradas a Bocamina:</h4>
                 {unitData.bocaminas.length > 0 ? (
                   <div className="h-64 w-full">
                     <AgGridReact
@@ -134,7 +134,7 @@ const TripsByBocaminaTable = ({ data }) => {
                     />
                   </div>
                 ) : (
-                  <p className="text-gray-500 italic">No hay entradas a bocamina registradas para esta unidad.</p>
+                  <p className="text-[10px] text-zinc-400 italic">No hay entradas a bocamina registradas para esta unidad.</p>
                 )}
               </div>
             )}

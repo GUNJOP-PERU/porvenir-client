@@ -10,6 +10,7 @@ import IconNight from "@/icons/IconNight";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
+import { DataTableRowActions } from "../DataTableRowActions";
 
 export const columns = [
   {
@@ -145,7 +146,7 @@ export const columns = [
     header: "Estado Ciclo",
     cell: ({ row }) => {
       const isValid = row.original?.isValid;
-  
+
       if (isValid === undefined || isValid === null) {
         return (
           <span className="text-gray-500 bg-gray-100 text-[10px] py-[2px] px-2 rounded-[8px]">
@@ -153,7 +154,7 @@ export const columns = [
           </span>
         );
       }
-  
+
       return (
         <span
           className={clsx(
@@ -175,14 +176,14 @@ export const columns = [
     ),
     cell: ({ row }) => {
       return (
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              <TimeAgo datetime={row.original.updatedAt} locale="es" />
-            </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de actualización
-            </span>
-          </div>
+        <div className="flex flex-col justify-center">
+          <h4 className="text-[12.5px] font-semibold leading-4 flex ">
+            <TimeAgo datetime={row.original.updatedAt} locale="es" />
+          </h4>
+          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+            fecha de actualización
+          </span>
+        </div>
       );
     },
   },
@@ -193,15 +194,29 @@ export const columns = [
     ),
     cell: ({ row }) => {
       return (
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.createdAt)}
-            </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de creación
-            </span>
-          </div>
+        <div className="flex flex-col justify-center">
+          <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+            {formatFecha(row.original.createdAt)}
+          </h4>
+          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+            fecha de creación
+          </span>
+        </div>
       );
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      // if (!row.original?.isNewLabor) return null; 
+      return (
+        <DataTableRowActions
+          componentToShow={"cycleTruck"}
+          row={row}
+          deleteModal={false}
+        />
+      );
+    },
+    enableHiding: false,
   },
 ];

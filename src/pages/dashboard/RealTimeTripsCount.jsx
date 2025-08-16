@@ -99,14 +99,14 @@ const RealTimeTripsCount = () => {
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-center gap-2">
-          <h3 className="text-xl font-semibold">Conteo de Viajes</h3>
+          <h3 className="text-lg font-semibold">Conteo de Viajes</h3>
           <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border">
-            <span className="text-lg">{currentShift.emoji}</span>
+            <span className="text-md">{currentShift.emoji}</span>
             <span className="font-medium text-black">Turno {currentShift.name}</span>
-            <span className="text-sm text-black">({currentShift.hours})</span>
+            <span className="text-xs text-black">({currentShift.hours})</span>
           </div>
         </div>
-        <div className="grid grid-cols-[1fr_1fr] rounded-lg p-4 gap-4 card-shadow">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 ">
           <BarChart
             data={data.stats ? data.stats.tripsByFrontLabors : []}
             title="Cantidad de viajes por Origen (Tajo)"
@@ -117,20 +117,20 @@ const RealTimeTripsCount = () => {
           />
         </div>
 
-        <div className="grid grid-cols-[1fr] h-[500px] gap-4">
-          <Tabs defaultValue="bocamina" className="h-full flex flex-col">
+        <div className="grid grid-cols-[1fr] h-[500px]">
+          <Tabs defaultValue="bocamina" >
             <TabsList className="grid w-full grid-cols-2 flex-shrink-0">
               <TabsTrigger value="bocamina">Ingreso a Bocamina (Truck | Scoop)</TabsTrigger>
               <TabsTrigger value="unidad">Viajes por Unidad ( Agrupados por Destino )</TabsTrigger>
             </TabsList>
-            <TabsContent value="bocamina" className="flex-1 mt-4 overflow-hidden">
+            <TabsContent value="bocamina" className="">
               <TripsByBocaminaTable
                 data={tripData ? tripData : []}
                 title="Viajes por Unidad (Truck | Scoop)"
                 isLoading={isLoading || isFetching}
               />
             </TabsContent>
-            <TabsContent value="unidad" className="flex-1 mt-4 overflow-hidden">
+            <TabsContent value="unidad" className="">
               <TripsByUnitTable
                 data={tripData ? tripData : []}
                 title="Viajes por Unidad (Truck)"

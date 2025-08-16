@@ -12,8 +12,7 @@ import {
 export const tableConfigs = {
   users: {
     searchColumns: ["name"],
-    filters: [
-      { columnId: "role", title: "Rol", options: statuses },
+    filters: [     
       { columnId: "cargo", title: "Cargo", options: cargo },
     ],
   },

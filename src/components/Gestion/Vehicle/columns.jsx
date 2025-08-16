@@ -40,7 +40,7 @@ export const columns = [
               {row.getValue("tagName")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              {row.original?.model}
+              {row.original?.type}
             </span>
           </div>
         </div>
@@ -48,13 +48,13 @@ export const columns = [
     },
   },
   {
-    accessorKey: "plate",
+    accessorKey: "type",
     header: "Placa",
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("plate")}
+          {row.original?.plate}
           </span>
         </div>
       );

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const TripsByUnitTable = ({ data }) => {
   const [expandedGroups, setExpandedGroups] = useState(new Set());
-  console.log(data, "data")
+  console.log(data, "TripsByUnitTable")
 
   const formatUnit = (unit) => {
     if (unit && unit.startsWith('truck_')) {
@@ -16,7 +16,7 @@ const TripsByUnitTable = ({ data }) => {
     return unit;
   };
 
-  // Agrupar datos por destination
+  // Agrupar datos por destino
   const groupedData = data?.reduce((groups, item) => {
     const destination = item.destination;
     if (!groups[destination]) {
@@ -25,6 +25,7 @@ const TripsByUnitTable = ({ data }) => {
     groups[destination].push({
       truck: formatUnit(item.truck),
       origin: item.origin,
+      frontLabors_ubication: item.frontLabors_ubication || "----",
       destination: item.destination,
       salida_origen: new Date(item.salida_origen).toLocaleString('es-ES'),
       cycleDuration: item.cycleDuration,
@@ -57,9 +58,16 @@ const TripsByUnitTable = ({ data }) => {
       filter: true,
       flex: 1
     },
+    // { 
+    //   headerName: 'Origen', 
+    //   field: 'origin', 
+    //   sortable: true, 
+    //   filter: true,
+    //   flex: 1
+    // },
     { 
-      headerName: 'Origen', 
-      field: 'origin', 
+      headerName: 'Tajo', 
+      field: 'frontLabors_ubication', 
       sortable: true, 
       filter: true,
       flex: 1
@@ -105,20 +113,20 @@ const TripsByUnitTable = ({ data }) => {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto space-y-2 p-2">
+      <div className="flex-1 overflow-y-auto space-y-1 pt-1">
         {Object.entries(groupedData).map(([destination, trips]) => (
-          <div key={destination} className="border border-gray-300 rounded-lg">
+          <div key={destination} className="border border-zinc-100 rounded-[10px] overflow-hidden ">
             {/* Header del grupo */}
             <div 
-              className="bg-gray-100 p-3 cursor-pointer hover:bg-gray-200 flex justify-between items-center"
+              className="bg-gray-100 p-3 py-2 cursor-pointer hover:bg-gray-200 flex justify-between items-center"
               onClick={() => toggleGroup(destination)}
             >
-              <div className="flex items-center space-x-2">
-                <span className="text-lg">
+              <div className="flex items-center space-x-1.5 ">
+                <span className="text-[8px] text-zinc-400">
                   {expandedGroups.has(destination) ? '▼' : '▶'}
                 </span>
-                <span className="font-semibold">📍 {destination}</span>
-                <span className="text-gray-600 text-sm">({trips.length} viajes)</span>
+                <span className="font-semibold text-[12px]">📍 {destination}</span>
+                <span className="text-zinc-400 text-[10px] font-bold">({trips.length} viajes)</span>
               </div>
             </div>
             
@@ -134,6 +142,7 @@ const TripsByUnitTable = ({ data }) => {
                     paginationPageSize={10}
                     paginationPageSizeSelector={[10, 15, 20]}
                     domLayout="normal"
+                   
                   />
                 </div>
               </div>
