@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import BarChart from "@/components/Dashboard/Charts/BarChart";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import TripsByBocaminaTable from "@/components/Dashboard/Table/BocaminaTable";
-import TripsByUnitTable from "@/components/Dashboard/Table/TripByUnit";
+import TripsByDestinationTable from "@/components/Dashboard/Table/TripsByDestinationTable";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const RealTimeTripsCount = () => {
@@ -77,6 +77,17 @@ const RealTimeTripsCount = () => {
     `trip/all?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
   );
 
+  const {
+    data: wapData = [],
+    // isFetching,
+    // isLoading,
+    // isError,
+    refetch : refetchWapData,
+  } = useFetchData(
+    "wap-trips",
+    `wap/trips?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
+  );
+
   useEffect(() => {
     setDateFilterBasedOnTime();
   }, []);
@@ -85,6 +96,7 @@ const RealTimeTripsCount = () => {
     const interval = setInterval(() => {
       setDateFilterBasedOnTime();
       refetchTripData();
+      refetchWapData();
       refetch();
     }, 10000);
     return () => clearInterval(interval);
@@ -112,7 +124,7 @@ const RealTimeTripsCount = () => {
             title="Cantidad de viajes por Origen (Tajo)"
           />
           <BarChart
-            data={data.stats ? data.stats.tripsByDestination : []}
+            data={wapData ? wapData : []}
             title="Cantidad de viajes por Destino (Cancha)"
           />
         </div>
@@ -125,14 +137,14 @@ const RealTimeTripsCount = () => {
             </TabsList>
             <TabsContent value="bocamina" className="flex-1 mt-4 overflow-hidden">
               <TripsByBocaminaTable
-                data={tripData ? tripData : []}
+                data={wapData ? wapData : []}
                 title="Viajes por Unidad (Truck | Scoop)"
                 isLoading={isLoading || isFetching}
               />
             </TabsContent>
             <TabsContent value="unidad" className="flex-1 mt-4 overflow-hidden">
-              <TripsByUnitTable
-                data={tripData ? tripData : []}
+              <TripsByDestinationTable
+                data={wapData ? wapData : []}
                 title="Viajes por Unidad (Truck)"
               />
             </TabsContent>

@@ -1,12 +1,36 @@
+import { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types'
 
 const ColumnChart = ({ data, title }) => {
-  const chartData = Object.entries(data).map(([name, value]) => ({
-    name,
-    y: value
-  }));
+  const [chartData, setChartData] = useState([])
+
+  useEffect(() => {
+    console.log("boolean",data,Array.isArray(data))
+    if(Array.isArray(data)) {
+    const groupedData = data?.filter(item => item.ubicationType === "destino").reduce((groups, item) => {
+      const destination = item.ubication;
+      if (!groups[destination]) {
+        groups[destination] = {
+          trips: [],
+        };
+      }
+      groups[destination].trips.push(item);
+      return groups;
+    }, {});
+    setChartData(Object.entries(groupedData).map(([name, value]) => ({
+      name,
+      y: value.trips.length
+    })));
+    } else {
+      setChartData(Object.entries(data).map(([name, value]) => ({
+        name,
+        y: value
+      })));
+    }
+  }, [data])
+
 
   const options = {
     chart: {
@@ -72,22 +96,17 @@ const ColumnChart = ({ data, title }) => {
 
 ColumnChart.propTypes = {
   title: PropTypes.string.isRequired,
-  data: PropTypes.shape({
-    totalTrips: PropTypes.number.isRequired,
-    hourRangesWithTrips: PropTypes.number.isRequired,
-    tripsByDestination: PropTypes.objectOf(PropTypes.number).isRequired,
-    tripsByFrontLabors: PropTypes.objectOf(PropTypes.number).isRequired,
-    tripsByUnit: PropTypes.arrayOf(PropTypes.shape({
-      unit: PropTypes.string.isRequired,
-      count: PropTypes.number.isRequired,
-      firstMineEntrance: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        durationMin: PropTypes.number.isRequired,
-        start: PropTypes.string.isRequired,
-        end: PropTypes.string.isRequired,
-      }).isRequired,
-    })).isRequired,
-  }),
+  data: PropTypes.arrayOf(PropTypes.shape({
+    tag: PropTypes.string.isRequired,
+    ubication: PropTypes.string.isRequired,
+    ubicationType: PropTypes.string.isRequired,
+    duration: PropTypes.number.isRequired,
+    durationMin: PropTypes.string.isRequired,
+    tsStart: PropTypes.number.isRequired,
+    tsEnd: PropTypes.number.isRequired,
+    tsStartDate: PropTypes.string.isRequired,
+    tsEndDate: PropTypes.string.isRequired
+  })).isRequired,
 }
 
 export default ColumnChart;
