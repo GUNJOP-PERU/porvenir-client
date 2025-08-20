@@ -28,8 +28,8 @@ export const PlanContent = ({
         totalsDia[key] = "";
       } else {
         const [fecha, turno] = key.split(" - ");
-        const diaKey = `${fecha} - Día`;
-        const nocheKey = `${fecha} - Noche`;
+        const diaKey = `${fecha} - DIA`;
+        const nocheKey = `${fecha} - NOCHE`;
 
         // Totales por turno
         totalsTurno[key] = data.reduce(
@@ -38,7 +38,7 @@ export const PlanContent = ({
         );
 
         // Totales generales (solo en columna "Día")
-        if (turno === "Día") {
+        if (turno === "DIA") {
           const sumaDia = data.reduce(
             (sum, row) => sum + (Number(row[diaKey]) || 0),
             0

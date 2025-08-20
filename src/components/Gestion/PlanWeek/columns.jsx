@@ -22,7 +22,7 @@ export const columns = [
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {getMonthName(row.getValue("month"))}
+            {getMonthName(row.getValue("month"))} / Semana {row.original?.week}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
             {row.original?.year}
@@ -106,7 +106,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planMonth"} row={row} />
+      <DataTableRowActions componentToShow={"planWeek"} row={row} />
     ),
     enableHiding: false,
   },

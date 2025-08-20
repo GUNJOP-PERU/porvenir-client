@@ -63,7 +63,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
     defaultValues: {
       dob: {
         start: new Date(),
-        end: new Date(),
+        end: new Date(new Date().setDate(new Date().getDate() + 6)),
       },
       selectedItems: [],
     },
@@ -75,7 +75,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
 
     return dataHotTable.reduce((total, row) => {
       const tonnageValues = Object.keys(row)
-      .filter((key) => key.match(/^\d{2}-\d{2}$/))
+        .filter((key) => key.match(/^\d{2}-\d{2}$/))
         .map((fecha) => row[fecha] || 0);
 
       return total + tonnageValues.reduce((sum, tonnage) => sum + tonnage, 0);
@@ -89,35 +89,35 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
       alert("Debe seleccionar una fecha válida.");
       return { data: [] };
     }
-  
+
     const startDate = dayjs(dob.start);
     const endDate = dayjs(dob.end);
     const daysInMonth = endDate.diff(startDate, "day") + 1;
-  
-    const items = Array.isArray(selectedItems) && selectedItems.length > 0
-      ? selectedItems
-      : [""];
-  
+
+    const items =
+      Array.isArray(selectedItems) && selectedItems.length > 0
+        ? selectedItems
+        : [""];
+
     const exampleData = items.map((labor, index) => {
       let row = {
         labor,
         fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
       };
-  
+
       for (let i = 0; i < daysInMonth; i++) {
         const currentDate = startDate.add(i, "day").format("DD-MM");
-  
+
         // 🔹 Dos columnas por día
-        row[`${currentDate} - Día`] = 0;
-        row[`${currentDate} - Noche`] = 0;
+        row[`${currentDate} - DIA`] = 0;
+        row[`${currentDate} - NOCHE`] = 0;
       }
-  
+
       return row;
     });
-  
+
     return { data: exampleData };
   };
-  
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
@@ -135,29 +135,60 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
 
   const handleSendData = async () => {
     setLoadingGlobal(true);
-    const { shift } = form.getValues();
     console.log("Datos dataHotTable:", dataHotTable);
-    const datosFinales = dataHotTable.flatMap((row) => {
-      const fechas = Object.keys(row).filter((key) =>
-        key.match(/^\d{4}-\d{2}-\d{2}$/)
-      );
 
-      return fechas.map((fecha) => ({
-        frontLabor: row.labor,
-        phase: row.fase,
-        date: fecha,
-        tonnage: row[fecha],
-        shift: shift,
-      }));
+    const getWeekOfMonth = (dateObj) => {
+      const firstDayOfMonth = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+      const dayOfMonth = dateObj.getDate();
+      const firstDayWeekday = firstDayOfMonth.getDay() || 7; // Lunes=1 ... Domingo=7
+      return Math.ceil((dayOfMonth + firstDayWeekday - 1) / 7);
+    };
+
+    // Paso 1: Generar el array de registros individuales
+    const dataGenerate = dataHotTable.flatMap((row) => {
+      const year = form.getValues("dob").end.getFullYear();
+      return Object.entries(row)
+        .filter(([key]) => key.includes("-")) // filtrar solo las fechas
+        .map(([key, value]) => {
+          // key ejemplo: "25-08 - Día"
+          const [dayMonth, turnoText] = key.split(" - ");
+          const [day, monthStr] = dayMonth.split("-");
+          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          const turno = turnoText.toLowerCase() === "dia" ? "dia" : "noche";
+          return {
+            origen: row.labor,
+            turno,
+            tonnage: value,
+            date,
+            phase: row.fase,
+          };
+        });
     });
-    console.log("Datos Finales:", datosFinales);
+
+    // Paso 2: Calcular el tonnage total
+    const totalTonnage = dataGenerate.reduce(
+      (sum, item) => sum + item.tonnage,
+      0
+    );
+    const refDate = new Date(dataGenerate[0].date);
+    // Paso 3: Generar el objeto final
+    const result = {
+      year: form.getValues("dob").end.getFullYear(),
+      month: form.getValues("dob").end.getMonth() + 1,
+      week: getWeekOfMonth(refDate),
+      totalTonnage,
+      dataGenerate,
+      dataEdit: dataHotTable,
+    };
+
+    console.log("Resultado final:", result);
 
     try {
-      const response = await postDataRequest("planDay/many", datosFinales);
+      const response = await postDataRequest("planWeek", result);
 
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");
-        queryClient.invalidateQueries({ queryKey: ["crud", "planDay"] });
+        queryClient.invalidateQueries({ queryKey: ["crud", "planWeek"] });
         setDataHotTable([]);
       } else {
         alert("Error al enviar los datos.");
@@ -195,9 +226,9 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
             <div>
-              <DialogTitle>Crear Plan Semanal</DialogTitle>
+              <DialogTitle>{isEdit ? "Editar" : "Crear"} Plan Semanal</DialogTitle>
               <DialogDescription>
-                Ingresar los datos necesarios para la creación y enviar
+                {isEdit ? "Editar" : "Ingresar"} los datos necesarios para la creación y enviar
               </DialogDescription>
             </div>
           </div>
@@ -225,7 +256,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
                           dayjs(form.getValues("dob").end).format("DD MMMM")}
                     </>
                   ) : (
-                    "Sin fecha seleccionada"
+                    <span className="text-zinc-300 font-bold">Sin fecha seleccionada</span>
                   )}
                 </strong>
               </h1>

@@ -25,6 +25,7 @@ import { IncidenceEditModal } from "./Incidence/IncidenceEditModal";
 import { BeaconModal } from "./Beacon/BeaconModal";
 import { ModalWap } from "./Wap/WapModal";
 import { CycleTruckModal } from "./CycleTruck/CycleTruckModal";
+import { PlanWeekModal } from "./PlanWeek/PlanWeekModal";
 
 export function DataTableRowActions({
   componentToShow,
@@ -148,6 +149,14 @@ export function DataTableRowActions({
     ),
     cycleTruck: (
       <CycleTruckModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    planWeek: (
+      <PlanWeekModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
