@@ -39,6 +39,7 @@ export function DataTable({
   fetchNextPage,
   hasNextPage,
   tableType,
+  hideToolbar = false,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -159,12 +160,14 @@ export function DataTable({
   }
   return (
     <>
-      <DataTableToolbar
-        table={table}
-        isFetching={isFetching}
-        searchColumns={searchColumns}
-        filters={filters}
-      />
+      {!hideToolbar && (
+        <DataTableToolbar
+          table={table}
+          isFetching={isFetching}
+          searchColumns={searchColumns}
+          filters={filters}
+        />
+      )}
       <div ref={parentRef} style={{ overflowY: "hidden", height: "80vh", padding:"10px" }}>
         <div style={{ height: "100%", overflowY: "auto" }}>
           <Table>
@@ -199,13 +202,7 @@ export function DataTable({
                   const isExpanded = expandedRows.includes(row.id);
                   return (
                     <>
-                      <TableRow
-                        key={row.id}
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          // transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
-                        }}
-                      >
+                      <TableRow key={row.id} style={{ height: `${virtualRow.size}px` }}>
                         <TableCell style={{ width: 40 }}>
                           <button
                             onClick={() => handleToggleRow(row.id)}

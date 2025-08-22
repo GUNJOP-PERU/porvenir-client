@@ -1,5 +1,4 @@
 import CardColum from "@/components/Dashboard/CardColum";
-import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardRange from "@/components/Dashboard/CardRange";
 import CardTitle from "@/components/Dashboard/CardTitle";
@@ -14,7 +13,7 @@ function ProductionMonth() {
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(140px,1fr))]">
-        <CardGauge />
+       
         <CardItem
           value={data?.monthly_goal?.value || 0}
           title="Meta del mes"

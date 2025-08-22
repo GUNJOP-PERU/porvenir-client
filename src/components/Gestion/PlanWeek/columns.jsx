@@ -1,4 +1,4 @@
-import { formatFecha, getMonthName } from "@/lib/utilsGeneral";
+import { formatDay, formatFecha, getMonthName } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import { DataTableRowActions } from "../DataTableRowActions";
 import TimeAgo from "timeago-react";
@@ -22,10 +22,10 @@ export const columns = [
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {getMonthName(row.getValue("month"))} / Semana {row.original?.week}
+            {getMonthName(row.getValue("month"))} / {" "} <span className="text-zinc-500 pl-1">#Sem {row.original?.week}</span>
           </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.year}
+          <span className="text-[11px] leading-3 text-zinc-400 md:inline capitalize ">
+            {formatDay(row.original?.startDate)} - {formatDay(row.original?.endDate)}
           </span>
         </div>
       );

@@ -30,7 +30,9 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/vehicle/truck.png')]"></div>
+         <div>
+         <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/vehicle/truck.png')]"></div>
+         </div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("user")}
@@ -97,7 +99,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "start",
+    accessorKey: "end",
     header: "Tiempo Viaje",
     cell: ({ row }) => {
       return (
@@ -170,41 +172,45 @@ export const columns = [
     },
   },
   {
-    accessorKey: "updatedAt",
+    accessorKey: "start",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha actualización" />
+      <DataTableColumnHeader column={column} title="Fecha de Ciclo" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex flex-col justify-center">
-          <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-            <TimeAgo datetime={row.original.updatedAt} locale="es" />
-          </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            fecha de actualización
-          </span>
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col justify-center">
+            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+              {formatFecha(row.original.start)}
+            </h4>
+            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+              inicio en tablet
+            </span>
+          </div>
         </div>
       );
     },
   },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha creación" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex flex-col justify-center">
-          <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {formatFecha(row.original.createdAt)}
-          </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            fecha de creación
-          </span>
-        </div>
-      );
+   {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Fecha actualización" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col justify-center">
+              <h4 className="text-[12.5px] font-semibold leading-4 flex">
+                <TimeAgo datetime={row.original.updatedAt} locale="es" /> 
+              </h4>
+              <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+                creación {formatFecha(row.original.createdAt)}
+              </span>
+            </div>
+          </div>
+        );
+      },
     },
-  },
   {
     id: "actions",
     cell: ({ row }) => {

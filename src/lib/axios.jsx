@@ -5,7 +5,7 @@ const authApi = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 15000,
+  timeout: 60000,
 });
 
 export default authApi;

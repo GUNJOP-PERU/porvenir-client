@@ -4,7 +4,6 @@ import calendar from "dayjs/plugin/calendar";
 import relativeTime from "dayjs/plugin/relativeTime";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useEffect, useState } from "react";
 
 dayjs.extend(relativeTime);
 dayjs.locale("es");
@@ -32,6 +31,12 @@ export function formatFecha(dateString) {
 }
 export function formatHour(dateString) {
   return dayjs(dateString).format("HH:mm:ss");
+}
+export function formatDay(dateString) {
+  const date = dayjs(dateString);
+  const day = date.format("DD");
+  const monthShort = date.format("MMM");
+  return `${day} ${monthShort}`;
 }
 
 export function countItems(data) {

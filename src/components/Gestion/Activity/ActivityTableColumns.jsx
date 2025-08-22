@@ -50,15 +50,14 @@ export const columns = [
             )}
           >
             <span className="text-zinc-50 font-bold">
-              {" "}
               {row.original?.code_activity}
             </span>
           </div>
-          <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 capitalize truncate ">
+          <div className="flex-1 flex flex-col justify-center gap-0.5 min-w-[150px] max-w-[150px]">
+            <h4 className="text-[12.5px] font-semibold leading-[0.9rem] capitalize line-clamp-2">
               {row.getValue("activityName")}
             </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
+            <span className="text-[11px] leading-3 text-zinc-400 md:inline">
               {row.original?.type_activity}
             </span>
           </div>
@@ -115,7 +114,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "tagName",
+    accessorKey: "end",
     header: "Tiempo Viaje",
     cell: ({ row }) => {
       return (
@@ -163,33 +162,53 @@ export const columns = [
     },
   },
   {
-      accessorKey: "isValid",
-      header: "Estado Ciclo",
-      cell: ({ row }) => {
-        const isValid = row.original?.isValid;
-    
-        if (isValid === undefined || isValid === null) {
-          return (
-            <span className="text-gray-500 bg-gray-100 text-[10px] py-[2px] px-2 rounded-[8px]">
-              Error
-            </span>
-          );
-        }
-    
+    accessorKey: "isValid",
+    header: "Estado Ciclo",
+    cell: ({ row }) => {
+      const isValid = row.original?.isValid;
+
+      if (isValid === undefined || isValid === null) {
         return (
-          <span
-            className={clsx(
-              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
-              isValid
-                ? "text-green-500 bg-green-50 before:bg-green-500"
-                : "text-rose-500 bg-rose-50 before:bg-rose-500"
-            )}
-          >
-            {isValid ? "Ciclo completo" : "Ciclo interrumpido"}
+          <span className="text-gray-500 bg-gray-100 text-[10px] py-[2px] px-2 rounded-[8px]">
+            Error
           </span>
         );
-      },
+      }
+
+      return (
+        <span
+          className={clsx(
+            "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+            isValid
+              ? "text-green-500 bg-green-50 before:bg-green-500"
+              : "text-rose-500 bg-rose-50 before:bg-rose-500"
+          )}
+        >
+          {isValid ? "Ciclo completo" : "Ciclo interrumpido"}
+        </span>
+      );
     },
+  },
+  {
+    accessorKey: "start",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha de Ciclo" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col justify-center">
+            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+              {formatFecha(row.original.start)}
+            </h4>
+            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+              inicio en tablet
+            </span>
+          </div>
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (
@@ -203,27 +222,7 @@ export const columns = [
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de actualización
-            </span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha creación" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.createdAt)}
-            </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de creación
+              creación {formatFecha(row.original.createdAt)}
             </span>
           </div>
         </div>

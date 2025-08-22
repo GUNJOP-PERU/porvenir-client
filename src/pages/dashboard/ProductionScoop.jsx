@@ -1,6 +1,5 @@
 import CardColumScoop from "@/components/Dashboard/CardColumScoop";
 import CardFlotaTime from "@/components/Dashboard/CardFloatTime/CardFlotaTime";
-import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/CardTable";
 import CardTitle from "@/components/Dashboard/CardTitle";
@@ -16,7 +15,7 @@ function ProductionScoop() {
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(125px,1fr))]">
-        <CardGauge />
+      
         <CardItem
           value={data?.mineral?.productive?.value || 0}
           title="Mineral Producción"

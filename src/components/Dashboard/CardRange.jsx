@@ -4,6 +4,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useGraphicData } from "@/hooks/useGraphicData";
 
+
 export default function CardRange({ symbol, endpoint }) {
   const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
 
@@ -39,72 +40,11 @@ export default function CardRange({ symbol, endpoint }) {
       };
     });
   }, [data]);
-  const dataPrueba = {
-    "dates": ["01-05", "02-05", "03-05" , "04-05" , "05-05","06-05","07-05","08-05","09-05","10-05","11-05","12-05","13-05","14-05","15-05","16-05","17-05","18-05","19-05","20-05","21-05","22-05","23-05","24-05","25-05","26-05","27-05","28-05","29-05","30-05","31-05"],
-    "ranges": {
-      "mañana": [
-        { "low": "8:30", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-       
-
-      ],
-      "tarde": [
-        { "low": "8:30", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-        { "low": "6:00", "high": "12:00" },
-        { "low": "6:50", "high": "12:50" },
-        { "low": "7:00", "high": "13:00" },
-        { "low": "7:50", "high": "13:50" },
-        { "low": "8:00", "high": "14:00" },
-        { "low": "8:50", "high": "14:50" },
-       
-          
-      ]
-    }
-  }
 
   const options = useMemo(
     () => ({
       chart: {
-        type: "columnrange",
+        
         backgroundColor: "transparent",
         height: 250,
         marginBottom: 35,

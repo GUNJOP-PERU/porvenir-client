@@ -9,18 +9,18 @@ import {
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
-import { postDataRequest } from "@/api/api";
+import { postDataRequest, putDataRequest } from "@/api/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CircleFadingPlus, SendHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import IconWarning from "@/icons/IconWarning";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlanHeader } from "./PlanHeader";
 import { PlanContent } from "./PlanContent";
+import { useToast } from "@/hooks/useToaster";
 
 const FormSchema = z.object({
   dob: z
@@ -36,27 +36,21 @@ const FormSchema = z.object({
       message: "*La fecha de inicio no puede ser posterior a la fecha de fin.",
       path: ["start"],
     }),
+  week: z.number().max(99, { message: "*Maximo 99" }),
   selectedItems: z.array(z.string()).nonempty({ message: "*Labor." }),
 });
 
-export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
-  const queryClient = useQueryClient();
-  const [dataHotTable, setDataHotTable] = useState([]);
-  const [loadingGlobal, setLoadingGlobal] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
     "frontLabor-General",
     "frontLabor",
-    {
-      enabled: false,
-    }
+    { enabled: false }
   );
-
-  useEffect(() => {
-    if (isOpen) {
-      refetchLaborList();
-    }
-  }, [isOpen, refetchLaborList]);
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+  const [dataHotTable, setDataHotTable] = useState([]);
+  const [loadingGlobal, setLoadingGlobal] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -65,95 +59,71 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
         start: new Date(),
         end: new Date(new Date().setDate(new Date().getDate() + 6)),
       },
+      week: 1,
       selectedItems: [],
     },
   });
 
-  // ✅ Calcular el total de toneladas
+  // Calcular el total de toneladas
   const calculateTotal = () => {
     if (!dataHotTable || dataHotTable.length === 0) return 0;
 
     return dataHotTable.reduce((total, row) => {
       const tonnageValues = Object.keys(row)
-        .filter((key) => key.match(/^\d{2}-\d{2}$/))
-        .map((fecha) => row[fecha] || 0);
+        .filter((key) => key.includes("- DIA") || key.includes("- NOCHE"))
+        .map((key) => row[key] || 0);
 
-      return total + tonnageValues.reduce((sum, tonnage) => sum + tonnage, 0);
+      return total + tonnageValues.reduce((sum, val) => sum + val, 0);
     }, 0);
   };
 
   const totalTonnage = calculateTotal();
 
-  const generarEstructura = (dob, selectedItems) => {
-    if (!dob?.start || !dob?.end) {
-      alert("Debe seleccionar una fecha válida.");
-      return { data: [] };
-    }
-
-    const startDate = dayjs(dob.start);
-    const endDate = dayjs(dob.end);
-    const daysInMonth = endDate.diff(startDate, "day") + 1;
-
-    const items =
-      Array.isArray(selectedItems) && selectedItems.length > 0
-        ? selectedItems
-        : [""];
-
-    const exampleData = items.map((labor, index) => {
-      let row = {
-        labor,
-        fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
-      };
-
-      for (let i = 0; i < daysInMonth; i++) {
-        const currentDate = startDate.add(i, "day").format("DD-MM");
-
-        // 🔹 Dos columnas por día
-        row[`${currentDate} - DIA`] = 0;
-        row[`${currentDate} - NOCHE`] = 0;
-      }
-
-      return row;
-    });
-
-    return { data: exampleData };
-  };
-
-  const onSubmit = (data) => {
-    setLoadingGlobal(true);
-    setShowLoader(true);
-
-    setTimeout(() => {
-      setShowLoader(false);
-      const generatedData = generarEstructura(data.dob, data.selectedItems);
-      if (generatedData) {
-        setDataHotTable(generatedData.data);
-      }
-      setLoadingGlobal(false);
-    }, 1500);
-  };
+  const mutation = useMutation({
+    mutationFn: async ({ isEdit, id, data }) => {
+      return isEdit
+        ? await putDataRequest(`planWeek/${id}`, data)
+        : await postDataRequest(`planWeek`, data);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["crud", "planWeek"] });
+      addToast({
+        title: variables.isEdit
+          ? "Editado correctamente"
+          : "Creado correctamente",
+        message: variables.isEdit
+          ? "Los cambios se han guardado con éxito."
+          : "Dato creado con éxito.",
+        variant: "success",
+      });
+    },
+    onError: (error, variables) => {
+      console.error("Error en la solicitud:", error);
+      addToast({
+        title: variables.isEdit ? "Error al editar" : "Error al crear",
+        message:
+          error.response.data.message ||
+          "Revise la información e intente nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleSendData = async () => {
     setLoadingGlobal(true);
     console.log("Datos dataHotTable:", dataHotTable);
 
-    const getWeekOfMonth = (dateObj) => {
-      const firstDayOfMonth = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
-      const dayOfMonth = dateObj.getDate();
-      const firstDayWeekday = firstDayOfMonth.getDay() || 7; // Lunes=1 ... Domingo=7
-      return Math.ceil((dayOfMonth + firstDayWeekday - 1) / 7);
-    };
-
-    // Paso 1: Generar el array de registros individuales
     const dataGenerate = dataHotTable.flatMap((row) => {
       const year = form.getValues("dob").end.getFullYear();
       return Object.entries(row)
-        .filter(([key]) => key.includes("-")) // filtrar solo las fechas
+        .filter(([key]) => key.includes("-"))
         .map(([key, value]) => {
-          // key ejemplo: "25-08 - Día"
           const [dayMonth, turnoText] = key.split(" - ");
           const [day, monthStr] = dayMonth.split("-");
-          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(
+            2,
+            "0"
+          )}`;
           const turno = turnoText.toLowerCase() === "dia" ? "dia" : "noche";
           return {
             origen: row.labor,
@@ -165,53 +135,64 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
         });
     });
 
-    // Paso 2: Calcular el tonnage total
     const totalTonnage = dataGenerate.reduce(
       (sum, item) => sum + item.tonnage,
       0
     );
-    const refDate = new Date(dataGenerate[0].date);
-    // Paso 3: Generar el objeto final
     const result = {
       year: form.getValues("dob").end.getFullYear(),
       month: form.getValues("dob").end.getMonth() + 1,
-      week: getWeekOfMonth(refDate),
+      week: form.getValues("week"),
       totalTonnage,
       dataGenerate,
       dataEdit: dataHotTable,
+      startDate: form.getValues("dob").start,
+      endDate: form.getValues("dob").end,
+      items: form.getValues("selectedItems"),
     };
 
-    console.log("Resultado final:", result);
-
     try {
-      const response = await postDataRequest("planWeek", result);
-
-      if (response.status >= 200 && response.status < 300) {
-        alert("Datos enviados con éxito!");
-        queryClient.invalidateQueries({ queryKey: ["crud", "planWeek"] });
-        setDataHotTable([]);
-      } else {
-        alert("Error al enviar los datos.");
-      }
-
+      await mutation.mutateAsync({
+        isEdit,
+        id: dataCrud?._id,
+        data: result,
+      });
+      setDataHotTable([]);
       if (onClose) onClose();
       form.reset();
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-      alert("Ocurrió un error al enviar los datos.");
     } finally {
-      setLoadingGlobal(false); // Detener indicador de carga
+      setLoadingGlobal(false);
     }
   };
 
   const handleCancel = () => {
-    if (onClose) onClose(); // Cerrar el modal
-    form.reset(); // Restablecer los valores del formulario
-    setDataHotTable([]); // Limpiar la tabla de datos
-    setLoadingGlobal(false); // Detener cualquier indicador de carga
+    if (onClose) onClose();
+    form.reset();
+    setDataHotTable([]);
+    setLoadingGlobal(false);
   };
 
-  // console.log("Form Values:", form.getValues());
+  useEffect(() => {
+    if (isOpen) {
+      if (isEdit) setShowLoader(true);
+      refetchLaborList().then(() => {
+        if (isEdit && dataCrud?.dataEdit) {
+          setDataHotTable(dataCrud.dataEdit);
+          if (dataCrud?.startDate && dataCrud?.endDate && dataCrud?.week && dataCrud?.items) {
+            form.setValue("dob", {
+              start: new Date(dataCrud.startDate),
+              end: new Date(dataCrud.endDate),
+            });
+            form.setValue("week", dataCrud.week);
+            form.setValue("selectedItems", dataCrud.items);
+          }
+        } else {
+          setDataHotTable([]);
+        }
+        if (isEdit) setShowLoader(false);
+      });
+    }
+  }, [isOpen, refetchLaborList, isEdit, dataCrud, form]);
 
   return (
     <Dialog
@@ -226,9 +207,12 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
             <div>
-              <DialogTitle>{isEdit ? "Editar" : "Crear"} Plan Semanal</DialogTitle>
+              <DialogTitle>
+                {isEdit ? "Editar" : "Crear"} Plan Semanal
+              </DialogTitle>
               <DialogDescription>
-                {isEdit ? "Editar" : "Ingresar"} los datos necesarios para la creación y enviar
+                {isEdit ? "Editar" : "Ingresar"} los datos necesarios para la
+                creación y enviar
               </DialogDescription>
             </div>
           </div>
@@ -236,10 +220,12 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
         <div className="flex flex-col gap-7">
           <PlanHeader
             form={form}
-            onSubmit={onSubmit}
             dataLaborList={dataLaborList}
-            hasData={dataHotTable.length > 0}
+            isEdit={isEdit}
             loadingGlobal={loadingGlobal}
+            setLoadingGlobal={setLoadingGlobal}
+            setShowLoader={setShowLoader}
+            setDataHotTable={setDataHotTable}
           />
           <div className="flex flex-col gap-3">
             <div>
@@ -256,7 +242,9 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
                           dayjs(form.getValues("dob").end).format("DD MMMM")}
                     </>
                   ) : (
-                    <span className="text-zinc-300 font-bold">Sin fecha seleccionada</span>
+                    <span className="text-zinc-300 font-bold">
+                      Sin fecha seleccionada
+                    </span>
                   )}
                 </strong>
               </h1>
@@ -317,7 +305,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit }) => {
               <>Cargando...</>
             ) : (
               <>
-                Enviar Plan
+                {isEdit ? "Actualizar" : "Crear"} Plan
                 <SendHorizontal className="text-background w-4 h-4" />
               </>
             )}

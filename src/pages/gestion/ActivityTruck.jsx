@@ -1,17 +1,14 @@
 import { RefreshCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DataTable } from "@/components/Gestion/DataTable";
 import { Button } from "@/components/ui/button";
-
-import { ModalActivity } from "@/components/Gestion/Activity/ActivityModal";
 import { columns } from "@/components/Gestion/Activity/ActivityTableColumns";
-import { useFetchInfinityScroll } from "@/hooks/useGlobalQuery";
+import { useFetchInfinityScrollTruck } from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
 import { format } from "date-fns";
 import { Search } from "lucide-react";
 
 function PageActivity() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [search, setSearch] = useState("");
   const [shift, setShift] = useState("dia");
@@ -23,18 +20,7 @@ function PageActivity() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = useFetchInfinityScroll(
-    "activityTruck",
-    "activity/truck/items",
-    12,
-    `vehicle=${search}&shift=${shift}&date=${date}`
-  );
-
-  useEffect(() => {
-    // Reset the page when the date changes
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, search, shift])
+  } = useFetchInfinityScrollTruck({ queryKey: "activityTruck", endpoint: "activity/truck/items", date, search, shift });
 
   return (
     <>
@@ -65,7 +51,7 @@ function PageActivity() {
         </div>
       </div>
 
-      <div className="flex flex-row justify-between items-center my-4">
+      <div className="flex flex-row justify-between items-center">
         <div className="relative">
           <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4 text-zinc-300" />
           <input
@@ -78,8 +64,9 @@ function PageActivity() {
         </div>
 
         <div className="flex gap-3 items-center">
-          <button
-            className={`px-3 py-1 rounded text-xs font-bold border ${shift === "dia" ? "bg-yellow-200 border-yellow-400 text-yellow-800" : "bg-white border-zinc-300 text-zinc-400"}`}
+         <div className="flex items-center rounded-lg bg-zinc-100 px-1 h-8">
+         <button
+            className={`px-3 h-6 py-1 rounded-md text-xs font-bold transition ease-in-out duration-300 ${shift === "dia" ? "bg-orange-300 text-orange-800" : "  text-zinc-300"}`}
             onClick={() => setShift("dia")}
             type="button"
           >
@@ -87,21 +74,22 @@ function PageActivity() {
           </button>
 
           <button
-            className={`px-3 py-1 rounded text-xs font-bold border ${shift === "noche" ? "bg-blue-200 border-blue-400 text-blue-800" : "bg-white border-zinc-300 text-zinc-400"}`}
+            className={`px-3 h-6 py-1 rounded-md text-xs font-bold transition ease-in-out duration-300 ${shift === "noche" ? "bg-sky-200 text-sky-800" : " border-zinc-300 text-zinc-300"}`}
             onClick={() => setShift("noche")}
             type="button"
           >
             Noche
           </button>
+         </div>
 
           <label className="text-xs">
-            Fecha:
+            Fecha de Ciclo:
             <input
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
               max={format(new Date(), "yyyy-MM-dd")}
-              className="border rounded px-2 py-1 ml-1"
+              className="border rounded-lg px-2 py-1 ml-1"
             />
           </label>
         </div>
@@ -116,11 +104,6 @@ function PageActivity() {
         hasNextPage={hasNextPage}
         tableType={"activities"}
         hideToolbar={true}
-      />
-      <ModalActivity
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
       />
     </>
   );

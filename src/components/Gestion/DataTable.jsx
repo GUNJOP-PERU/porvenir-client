@@ -69,20 +69,16 @@ export function DataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-
-
-
   const rows = isLoading ? [] : table.getRowModel().rows;
 
   const virtualizer = useVirtualizer({
-    count: rows.length, // Se asegura de que no haya problemas cuando isLoading es true
+    count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 50,
     overscan: 5,
     measureElement: (el) => el?.getBoundingClientRect().height || 50,
   });
   
-
   const { searchColumns, filters } = tableConfigs[tableType] || {
     searchColumns: [],
     filters: [],

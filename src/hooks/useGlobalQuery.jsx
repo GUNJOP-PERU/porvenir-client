@@ -41,3 +41,33 @@ export function useFetchInfinityScroll(queryKey, endpoint, limit = 12, filters =
     },
   });
 }
+
+export function useFetchInfinityScrollTruck({ queryKey, endpoint, date, search, shift}) {
+  const filters = `vehicle=${search}&shift=${shift}&date=${date}`;
+
+  return useInfiniteQuery({
+    queryKey: ["crud", queryKey, { date, search, shift }],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await getDataRequest(
+        `${endpoint}?page=${pageParam}&limit=12&${filters}`
+      );
+      return response;
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.data.page < lastPage.data.total_pages ? lastPage.data.page + 1 : undefined;
+    },
+    cacheTime: Infinity,
+    staleTime: 0,
+    refetchOnReconnect: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: 1,
+    retryDelay: 2000,
+    select: (data) => {
+      return data.pages
+        .map(page => page.data.data)
+        .flat()
+        .sort((a, b) => new Date(b.start) - new Date(a.start)) || [];
+    },
+  });
+}

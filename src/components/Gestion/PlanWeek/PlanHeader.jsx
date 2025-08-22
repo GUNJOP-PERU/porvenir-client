@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import dayjs from "dayjs";
+
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
@@ -17,14 +14,65 @@ import { es } from "date-fns/locale";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "../PlanDay/PlanDayFilterItems";
 import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 
 export const PlanHeader = ({
   form,
-  onSubmit,
   dataLaborList,
-  hasData,
+  isEdit,
   loadingGlobal,
+  setLoadingGlobal,
+  setShowLoader,
+  setDataHotTable,
 }) => {
+  const onSubmit = (data) => {
+    setLoadingGlobal(true);
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      const generatedData = generarEstructura(data.dob, data.selectedItems);
+      if (generatedData) {
+        setDataHotTable(generatedData.data);
+      }
+      setLoadingGlobal(false);
+    }, 1500);
+  };
+
+  const generarEstructura = (dob, selectedItems) => {
+    if (!dob?.start || !dob?.end) {
+      alert("Debe seleccionar una fecha válida.");
+      return { data: [] };
+    }
+
+    const startDate = dayjs(dob.start);
+    const endDate = dayjs(dob.end);
+    const daysInMonth = endDate.diff(startDate, "day") + 1;
+
+    const items =
+      Array.isArray(selectedItems) && selectedItems.length > 0
+        ? selectedItems
+        : [""];
+
+    const exampleData = items.map((labor, index) => {
+      let row = {
+        labor,
+        fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
+      };
+
+      for (let i = 0; i < daysInMonth; i++) {
+        const currentDate = startDate.add(i, "day").format("DD-MM");
+
+        // 🔹 Dos columnas por día
+        row[`${currentDate} - DIA`] = 0;
+        row[`${currentDate} - NOCHE`] = 0;
+      }
+
+      return row;
+    });
+
+    return { data: exampleData };
+  };
+
   return (
     <Form {...form}>
       <form
@@ -43,13 +91,16 @@ export const PlanHeader = ({
                     <Button
                       variant="outline"
                       id="date"
-                      className="w-48 justify-between font-normal"
+                      className="w-40 justify-between font-normal capitalize"
                     >
                       {field.value?.start ? (
                         field.value?.end ? (
                           <>
-                            {format(field.value.start, "dd MMM", { locale: es })}{" "}
-                            - {format(field.value.end, "dd MMM", { locale: es })}
+                            {format(field.value.start, "dd MMM", {
+                              locale: es,
+                            })}{" "}
+                            -{" "}
+                            {format(field.value.end, "dd MMM", { locale: es })}
                           </>
                         ) : (
                           format(field.value.start, "dd MMM", { locale: es })
@@ -72,14 +123,14 @@ export const PlanHeader = ({
                       defaultMonth={field.value?.start}
                       selected={{
                         from: field.value?.start,
-                        to: field.value?.end
+                        to: field.value?.end,
                       }}
                       captionLayout="dropdown"
                       locale={es}
                       onSelect={(date) => {
                         field.onChange({
                           start: date?.from,
-                          end: date?.to
+                          end: date?.to,
                         });
                       }}
                     />
@@ -90,6 +141,29 @@ export const PlanHeader = ({
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="week"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="flex items-center gap-4 border pl-4 pr-1 py-0 rounded-lg h-[34px] max-w-[150px]">
+                  <div className="text-xs flex flex-col">
+                    <b className="text-[8px] leading-[10px]">N° de la</b>
+                    <span className="text-xs leading-3">Semana</span>
+                  </div>
+                  <Input
+                    type="number"
+                    disabled={loadingGlobal}
+                    placeholder="Ej. 12345678"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    className="w-full py-0 h-7 rounded-md !my-0 border-none bg-zinc-100"
+                  />
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           {/* Selección de Labor */}
           <FormField
             control={form.control}
@@ -111,7 +185,7 @@ export const PlanHeader = ({
 
         {/* Botón de Enviar */}
         <Button type="submit" disabled={loadingGlobal} variant="tertiary">
-          {hasData ? (
+          {isEdit ? (
             <>
               <IconEdit className="w-5 h-5 stroke-primary" />
               Actualizar
