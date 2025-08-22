@@ -86,7 +86,6 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
     return Object.values(loadingItems).some(Boolean);
   }, [loadingItems]);
 
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!anyItemLoading) onClose(open);
