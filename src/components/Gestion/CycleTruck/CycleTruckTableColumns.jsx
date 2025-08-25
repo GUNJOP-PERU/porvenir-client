@@ -11,6 +11,7 @@ import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
 import { DataTableRowActions } from "../DataTableRowActions";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 export const columns = [
   {
@@ -22,8 +23,9 @@ export const columns = [
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
-    accessorKey: "user",
+    accessorKey: "user",  
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
@@ -41,6 +43,17 @@ export const columns = [
               {row.original?.tagName}
             </span>
           </div>
+          <button
+          onClick={row.getToggleExpandedHandler()}
+          className="flex items-center gap-1"
+        >
+          {row.getIsExpanded() ? (
+            <ChevronDown size={16} />
+          ) : (
+            <ChevronRight size={16} />
+          )}
+         
+        </button>
         </div>
       );
     },

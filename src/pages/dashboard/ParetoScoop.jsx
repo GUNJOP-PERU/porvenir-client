@@ -15,7 +15,6 @@ function ParetoScoop() {
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(150px,1fr))]">
-
         <CardItem
           value={data?.total_events || 0}
           title="Total de eventos"

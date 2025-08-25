@@ -96,7 +96,7 @@ function PageCycleTruck() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              max={format(new Date(), "yyyy-MM-dd")}
+              // max={format(new Date(), "yyyy-MM-dd")}
               className="border rounded-lg px-2 py-1 ml-1"
             />
           </label>
