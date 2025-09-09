@@ -43,7 +43,7 @@ const FormSchema = z.object({
 });
 
 export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
-   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);

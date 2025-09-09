@@ -65,7 +65,7 @@ function PageUbications() {
       >
         <TabsList>
           {categories.map((key) => (
-            <TabsTrigger key={key} value={key}>
+            <TabsTrigger key={key} value={key} className="capitalize">
               {key}
             </TabsTrigger>
           ))}

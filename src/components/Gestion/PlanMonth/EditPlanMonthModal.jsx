@@ -271,7 +271,7 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 </div>
               ) : (
                 <PlanContent
-                  heightSize="small"
+                  // heightSize="small"
                   dataHotTable={dataHotTable}
                   dataLaborList={dataLaborList}
                   setDataHotTable={setDataHotTable}

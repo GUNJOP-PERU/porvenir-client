@@ -67,7 +67,7 @@ const CardHeatMap = () => {
           style: {
             color: "#A1A1AA",
             fontSize: "0.6em",
-            fontWeight: "bold",
+            fontWeight: "700",
           },
           rotation: 0,
         },
@@ -83,7 +83,7 @@ const CardHeatMap = () => {
           style: {
             color: "#A1A1AA",
             fontSize: "0.6em",
-            fontWeight: "bold",
+            fontWeight: "700",
           },
         },
         gridLineWidth: 1,

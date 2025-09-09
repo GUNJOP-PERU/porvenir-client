@@ -1,112 +1,125 @@
-import { useEffect, useState } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import PropTypes from 'prop-types'
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import PropTypes from "prop-types";
 
 const ColumnChart = ({ data, title }) => {
-  const [chartData, setChartData] = useState([])
-
-  useEffect(() => {
-    console.log("boolean",data,Array.isArray(data))
-    if(Array.isArray(data)) {
-    const groupedData = data?.filter(item => item.ubicationType === "destino").reduce((groups, item) => {
-      const destination = item.ubication;
-      if (!groups[destination]) {
-        groups[destination] = {
-          trips: [],
-        };
-      }
-      groups[destination].trips.push(item);
-      return groups;
-    }, {});
-    setChartData(Object.entries(groupedData).map(([name, value]) => ({
-      name,
-      y: value.trips.length
-    })));
-    } else {
-      setChartData(Object.entries(data).map(([name, value]) => ({
-        name,
-        y: value
-      })));
-    }
-  }, [data])
-
+  const chartData = Object.entries(data).map(([name, value]) => ({
+    name,
+    y: value,
+  }));
 
   const options = {
     chart: {
-      type: 'column',
-      height: 400,
-      backgroundColor: 'transparent'
+      type: "column",
+      height: 260,
+      backgroundColor: "transparent",
     },
     title: {
       text: title,
       style: {
-        fontSize: '16px',
-        fontWeight: 'bold'
-      }
+        fontSize: "14px",
+        fontWeight: "bold",
+      },
     },
     xAxis: {
-      type: 'category',
-      labels: {
-        rotation: -45,
-        style: {
-          fontSize: '11px'
-        }
-      }
+      type: "category",
+      lineColor: "transparent",
+      crosshair: true,
+        tickWidth: 0,
+        tickLength: 0,
+        labels: {
+          style: {
+            color: "#A1A1AA",
+            fontSize: "0.65em",
+            fontWeight: "700",
+          },
+        },
     },
     yAxis: {
       title: {
-        text: 'Cantidad de Viajes'
-      }
+        text: null,
+      },
+      labels: {
+        enabled: false,
+      },
+      gridLineColor: "#D9D9D9",
+      gridLineWidth: 0.5,
+      gridLineDashStyle: "Dash",
     },
     legend: {
-      enabled: false
+      enabled: false,
     },
     credits: {
-      enabled: false
+      enabled: false,
     },
     plotOptions: {
       column: {
+        stacking: "normal",
+        borderRadius: "15%",
+        pointPadding: 0.05,
+        groupPadding: 0.05,
+        borderWidth: 0,
         dataLabels: {
           enabled: true,
-          format: '{y}'
+          style: {
+            fontSize: "0.75em",
+            color: "#000",
+            fontWeight: "bold",
+            textOutline: "none",
+          },
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          borderRadius: 3,
+          padding: 3,
+          borderWidth: 0,
         },
-        colorByPoint: true
-      }
+        colorByPoint: true,
+      },
     },
-    series: [{
-      name: 'Viajes',
-      data: chartData
-    }],
+    series: [
+      {
+        name: "Viajes",
+        data: chartData,
+      },
+    ],
     colors: [
-      '#3b82f6', '#ef4444', '#10b981', '#f59e0b', 
-      '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'
-    ]
+      "#3b82f6",
+      "#ef4444",
+      "#10b981",
+      "#f59e0b",
+      "#8b5cf6",
+      "#06b6d4",
+      "#ec4899",
+      "#84cc16",
+    ],
   };
 
   return (
-    <div className="w-full h-full">
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-      />
+    <div className="w-full h-full border border-[#F0F0F0] shadow-sm rounded-2xl px-4 py-2">
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
-  )
-}
+  );
+};
 
 ColumnChart.propTypes = {
   title: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.shape({
-    tag: PropTypes.string.isRequired,
-    ubication: PropTypes.string.isRequired,
-    ubicationType: PropTypes.string.isRequired,
-    duration: PropTypes.number.isRequired,
-    durationMin: PropTypes.string.isRequired,
-    tsStart: PropTypes.number.isRequired,
-    tsEnd: PropTypes.number.isRequired,
-    tsStartDate: PropTypes.string.isRequired,
-    tsEndDate: PropTypes.string.isRequired
-  })).isRequired,
-}
+  data: PropTypes.shape({
+    totalTrips: PropTypes.number.isRequired,
+    hourRangesWithTrips: PropTypes.number.isRequired,
+    tripsByDestination: PropTypes.objectOf(PropTypes.number).isRequired,
+    tripsByFrontLabors: PropTypes.objectOf(PropTypes.number).isRequired,
+    tripsByUnit: PropTypes.arrayOf(
+      PropTypes.shape({
+        unit: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+        firstMineEntrance: PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          durationMin: PropTypes.number.isRequired,
+          start: PropTypes.string.isRequired,
+          end: PropTypes.string.isRequired,
+        }).isRequired,
+      })
+    ).isRequired,
+  }),
+};
 
 export default ColumnChart;

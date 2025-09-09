@@ -18,12 +18,10 @@ export const PlanContent = ({
 }) => {
  
 
-  // ✅ Verifica si el valor de la celda está en dataLaborList
   const isLaborInList = (laborName) => {
     return dataLaborList?.some((item) => item.name === laborName);
   };
 
-  // ✅ Función para actualizar la tabla después de un cambio
   const handleAfterChange = (changes) => {
     if (!changes) return;
 
@@ -46,8 +44,6 @@ export const PlanContent = ({
       .filter((laborName) => !isLaborInList(laborName));
     setInvalidLabors(invalids);
   }, [dataHotTable, dataLaborList]);
-
-
 
   return (
     <div

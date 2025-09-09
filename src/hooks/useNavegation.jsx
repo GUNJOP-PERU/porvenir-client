@@ -62,6 +62,12 @@ export const useNavigation = () => {
             icon: <IconPlan className="w-4 h-4 " />,
             active: pathname === "/planDay",
           },
+          {
+            name: "Plan Semanal",
+            href: "/planWeek",
+            icon: <IconPlan className="w-4 h-4 " />,
+            active: pathname === "/planWeek",
+          },
 
           {
             name: "Plan Mensual",

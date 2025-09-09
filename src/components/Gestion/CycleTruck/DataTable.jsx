@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -16,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { DataTableToolbar } from "@/components/Gestion/DataTableToolbar";
@@ -31,7 +32,6 @@ import { useGlobalData } from "@/context/GlobalDataContext";
 
 export function DataTable({
   columns,
-  activityColumns,
   data,
   isLoading,
   isFetching,
@@ -39,13 +39,13 @@ export function DataTable({
   fetchNextPage,
   hasNextPage,
   tableType,
+  hideToolbar = false,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
-  const [expandedRows, setExpandedRows] = useState([]); // IDs de filas expandidas
-  const { data: globalData } = useGlobalData();
+  const [expanded, setExpanded] = useState([]);
 
   const parentRef = useRef();
 
@@ -60,30 +60,31 @@ export function DataTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      expanded,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getSubRows: (row) => row.activities || [],
   });
-
-
-
 
   const rows = isLoading ? [] : table.getRowModel().rows;
 
   const virtualizer = useVirtualizer({
-    count: rows.length, // Se asegura de que no haya problemas cuando isLoading es true
+    count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 50,
+    measureElement: (el) => el?.getBoundingClientRect().height,
     overscan: 5,
-    measureElement: (el) => el?.getBoundingClientRect().height || 50,
   });
   
 
@@ -122,7 +123,7 @@ export function DataTable({
     "duration",
     "material",
     "activityName",
-    "tonnage"
+    "tonnage",
   ];
 
   useEffect(() => {
@@ -133,25 +134,15 @@ export function DataTable({
     });
   }, [isMobile, table]);
 
-  const handleToggleRow = (rowId) => {
-    setExpandedRows((prev) =>
-      prev.includes(rowId)
-        ? prev.filter((id) => id !== rowId)
-        : [...prev, rowId]
-    );
-  };
-
-  if (isLoading)
-  return (
-    <SkeletonWrapper isLoading={isLoading}/>
-  );
+  if (isLoading) return <SkeletonWrapper isLoading={isLoading} />;
   if (isError) {
     return (
       <div className="space-y-4 flex-1 flex flex-col">
         <div className="max-w-[150px] leading-3 mx-auto flex-1 flex flex-col items-center justify-center gap-1">
           <IconWarning className="w-6 h-6 text-[#D32F2F]" />
           <p className="text-center text-[#B71C1C] text-[10px] font-medium">
-            Hubo un error al cargar los datos. Por favor, intente nuevamente mas tarde.
+            Hubo un error al cargar los datos. Por favor, intente nuevamente mas
+            tarde.
           </p>
         </div>
       </div>
@@ -159,25 +150,29 @@ export function DataTable({
   }
   return (
     <>
-      <DataTableToolbar
-        table={table}
-        isFetching={isFetching}
-        searchColumns={searchColumns}
-        filters={filters}
-      />
-      <div ref={parentRef} style={{ overflowY: "hidden", height: "80vh", padding:"10px" }}>
-        <div style={{ height: "100%", overflowY: "auto" }}>
+      {!hideToolbar && (
+        <DataTableToolbar
+          table={table}
+          isFetching={isFetching}
+          searchColumns={searchColumns}
+          filters={filters}
+        />
+      )}
+      <div
+        ref={parentRef}
+        style={{ overflowY: "auto", height: "80vh", padding: "10px" }}
+      >
+        <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
           <Table>
             <TableHeader className="">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {/* Columna extra para el botón de expandir */}
-                  <TableHead style={{ width: 40 }}></TableHead>
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead
                         key={header.id}
                         colSpan={header.colSpan}
+                        // style={{ width: header.getSize() }}
                       >
                         {header.isPlaceholder
                           ? null
@@ -196,25 +191,17 @@ export function DataTable({
               virtualizer?.getVirtualItems()?.length > 0 ? (
                 virtualizer.getVirtualItems().map((virtualRow, index) => {
                   const row = rows[virtualRow.index];
-                  const isExpanded = expandedRows.includes(row.id);
                   return (
-                    <>
+                    <React.Fragment key={row.id}>
                       <TableRow
                         key={row.id}
                         style={{
                           height: `${virtualRow.size}px`,
-                          // transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                          transform: `translateY(${
+                            virtualRow.start - index * virtualRow.size
+                          }px)`,
                         }}
                       >
-                        <TableCell style={{ width: 40 }}>
-                          <button
-                            onClick={() => handleToggleRow(row.id)}
-                            className="focus:outline-none"
-                            aria-label={isExpanded ? "Colapsar" : "Expandir"}
-                          >
-                            {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                          </button>
-                        </TableCell>
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
@@ -224,34 +211,56 @@ export function DataTable({
                           </TableCell>
                         ))}
                       </TableRow>
-                      {isExpanded && Array.isArray(row.original.activities) && row.original.activities.length > 0 && (
-                        row.original.activities.filter((activity) => activity.type_activity === "productive").map((subRow, subIdx) => (
-                          <TableRow key={row.id + "-sub-" + subIdx} className="bg-zinc-50">
-                            <TableCell style={{ width: 40 }} />
-                            {activityColumns(globalData).map((col, colIdx) => {
-                              return (
-                                <TableCell key={colIdx}>
-                                  {col.cell
-                                    ? flexRender(col.cell, {
-                                        table,
-                                        row: { ...row, original: subRow },
-                                        column: { ...col },
-                                        getValue: () => subRow[col.accessorKey],
-                                      })
-                                    : subRow[col.accessorKey] ?? ''}
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        ))
-                      )}
-                    </>
+
+                      {/* Subfilas */}
+                      {row.getIsExpanded() && (
+  <TableRow className="bg-zinc-50">
+    <TableCell colSpan={columns.length}>
+      {row.original.activities && row.original.activities.length > 0 ? (
+        <Table className="text-xs border rounded-lg">
+          <TableHeader>
+            <TableRow className="bg-gray-100">
+              <TableHead>Actividad</TableHead>
+              <TableHead>Material</TableHead>
+              <TableHead>Toneladas</TableHead>
+              <TableHead>Destino</TableHead>
+              <TableHead>Inicio</TableHead>
+              <TableHead>Fin</TableHead>
+              <TableHead>Operador</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {row.original.activities.map((act) => (
+              <TableRow key={act._id}>
+                <TableCell>{act.activityName}</TableCell>
+                <TableCell>{act.material}</TableCell>
+                <TableCell>{act.tonnage}</TableCell>
+                <TableCell>{act.destiny}</TableCell>
+                <TableCell>
+                  {new Date(act.start).toLocaleTimeString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(act.end).toLocaleTimeString()}
+                </TableCell>
+                <TableCell>{act.user}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p className="text-gray-400 text-xs">Sin actividades</p>
+      )}
+    </TableCell>
+  </TableRow>
+)}
+
+                    </React.Fragment>
                   );
                 })
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length + 1}
+                    colSpan={columns.length}
                     className="h-24 text-center"
                   >
                     <div className="max-w-xs m-auto py-24">

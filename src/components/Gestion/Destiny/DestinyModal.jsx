@@ -19,15 +19,21 @@ import {
 } from "../../ui/dialog";
 import {
   Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
-  name: z.string().min(1, { message: "*Nombre requerido" }),
+  name: z
+    .string()
+    .min(1, { message: "*Nombre requerido" })
+    .transform((val) => val.trim()),
   isActive: z.boolean().optional(),
 });
 
@@ -84,8 +90,8 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[350px]">
-        <DialogHeader>
+      <DialogContent className="w-[350px] p-0">
+        <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
             <div>
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
@@ -100,7 +106,7 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4 px-6">
               <FormField
                 control={control}
                 name="name"
@@ -117,34 +123,33 @@ export const DestinyModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-8 px-6">
               <FormField
-                control={control}
+                control={form.control}
                 name="isActive"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center gap-2">
-                    <FormLabel>Habilitar</FormLabel>
-                    <button
-                      type="button"
-                      className={`relative w-10 h-6 rounded-full transition-colors duration-200 
-                        ${field.value ? 'bg-green-500' : 'bg-gray-300'}`}
-                      onClick={() => {console.log(field.value), field.onChange(!field.value)}}
-                      disabled={loadingGlobal}
-                      tabIndex={0}
-                      aria-checked={field.value}
-                      role="switch"
-                    >
-                      <span
-                        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200
-                          ${field.value ? 'translate-x-4' : ''}`}
+                  <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
+                    <div className="flex flex-col  justify-center ">
+                      <FormLabel>Activar/Desactivar</FormLabel>
+                      <FormDescription className="pt-0">
+                        Se deshabilitará el destino.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        aria-readonly
+                        disabled={loadingGlobal}
                       />
-                    </button>
-                    <FormMessage />
+                    </FormControl>
                   </FormItem>
                 )}
               />
             </div>
             <Separator className="my-6" />
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
               <Button
                 type="button"
                 onClick={() => onClose()}

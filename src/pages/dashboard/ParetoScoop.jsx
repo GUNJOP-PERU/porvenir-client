@@ -1,7 +1,6 @@
 import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
 import CardColumImpact from "@/components/Dashboard/CardColumImpact";
 import CardColumParetoScoop from "@/components/Dashboard/CardColumParetoScoop";
-import CardGauge from "@/components/Dashboard/CardGauge";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
@@ -16,8 +15,6 @@ function ParetoScoop() {
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(150px,1fr))]">
-        <CardGauge />
-
         <CardItem
           value={data?.total_events || 0}
           title="Total de eventos"

@@ -28,10 +28,10 @@ import {
 import { Input } from "../../ui/input";
 
 const FormSchema = z.object({
-  name: z.string().min(1, { message: "*Nombre requerido" }),
-  description: z.string().min(1, { message: "*Descripción requerida" }),
-  mac_ap: z.string().min(1, { message: "*MAC AP requerida" }),
-  category: z.string().min(1, { message: "*Categoría requerida" }),
+  name: z.string().min(1, { message: "*Nombre requerido" }).transform((val) => val.trim()),
+  description: z.string().min(1, { message: "*Descripción requerida" }).transform((val) => val.trim()),
+  mac_ap: z.string().min(1, { message: "*MAC AP requerida" }).transform((val) => val.replace(/\s+/g, "")),
+  category: z.string().min(1, { message: "*Categoría requerida" }).transform((val) => val.trim()),
 });
 
 export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -87,8 +87,8 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
       onOpenChange={(onClose) => !loadingGlobal && onClose}
       modal={true}
     >
-      <DialogContent className="w-[350px]">
-        <DialogHeader>
+      <DialogContent className="w-[400px] p-0">
+      <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
             <div>
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
@@ -103,7 +103,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 px-6">
               <FormField
                 control={control}
                 name="name"
@@ -145,8 +145,9 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
-                      {...field}
+                      placeholder="Ej. D4:A3:EB:9D:0F:C4"
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                     />
                     <FormMessage />
                   </FormItem>
@@ -171,7 +172,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
               
             </div>
             <Separator className="my-6" />
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
               <Button
                 type="button"
                 onClick={() => onClose()}

@@ -197,7 +197,7 @@ export const dataStatusVehicle = [
   {
     value: 3,
     label: "Inoperativo",
-    color: "#ff9999",
+    color: "#FF6565",
   },
 ]
 export const dataDestiny = [

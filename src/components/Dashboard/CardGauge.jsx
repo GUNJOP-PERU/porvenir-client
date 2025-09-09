@@ -1,10 +1,10 @@
 import { memo, useMemo, useRef } from "react";
 import { formatThousands } from "@/lib/utilsGeneral";
-import Highcharts from "highcharts";
+import { useGraphicData } from "@/hooks/useGraphicData";
+import Highcharts from "highcharts/highcharts.src.js";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
-import { useGraphicData } from "@/hooks/useGraphicData";
 
 if (typeof solidGauge === "function") {
   solidGauge(Highcharts);
@@ -22,7 +22,7 @@ const CardGauge = memo(() => {
       chart: {
         backgroundColor: "transparent",
         type: "solidgauge",
-        height: 75,
+        height: 60,
         width: 120,
         marginTop: -20,
         marginBottom: 0,
@@ -81,13 +81,13 @@ const CardGauge = memo(() => {
             useHTML: true,
             formatter: function () {
               return `
-                          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
-                            <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
-                            <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
-                              ${formatThousands(this.y) || `${0}`}
-                            </span>
-                          </div>
-                        `;
+                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; height:29px; padding-top:3px">
+                  <span style="font-size: 7px; opacity: 0.3;line-height:8px">Ejecutado</span>
+                  <span style="font-size: 1.5rem; font-weight: 800; color: #5190FF;line-height:1.5rem">
+                    ${formatThousands(this.y) || `${0}`}
+                  </span>
+                </div>
+              `;
             },
           },
         },
@@ -130,7 +130,8 @@ const CardGauge = memo(() => {
     );
 
   return (
-    <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px]">
+    <div className="bg-zinc-100/50 rounded-2xl py-1 px-4 flex flex-col items-center justify-center h-[100px] md:h-[90px] gap-1">
+      <span className="text-[9px] text-zinc-400 font-semibold leading-[8px]">Acumulado del dia</span>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

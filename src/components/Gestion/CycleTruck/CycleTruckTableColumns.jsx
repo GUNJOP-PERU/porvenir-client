@@ -10,6 +10,8 @@ import IconNight from "@/icons/IconNight";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
+import { DataTableRowActions } from "../DataTableRowActions";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 export const columns = [
   {
@@ -21,15 +23,18 @@ export const columns = [
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
-    accessorKey: "user",
+    accessorKey: "user",  
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/vehicle/truck.png')]"></div>
+         <div>
+         <div className="w-8 h-8 rounded-[10px] bg-cover bg-center flex items-center justify-center bg-[url('/vehicle/truck.png')]"></div>
+         </div>
           <div className="flex flex-col justify-center gap-0.5">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {row.getValue("user")}
@@ -38,6 +43,17 @@ export const columns = [
               {row.original?.tagName}
             </span>
           </div>
+          <button
+          onClick={row.getToggleExpandedHandler()}
+          className="flex items-center gap-1"
+        >
+          {row.getIsExpanded() ? (
+            <ChevronDown size={16} />
+          ) : (
+            <ChevronRight size={16} />
+          )}
+         
+        </button>
         </div>
       );
     },
@@ -96,7 +112,7 @@ export const columns = [
     },
   },
   {
-    accessorKey: "start",
+    accessorKey: "end",
     header: "Tiempo Viaje",
     cell: ({ row }) => {
       return (
@@ -145,7 +161,7 @@ export const columns = [
     header: "Estado Ciclo",
     cell: ({ row }) => {
       const isValid = row.original?.isValid;
-  
+
       if (isValid === undefined || isValid === null) {
         return (
           <span className="text-gray-500 bg-gray-100 text-[10px] py-[2px] px-2 rounded-[8px]">
@@ -153,7 +169,7 @@ export const columns = [
           </span>
         );
       }
-  
+
       return (
         <span
           className={clsx(
@@ -169,39 +185,57 @@ export const columns = [
     },
   },
   {
-    accessorKey: "updatedAt",
+    accessorKey: "start",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha actualización" />
+      <DataTableColumnHeader column={column} title="Fecha de Ciclo" />
     ),
     cell: ({ row }) => {
       return (
+        <div className="flex items-center gap-2">
           <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              <TimeAgo datetime={row.original.updatedAt} locale="es" />
+            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+              {formatFecha(row.original.start)}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de actualización
+              inicio en tablet
             </span>
           </div>
+        </div>
       );
     },
   },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha creación" />
-    ),
-    cell: ({ row }) => {
-      return (
-          <div className="flex flex-col justify-center">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.createdAt)}
-            </h4>
-            <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-              fecha de creación
-            </span>
+   {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Fecha actualización" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col justify-center">
+              <h4 className="text-[12.5px] font-semibold leading-4 flex">
+                <TimeAgo datetime={row.original.updatedAt} locale="es" /> 
+              </h4>
+              <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+                creación {formatFecha(row.original.createdAt)}
+              </span>
+            </div>
           </div>
+        );
+      },
+    },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      if (!row.original?.isNewLabor) return null; 
+      return (
+        <DataTableRowActions
+          componentToShow={"cycleTruck"}
+          row={row}
+          deleteModal={false}
+        />
       );
     },
+    enableHiding: false,
   },
 ];

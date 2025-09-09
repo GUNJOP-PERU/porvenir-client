@@ -139,25 +139,25 @@ export const createRouteMap = (queryClient) => {
   const addItemsToCache = (queryKey, newItems) => {
     queryClient.setQueryData(queryKey, (oldData) => {
       if (!oldData || !oldData.pages) return oldData;
-  
+
       const seen = new Set();
       const existingIds = new Set();
-  
+
       oldData.pages.forEach((page) => {
         page.data?.data?.forEach((item) => {
           if (item._id) existingIds.add(item._id);
         });
       });
-  
+
       const filteredNewItems = newItems.filter(
         (item) => item._id && !existingIds.has(item._id)
       );
-  
+
       if (filteredNewItems.length === 0) {
         console.log("✅ Todas las actividades ya existen en caché.");
         return oldData;
       }
-  
+
       const firstPage = oldData.pages[0];
       const newFirstPage = {
         ...firstPage,
@@ -166,17 +166,19 @@ export const createRouteMap = (queryClient) => {
           data: [...filteredNewItems, ...firstPage.data.data],
         },
       };
-  
+
       const newPages = [newFirstPage, ...oldData.pages.slice(1)];
-  
-      console.log(`➕ ${filteredNewItems.length} nuevas actividades agregadas al caché.`);
+
+      console.log(
+        `➕ ${filteredNewItems.length} nuevas actividades agregadas al caché.`
+      );
       return { ...oldData, pages: newPages };
     });
   };
   const updateItemToCache = (queryKey, updatedItem) => {
     queryClient.setQueryData(queryKey, (oldData) => {
       if (!oldData || !oldData.pages) return oldData;
-  
+
       const newPages = oldData.pages.map((page) => {
         const updatedData = page.data?.data?.map((item) => {
           if (item._id === updatedItem._id) {
@@ -184,7 +186,7 @@ export const createRouteMap = (queryClient) => {
           }
           return item;
         });
-  
+
         return {
           ...page,
           data: {
@@ -193,12 +195,11 @@ export const createRouteMap = (queryClient) => {
           },
         };
       });
-  
+
       console.log(`✏️ Actividad ${updatedItem._id} actualizada en caché.`);
       return { ...oldData, pages: newPages };
     });
   };
-  
 
   return {
     ...Object.fromEntries(
@@ -209,9 +210,11 @@ export const createRouteMap = (queryClient) => {
     ),
     "order-ready": updateWorkOrder,
     "checklist-ready": updateWorkOrder,
-    "activity-created": (data) => addItemsToCache(["crud", "activityTruck"], data),
+    "activity-created": (data) =>
+      addItemsToCache(["crud", "activityTruck"], data),
     "truck-cycle": (data) => addItemToCache(["crud", "cycleTruck"], data),
-    "truck-cycle-updated": (data) => updateItemToCache(["crud", "cycleTruck"], data),
+    "truck-cycle-updated": (data) =>
+      updateItemToCache(["crud", "cycleTruck"], data),
     "scoop-cycle": (data) => addItemToCache(["crud", "cycleScoop"], data),
     "monthly-average-journals": (data) => {
       const path =
@@ -248,27 +251,25 @@ export const createRouteMap = (queryClient) => {
     },
     "list-fleet": (data) => {
       console.log("fleet", data);
+
       if (data.type === "truck") {
         console.log("truck");
         queryClient.setQueryData(
           ["shift-variable", "list-fleet-truck"],
           (oldData) => {
             if (!oldData) return oldData;
-            // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
             );
             return updatedData;
           }
         );
-      }
-      if (data.type === "scoop") {
+      } else if (data.type === "scoop") {
         console.log("scoop");
         queryClient.setQueryData(
           ["shift-variable", "list-fleet-scoop"],
           (oldData) => {
             if (!oldData) return oldData;
-            // Buscar y reemplazar el objeto con el mismo id
             const updatedData = oldData.map((item) =>
               item.id === data.id ? { ...item, ...data } : item
             );

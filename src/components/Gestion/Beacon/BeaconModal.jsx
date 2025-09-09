@@ -37,9 +37,9 @@ import { useFetchData } from "@/hooks/useGlobalQuery";
 
 const FormSchema = z.object({
   mac: z.string().min(1, { message: "*Nombre requerido" }).transform((val) => val.replace(/\s+/g, "")),
-  type: z.string().min(1, { message: "*Nombre requerido" }),
-  ubicationType: z.string().min(1, { message: "*Tipo requerido" }),
-  ubication: z.string().min(1, { message: "*Ubicación requerida" }),
+  type: z.string().min(1, { message: "*Nombre requerido" }).transform((val) => val.trim()),
+  ubicationType: z.string().min(1, { message: "*Tipo requerido" }).transform((val) => val.trim()),
+  ubication: z.string().min(1, { message: "*Ubicación requerida" }).transform((val) => val.trim()),
 });
 
 export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -107,8 +107,8 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       onOpenChange={(onClose) => !loadingGlobal && onClose}
       modal={true}
     >
-      <DialogContent className="w-[400px]">
-        <DialogHeader>
+      <DialogContent className="w-[400px] p-0">
+        <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
             <div>
               <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
@@ -123,7 +123,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 px-6">
               <FormField
                 control={control}
                 name="mac"
@@ -134,7 +134,8 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       type="text"
                       disabled={loadingGlobal}
                       placeholder="Ej. 00:1A:7D:DA:71:13"
-                      {...field}
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                     />
                     <FormMessage />
                   </FormItem>
@@ -258,7 +259,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
               /> */}
             </div>
             <Separator className="my-6" />
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
               <Button
                 type="button"
                 onClick={() => onClose()}
