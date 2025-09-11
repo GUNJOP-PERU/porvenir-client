@@ -12,6 +12,7 @@ export default {
         custom: {
           100: "#23262E",
           200: "#6E7179",
+          500: "#f79009",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

@@ -90,7 +90,7 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     const exampleData = items.map((labor, index) => {
       let row = {
         labor, // Si `selectedItems` estaba vacío, esto será ""
-        fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
+        fase: index % 2 === 0 ? "mineral" : "desmonte",
       };
 
       // Generar columnas para cada día del rango de fechas

@@ -156,9 +156,11 @@ export const PlanContent = ({
                   return { type: "text", data: key, readOnly: true };
                 } else if (key === "fase") {
                   return {
-                    type: "select",
-                    selectOptions: dataFase.map((item) => item.name),
+                    type: "dropdown",
+                    source: dataFase.map((item) => item.name),
                     data: key,
+                    allowInvalid: false,
+                    className: "ht-fase-dropdown" 
                   };
                 }
                 return {

@@ -1,12 +1,12 @@
 import {
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-  getExpandedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -18,17 +18,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
 
-import { DataTableToolbar } from "@/components/Gestion/DataTableToolbar";
-
-import IconWarning from "@/icons/IconWarning";
-import IconLoader from "@/icons/IconLoader";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { tableConfigs } from "@/components/Gestion/DataTableConfig";
-import { useIsMobile } from "@/hooks/use-mobile";
 import SkeletonWrapper from "@/components/SkeletonWrapper";
-import { useGlobalData } from "@/context/GlobalDataContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import IconLoader from "@/icons/IconLoader";
+import IconWarning from "@/icons/IconWarning";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { activityColumns } from "./CycleTruckActivitiesColumns";
 
 export function DataTable({
   columns,
@@ -38,8 +34,6 @@ export function DataTable({
   isError,
   fetchNextPage,
   hasNextPage,
-  tableType,
-  hideToolbar = false,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -79,6 +73,8 @@ export function DataTable({
 
   const rows = isLoading ? [] : table.getRowModel().rows;
 
+  const hasExpanded = rows.some((r) => r.getIsExpanded());
+
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
@@ -86,50 +82,25 @@ export function DataTable({
     measureElement: (el) => el?.getBoundingClientRect().height,
     overscan: 5,
   });
-  
 
-  const { searchColumns, filters } = tableConfigs[tableType] || {
-    searchColumns: [],
-    filters: [],
-  };
+  const isMobile = useIsMobile();
 
-  const isMobile = useIsMobile(); // Detecta si es móvil
-
-  // Definir columnas que se ocultarán en móviles
   const hiddenColumnsOnMobile = [
-    "address",
-    "updatedAt",
-    "description",
-    "role",
-    "cargo",
-    "guard",
-    "plate",
-    "horometer",
-    "odometer",
-    "year",
-    "type",
-    "nro_volquetes",
-    "state",
-    "id",
-    "reasonNoPlanned",
-    "statusOperator",
-    "statusSupervisor",
-    "workOrderOk",
-    "checkListOk",
-    "vehicleType",
-    "vehicleTagName",
-    "tagName",
     "start",
     "duration",
     "material",
     "activityName",
     "tonnage",
+    "isNewLabor",
+    "tonnage",
+    "shift",
+    "isValid",
   ];
 
   useEffect(() => {
     table.getAllColumns().forEach((column) => {
       if (hiddenColumnsOnMobile.includes(column.id)) {
-        column.toggleVisibility(!isMobile); // Oculta en móviles, muestra en desktop
+        column.toggleVisibility(!isMobile);
       }
     });
   }, [isMobile, table]);
@@ -148,16 +119,11 @@ export function DataTable({
       </div>
     );
   }
+
+  const myColumns = activityColumns();
+
   return (
     <>
-      {!hideToolbar && (
-        <DataTableToolbar
-          table={table}
-          isFetching={isFetching}
-          searchColumns={searchColumns}
-          filters={filters}
-        />
-      )}
       <div
         ref={parentRef}
         style={{ overflowY: "auto", height: "80vh", padding: "10px" }}
@@ -169,11 +135,7 @@ export function DataTable({
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        // style={{ width: header.getSize() }}
-                      >
+                      <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -194,70 +156,37 @@ export function DataTable({
                   return (
                     <React.Fragment key={row.id}>
                       <TableRow
-                        key={row.id}
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${
-                            virtualRow.start - index * virtualRow.size
-                          }px)`,
-                        }}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-
-                      {/* Subfilas */}
-                      {row.getIsExpanded() && (
-  <TableRow className="bg-zinc-50">
-    <TableCell colSpan={columns.length}>
-      {row.original.activities && row.original.activities.length > 0 ? (
-        <Table className="text-xs border rounded-lg">
-          <TableHeader>
-            <TableRow className="bg-gray-100">
-              <TableHead>Actividad</TableHead>
-              <TableHead>Material</TableHead>
-              <TableHead>Toneladas</TableHead>
-              <TableHead>Destino</TableHead>
-              <TableHead>Inicio</TableHead>
-              <TableHead>Fin</TableHead>
-              <TableHead>Operador</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {row.original.activities.map((act) => (
-              <TableRow key={act._id}>
-                <TableCell>{act.activityName}</TableCell>
-                <TableCell>{act.material}</TableCell>
-                <TableCell>{act.tonnage}</TableCell>
-                <TableCell>{act.destiny}</TableCell>
-                <TableCell>
-                  {new Date(act.start).toLocaleTimeString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(act.end).toLocaleTimeString()}
-                </TableCell>
-                <TableCell>{act.user}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      ) : (
-        <p className="text-gray-400 text-xs">Sin actividades</p>
-      )}
-    </TableCell>
-  </TableRow>
-)}
-
-                    </React.Fragment>
-                  );
-                })
-              ) : (
+                          style={{
+                            height: `${virtualRow.size}px`,
+                            transform: `translateY(${
+                              virtualRow.start - index * virtualRow.size
+                            }px)`,
+                          }}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        {/* Filas expandidas */}
+                        {row.getIsExpanded() &&
+                          (row.subRows || []).map((subRow) => (
+                            <TableRow key={subRow.id} className="bg-gray-50">
+                              {myColumns.map((col) => (
+                                <TableCell key={col.accessorKey}>
+                                  {col.cell ? col.cell({ row: subRow }) : null}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                      </React.Fragment>
+                    );
+                  })
+                ) : (
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
@@ -270,8 +199,6 @@ export function DataTable({
                         </strong>
                         <br />
                         Lo sentimos, no hay datos para mostrar en este momento.
-                        Por favor, verifica tu selección e intente de nuevo más
-                        tarde.
                       </p>
                     </div>
                   </TableCell>

@@ -43,6 +43,11 @@ import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
 import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
 import RealTimeByMonth from "./pages/dashboard/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/dashboard/RealTimeTripsCount";
+import TimeDistribution from "./pages/dashboard/TimeDistribution";
+import UnproductiveReport from "./pages/dashboard/UnproductiveReport";
+import ProduccionLayout from "./pages/dashboard/ProduccionDashboard/ProduccionLayout";
+import HistoricoExtract from "./pages/dashboard/ProduccionDashboard/HistoricoExtract";
+import RealTimeExtract from "./pages/dashboard/ProduccionDashboard/RealTimeExtract";
 
 const protectedRoutes = [
   //Gestion
@@ -65,6 +70,7 @@ const protectedRoutes = [
   { path: "ubications", element: <PageUbications /> },
   { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
+  { path: "unproductiveReport", element: <UnproductiveReport /> },
 
   //Dashboard
   { path: "dashboard/productionScoop", element: <ProductionScoop /> },
@@ -78,6 +84,18 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
+  { path: "dashboard/timeDistribution", element: <TimeDistribution /> },
+  { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
+
+  {
+    path: "dashboard/productionExtract",
+    element: <ProduccionLayout />,
+    children: [
+      { index: true, element: <Navigate to="realtime" replace /> },
+      { path: "realtime", element: <RealTimeExtract /> },
+      { path: "historico", element: <HistoricoExtract /> },
+    ],
+  },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },
@@ -106,7 +124,13 @@ export default function Router() {
       children: [
         {
           element: <Layout />,
-          children: protectedChildren,
+          children: [
+            ...protectedRoutes,
+            {
+              index: true,
+              element: <ProductionTruck />,
+            },
+          ],
         },
       ],
     },

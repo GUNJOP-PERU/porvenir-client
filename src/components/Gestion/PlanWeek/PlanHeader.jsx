@@ -56,7 +56,7 @@ export const PlanHeader = ({
     const exampleData = items.map((labor, index) => {
       let row = {
         labor,
-        fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
+        fase: index % 2 === 0 ? "mineral" : "desmonte",
       };
 
       for (let i = 0; i < daysInMonth; i++) {
@@ -86,7 +86,7 @@ export const PlanHeader = ({
             name="dob"
             render={({ field }) => (
               <FormItem>
-                <Popover modal={true}>
+                <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -146,7 +146,7 @@ export const PlanHeader = ({
             name="week"
             render={({ field }) => (
               <FormItem className="">
-                <div className="flex items-center gap-4 border pl-4 pr-1 py-0 rounded-lg h-[34px] max-w-[150px]">
+                <div className="flex items-center gap-4 border pl-4 pr-1 py-0 rounded-lg h-8 max-w-[150px]">
                   <div className="text-xs flex flex-col">
                     <b className="text-[8px] leading-[10px]">N° de la</b>
                     <span className="text-xs leading-3">Semana</span>

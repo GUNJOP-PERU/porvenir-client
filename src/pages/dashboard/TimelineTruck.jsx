@@ -9,11 +9,6 @@ export default function TimelineTruck() {
 
   return (
     <div className="flex-1 w-full h-full">
-      {/* <CardTitle
-          title="Eventos por vehiculo y labor"
-          subtitle="Eventos por vehículo y tipo de labor.."
-          icon={IconDash1}
-        /> */}
       <CardTimeline data={data} isLoading={isLoading} isError={isError} />
     </div>
   );

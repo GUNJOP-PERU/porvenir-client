@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { ModalVehicle } from "../../components/Gestion/Vehicle/ModalVehicle";
+import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { columns } from "@/components/Gestion/Vehicle/columns";
-import { DataTable } from "@/components/Gestion/DataTable";
-import { Button } from "../../components/ui/button";
+import { useState } from "react";
+import PageHeader from "../../components/Gestion/PageHeader";
+import { ModalVehicle } from "../../components/Gestion/Vehicle/ModalVehicle";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
-import { RefreshCcw } from "lucide-react";
 
 function Vehicles() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const {
     data = [],
     isFetching,
@@ -16,45 +15,17 @@ function Vehicles() {
     isError,
     refetch,
   } = useFetchData("vehicle", "vehicle");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg lg:text-xl font-bold leading-6">
-              Gestión de Vehiculos{" "}
-            </h1>
-            <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
-              {countItems(data)}
-            </span>{" "}
-          </div>
-          <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => refetch()}
-            variant="outline"
-            size="icon"
-            disabled={isFetching || isError}
-          >
-            <RefreshCcw className="w-5 h-5 text-zinc-400" />
-          </Button>
-         
-          <Button
-            onClick={() => setDialogOpen(true)}
-            className="w-fit"
-            disabled={isFetching || isError}
-          >
-            <IconMore className="w-5 h-5 fill-white" />
-            Añadir nuevo
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Gestión de Vehiculos"
+        description="Administre los vehiculos aquí."
+        count={countItems(data)}
+        refetch={refetch}
+        isFetching={isFetching}
+        setDialogOpen={setDialogOpen}
+      />
       <DataTable
         data={data}
         columns={columns}

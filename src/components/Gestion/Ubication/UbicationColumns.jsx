@@ -2,7 +2,7 @@ import {
   formatFecha
 } from "@/lib/utilsGeneral";
 import TimeAgo from "timeago-react";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 
 export const columns = [
   {

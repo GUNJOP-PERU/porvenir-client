@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
-import { LaborModal } from "../../components/Gestion/Labor/LaborModal";
+import LaborImport from "@/components/Gestion/Labor/LaborImport";
 import { columns } from "@/components/Gestion/Labor/LaborTableColumns";
-import { DataTable } from "@/components/Gestion/DataTable";
+import PageHeader from "@/components/Gestion/PageHeader";
+import { DataTable } from "@/components/Gestion/Table/DataTable";
+import { FileUp } from "lucide-react";
+import { useState } from "react";
+import { LaborModal } from "../../components/Gestion/Labor/LaborModal";
 import { Button } from "../../components/ui/button";
 import {
-  useFetchData,
   useFetchInfinityScroll,
 } from "../../hooks/useGlobalQuery";
-import IconMore from "../../icons/IconMore";
 import { countItems } from "../../lib/utilsGeneral";
-import { FileUp, RefreshCcw } from "lucide-react";
-import LaborImport from "@/components/Gestion/Labor/LaborImport";
 
 function PageLabor() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -26,48 +25,28 @@ function PageLabor() {
   } = useFetchInfinityScroll("frontLabor", "frontLabor/items");
   
   return (
-    <>
-      <div className="flex flex-wrap gap-2 justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">Gestión de Labor </h1>
-            <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-fit  h-5 flex items-center justify-center px-1 font-bold ">
-              {countItems(data || 0)}
-            </span>{" "}
-          </div>
-          <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            disabled={isFetching}
-            onClick={() => refetch()}
-            variant="outline"
-            size="icon"
-          >
-            <RefreshCcw className="w-5 h-5 text-zinc-400" />
-          </Button>
-          <Button
-            disabled={isFetching || isError}
-            onClick={() => setImportOpen(true)}
-            className="w-fit"
-            variant="outline"
-          >
-            <FileUp className="w-5 h-5 text-zinc-400" />
-            Importar
-          </Button>
-          <Button
-            disabled={isFetching || isError}
-            onClick={() => setDialogOpen(true)}
-            className="w-fit"
-          >
-            <IconMore className="w-5 h-5 fill-white" />
-            Añadir nuevo
-          </Button>
-        </div>
-      </div>
+    <>      
+      <PageHeader
+        title="Gestión de Labor"
+        description="Administre los miembros de su equipo y los permisos de sus cuentas aquí."
+        count={countItems(data || 0)}
+        refetch={refetch}
+        isFetching={isFetching}
+        setDialogOpen={setDialogOpen}
+        actions={
+          <>
+            <Button
+              disabled={isFetching || isError}
+              onClick={() => setImportOpen(true)}
+              className="w-fit"
+              variant="outline"
+            >
+              <FileUp className="w-5 h-5 text-zinc-400" />
+              Importar
+            </Button>            
+          </>
+        }
+      />
     
       <DataTable
         data={data}

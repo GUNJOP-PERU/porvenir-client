@@ -149,7 +149,7 @@ const LineAndBarChartByDay = ({ title, chartData, mineralWeight }) => {
       visible: false,
     },
     legend: {
-      enabled: false
+      enabled: true
     },
     plotOptions: {
       column: {

@@ -7,7 +7,9 @@ import {
 } from "@/lib/utilsGeneral";
 import clsx from "clsx";
 import TimeAgo from "timeago-react";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
+
+import { CircleCheckBig, CircleOff } from "lucide-react";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 
 const codeColorMap = {
   1: "bg-sky-500",
@@ -87,7 +89,7 @@ export const columns = [
             ></div>
           </div>
           <div className="flex flex-col justify-center gap-0.5">
-            <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
+            <h4 className="text-[12.5px] font-semibold leading-4 capitalize  min-w-[120px] max-w-[120px] truncate">
               {row.getValue("user")}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
@@ -149,10 +151,10 @@ export const columns = [
           <div></div>
           <span
             className={clsx(
-              "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+              "inline-flex items-center justify-center rounded-md py-[1px] text-[10px] font-medium w-fit gap-1 px-[7px]",
               row.original?.isNewLabor
-                ? "text-green-500 bg-green-50 before:bg-green-500"
-                : "text-blue-500 bg-sky-50 before:bg-blue-500"
+                ? "text-amber-500 bg-amber-50 "
+                : "text-blue-500 bg-sky-50 "
             )}
           >
             {row.original?.isNewLabor ? "Nueva" : "Existe"}
@@ -163,7 +165,7 @@ export const columns = [
   },
   {
     accessorKey: "isValid",
-    header: "Estado Ciclo",
+    header: "Estado del Ciclo",
     cell: ({ row }) => {
       const isValid = row.original?.isValid;
 
@@ -178,13 +180,13 @@ export const columns = [
       return (
         <span
           className={clsx(
-            "relative text-[10px] py-[2px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[5px] before:top-1/2 before:-translate-y-1/2 pl-3",
+            "inline-flex items-center justify-center rounded-md py-[1px] text-[10px] font-medium w-fit gap-1 px-[7px]",
             isValid
-              ? "text-green-500 bg-green-50 before:bg-green-500"
-              : "text-rose-500 bg-rose-50 before:bg-rose-500"
+              ? "text-green-500 bg-green-50"
+              : "text-rose-500 bg-rose-50"
           )}
         >
-          {isValid ? "Ciclo completo" : "Ciclo interrumpido"}
+          {isValid ? <><CircleCheckBig className="size-3" /> Completo</> : <><CircleOff className="size-3" /> Interrumpido</>}
         </span>
       );
     },

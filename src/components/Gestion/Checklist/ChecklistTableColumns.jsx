@@ -1,5 +1,5 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 import clsx from "clsx";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";

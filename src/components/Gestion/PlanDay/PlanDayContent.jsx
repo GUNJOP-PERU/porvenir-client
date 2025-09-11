@@ -57,16 +57,18 @@ export const PlanContent = ({
                 if (key === "labor") {
                   return {
                     title: key,
-                    type: "text", // Cambiar a "text" o "readonly" en vez de "dropdown"
+                    type: "text", 
                     data: key,
-                    readOnly: true, // Bloquear la edición de la columna "labor"
+                    readOnly: true,
                   };
                 } else if (key === "fase") {
                   return {
                     title: key,
-                    type: "select",
-                    selectOptions: dataFase.map((item) => item.name),
+                    type: "dropdown",
+                    source: dataFase.map((item) => item.name),
                     data: key,
+                    allowInvalid: false,
+                    className: "ht-fase-dropdown" 
                   };
                 }
                 return {

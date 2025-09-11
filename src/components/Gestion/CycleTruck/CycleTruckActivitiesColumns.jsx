@@ -5,7 +5,7 @@ import {
 } from "@/lib/utilsGeneral";
 import clsx from "clsx";
 import TimeAgo from "timeago-react";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 // Utils
 import IconWarning from "@/icons/IconWarning";
 import { CheckCheckIcon } from "lucide-react";
@@ -165,7 +165,7 @@ export const activityColumns = (globalData) => {
         return (
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex ">
-              <TimeAgo datetime={row.original.updatedAt} locale="es" />
+              <TimeAgo datetime={row.original?.updatedAt} locale="es" />
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de actualización
@@ -183,7 +183,7 @@ export const activityColumns = (globalData) => {
         return (
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-              {formatFecha(row.original.createdAt)}
+              {formatFecha(row.original?.createdAt)}
             </h4>
             <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
               fecha de creación

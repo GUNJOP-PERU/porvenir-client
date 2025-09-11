@@ -1,22 +1,23 @@
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import React from "react";
 
-const CardTitle = React.memo(({ title, subtitle, icon: Icon }) => {
-  return (
-    <>
-      <div className="w-full flex flex-col gap-1">
-        <div className="flex items-end gap-2">
-          {Icon && <IconDash1 className="text-zinc-500 w-4 h-4" />}
-          <h4 className="text-xs font-bold leading-3">{title}</h4>
+const CardTitle = React.memo(
+  ({ title, subtitle, icon: Icon, classIcon, children, className }) => {
+    return (
+      <div
+        className={`flex flex-col border border-[#F0F0F0] shadow-sm rounded-xl p-3 ${className}`}
+      >
+        <div className="w-full flex flex-col gap-1 border-b border-zinc-100 pb-2">
+          <div className="flex items-end gap-2">
+            {Icon && <Icon className={`w-4 h-4 ${classIcon}`} />}
+            <h4 className="text-xs font-bold leading-3">{title}</h4>
+          </div>
+          <p className="text-[10.5px] text-zinc-400 leading-3">{subtitle}</p>
         </div>
-        <p className="text-[10.5px] text-zinc-400 leading-3">{subtitle}</p>
+        {children}
       </div>
-      <div className="w-full h-[1px] bg-zinc-100 mt-1"></div>
-    </>
-  );
-});
+    );
+  }
+);
 
 CardTitle.displayName = "CardTitle";
 export default CardTitle;
-
-// "group pointer-events-auto relative flex w-full max-w-xs items-center gap-3 overflow-hidden rounded-xl p-4 pr-6 shadow-lg transition-all ",

@@ -91,7 +91,7 @@ export const IncidenceEditModal = ({ isOpen, onClose, dataCrud, isEdit }) => {
             <input
               value={dataCrud?.vehicleId.tagName || ""}
               disabled={true}
-              className="flex h-[34px] rounded-[10px] border border-zinc-300 bg-transparent px-3 py-1 text-[13px] text-black font-medium"
+              className="flex h-8 rounded-[10px] border border-zinc-300 bg-transparent px-3 py-1 text-[13px] text-black font-medium"
             />
           </div>
 
@@ -102,7 +102,7 @@ export const IncidenceEditModal = ({ isOpen, onClose, dataCrud, isEdit }) => {
             <input
               value={dataCrud?.code}
               disabled={true}
-              className="flex h-[34px] rounded-[10px] border border-zinc-300 bg-transparent px-3 py-1 text-[13px] text-black font-medium"
+              className="flex h-8 rounded-[10px] border border-zinc-300 bg-transparent px-3 py-1 text-[13px] text-black font-medium"
             />
           </div>
 

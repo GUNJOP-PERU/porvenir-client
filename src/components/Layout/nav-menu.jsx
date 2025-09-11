@@ -20,14 +20,14 @@ export function NavMenu() {
         </button>
         <img src="./logo-white.svg" alt="" className="h-7 " />
       </div>
-      {/* Overlay (Fondo negro semitransparente) */}
+    
       {isOpen && (
         <div
           className="fixed inset-0 z-[9999] bg-black/70 transition-opacity duration-300 animate-fade-in md:hidden"
           onClick={() => setIsOpen(false)}
         ></div>
       )}
-      {/* Sidebar */}
+   
       <div
         className={`fixed left-0 top-0 h-full w-[75%] bg-[#000000] transition-transform duration-300 z-[9999] md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -58,7 +58,7 @@ export function NavMenu() {
                     >
                       <li
                         className={clsx(
-                          "w-full h-[34px] flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200 ",
+                          "w-full h-8 flex items-center gap-2 text-[13px] py-1.5 px-3 rounded-lg cursor-pointer font-semibold hover:bg-[#1D1D1D] hover:text-zinc-200 transition ease-in-out duration-200 ",
                           item.active
                             ? "bg-[#1D1D1D] text-zinc-200 shadow-sm"
                             : "text-zinc-600"

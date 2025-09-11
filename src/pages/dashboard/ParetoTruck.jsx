@@ -1,17 +1,17 @@
-import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
-import CardColumImpact from "@/components/Dashboard/CardColumImpact";
+import CardActivitiesChart from "@/components/Dashboard/TimeDistribution/CardActivitiesChart";
+import CardColumImpact from "@/components/Dashboard/ParetoTruck/CardColumImpact";
 
-import CardColumParetoTruck from "@/components/Dashboard/CardColumParetoTruck";
+import CardColumParetoTruck from "@/components/Dashboard/ParetoTruck/CardColumParetoTruck";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function ParetoTruck() {
+export default function ParetoTruck() {
   const { data } = useGraphicData(
     "pareto-truck-progress-monthly",
-    "dashboard/pareto/progress-monthly?equipment=truck",
+    "dashboard/pareto/progress-monthly?equipment=truck"
   );
 
   return (
@@ -56,39 +56,38 @@ function ParetoTruck() {
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
-        <div className="xl:col-span-2 border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-          <CardTitle
-            title="Actividades Improductivas Mes"
-            subtitle="Resumen de las actividades improductivas durante el mes."
-            icon={IconDash1}
-          />
-          <CardColumParetoTruck  />
-        </div>
-        <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title=" Actividades Improductivas Promedio vs Acumulada"
-            subtitle="Promedio mensual vs. acumulado de actividades improductivas."
-            icon={IconDash1}
-          />
+        <CardTitle
+          title="Actividades Improductivas Mes"
+          subtitle="Resumen de las actividades improductivas durante el mes."
+          icon={IconDash1}
+          className="xl:col-span-2"
+        >
+          <CardColumParetoTruck />
+        </CardTitle>
+
+        <CardTitle
+          title=" Actividades Improductivas Promedio vs Acumulada"
+          subtitle="Promedio mensual vs. acumulado de actividades improductivas."
+          icon={IconDash1}
+        >
           <CardActivitiesChart
             symbol="pareto-truck-improductive-activities"
             endpoint="dashboard/pareto/truck/no-productive-activities-chart?quantity=7"
           />
-        </div>
-        <div className="flex flex-col justify-center gap-2  border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title=" Análisis de Pareto con Índice de Impacto Ponderado"
-            subtitle="Pareto con Índice de Impacto Ponderado."
-            icon={IconDash1}
-          />
+        </CardTitle>
+        <CardTitle
+          title=" Análisis de Pareto con Índice de Impacto Ponderado"
+          subtitle="Pareto con Índice de Impacto Ponderado."
+          icon={IconDash1}
+        >
           <CardColumImpact
             symbol="pareto-truck-impact-diagram"
             endpoint="dashboard/pareto/truck/impact-diagram?quantity=7"
           />
-        </div>
+        </CardTitle>
       </div>
     </>
   );
 }
 
-export default ParetoTruck;
+

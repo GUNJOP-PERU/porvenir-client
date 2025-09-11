@@ -74,7 +74,7 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
     const exampleData = selectedItems.map((labor, index) => {
       let row = {
         labor,
-        fase: index % 2 === 0 ? "Extracción / Producción" : "Avance",
+        fase: index % 2 === 0 ? "mineral" : "desmonte",
       };
   
       for (let i = 0; i < daysInMonth; i++) {

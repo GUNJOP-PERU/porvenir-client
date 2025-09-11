@@ -3,14 +3,14 @@ import {
   formatFecha,
   formatHour,
 } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import clsx from "clsx";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
 import TimeAgo from "timeago-react";
-import { DataTableRowActions } from "../DataTableRowActions";
+import { DataTableRowActions } from "../Table/DataTableRowActions";
 
 export const columns = [
   {

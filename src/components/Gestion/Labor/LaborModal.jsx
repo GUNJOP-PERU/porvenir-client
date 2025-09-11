@@ -7,7 +7,7 @@ import { useHandleFormSubmit } from "@/hooks/useMutation";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import IconToggle from "@/icons/IconToggle";
-import { dataLabor, dataOB } from "@/lib/data";
+import { dataLabor } from "@/lib/data";
 import { CircleFadingPlus } from "lucide-react";
 import { Button } from "../../ui/button";
 import {

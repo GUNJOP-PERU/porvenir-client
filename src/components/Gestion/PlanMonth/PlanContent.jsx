@@ -81,9 +81,11 @@ export const PlanContent = ({
                 } else if (key === "fase") {
                   return {
                     title: key,
-                    type: "select",
-                    selectOptions: dataFase.map((item) => item.name),
+                    type: "dropdown",
+                    source: dataFase.map((item) => item.name),
                     data: key,
+                    allowInvalid: false,
+                    className: "ht-fase-dropdown" 
                   };
                 }
                 return {

@@ -20,6 +20,7 @@ import { PlanContent } from "./PlanDayContent";
 import { PlanHeader } from "./PlanDayHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useQueryClient } from "@tanstack/react-query";
+import { getDefaultShift, getDefaultDateObj } from "@/lib/utilsGeneral";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
@@ -27,29 +28,37 @@ const FormSchema = z.object({
   selectedItems: z.array(z.string()).nonempty({ message: "*Labor." }),
 });
 
-export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
+export const ModalPlanDay = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
     "frontLabor-General",
-    "frontLabor",
+    "frontLabor", 
     {
       enabled: false,
     }
   );
+
   useEffect(() => {
-    if (isOpen) {
-      refetchLaborList();
+    if (isOpen) {    
+      console.log(getDefaultDateObj());
+      form.reset({
+        dob: getDefaultDateObj(),
+        selectedItems: [],
+        shift: getDefaultShift(),
+      });
     }
-  }, [isOpen, refetchLaborList]);
+    refetchLaborList();
+  }, [isOpen]);
+  
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      dob: new Date(),
+      dob: getDefaultDateObj(),
       selectedItems: [],
-      shift: "",
+      shift: getDefaultShift(),
     },
   });
   // Cambiar la fecha sin perder valores previos
@@ -81,7 +90,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
         .filter((item) => !existingLabors.includes(item))
         .map((labor) => ({
           labor,
-          fase: "Extracción / Producción",
+          fase: "mineral",
           [formattedDate]: Math.floor(Math.random() * 100) * 100,
         }));
 
@@ -171,7 +180,7 @@ export const ModalPlanDay = ({ isOpen, onClose, isEdit }) => {
     setDataHotTable([]); // Limpiar la tabla de datos
     setLoadingGlobal(false); // Detener cualquier indicador de carga
   };
-
+  
   return (
     <Dialog
       open={isOpen}

@@ -48,6 +48,7 @@ export const PlanHeader = ({
               <FormItem className="col-span-2">
                 <FormControl>
                   <Select
+                    value={field.value}
                     onValueChange={field.onChange}
                     disabled={loadingGlobal}
                   >
@@ -72,7 +73,7 @@ export const PlanHeader = ({
             name="dob"
             render={({ field }) => (
               <FormItem>
-                <Popover modal={true}>
+                <Popover >
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -92,7 +93,7 @@ export const PlanHeader = ({
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-2" align="start">
                     <Calendar
                       mode="single"
                       selected={field.value}

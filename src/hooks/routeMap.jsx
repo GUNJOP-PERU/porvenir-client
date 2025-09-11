@@ -1,6 +1,8 @@
 export const createRouteMap = (queryClient) => {
   // 🛠️ Definir tópicos que solo actualizan la caché sin lógica extra
   const simpleTopics = {
+    //Page Production Extract
+    "cycle-current-shift-list": ["dashboard", "production-extract-realtime"],
     //CheckList Message
     "checklist/alert": [],
     //CardGuage
@@ -39,6 +41,10 @@ export const createRouteMap = (queryClient) => {
       "dashboard",
       "pareto-truck-improductive-activities",
     ],
+    "pareto-truck-improductive-activities-by-shift": [
+      "dashboard",
+      "pareto-truck-improductive-activitie-chart-by-shift",
+    ],
     "pareto-truck-impact-diagram": ["dashboard", "pareto-truck-impact-diagram"],
     //Page Pareto-Scoop
     "pareto-scoop-progress-monthly": [
@@ -66,7 +72,7 @@ export const createRouteMap = (queryClient) => {
   };
 
   const updateWorkOrder = (newData) => {
-    console.log("📩 Datos recibidos:", newData);
+    // console.log("📩 Datos recibidos:", newData);
     queryClient.setQueryData(["crud", "workOrder"], (oldData) => {
       if (!oldData || !oldData.pages) return oldData;
 

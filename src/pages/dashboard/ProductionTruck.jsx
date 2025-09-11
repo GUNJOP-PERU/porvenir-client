@@ -1,15 +1,15 @@
-import CardCycleWork from "@/components/Dashboard/CardCycleWork";
-import CardFlotaTime from "@/components/Dashboard/CardFloatTime/CardFlotaTime";
-import CardGauge from "@/components/Dashboard/CardGauge";
-import CardHeatMap from "@/components/Dashboard/CardHeatmap";
+import CardCycleWork from "@/components/Dashboard/TimeDistribution/CardCycleWork";
+import CardFlotaTime from "@/components/Dashboard/TimeDistribution/CardFlotaTime";
+import CardGauge from "@/components/Dashboard/ProductionTruck/CardGauge";
+import CardHeatMap from "@/components/Dashboard/ProductionTruck/CardHeatmap";
 import CardItem from "@/components/Dashboard/CardItem";
-import CardPie from "@/components/Dashboard/CardPie";
+import CardPie from "@/components/Dashboard/ProductionTruck/CardPie";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function ProductionTruck() {
-  const { data} = useGraphicData(
+export default function ProductionTruck() {
+  const { data } = useGraphicData(
     "truck-progress-day",
     "dashboard/truck/progress-day",
     "shift-variable"
@@ -64,39 +64,42 @@ function ProductionTruck() {
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
-        <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl first-line:relative">
-          <CardTitle
-            title="Ruta vs Tonelaje"
-            subtitle="   Comparación del tonelaje transportado en distintas rutas."
-            icon={IconDash1}
-          />
+        <CardTitle
+          title="Ruta vs Tonelaje"
+          subtitle="   Comparación del tonelaje transportado en distintas rutas."
+          icon={IconDash1}
+        >
           <CardHeatMap />
-        </div>
-        <div className="flex flex-col gap-2 border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl relative">
-          <CardTitle
-            title="Ciclo de Trabajo"
-            subtitle=" Duración y fases del proceso operativo."
-            icon={IconDash1}
-          />
-          <CardCycleWork/>
-        </div>
-        <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-          <CardTitle
-            title="Tiempos productivos vs Improductivos"
-            subtitle="Comparación entre trabajo efectivo y tiempo perdido."
-            icon={IconDash1}
-          />
+        </CardTitle>
+
+        <CardTitle
+          title="Ciclo de Trabajo"
+          subtitle=" Duración y fases del proceso operativo."
+          icon={IconDash1}
+        >
+          <CardCycleWork />
+        </CardTitle>
+
+        <CardTitle
+          title="Tiempos productivos vs Improductivos"
+          subtitle="Comparación entre trabajo efectivo y tiempo perdido."
+          icon={IconDash1}
+        >
           <CardPie
             symbol="truck-chart-productivity"
-            endpoint="dashboard/truck/chart-productivity"            
+            endpoint="dashboard/truck/chart-productivity"
           />
-        </div>
+        </CardTitle>
+
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
-          <CardFlotaTime symbol="list-fleet-truck" endpoint="dashboard/list-fleet?equipment=truck"/>
+          <CardFlotaTime
+            symbol="list-fleet-truck"
+            endpoint="dashboard/list-fleet?equipment=truck"
+          />
         </div>
       </div>
     </>
   );
 }
 
-export default ProductionTruck;
+

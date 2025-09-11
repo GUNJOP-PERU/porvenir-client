@@ -1,5 +1,5 @@
 import { RefreshCcw } from "lucide-react";
-import { DataTable } from "@/components/Gestion/DataTable";
+import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { Button } from "../../components/ui/button";
 
 import { columns } from "@/components/Gestion/CycleScoop/CycleScoopTableColumns";

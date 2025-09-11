@@ -106,7 +106,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[380px] p-0">
+      <DialogContent className="w-[400px] p-0">
         <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
             <div>
@@ -129,7 +129,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col col-span-2">
                     <FormLabel>Nombre de usuario</FormLabel>
                     <Input
                       type="text"
@@ -141,7 +141,27 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel>Contraseña</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. 12345678"
+                      maxLength="8"
+                      {...field}
+                      onChange={(e) => {
+                        const numericValue = e.target.value.replace(/\D/g, "");
+                        field.onChange(numericValue);
+                      }}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={control}
                 name="cargo"
@@ -198,28 +218,6 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       </SelectContent>
                     </Select>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Contraseña</FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
-                      maxLength="8"
-                      {...field}
-                      onChange={(e) => {
-                        const numericValue = e.target.value.replace(/\D/g, "");
-                        field.onChange(numericValue);
-                      }}
-                    />
                     <FormMessage />
                   </FormItem>
                 )}

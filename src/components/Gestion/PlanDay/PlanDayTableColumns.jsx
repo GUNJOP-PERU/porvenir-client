@@ -1,6 +1,6 @@
-import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
-import { DataTableRowActions } from "../DataTableRowActions";
+import { formatFecha, roundAndFormat } from "@/lib/utilsGeneral";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
+import { DataTableRowActions } from "../Table/DataTableRowActions";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
@@ -27,7 +27,7 @@ export const columns = [
             {row.getValue("frontLabor")}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.phase || ""}
+            {row.original?.phase || ""} / {row.original?.day || ""}/{row.original?.month || ""}/{row.original?.year || ""}
           </span>
         </div>
       );
@@ -73,7 +73,7 @@ export const columns = [
     accessorKey: "phase",
     header: "Tonelaje",
     cell: ({ row }) => {
-      return <>{row.original.tonnage || ""} TN</>;
+      return <>{roundAndFormat(row.original.tonnage || 0)} TN</>;
     },
   },
   {

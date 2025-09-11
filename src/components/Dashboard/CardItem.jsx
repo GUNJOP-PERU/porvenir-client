@@ -75,7 +75,7 @@ const CardItem = memo(
         </span>
 
         <div className="flex items-center justify-between gap-1">
-          <h1 className={`${valueColor} font-extrabold text-2xl leading-5`}>
+          <h1 className={`${valueColor} font-extrabold text-2xl leading-none`}>
             <NumberFlow value={value}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: decimals }} suffix={unid} className="!leading-4" />            
           </h1>
          

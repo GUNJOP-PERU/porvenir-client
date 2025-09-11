@@ -1,6 +1,6 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
-import { DataTableRowActions } from "../DataTableRowActions";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
+import { DataTableRowActions } from "../Table/DataTableRowActions";
 import clsx from "clsx";
 import TimeAgo from "timeago-react";
 

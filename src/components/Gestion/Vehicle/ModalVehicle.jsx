@@ -37,8 +37,8 @@ import {
 
 const FormSchema = z.object({
   empresaId: z.string().min(1, { message: "*Empresa requerida" }),
-  tagName: z.string().min(1, { message: "*Nombre requerido" }).max(30, { message: "*Maximo 30 caracteres" }),
-  plate: z.string().min(1, { message: "*Placa requerida" }).max(10, { message: "*Maximo 10 caracteres" }),
+  tagName: z.string().min(1, { message: "*Nombre requerido" }).max(30, { message: "*Maximo 30 caracteres" }).transform((val) => val.replace(/\s+/g, "")),
+  plate: z.string().min(1, { message: "*Placa requerida" }).max(30, { message: "*Maximo 30 caracteres" }).transform((val) => val.replace(/\s+/g, "")),
   model: z.string().max(20, { message: "*Maximo 20 caracteres" }).optional(),
   odometer: z.number().max(1000000, { message: "*Maximo 1000000" }).optional(),
   horometer: z.number().max(1000000, { message: "*Maximo 1000000" }).optional(),

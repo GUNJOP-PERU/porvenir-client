@@ -350,7 +350,7 @@ const LaborImport = ({ isOpen, onClose }) => {
           </div>
           <label
             htmlFor="file"
-            className="flex gap-2 items-center justify-center cursor-pointer px-4 bg-blue-500 rounded-[10px] h-[34px] active:scale-95 transition-all"
+            className="flex gap-2 items-center justify-center cursor-pointer px-4 bg-blue-500 rounded-[10px] h-8 active:scale-95 transition-all"
           >
             <Upload className="text-zinc-50 h-4 w-4" />
             <input

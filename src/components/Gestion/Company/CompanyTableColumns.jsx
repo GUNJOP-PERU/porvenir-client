@@ -1,6 +1,6 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "../DataTableColumnHeader";
-import { DataTableRowActions } from "../DataTableRowActions";
+import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
+import { DataTableRowActions } from "../Table/DataTableRowActions";
 import clsx from "clsx";
 import TimeAgo from "timeago-react";
 
@@ -25,9 +25,9 @@ export const columns = [
           <div
             className={clsx(
               "w-8 h-8 rounded-[10px] flex items-center justify-center",
-              row.original?.name === "nexa"
+              row.original?.name === "nexa" || row.original?.name === "NEXA"
                 ? "bg-cyan-500"
-                : row.original?.name === "saturno"
+                : row.original?.name === "saturno" || row.original?.name === "SATURNO"
                 ? "bg-orange-500"
                 : "bg-gray-500"
             )}

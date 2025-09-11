@@ -1,6 +1,6 @@
 import { formatFecha } from "@/lib/utilsGeneral";
-import { DataTableColumnHeader } from "@/components/Gestion/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/Gestion/DataTableRowActions";
+import { DataTableColumnHeader } from "@/components/Gestion/Table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/Gestion/Table/DataTableRowActions";
 import TimeAgo from "timeago-react";
 
 export const columns = [
