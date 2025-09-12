@@ -2,7 +2,7 @@ import { columns } from "@/components/Gestion/Destiny/DestinyColumns";
 import { DestinyModal } from "@/components/Gestion/Destiny/DestinyModal";
 import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { useState } from "react";
-import PageHeader from "../../components/Gestion/PageHeader";
+import PageHeader from "../../components/PageHeader";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 

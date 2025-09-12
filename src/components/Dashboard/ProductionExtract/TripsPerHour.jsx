@@ -2,8 +2,7 @@ import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-const TripsPerHour = ({ data, shift, isLoading, isError }) => {
-
+const TripsPerHour = ({ data, isLoading, isError }) => {
   const formatHourRange = (hr) => {
     const start = hr % 12 || 12;
     const end = (hr + 1) % 12 || 12;
@@ -11,12 +10,27 @@ const TripsPerHour = ({ data, shift, isLoading, isError }) => {
     return `${start} a ${end} ${ampm}`;
   };
 
+  const detectedShift = useMemo(() => {
+    if (!data?.length) return "dia"; 
+
+    const horas = data.map((item) =>
+      new Date(item.start || item.createdAt).getHours()
+    );
+
+    // Calcular hora promedio
+    const avgHora =
+      horas.reduce((acc, h) => acc + h, 0) / horas.length;
+
+    return avgHora >= 6 && avgHora < 18 ? "dia" : "noche";
+  }, [data]);
+  
+
   const dataChart = useMemo(() => {
     const agrupado = {};
 
     // Precrear todas las horas del turno con 0 viajes
     const horasTurno =
-      shift === "dia"
+      detectedShift === "dia"
         ? Array.from({ length: 12 }, (_, i) => i + 6) // 6 a 17
         : [
             ...Array.from({ length: 6 }, (_, i) => i + 18),
@@ -35,8 +49,8 @@ const TripsPerHour = ({ data, shift, isLoading, isError }) => {
     const dataFiltrada = data.filter((item) => {
       const fecha = new Date(item.start || item.createdAt);
       const hora = fecha.getHours();
-      if (shift === "dia") return hora >= 6 && hora < 18;
-      if (shift === "noche") return hora >= 18 || hora < 6;
+      if (detectedShift === "dia") return hora >= 6 && hora < 18;
+      if (detectedShift === "noche") return hora >= 18 || hora < 6;
       return true;
     });
 
@@ -65,7 +79,7 @@ const TripsPerHour = ({ data, shift, isLoading, isError }) => {
       valoresDesmonte: categorias.map((r) => agrupado[r].desmonte.viajes),
       toneladasDesmonte: categorias.map((r) => agrupado[r].desmonte.toneladas),
     };
-  }, [data, shift]);
+  }, [data, detectedShift]);
 
   const options = useMemo(
     () => ({

@@ -2,7 +2,7 @@ import { columns } from "@/components/Gestion/Checklist/ChecklistTableColumns";
 import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { useFetchInfinityScroll } from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
-import PageHeader from "../../components/Gestion/PageHeader";
+import PageHeader from "../../components/PageHeader";
 
 function Checklist() {
   const {

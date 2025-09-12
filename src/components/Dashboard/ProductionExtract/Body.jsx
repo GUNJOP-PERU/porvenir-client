@@ -5,9 +5,7 @@ import HeatMap from "@/components/Dashboard/ProductionExtract/Heatmap";
 import TripsPerHour from "@/components/Dashboard/ProductionExtract/TripsPerHour";
 import IconMineral from "@/icons/IconMineral";
 import IconClearance from "@/icons/IconClearance";
-import {
-  filterData,
-} from "@/lib/utilsGeneral";
+import { filterData } from "@/lib/utilsGeneral";
 import TableObservations from "@/components/Dashboard/ProductionExtract/TableObservations";
 import CardTravels from "@/components/Dashboard/ProductionExtract/CardTravels";
 import KPIProduction from "@/components/Dashboard/ProductionExtract/KPIProduction";
@@ -21,16 +19,13 @@ export default function Body({
   isError,
   shift,
 }) {
-  
   return (
     <>
-      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
-        <KPIProduction
-          filteredData={data}
-          programmedTonnageMineral={programmedTonnageMineral}
-          programmedTonnageDesmonte={programmedTonnageDesmonte}
-        />
-      </div>
+      <KPIProduction
+        filteredData={data}
+        programmedTonnageMineral={programmedTonnageMineral}
+        programmedTonnageDesmonte={programmedTonnageDesmonte}
+      />
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
           title="Extracción de Mineral"
@@ -93,7 +88,6 @@ export default function Body({
         >
           <TripsPerHour
             data={data}
-            shift={shift}
             isLoading={isLoading}
             isError={isError}
           />

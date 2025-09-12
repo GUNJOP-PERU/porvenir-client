@@ -2,7 +2,7 @@ import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { columns } from "@/components/Gestion/Ubication/UbicationColumns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import PageHeader from "../../components/Gestion/PageHeader";
+import PageHeader from "../../components/PageHeader";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItemsByType } from "../../lib/utilsGeneral";
 

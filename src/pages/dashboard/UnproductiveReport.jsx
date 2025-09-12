@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
+import { getShiftRangeMs } from "@/lib/utilsGeneral";
 
 export default function UnproductiveReport() {
   const [date, setDate] = useState(new Date());

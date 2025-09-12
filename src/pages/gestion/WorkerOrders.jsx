@@ -1,6 +1,6 @@
 import PageHeader from "@/components/Gestion/PageHeader";
 import { DataTable } from "@/components/Gestion/Table/DataTable";
-import { columns } from "../../components/Gestion/WorkOrder/columns";
+import { columns } from "../../components/Monitoring/WorkOrder/columns";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 

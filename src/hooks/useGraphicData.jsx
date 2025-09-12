@@ -22,11 +22,11 @@ export function useFetchGraphicData({ queryKey, endpoint,filters }) {
   return useQuery({
     queryKey: ["dashboard", queryKey, { filters }],
     queryFn: () => getDataGraphicRequest(`${endpoint}?${filters}`),
-     staleTime: Infinity,
-    cacheTime: Infinity,
+    //  staleTime: Infinity,
+    // cacheTime: Infinity,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
-     refetchOnMount: false,
+    //  refetchOnMount: false,
     retry: 1, 
     retryDelay: 2000,
   });

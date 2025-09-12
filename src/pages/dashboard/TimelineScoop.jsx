@@ -1,4 +1,4 @@
-import CardTimeline from "@/components/Dashboard/CardTimeline";
+import CardTimeline from "@/components/Dashboard/TimeDistribution/CardTimeline";
 import { useGraphicData } from "@/hooks/useGraphicData";
 
 export default function TimelineScoop() {

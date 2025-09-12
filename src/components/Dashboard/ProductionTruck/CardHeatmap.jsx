@@ -1,4 +1,5 @@
 import { useGraphicData } from "@/hooks/useGraphicData";
+import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highcharts.src.js";
 import highchartsHeatmap from "highcharts/modules/heatmap";
@@ -10,6 +11,8 @@ if (typeof highchartsHeatmap === "function") {
 }
 
 const CardHeatMap = () => {
+  useSocketTopicValue("truck-heatmap", ["shift-variable", "truck-heatmap"]);
+
   const {
     data = [],
     isLoading,
@@ -19,8 +22,6 @@ const CardHeatMap = () => {
     "dashboard/truck/heatmap",
     "shift-variable"
   );
-
-  console.log("heatmap", data);
 
   const chartRef = useRef(null); // Referencia al gráfico
 
@@ -173,7 +174,9 @@ const CardHeatMap = () => {
   if (data.length === 0)
     return (
       <div className="py-2 px-4 flex items-center justify-center h-[280px] w-full ">
-        <span className="text-[10px] text-zinc-500 font-semibold">Esperando datos del turno</span>
+        <span className="text-[10px] text-zinc-500 font-semibold">
+          Esperando datos del turno
+        </span>
       </div>
     );
   return (

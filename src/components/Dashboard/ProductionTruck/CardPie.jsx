@@ -1,10 +1,18 @@
 import { useGraphicData } from "@/hooks/useGraphicData";
+import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import React, { Suspense, useMemo } from "react";
 
-const CardPie = React.memo(({ symbol, endpoint}) => {
-  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint , "shift-variable");
+const CardPie = React.memo(({ symbol, endpoint }) => {
+  useSocketTopicValue(symbol, ["shift-variable", symbol]);
+
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useGraphicData(symbol, endpoint, "shift-variable");
+
   const options = useMemo(
     () => ({
       chart: {
@@ -34,7 +42,6 @@ const CardPie = React.memo(({ symbol, endpoint}) => {
         },
       ],
       tooltip: {
-       
         enabled: false,
       },
       plotOptions: {
@@ -94,7 +101,7 @@ const CardPie = React.memo(({ symbol, endpoint}) => {
         <span className="text-[10px] text-red-500">Ocurrió un error</span>
       </div>
     );
-    
+
   return (
     <div className="w-full flex flex-1 justify-center items-center gap-2">
       <div style={{ width: "100%", overflowX: "auto" }}>

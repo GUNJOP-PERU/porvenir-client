@@ -3,7 +3,7 @@ import { columns } from "@/components/Gestion/PlanDay/PlanDayTableColumns";
 import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { countItems } from "@/lib/utilsGeneral";
 import { useState } from "react";
-import PageHeader from "../../components/Gestion/PageHeader";
+import PageHeader from "../../components/PageHeader";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 
 function PlanDay() {

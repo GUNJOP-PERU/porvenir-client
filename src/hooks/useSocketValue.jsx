@@ -21,6 +21,7 @@ export function useSocketValue(topic, queryKey) {
 
     console.log(`Conectando al tópico: ${topic}`);
     const unsubscribe = subscribe(socket, topic, (data) => { 
+      console.log('Datos recibidos del socket:', data); 
       setPayload(data);
 
       if (queryKey) {

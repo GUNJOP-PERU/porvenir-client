@@ -48,14 +48,14 @@ export function NavMain() {
                       >
                         <summary
                           className={clsx(
-                            "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold list-none transition ease-in-out duration-200 relative",
+                            "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold list-none transition ease-in-out duration-200 relative select-none",
                             isCollapsed
                               ? "px-1 w-8 justify-center"
                               : "px-3 w-full",
                             "text-zinc-500",
                             hasActiveChild && "text-primary bg-primary/[0.25]",
                             !hasActiveChild &&
-                              "hover:bg-zinc-900 hover:text-zinc-300" // <-- hover solo si no está activo
+                              "hover:bg-zinc-900 hover:text-zinc-300" 
                           )}
                         >
                           {React.cloneElement(item.icon, {
@@ -95,7 +95,7 @@ export function NavMain() {
                                 <Link to={subItem.href}>
                                   <div
                                     className={clsx(
-                                      "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold transition ease-in-out duration-200 px-3 w-full",
+                                      "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold transition ease-in-out duration-200 px-3 w-full select-none",
                                       subItem.active
                                         ? "bg-primary/[0.25] text-zinc-200 shadow-sm"
                                         : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"

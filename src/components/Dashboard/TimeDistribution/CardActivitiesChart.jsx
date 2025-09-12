@@ -1,17 +1,9 @@
-import { useGraphicData } from "@/hooks/useGraphicData";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
-import { useSocketTopicValue } from "@/hooks/useSocketValue";
 
-export default function CardActivitiesChart({ symbol, endpoint }) {
+export default function CardActivitiesChart({ data, isLoading, isError }) {
 
-  useSocketTopicValue(symbol, [
-    "dashboard",
-    symbol,
-  ]);
-
-  const { data = [], isLoading, isError } = useGraphicData(symbol, endpoint);
 
   const options = useMemo(
     () => ({

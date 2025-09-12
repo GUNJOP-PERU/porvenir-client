@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { Button } from "../../components/ui/button";
 import { useFetchData } from "../../hooks/useGlobalQuery";
-import PageHeader from "../../components/Gestion/PageHeader";
+import PageHeader from "../../components/PageHeader";
 
 function PlanMonth() {
   const {

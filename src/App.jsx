@@ -12,9 +12,7 @@ import "handsontable/styles/handsontable.min.css";
 import "handsontable/styles/ht-theme-main.min.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
 register("es", es);
-
 const queryClient = new QueryClient();
 
 function App() {

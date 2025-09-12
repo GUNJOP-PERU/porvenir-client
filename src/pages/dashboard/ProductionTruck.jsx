@@ -7,8 +7,14 @@ import CardPie from "@/components/Dashboard/ProductionTruck/CardPie";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { useSocketTopicValue } from "@/hooks/useSocketValue";
 
 export default function ProductionTruck() {
+  useSocketTopicValue("truck-progress-day", [
+    "shift-variable",
+    "truck-progress-day",
+  ]);
+
   const { data } = useGraphicData(
     "truck-progress-day",
     "dashboard/truck/progress-day",
@@ -101,5 +107,3 @@ export default function ProductionTruck() {
     </>
   );
 }
-
-

@@ -5,12 +5,18 @@ import Highcharts from "highcharts/highcharts.src.js";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
+import { useSocketTopicValue } from "@/hooks/useSocketValue";
 
 if (typeof solidGauge === "function") {
   solidGauge(Highcharts);
 }
 
 const CardGauge = memo(() => {
+    useSocketTopicValue("progress-shift", [
+      "shift-variable",
+      "progress-shift",
+    ]);
+
   const { data, isLoading, isError } = useGraphicData(
     "progress-shift",
     "dashboard/progress-shift",

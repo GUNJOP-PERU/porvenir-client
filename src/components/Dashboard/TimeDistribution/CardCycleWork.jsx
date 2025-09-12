@@ -1,18 +1,12 @@
-import { useGraphicData } from "@/hooks/useGraphicData";
 import React from "react";
 import { formatDurationMinutes } from "@/lib/utilsGeneral";
-import { useSocketTopicValue } from "@/hooks/useSocketValue";
+import ImgTruck1 from "/truck-01.svg";
+import ImgTruck2 from "/truck-02.svg";
+import ImgTruck3 from "/truck-03.svg";
+import ImgTruck4 from "/truck-04.svg";
+import ImgLineSquare from "/lineSquare-2.svg";
 
-const CardCycleWork = React.memo(() => {
-  useSocketTopicValue("truck-job-cycle", [
-    "shift-variable",
-    "truck-job-cycle",
-  ]);
-  const { data, isLoading, isError } = useGraphicData(
-    "truck-job-cycle",
-    "dashboard/truck/job-cycle",
-    "shift-variable"
-  );
+const CardCycleWork = React.memo(({ data, isLoading, isError }) => {
 
   if (isLoading)
     return (
@@ -36,7 +30,7 @@ const CardCycleWork = React.memo(() => {
             {formatDurationMinutes(data?.avg_time_dump?.value || 0)}             
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="./truck-01.svg" />
+          <img className="w-16 md:w-24 h-auto" src={ImgTruck1} />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row-reverse ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -45,7 +39,7 @@ const CardCycleWork = React.memo(() => {
               {formatDurationMinutes(data?.avg_time_empty?.value || 0)} 
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="./truck-02.svg" />
+          <img className="w-16 md:w-24 h-auto" src={ImgTruck2} />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -54,7 +48,7 @@ const CardCycleWork = React.memo(() => {
               {formatDurationMinutes(data?.avg_time_transport?.value || 0)} 
             </span>
           </div>
-          <img className="w-16 md:w-24 h-auto" src="./truck-03.svg" />
+          <img className="w-16 md:w-24 h-auto" src={ImgTruck3} />
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row-reverse  ">
           <div className="flex flex-col items-center justify-center gap-1.5">
@@ -65,13 +59,13 @@ const CardCycleWork = React.memo(() => {
           </div>
           <img
             className="w-16 md:w-24 h-auto"
-            src="./truck-04.svg"
+            src={ImgTruck4}
             loading="lazy"
           />
         </div>
         <img
           className="w-full h-[90%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"
-          src="./lineSquare-2.svg"
+          src={ImgLineSquare}
         />
       </div>
     </div>

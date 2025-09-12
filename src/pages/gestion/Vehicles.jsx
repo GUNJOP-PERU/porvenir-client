@@ -1,8 +1,8 @@
 import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { columns } from "@/components/Gestion/Vehicle/columns";
 import { useState } from "react";
-import PageHeader from "../../components/Gestion/PageHeader";
-import { ModalVehicle } from "../../components/Gestion/Vehicle/ModalVehicle";
+import PageHeader from "../../components/PageHeader";
+import { ModalVehicle } from "../../components/Management/Vehicle/ModalVehicle";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
 
