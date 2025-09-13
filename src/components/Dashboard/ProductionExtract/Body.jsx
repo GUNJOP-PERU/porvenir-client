@@ -85,6 +85,7 @@ export default function Body({
           title="Viajes por Hora de Mineral y Desmonte"
           subtitle="Análisis de la cantidad de viajes realizados"
           icon={IconDash1}
+          className="xl:col-span-2"
         >
           <TripsPerHour
             data={data}
@@ -92,9 +93,9 @@ export default function Body({
             isError={isError}
           />
         </CardTitle>
-        <CardTitle title="Observaciones" subtitle="">
+        {/* <CardTitle title="Observaciones" subtitle="">
           <TableObservations />
-        </CardTitle>
+        </CardTitle> */}
       </div>
     </>
   );

@@ -21,7 +21,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     const avgHora =
       horas.reduce((acc, h) => acc + h, 0) / horas.length;
 
-    return avgHora >= 6 && avgHora < 18 ? "dia" : "noche";
+    return avgHora >= 7 && avgHora < 19 ? "dia" : "noche";
   }, [data]);
   
 
@@ -31,9 +31,9 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     // Precrear todas las horas del turno con 0 viajes
     const horasTurno =
       detectedShift === "dia"
-        ? Array.from({ length: 12 }, (_, i) => i + 6) // 6 a 17
+        ? Array.from({ length: 12 }, (_, i) => i + 7) // 6 a 17
         : [
-            ...Array.from({ length: 6 }, (_, i) => i + 18),
+            ...Array.from({ length: 6 }, (_, i) => i + 19),
             ...Array.from({ length: 6 }, (_, i) => i),
           ]; // 18 a 23 y 0 a 5
 
@@ -49,8 +49,8 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     const dataFiltrada = data.filter((item) => {
       const fecha = new Date(item.start || item.createdAt);
       const hora = fecha.getHours();
-      if (detectedShift === "dia") return hora >= 6 && hora < 18;
-      if (detectedShift === "noche") return hora >= 18 || hora < 6;
+      if (detectedShift === "dia") return hora >= 7 && hora < 19;
+      if (detectedShift === "noche") return hora >= 19 || hora < 7;
       return true;
     });
 
@@ -99,7 +99,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
             return this.value.replace(/ (a\.m\.|p\.m\.)$/, "<br>$1");
           },
           style: {
-            fontSize: "10px",
+            fontSize: "0.6rem",
             fontWeight: "bold",
             color: "#A1A1AA",
             fontFamily: "Nunito, sans-serif",
@@ -148,7 +148,6 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
       plotOptions: {
         column: {
           grouping: true,
-
           pointPadding: 0,
           groupPadding: 0.05,
           borderWidth: 0,

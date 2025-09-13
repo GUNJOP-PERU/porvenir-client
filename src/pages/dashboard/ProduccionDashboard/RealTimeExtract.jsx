@@ -7,8 +7,12 @@ import { useMemo } from "react";
 export default function RealTimeExtract() {
 
   useSocketTopicValue("cycle-current-shift-list", [
-    "dashboard",
+    "shift-variable",
     "production-extract-realtime",
+  ]);  
+  useSocketTopicValue("planday/current", [
+    "shift-variable",
+    "plan-extract-realtime",
   ]);  
 
   const {
@@ -16,12 +20,12 @@ export default function RealTimeExtract() {
     isLoading,
     isError,
   } = useFetchDataRealtime({
-    queryKey: ["dashboard", "production-extract-realtime"],
+    queryKey: ["shift-variable", "production-extract-realtime"],
     endpoint: "cycle/by-current-shift",
   });
 
   const { data: dataPlanRealtime = [] } = useFetchDataRealtime({
-    queryKey: ["dashboard", "plan-extract-realtime"],
+    queryKey: ["shift-variable", "plan-extract-realtime"],
     endpoint: "planDay/byDay",
   });
 

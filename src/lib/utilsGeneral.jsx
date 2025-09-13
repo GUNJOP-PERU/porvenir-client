@@ -131,8 +131,8 @@ export function roundAndFormat(valor) {
 }
 
 // Filtrar datos
-const EXCLUDED_ORIGINS = ["faja 4", "cancha 100"];
-const EXCLUDED_DESTINY = ["labor a labor"];
+const EXCLUDED_ORIGINS = ["cancha 100", "faja 4"].map(o => o.toLowerCase());
+const EXCLUDED_DESTINY = ["labor a labor"].map(d => d.toLowerCase());
 
 export function filterData(data, material = null) {
   return data.filter((i) => {
@@ -146,9 +146,25 @@ export function filterData(data, material = null) {
 
     const isMaterialMatch = material ? mat === material : true;
 
-    return (
-      i.isValid && !isExcludedOrigin && !isExcludedDestiny && isMaterialMatch
-    );
+    return !(isExcludedOrigin || isExcludedDestiny) && isMaterialMatch;
+  });
+}
+
+export function filterInvalidData(data, material = null) {
+  return data.filter((i) => !filterData([i], material).length);
+}
+
+export function filterValidTrips(data, material = null) {
+  return data.filter((i) => {
+    const origin = i.origin?.toLowerCase().trim() || "";
+    const destiny = i.destiny?.toLowerCase().trim() || "";
+    const mat = i.material?.toLowerCase();
+
+    const isAllowedOrigin = EXCLUDED_ORIGINS.includes(origin);   
+    const isAllowedDestiny = EXCLUDED_DESTINY.includes(destiny);
+    const isMaterialMatch = material ? mat === material : true;
+
+    return (isAllowedOrigin || isAllowedDestiny) && isMaterialMatch;
   });
 }
 
@@ -177,27 +193,25 @@ export function getMetrics(filtered, programmedTonnage, value, isTravels = false
 
 // Rango de horas
 export function getShiftRangeMs(baseDate, shift) {
-  if (!(baseDate instanceof Date) || isNaN(baseDate)) {
-    baseDate = new Date(); // valor por defecto si no es válido
-  }
+  const date = dayjs(baseDate); // garantiza que baseDate sea consistente
 
-  let start = new Date(baseDate);
-  let end = new Date(baseDate);
+  let start, end;
 
-  if (shift === "D" || shift.toLowerCase() === "dia") {
-    start.setHours(6, 0, 0, 0);
-    end.setHours(18, 0, 0, 0);
+  if (shift.toLowerCase() === "dia") {
+    start = date.hour(7).minute(0).second(0).millisecond(0);
+    end = date.hour(19).minute(0).second(0).millisecond(0);
   } else {
-    start.setDate(start.getDate() - 1);
-    start.setHours(18, 0, 0, 0);
-    end.setHours(6, 0, 0, 0);
+    // turno noche: 19:00 del día anterior → 07:00 del día actual
+    start = date.subtract(1, "day").hour(19).minute(0).second(0).millisecond(0);
+    end = date.hour(7).minute(0).second(0).millisecond(0);
   }
 
   return {
-    startMs: start.getTime(),
-    endMs: end.getTime(),
+    startMs: start.valueOf(),
+    endMs: end.valueOf(),
   };
 }
+
 
 
 export const toInputDate = (d) => dayjs(d).format("YYYY-MM-DD");

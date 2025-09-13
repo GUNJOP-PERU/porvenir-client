@@ -64,7 +64,7 @@ const tooltipArrowStyles = cva(
 );
 
 const CardItem = memo(
-  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 }) => {
+  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 ,subtitleUnid = "viajes"}) => {
     const getChangeVariant = (val) =>
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
@@ -122,7 +122,7 @@ const CardItem = memo(
 
         {subtitle !== undefined && (
           <span className=" text-[10px] leading-[8px] font-semibold text-zinc-600">
-            De <NumberFlow value={subtitle}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> viajes
+            De <NumberFlow value={subtitle}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> {subtitleUnid}
           </span>
         )}
       </div>

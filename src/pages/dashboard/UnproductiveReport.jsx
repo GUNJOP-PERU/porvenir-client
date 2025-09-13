@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import { getShiftRangeMs } from "@/lib/utilsGeneral";
+import ParetoTime from "@/components/Dashboard/UnproductiveReport/ParetoTime";
+import InproductiveTime from "@/components/Dashboard/UnproductiveReport/InproductiveTime";
+import WeeklyEvolution from "@/components/Dashboard/UnproductiveReport/WeeklyEvolution";
+import CardTitle from "@/components/Dashboard/CardTitle";
+import IconDash1 from "@/icons/Dashboard/IconDash1";
 
 export default function UnproductiveReport() {
   const [date, setDate] = useState(new Date());
@@ -22,9 +27,10 @@ export default function UnproductiveReport() {
   } = useFetchGraphicData({
     queryKey: "production-extract",
     endpoint: "cycle/by-date-range",
-    filters: range ? `startDate=${range.startMs}&endDate=${range.endMs}` : "",
+    filters: range ? `startDate=1755361126000&endDate=1757780326000` : "",
   });
 
+  console.log(data)
 
   return (
     <>
@@ -60,6 +66,29 @@ export default function UnproductiveReport() {
             Refetch
           </button>
         </div>
+      </div>
+      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+        <CardTitle
+          title="Pareto de Tiempo Improductivo (Hrs)"
+          subtitle="Tiempo de espera en la cola"
+          icon={IconDash1}
+        >
+          <ParetoTime />
+        </CardTitle>
+        <CardTitle
+          title="Tiempo Improductivo (Hrs)"
+          subtitle="Tiempo de espera en la cola"
+          icon={IconDash1}
+        >
+          <InproductiveTime />
+        </CardTitle>
+        <CardTitle
+          title="Evolución Semanal"
+          subtitle="Tiempo de espera en la cola"
+          icon={IconDash1}
+        >
+          <WeeklyEvolution />
+        </CardTitle>
       </div>
     </>
   );

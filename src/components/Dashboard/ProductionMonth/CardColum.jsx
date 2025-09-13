@@ -60,7 +60,7 @@ export default function CardColum() {
         padding: 15,
         style: {
           color: "#FFFFFF",
-          fontSize: "11px",
+          fontSize: "0.65em"
         },
         formatter: function () {
           const category =

@@ -168,10 +168,16 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/timeDistribution/realtime" || pathname === "/dashboard/timeDistribution/historical",
           },
           {
-            name: "Reporte de Inproductividad",
+            name: "Reporte de Improductivos",
             href: "/dashboard/unproductiveReport",
             icon: <IconDash6 />,
             active: pathname === "/dashboard/unproductiveReport",
+          },
+          {
+            name: "Reporte Semanal",
+            href: "/dashboard/weekReport",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/weekReport",
           },
           {
             name: "Producción Truck",

@@ -37,7 +37,7 @@ export default function HistoricalExtract() {
     refetch,
     isFetching,
   } = useFetchGraphicData({
-    queryKey: "production-extract-history",
+    queryKey: ["production-extract-history", form.date, form.shift],
     endpoint: "cycle/by-date-range",
     filters: `startDate=${range.startMs}&endDate=${range.endMs}`,
   });

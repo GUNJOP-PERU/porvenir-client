@@ -44,6 +44,7 @@ import Checklist from "./pages/monitoring/Checklist";
 import PageCycleTruck from "./pages/monitoring/CycleTruck";
 import Incidence from "./pages/monitoring/Incidences";
 import WorkerOrders from "./pages/monitoring/WorkerOrders";
+import WeekReport from "./pages/dashboard/WeekReport";
 
 const protectedRoutes = [
   //Gestion
@@ -77,7 +78,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
   
   { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
-
+  { path: "dashboard/weekReport", element: <WeekReport /> },
   {
     path: "dashboard/productionExtract",
     element: <ProductionLayout />,

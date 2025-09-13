@@ -10,6 +10,7 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 // Styles
 import "handsontable/styles/handsontable.min.css";
 import "handsontable/styles/ht-theme-main.min.css";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 register("es", es);
@@ -18,6 +19,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
       <ToastProvider>
         <SocketProvider>
           <GlobalDataProvider>
@@ -25,6 +27,7 @@ function App() {
           </GlobalDataProvider>
         </SocketProvider>
       </ToastProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
