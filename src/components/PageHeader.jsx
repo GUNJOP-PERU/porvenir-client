@@ -24,8 +24,8 @@ export default function PageHeader({
         </div>
         {description && <p className="text-zinc-400 text-[10.5px] lg:text-xs">{description}</p>}
       </div>
-      <div className="flex gap-2">
-        <ButtonRefresh refetch={refetch} isFetching={isFetching} />
+      <div className="flex flex-wrap gap-2">
+        {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
         {setDialogOpen && (
           <Button onClick={() => setDialogOpen(true)} className="flex items-center gap-2 !min-w-9 md:!min-w-[100px] px-2 md:px-3 ">
             <CircleFadingPlus className="size-3.5" />

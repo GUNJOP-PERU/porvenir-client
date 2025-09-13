@@ -1,4 +1,5 @@
 import Body from "@/components/Dashboard/TimeDistribution/Body";
+import PageHeader from "@/components/PageHeader";
 import { useFetchDataRealtime } from "@/hooks/useGraphicData";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 
@@ -53,11 +54,10 @@ export default function TimeDistribution() {
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-bold leading-none">
-          Distribución de tiempos volquetes Tiempo real
-        </h1>
-      </div>
+      <PageHeader
+        title="Distribución de tiempos volquetes Tiempo real"
+        description="Tiempo real"
+      />
 
       <Body
         progressDay={progressDay}

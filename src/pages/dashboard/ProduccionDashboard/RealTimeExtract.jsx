@@ -3,17 +3,17 @@ import { filterData } from "@/lib/utilsGeneral";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import Body from "@/components/Dashboard/ProductionExtract/Body";
 import { useMemo } from "react";
+import PageHeader from "@/components/PageHeader";
 
 export default function RealTimeExtract() {
-
   useSocketTopicValue("cycle-current-shift-list", [
     "shift-variable",
     "production-extract-realtime",
-  ]);  
+  ]);
   useSocketTopicValue("planday/current", [
     "shift-variable",
     "plan-extract-realtime",
-  ]);  
+  ]);
 
   const {
     data: currentData = [],
@@ -49,14 +49,11 @@ export default function RealTimeExtract() {
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-bold leading-none">
-          Reporte de Extracción / Tiempo Real{" "}
-          <small className="text-zinc-400">
-            (Viajes de remanejo no considerados)
-          </small>
-        </h1>
-      </div>
+      <PageHeader
+        title="Reporte de Extracción / Tiempo Real"
+        description="Viajes de remanejo no considerados"
+      />
+
       <Body
         dataPlanTurno={dataPlanRealtime}
         programmedTonnageMineral={programmedTonnageMineral}

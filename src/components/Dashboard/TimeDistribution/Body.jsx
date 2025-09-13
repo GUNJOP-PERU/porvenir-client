@@ -40,7 +40,7 @@ export default function Body({
           subtitle="Promedio de tajo por equipo."
           icon={IconDash1}
         >
-          <AverageTajo data={progressDay?.frontLaborAvg || {}} />
+          <AverageTajo data={progressDay?.frontLaborAvg || {}} isLoading={isLoading} isError={isError} />
         </CardTitle>
         <div className="flex flex-col gap-2  items-center border border-[#F0F0F0] shadow-sm px-6 py-4 rounded-2xl">
           <CardFlotaTime

@@ -9,6 +9,7 @@ import AreaWeek from "@/components/Dashboard/WeekReport/AreaWeek";
 import RemanejoWeek from "@/components/Dashboard/WeekReport/RemanejoWeek";
 import SharedWeek from "@/components/Dashboard/WeekReport/SharedWeek";
 import MiningWeeksSelect from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
+import PageHeader from "@/components/PageHeader";
 
 export default function WeekReport() {
   const [selectedRange, setSelectedRange] = useState(null);
@@ -53,18 +54,14 @@ export default function WeekReport() {
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-bold leading-none">
-          Extracción, Remanejo y Historico
-        </h1>
-        <div className="flex gap-2">
-          <MiningWeeksSelect onChange={setSelectedRange} />
+      <PageHeader
+        title="Extracción, Remanejo y Historico"
+        description="Administre los planes y sus caractestisticas."
+        refetch={refetch}
+        isFetching={isFetching}
+        actions={<MiningWeeksSelect onChange={setSelectedRange} />}
+      />
 
-          <button onClick={() => refetch()} className="border p-2 text-xs h-6">
-            Refetch
-          </button>
-        </div>
-      </div>
       <KPIWeek
         data={data}
         programmedMineral={programmedMineral}
