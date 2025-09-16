@@ -21,10 +21,6 @@ import ProductionLayout from "./pages/dashboard/ProduccionDashboard/ProductionLa
 import RealTimeExtract from "./pages/dashboard/ProduccionDashboard/RealTimeExtract";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
-import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
-import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
-import RealTimeByMonth from "./pages/dashboard/RealTimeByMonth";
-import RealTimeTripsCount from "./pages/dashboard/RealTimeTripsCount";
 import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
 import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
 import TimelineTruck from "./pages/dashboard/TimelineTruck";
@@ -45,6 +41,12 @@ import PageCycleTruck from "./pages/monitoring/CycleTruck";
 import Incidence from "./pages/monitoring/Incidences";
 import WorkerOrders from "./pages/monitoring/WorkerOrders";
 import WeekReport from "./pages/dashboard/WeekReport";
+// Beacon
+import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
+import RealTimeByDay from "./pages/beacon/RealTimeByDay";
+import RealTimeByHour from "./pages/beacon/RealTimeByHour";
+import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
+import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
 
 const protectedRoutes = [
   //Gestion
@@ -109,6 +111,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
+  { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

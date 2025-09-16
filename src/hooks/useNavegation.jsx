@@ -13,6 +13,7 @@ import IconDash3 from "@/icons/Dashboard/IconDash3";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
+import IconRadar from "@/icons/IconRadar";
 import { ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, FileChartPie } from "lucide-react";
 
 export const useNavigation = () => {
@@ -239,6 +240,12 @@ export const useNavigation = () => {
             icon: <IconDash6 />,
             active: pathname === "/dashboard/real-time-trip-count",
           },  
+          {
+            name: "Tabla de Detección",
+            href: "dashboard/beacon-detection-table",
+            icon: <IconRadar />,
+            active: pathname === "/dashboard/beacon-detection-table",
+          },
         ],
       },
     ],

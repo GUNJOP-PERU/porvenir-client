@@ -143,10 +143,10 @@ const RealTimeTripsCount = () => {
               />
             </TabsContent>
             <TabsContent value="unidad" className="">
-              <TripsByUnitTable
+              {/* <TripsByUnitTable
                 data={tripData ? tripData : []}
                 title="Viajes por Unidad (Truck)"
-              />
+              /> */}
             </TabsContent>
           </Tabs>
         </div>
