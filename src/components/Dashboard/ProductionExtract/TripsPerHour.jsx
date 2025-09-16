@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { StatusDisplay } from "../StatusDisplay";
 
 const TripsPerHour = ({ data, isLoading, isError }) => {
   const formatHourRange = (hr) => {
@@ -14,7 +15,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     if (!data?.length) return "dia"; 
 
     const horas = data.map((item) =>
-      new Date(item.start || item.createdAt).getHours()
+      new Date(item.start).getHours()
     );
 
     // Calcular hora promedio
@@ -47,7 +48,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
 
     // Filtrar datos por turno
     const dataFiltrada = data.filter((item) => {
-      const fecha = new Date(item.start || item.createdAt);
+      const fecha = new Date(item.start);
       const hora = fecha.getHours();
       if (detectedShift === "dia") return hora >= 7 && hora < 19;
       if (detectedShift === "noche") return hora >= 19 || hora < 7;
@@ -56,7 +57,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
 
     // Sumar viajes y toneladas a las horas ya creadas
     dataFiltrada.forEach((item) => {
-      const fecha = new Date(item.start || item.createdAt);
+      const fecha = new Date(item.start);
       const hora = fecha.getHours();
       const rango = formatHourRange(hora);
       const material = item.material?.toLowerCase() || "otros";
@@ -211,15 +212,13 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     [dataChart]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || data.length === 0)
     return (
-      <div className="bg-zinc-100 animate-pulse flex flex-col items-center justify-center rounded-2xl w-full h-[250px]"></div>
-    );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center w-full h-[250px]">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || data.length === 0}
+      />
     );
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };

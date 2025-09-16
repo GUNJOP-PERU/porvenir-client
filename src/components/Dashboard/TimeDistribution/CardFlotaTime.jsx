@@ -8,6 +8,7 @@ import { ModalFloat } from "./ModalFloat";
 import { Button } from "@/components/ui/button";
 import { Disc2 } from "lucide-react";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
+import { StatusDisplay } from "../StatusDisplay";
 
 // Inicializar los módulos
 if (typeof highchartsTilemap === "function") {
@@ -215,16 +216,15 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
     [data, fleetData]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || Object.keys(data).length === 0) {
     return (
-      <div className="bg-zinc-200 rounded-2xl h-[330px] w-full animate-pulse"></div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || Object.keys(data).length === 0}
+      />
     );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[330px] w-full ">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
-    );
+  }
   return (
     <>
       <div className="w-full flex justify-between ">

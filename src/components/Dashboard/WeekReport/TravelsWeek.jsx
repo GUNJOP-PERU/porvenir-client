@@ -2,96 +2,69 @@ import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { filterData, filterValidTrips } from "@/lib/utilsGeneral";
+import { StatusDisplay } from "../StatusDisplay";
+import dayjs from "dayjs";
 
-export default function TravelsWeek({ data, isLoading, isError }) {
+export default function TravelsWeek({ data, selectedRange, isLoading, isError }) {
   const filteredInvalidData = useMemo(() => filterValidTrips(data), [data]);
   const filteredMineral = useMemo(() => filterData(data, "mineral"), [data]);
   const filteredDesmonte = useMemo(() => filterData(data, "desmonte"), [data]);
 
   const { categories, series } = useMemo(() => {
+    if (!selectedRange) return { categories: [], series: [] };
+
+    // 🔹 Todas las fechas del rango
+    const start = dayjs(selectedRange.startDate);
+    const end = dayjs(selectedRange.endDate);
+    const allDates = [];
+    for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+      allDates.push(d.format("DD-MM"));
+    }
+
     const grouped = {};
+
+    // Inicializar cada día con 0
+    allDates.forEach((date) => {
+      grouped[date] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
+    });
 
     // Viajes válidos de mineral
     filteredMineral.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = `${new Date(item.date).getDate()}-${
-        new Date(item.date).getMonth() + 1
-      }`;
-      if (!grouped[dayMonth])
-        grouped[dayMonth] = {
-          mineral: 0,
-          desmonte: 0,
-          remMineral: 0,
-          remDesmonte: 0,
-        };
+      const dayMonth = dayjs(item.date).format("DD-MM");
+      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
       grouped[dayMonth].mineral++;
     });
 
     // Viajes válidos de desmonte
     filteredDesmonte.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = `${new Date(item.date).getDate()}-${
-        new Date(item.date).getMonth() + 1
-      }`;
-      if (!grouped[dayMonth])
-        grouped[dayMonth] = {
-          mineral: 0,
-          desmonte: 0,
-          remMineral: 0,
-          remDesmonte: 0,
-        };
+      const dayMonth = dayjs(item.date).format("DD-MM");
+      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
       grouped[dayMonth].desmonte++;
     });
 
     // Remanejo mineral y desmonte
     filteredInvalidData.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = `${new Date(item.date).getDate()}-${
-        new Date(item.date).getMonth() + 1
-      }`;
-      if (!grouped[dayMonth])
-        grouped[dayMonth] = {
-          mineral: 0,
-          desmonte: 0,
-          remMineral: 0,
-          remDesmonte: 0,
-        };
+      const dayMonth = dayjs(item.date).format("DD-MM");
+      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
       const mat = item.material?.toLowerCase();
       if (mat === "mineral") grouped[dayMonth].remMineral++;
       if (mat === "desmonte") grouped[dayMonth].remDesmonte++;
     });
 
-    const sortedDates = Object.keys(grouped).sort((a, b) => {
-      const [dayA, monthA] = a.split("-").map(Number);
-      const [dayB, monthB] = b.split("-").map(Number);
-      return monthA - monthB || dayA - dayB;
-    });
+    const sortedDates = allDates; // ya vienen ordenadas
 
     const series = [
-      {
-        name: "Mineral",
-        data: sortedDates.map((d) => grouped[d].mineral),
-        color: "#14B8A6",
-      },
-      {
-        name: "Desmonte",
-        data: sortedDates.map((d) => grouped[d].desmonte),
-        color: "#F59E0B",
-      },
-      {
-        name: "Remanejo Mineral",
-        data: sortedDates.map((d) => grouped[d].remMineral),
-        color: "#3770C2",
-      },
-      {
-        name: "Remanejo Desmonte",
-        data: sortedDates.map((d) => grouped[d].remDesmonte),
-        color: "#898889",
-      },
+      { name: "Mineral", data: sortedDates.map((d) => grouped[d].mineral), color: "#14B8A6" },
+      { name: "Desmonte", data: sortedDates.map((d) => grouped[d].desmonte), color: "#F59E0B" },
+      { name: "Remanejo Mineral", data: sortedDates.map((d) => grouped[d].remMineral), color: "#6EE7B7" },
+      { name: "Remanejo Desmonte", data: sortedDates.map((d) => grouped[d].remDesmonte), color: "#FFD580" },
     ];
 
     return { categories: sortedDates, series };
-  }, [data]);
+  }, [data, selectedRange]);
 
   const options = useMemo(
     () => ({
@@ -197,17 +170,20 @@ export default function TravelsWeek({ data, isLoading, isError }) {
     [categories, series]
   );
 
-  if (isLoading)
-    return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse" />
-    );
+  const noData =
+  !categories.length || !series.length || series.every(s => s.data.every(d => d === 0));
 
-  if (isError)
+
+  if (isLoading || isError || noData) {
     return (
-      <div className="flex items-center justify-center h-[280px] w-full">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={noData}
+        height="280px"
+      />
     );
+  }
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

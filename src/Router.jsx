@@ -68,29 +68,19 @@ const protectedRoutes = [
   { path: "unproductiveReport", element: <UnproductiveReport /> },
 
   //Dashboard
-  { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
-  { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
-  { path: "dashboard/productionMonth", element: <ProductionMonth /> },
-  { path: "dashboard/productionUV", element: <Utilization /> },
-  { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
-  { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
-  { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
-  { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
-  
-  { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
-  { path: "dashboard/weekReport", element: <WeekReport /> },
+  // { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
+  // { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
   {
-    path: "dashboard/productionExtract",
+    path: "/",
     element: <ProductionLayout />,
     handle: {
       tabs: [
-        { to: "realtime", label: "Tiempo Real" },
+        { to: "", label: "Tiempo Real" },
         { to: "historical", label: "Histórico" },
       ],
     },
     children: [
-      { index: true, element: <Navigate to="realtime" replace /> },
-      { path: "realtime", element: <RealTimeExtract /> },
+      { index: true, element: <RealTimeExtract /> },
       { path: "historical", element: <HistoricalExtract /> },
     ],
   },
@@ -109,6 +99,16 @@ const protectedRoutes = [
       { path: "historical", element: <TimeDistributionHistorical /> },
     ],
   },
+  { path: "dashboard/weekReport", element: <WeekReport /> },
+  { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
+  { path: "dashboard/productionMonth", element: <ProductionMonth /> },
+  { path: "dashboard/productionUV", element: <Utilization /> },
+
+  //Dashboard-Beacon
+  { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
+  { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
+  { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },
@@ -124,7 +124,7 @@ export default function Router() {
 
   protectedChildren.push({
     index: true,
-    element: <ProductionTruck />,
+    element: <Navigate to="/" replace />, 
   });
 
   const router = createBrowserRouter([
@@ -141,7 +141,7 @@ export default function Router() {
             ...protectedRoutes,
             {
               index: true,
-              element: <ProductionTruck />,
+              element: <Navigate to="/" replace />,
             },
           ],
         },

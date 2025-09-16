@@ -1,52 +1,92 @@
 import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { filterValidTrips } from "@/lib/utilsGeneral";
+import { StatusDisplay } from "../StatusDisplay";
+import dayjs from "dayjs";
 
-export default function RemanejoWeek({ data, isLoading, isError }) {
-  const filteredInvalidData = useMemo(() => filterValidTrips(data), [data]);
-
+export default function RemanejoWeek({ data, selectedRange, isLoading, isError }) {
   const { categories, series } = useMemo(() => {
-    const grouped = {}; 
+    if (!selectedRange) return { categories: [], series: [] };
 
-    filteredInvalidData.forEach((item) => {
-      if (!item.date || !item.origin) return;
-      
-      const dayMonth = `${new Date(item.date).getDate()}-${
-        new Date(item.date).getMonth() + 1
-      }`;
-      
-      // Normalizamos el destino para agrupar correctamente
-      const destKey = item.origin.trim().toLowerCase(); 
-      
+    // 🔹 Generar todas las fechas del rango
+    const start = dayjs(selectedRange.startDate);
+    const end = dayjs(selectedRange.endDate);
+
+    const allDates = [];
+    for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+      allDates.push(d.format("DD-MM"));
+    }
+
+    // 🔹 Filtrar solo combinaciones permitidas
+    const allowedPairs = [
+      { origin: "cancha 100", destiny: "pahuaypite" },
+      { origin: "cancha 100", destiny: "dique 4" },
+      { origin: "cancha 100", destiny: "faja 4" },
+      { origin: "faja 4", destiny: "planta" },
+    ];
+
+    const filtered = data.filter((item) => {
+      if (!item.date || !item.origin || !item.destiny) return false;
+
+      const origin = item.origin.trim().toLowerCase();
+      const destiny = item.destiny.trim().toLowerCase();
+
+      const isExactAllowed = allowedPairs.some(
+        (pair) => pair.origin === origin && pair.destiny === destiny
+      );
+
+      const isBcAllowed = origin.startsWith("bc-") && destiny === "pahuaypite";
+
+      return isExactAllowed || isBcAllowed;
+    });
+
+    // 🔹 Agrupar por fecha y origen → destino
+    const grouped = {};
+    filtered.forEach((item) => {
+      const dayMonth = dayjs(item.date).format("DD-MM");
+      const origin = item.origin.trim().toLowerCase();
+      const destiny = item.destiny.trim().toLowerCase();
+      const key = `${origin} → ${destiny}`;
+
       if (!grouped[dayMonth]) grouped[dayMonth] = {};
-      if (!grouped[dayMonth][destKey]) grouped[dayMonth][destKey] = 0;
-      grouped[dayMonth][destKey]++;
+      if (!grouped[dayMonth][key]) grouped[dayMonth][key] = 0;
+      grouped[dayMonth][key]++;
     });
 
-    const sortedDates = Object.keys(grouped).sort((a, b) => {
-      const [dayA, monthA] = a.split("-").map(Number);
-      const [dayB, monthB] = b.split("-").map(Number);
-      return monthA - monthB || dayA - dayB;
-    });
-
-    // Obtener todos los destinos únicos
-    const allDestinations = Array.from(
-      new Set(filteredInvalidData.map((item) => item.origin.trim().toLowerCase()))
+    // 🔹 Todas las combinaciones que existen en los datos filtrados
+    const allKeys = Array.from(
+      new Set(
+        filtered.map((item) => {
+          const origin = item.origin.trim().toLowerCase();
+          const destiny = item.destiny.trim().toLowerCase();
+          return `${origin} → ${destiny}`;
+        })
+      )
     ).sort();
 
-    // Construir series: cada destino es una serie con datos por día
-    const series = allDestinations.map((destKey) => ({
-      name: destKey.charAt(0).toUpperCase() + destKey.slice(1), 
-      data: sortedDates.map((date) => grouped[date][destKey] || 0),
+    // 🔹 Construir series con todos los días
+    const series = allKeys.map((key) => ({
+      name: key
+        .split(" → ")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" → "),
+      data: allDates.map((date) => grouped[date]?.[key] || 0),
       color: undefined,
     }));
 
-    return { categories: sortedDates, series };
-  }, [filteredInvalidData]);
+    return { categories: allDates, series };
+  }, [data, selectedRange]);
 
   const options = useMemo(
     () => ({
+      colors: [
+        "#663532",
+        "#834943",
+        "#b3685b",
+        "#f79885",
+        "#ffdbb6",
+        "#c5986b"
+      ],
       chart: { type: "column", backgroundColor: "transparent", height: 280 },
       title: { text: null },
       xAxis: {
@@ -143,17 +183,20 @@ export default function RemanejoWeek({ data, isLoading, isError }) {
     [categories, series]
   );
 
-  if (isLoading)
-    return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse" />
-    );
+  const noData =
+  !categories.length || !series.length || series.every(s => s.data.every(d => d === 0));
 
-  if (isError)
+
+  if (isLoading || isError || noData) {
     return (
-      <div className="flex items-center justify-center h-[280px] w-full">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={noData}
+        height="280px"
+      />
     );
+  }
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

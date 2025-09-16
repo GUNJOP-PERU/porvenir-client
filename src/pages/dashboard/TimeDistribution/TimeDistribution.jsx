@@ -55,8 +55,8 @@ export default function TimeDistribution() {
   return (
     <>
       <PageHeader
-        title="Distribución de tiempos volquetes Tiempo real"
-        description="Tiempo real"
+        title="Distribución de tiempos / Tiempo Real"
+        description="Viajes de remanejo no considerados"
       />
 
       <Body

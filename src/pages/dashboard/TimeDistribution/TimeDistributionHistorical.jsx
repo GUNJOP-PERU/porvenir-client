@@ -72,8 +72,8 @@ export default function TimeDistributionHistorical() {
   return (
     <>
       <PageHeader
-        title="Distribución de tiempos volquetes Historial"
-        description="Historial"
+        title="Distribución de tiempos / Historial"
+        description="Viajes de remanejo no considerados"
         refetch={handleRefreshAll}
         isFetching={isFetchingJobCycle || isFetchingImproductive || isFetchingTimelineTrucks}
         actions={

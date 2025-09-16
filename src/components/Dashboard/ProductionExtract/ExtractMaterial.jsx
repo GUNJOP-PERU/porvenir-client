@@ -2,6 +2,7 @@ import { useMemo, useCallback } from "react";
 import { getMetrics, roundAndFormat } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { StatusDisplay } from "../StatusDisplay";
 
 export default function ExtractMaterial({
   data,
@@ -13,7 +14,6 @@ export default function ExtractMaterial({
   isLoading,
   isError,
 }) {
-
   const filteredPlan = useMemo(() => {
     if (!material) return dataPlan || [];
     return (dataPlan || []).filter(
@@ -27,7 +27,7 @@ export default function ExtractMaterial({
       filteredPlan.map((p) => p.frontLabor).includes(d.origin)
     );
   }, [data, filteredPlan, material]);
-  
+
   const metrics = useMemo(
     () => getMetrics(filteredData, programmedTonnage, tonnageMaterial),
     [filteredData, programmedTonnage, tonnageMaterial]
@@ -216,15 +216,13 @@ export default function ExtractMaterial({
     [totals, planValues, roundAndFormat, getLabelsFromData, colorPoint]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || data.length === 0)
     return (
-      <div className="bg-zinc-100 animate-pulse flex flex-col items-center justify-center rounded-2xl w-full h-[380px]"></div>
-    );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-full w-full ">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || data.length === 0}
+      />
     );
 
   return (

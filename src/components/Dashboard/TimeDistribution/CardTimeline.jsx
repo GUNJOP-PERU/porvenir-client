@@ -4,6 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import highchartsXrange from "highcharts/modules/xrange";
 import dayjs from "dayjs";
 import "dayjs/plugin/timezone";
+import { StatusDisplay } from "../StatusDisplay";
 
 dayjs.tz.setDefault("America/Lima");
 
@@ -266,16 +267,14 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
     [data, transformedData, min, max]
   );
 
-  if (isLoading)
-    return (
-      <div className="bg-zinc-200 rounded-2xl py-2 px-4 flex items-center justify-center w-full h-[830px] animate-pulse"></div>
-    );
+  const noData =
+    !data ||
+    (!data.data?.length &&
+      !data.rows?.length);
 
-  if (isError)
+  if (isLoading || isError || noData)
     return (
-      <div className="bg-zinc-100/50 rounded-2xl py-2 px-4 flex items-center justify-center h-[100px] md:h-[90px] animate-pulse">
-        <span className="text-[8px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay isLoading={isLoading} isError={isError} noData={noData} />
     );
 
   return (
@@ -286,19 +285,3 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
 });
 CardTimeline.displayName = "CardTimeline";
 export default CardTimeline;
-
-// const data = {
-//   shift: "dia",
-//   data: [
-//     {
-//       x: "06:10",
-//       x2: "07:40",
-//       y: "SC-21",
-//       color: "red",
-//       format: 1,
-//       tajo: "TJ-381",
-//     },
-//     
-//   ],
-//   rows: ["SC-21", "SC-22", "SC-23", "SC-24"],
-// };

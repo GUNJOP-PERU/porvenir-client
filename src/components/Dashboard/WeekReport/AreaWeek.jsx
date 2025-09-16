@@ -1,28 +1,30 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
+import { StatusDisplay } from "../StatusDisplay";
 
 export default function AreaWeek({ data, isLoading, isError }) {
-
-const pieData = useMemo(() => {
+  const pieData = useMemo(() => {
     if (!data?.length) return [];
 
-    const superficieTitles = ["FAJ4 CANCHA 100", "PAHUAYPITE", "LABOR A LABOR"];
+    const superficieTitles = ["faja 4", "cancha 100", "pahuaypite", "dique 4"];
+    const interiorTitles = ["parrilla 1", "parrilla 2", "pocket 3"];
 
     let superficieValue = 0;
     let interiorValue = 0;
 
     data.forEach((item) => {
-      const destinyUpper = (item.destiny || "").toUpperCase();
-      if (superficieTitles.includes(destinyUpper)) {
-        superficieValue += item.tonnage || 0;
-      } else {
-        interiorValue += item.tonnage || 0;
+      const destinyLower = (item.destiny || "").toLowerCase();
+
+      if (superficieTitles.some((t) => destinyLower.includes(t))) {
+        superficieValue += 1;
+      } else if (interiorTitles.some((t) => destinyLower.includes(t))) {
+        interiorValue += 1;
       }
     });
 
     return [
-      { name: "Superficie", y: superficieValue, color: "#9B9B9B" },
+      { name: "Superficie", y: superficieValue, color: "#26b969" },
       { name: "Interior / Mina", y: interiorValue, color: "#019cfe" },
     ];
   }, [data]);
@@ -52,26 +54,47 @@ const pieData = useMemo(() => {
       plotOptions: {
         pie: {
           allowPointSelect: true,
-          borderWidth: 2,
+          borderWidth: 5,
           cursor: "pointer",
-          borderRadius: 10,
-          dataLabels: {
-            enabled: true,
-            format:
-              '<b><span style="color:{point.color}">{point.name}</span></b><br>' +
-              '<span style=" font-size:14px">{point.y}TM {point.percentage:.2f}%</span>',
-            distance: 15,
-            style: {
-              fontSize: "10px",
-              color: "#000",
-              fontWeight: "bold",
-              textOutline: "none",
-              whiteSpace: "normal", // Permite saltos de línea
-              wordWrap: "break-word", // Divide automáticamente si es largo
-              width: "80px", // Define un ancho para el ajuste automático
-              textAlign: "center", // Centra el texto
+          borderRadius: 20,
+          dataLabels: [
+            {
+              enabled: true,
+              distance: 15,
+              formatter: function () {
+                return (
+                  `<b><span style="color:${this.point.color}">${this.point.name}</span></b><br>` +
+                  `<span style="font-size:14px;">${this.point.y} <small style="font-size:12px">viajes</small></span><br>`
+                );
+              },
+              style: {
+                fontSize: "0.7rem",
+                color: "#000",
+                fontWeight: "bold",
+                textOutline: "none",
+                whiteSpace: "normal",
+                wordWrap: "break-word",
+                width: "80px",
+                textAlign: "center",
+              },
             },
-          },
+            {
+              enabled: true,
+              distance: "-33%",
+              filter: {
+                property: "percentage",
+                operator: ">",
+                value: 5,
+              },
+              format:
+                '<span style=" font-size:14px">{point.percentage:.2f}%</span>',
+              style: {
+                fontSize: "0.9em",
+                textOutline: "none",
+                color: "#ffffff",
+              },
+            },
+          ],
           showInLegend: true,
         },
       },
@@ -88,16 +111,15 @@ const pieData = useMemo(() => {
     [pieData]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || Object.keys(data).length === 0) {
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse" />
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || Object.keys(data).length === 0}
+        height="280px"
+      />
     );
-
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[280px] w-full">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
-    );
+  }
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

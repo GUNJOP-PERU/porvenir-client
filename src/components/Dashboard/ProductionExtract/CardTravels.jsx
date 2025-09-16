@@ -1,14 +1,19 @@
 import { useMemo } from "react";
 import { filterData, roundAndFormat } from "@/lib/utilsGeneral";
 import TravelBars from "./TravelBars";
+import { StatusDisplay } from "../StatusDisplay";
 
-export default function CardTravels({ data,isLoading,isError}) {
+export default function CardTravels({ data, isLoading, isError }) {
   const travels = useMemo(() => {
     const travelTypes = [
-      { label: "Ripio", key: "ripio", color: "#F97316" },   // naranja
-      { label: "Arena", key: "arena", color: "#F4C542" },   // azul
-      { label: "Lama", key: "lama", color: "#65A30D" },     // verde lima
-      { label: "Relleno detrítico", key: "relleno detrítico", color: "#C026D3" }, // magenta
+      { label: "Ripio", key: "ripio", color: "#F97316" }, // naranja
+      { label: "Arena", key: "arena", color: "#F4C542" }, // azul
+      { label: "Lama", key: "lama", color: "#65A30D" }, // verde lima
+      {
+        label: "Relleno detrítico",
+        key: "relleno detrítico",
+        color: "#C026D3",
+      }, // magenta
     ];
 
     return travelTypes.map(({ label, key, color }) => {
@@ -22,15 +27,13 @@ export default function CardTravels({ data,isLoading,isError}) {
     });
   }, [data]);
 
-  if (isLoading)
+  if (isLoading || isError || !data || data.length === 0)
     return (
-      <div className="bg-zinc-100 animate-pulse flex flex-col items-center justify-center rounded-2xl w-full h-[340px]"></div>
-    );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-full w-full ">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || data.length === 0}
+      />
     );
   return (
     <>
@@ -41,7 +44,10 @@ export default function CardTravels({ data,isLoading,isError}) {
             className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg"
           >
             <span className="text-[10px] text-zinc-400">{label}</span>
-            <b className="leading-none font-extrabold text-xl" style={{ color }}>
+            <b
+              className="leading-none font-extrabold text-xl"
+              style={{ color }}
+            >
               {count} <small>viajes</small>
             </b>
             <span className="mt-1 text-[12px] leading-none text-zinc-500 font-bold">
@@ -52,11 +58,7 @@ export default function CardTravels({ data,isLoading,isError}) {
       </div>
 
       <div className="grid md:grid-cols-2 gap-2">
-        <TravelBars
-          data={data}
-          filterKeywords={["TJ"]}
-          colorPoint="#7cb5ec"
-        />
+        <TravelBars data={data} filterKeywords={["TJ"]} colorPoint="#7cb5ec" />
         <TravelBars
           data={data}
           filterKeywords={["CX", "GA", "BP"]}

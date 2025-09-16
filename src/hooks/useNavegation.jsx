@@ -13,6 +13,7 @@ import IconDash3 from "@/icons/Dashboard/IconDash3";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
+import { ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, FileChartPie } from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -157,46 +158,46 @@ export const useNavigation = () => {
         items: [
           {
             name: "Reporte de extracción",
-            href: "/dashboard/productionExtract/realtime",
-            icon: <IconDash6 />,
-            active: pathname === "/dashboard/productionExtract/realtime" || pathname === "/dashboard/productionExtract/historical",
+            href: "/",
+            icon: <ChartColumnStacked />,
+            active: pathname === "/" || pathname.startsWith("/historical")
           },
           {
             name: "Distribución de tiempo",
             href: "/dashboard/timeDistribution/realtime",
-            icon: <IconDash6 />,
+            icon: <ChartBarStacked />,
             active: pathname === "/dashboard/timeDistribution/realtime" || pathname === "/dashboard/timeDistribution/historical",
-          },
-          {
-            name: "Reporte de Improductivos",
-            href: "/dashboard/unproductiveReport",
-            icon: <IconDash6 />,
-            active: pathname === "/dashboard/unproductiveReport",
           },
           {
             name: "Reporte Semanal",
             href: "/dashboard/weekReport",
-            icon: <IconDash6 />,
+            icon: <FileChartPie />,
             active: pathname === "/dashboard/weekReport",
           },
           {
-            name: "Producción Truck",
-            href: "/",
-            icon: <IconDash1 />,
-            active: pathname === "/",
+            name: "Reporte de Improductivos",
+            href: "/dashboard/unproductiveReport",
+            icon: <ChartNoAxesCombined />,
+            active: pathname === "/dashboard/unproductiveReport",
           },
-          {
-            name: "Timeline Truck",
-            href: "/dashboard/timelineTruck",
-            icon: <IconTimeline />,
-            active: pathname === "/dashboard/timelineTruck",
-          },
-          {
-            name: "Pareto Truck",
-            href: "/dashboard/paretoTruck",
-            icon: <IconDash3 />,
-            active: pathname === "/dashboard/paretoTruck",
-          },
+          // {
+          //   name: "Producción Truck",
+          //   href: "/",
+          //   icon: <IconDash1 />,
+          //   active: pathname === "/",
+          // },
+          // {
+          //   name: "Timeline Truck",
+          //   href: "/dashboard/timelineTruck",
+          //   icon: <IconTimeline />,
+          //   active: pathname === "/dashboard/timelineTruck",
+          // },
+          // {
+          //   name: "Pareto Truck",
+          //   href: "/dashboard/paretoTruck",
+          //   icon: <IconDash3 />,
+          //   active: pathname === "/dashboard/paretoTruck",
+          // },
           {
             name: "Producción Mensual",
             href: "/dashboard/productionMonth",
@@ -209,6 +210,35 @@ export const useNavigation = () => {
             icon: <IconDash6 />,
             active: pathname === "/dashboard/productionUV",
           },
+        ],
+      },
+      {
+        title: "Beacon",
+        items: [
+          {
+            name: "Acumulado por hora",
+            href: "dashboard/real-time-by-hour",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/real-time-by-hour",
+          },
+          {
+            name: "Acumulado por día",
+            href: "/dashboard/real-time-by-day",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/real-time-by-day",
+          },
+          {
+            name: "Acumulado por mes",
+            href: "/dashboard/real-time-by-month",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/real-time-by-month",
+          },  
+          {
+            name: "Viajes por Turno",
+            href: "/dashboard/real-time-trip-count",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/real-time-trip-count",
+          },  
         ],
       },
     ],

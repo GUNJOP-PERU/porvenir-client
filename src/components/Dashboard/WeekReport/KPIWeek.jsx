@@ -34,9 +34,9 @@ export default function KPIWeek({
     const tonnageDesmonte = filteredDesmonte.reduce((acc, item) => {
       return acc + item.tonnage;
     }, 0);
-    const travelRemanejoPercentage = (travelRemanejo / travelsExtract) * 100;
-    const mineralPercentage = (travelsMineral / programmedMineral) * 100;
-    const desmontePercentage = (travelsDesmonte / programmedDesmonte) * 100;
+    const travelRemanejoPercentage = travelRemanejo > 0 ? (travelRemanejo / travelsExtract) * 100 : 0;
+    const mineralPercentage = programmedMineral > 0 ? (travelsMineral / programmedMineral) * 100 : 0;
+    const desmontePercentage = programmedDesmonte > 0 ? (travelsDesmonte / programmedDesmonte) * 100 : 0;
     return {
       totalTonnage,
       totalTravels,
@@ -56,7 +56,6 @@ export default function KPIWeek({
 
   const metrics = getMetrics(data, programmedMineral);
 
-  // 🔹 CardData igual que pediste
   const cardData = [
     {
       value: metrics.totalTravels,
@@ -86,14 +85,14 @@ export default function KPIWeek({
     {
       value: metrics.travelRemanejoPercentage,
       title: "% Viajes Remanejo",
-      valueColor: "text-[#1EE0EE]",
+      valueColor: "text-[#FE7887]",
       unid: "%",
       decimals: 2,
     },
     {
       value: metrics.travelsMineral,
       title: "Viajes Ext Mineral",
-      valueColor: "text-[#1EE0EE]",
+      valueColor: "text-[#14B8A6]",
       unid: "viajes",
       subtitle: metrics.tonnageMineral,
       subtitleUnid: "TM",
@@ -101,7 +100,7 @@ export default function KPIWeek({
     {
       value: metrics.mineralPercentage,
       title: "%Cumplimiento Programado de Mineral",
-      valueColor: "text-[#04C286]",
+      valueColor: "text-[#00a0ff]",
       unid: "%",
       decimals: 2,
       subtitle: programmedMineral,
@@ -110,7 +109,7 @@ export default function KPIWeek({
     {
       value: metrics.travelsDesmonte,
       title: "Viajes Ext Desmonte",
-      valueColor: "text-[#FE7887]",
+      valueColor: "text-[#F59E0B]",
       unid: "viajes",
       subtitle: metrics.tonnageDesmonte,
       subtitleUnid: "TM",
@@ -118,7 +117,7 @@ export default function KPIWeek({
     {
       value: metrics.desmontePercentage,
       title: "%Cumplimiento Programado de Desmonte",
-      valueColor: "text-[#FE7887]",
+      valueColor: "text-[#00a0ff]",
       unid: "%",
       decimals: 2,
       subtitle: programmedDesmonte,

@@ -5,19 +5,17 @@ import ImgTruck2 from "/truck-02.svg";
 import ImgTruck3 from "/truck-03.svg";
 import ImgTruck4 from "/truck-04.svg";
 import ImgLineSquare from "/lineSquare-2.svg";
+import { StatusDisplay } from "../StatusDisplay";
 
 const CardCycleWork = React.memo(({ data, isLoading, isError }) => {
 
-  if (isLoading)
+  if (isLoading || isError || !data || data.length === 0)
     return (
-      <div className="bg-zinc-200 rounded-2xl py-2 px-4 flex items-center justify-center w-full h-[280px] animate-pulse"></div>
-    );
-
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[280px]">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || data.length === 0}
+      />
     );
 
   return (

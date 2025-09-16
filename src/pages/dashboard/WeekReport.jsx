@@ -8,11 +8,23 @@ import DestinyWeek from "@/components/Dashboard/WeekReport/DestinyWeek";
 import AreaWeek from "@/components/Dashboard/WeekReport/AreaWeek";
 import RemanejoWeek from "@/components/Dashboard/WeekReport/RemanejoWeek";
 import SharedWeek from "@/components/Dashboard/WeekReport/SharedWeek";
-import MiningWeeksSelect from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
+import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 import PageHeader from "@/components/PageHeader";
 
 export default function WeekReport() {
-  const [selectedRange, setSelectedRange] = useState(null);
+  const { allWeeks, currentWeek } = generateNormalWeeks();
+  const [selectedWeek, setSelectedWeek] = useState(
+    currentWeek?.weekNumber?.toString() ?? ""
+  );
+  const [selectedRange, setSelectedRange] = useState(currentWeek ?? null);
+
+  const handleChange = (weekNumber) => {
+    setSelectedWeek(weekNumber);
+    const week = allWeeks.find((w) => w.weekNumber.toString() === weekNumber);
+    if (week) setSelectedRange(week);
+  };
+
+  console.log(selectedRange);
 
   const {
     data = [],
@@ -21,7 +33,7 @@ export default function WeekReport() {
     isError,
     refetch,
   } = useFetchGraphicData({
-    queryKey: ["week-report", selectedRange],
+    queryKey: ["report-week", selectedRange],
     endpoint: "cycle/by-date-range",
     filters: selectedRange
       ? `startDate=${selectedRange.startTimestamp}&endDate=${selectedRange.endTimestamp}`
@@ -59,7 +71,22 @@ export default function WeekReport() {
         description="Administre los planes y sus caractestisticas."
         refetch={refetch}
         isFetching={isFetching}
-        actions={<MiningWeeksSelect onChange={setSelectedRange} />}
+        actions={
+          <div className="">
+            <select
+              className="h-8 px-2 border rounded-lg w-full text-xs"
+              value={selectedWeek}
+              onChange={(e) => handleChange(e.target.value)}
+            >
+              <option value="">-- Elige semana --</option>
+              {allWeeks.map((w) => (
+                <option key={w.weekNumber} value={w.weekNumber.toString()}>
+                  {w.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        }
       />
 
       <KPIWeek
@@ -84,7 +111,7 @@ export default function WeekReport() {
             subtitle="Total de viajes por dia"
             icon={IconDash1}
           >
-            <TravelsWeek data={data} isLoading={isLoading} isError={isError} />
+            <TravelsWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
             title="Zona destino de viajes"
@@ -98,14 +125,14 @@ export default function WeekReport() {
             subtitle="Tiempo de espera en la cola"
             icon={IconDash1}
           >
-            <DestinyWeek data={data} isLoading={isLoading} isError={isError} />
+            <DestinyWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
             title="Remanejo Semanal - Viajes"
             subtitle="Remanejo Semanal - Viajes"
             icon={IconDash1}
           >
-            <RemanejoWeek data={data} isLoading={isLoading} isError={isError} />
+            <RemanejoWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
+import { StatusDisplay } from "../StatusDisplay";
 
 export default function CardActivitiesChart({ data, isLoading, isError }) {
-
 
   const options = useMemo(
     () => ({
@@ -183,16 +183,18 @@ export default function CardActivitiesChart({ data, isLoading, isError }) {
     [data]
   );
 
-  if (isLoading)
-    return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
-    );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[280px] w-full ">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
-    );
+  const noData =
+  !data ||
+  (!data.labors?.length && !data.sum_cola_origin?.length && !data.avg_cola_cycle?.length);
+
+if (isLoading || isError || noData)
+  return (
+    <StatusDisplay
+      isLoading={isLoading}
+      isError={isError}
+      noData={noData}
+    />
+  );
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }

@@ -36,7 +36,7 @@ export default function Body({
           />
         </CardTitle>
         <CardTitle
-          title="Tiempo promedio / Por Tajo"
+          title="Tiempo promedio / Por Labor"
           subtitle="Promedio de tajo por equipo."
           icon={IconDash1}
         >

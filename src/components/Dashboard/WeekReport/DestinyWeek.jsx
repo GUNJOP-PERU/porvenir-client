@@ -2,21 +2,30 @@ import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { filterData } from "@/lib/utilsGeneral";
+import { StatusDisplay } from "../StatusDisplay";
+import dayjs from "dayjs";
 
-export default function DestinyWeek({ data, isLoading, isError }) {
-
+export default function DestinyWeek({ data, selectedRange, isLoading, isError }) {
   const filteredData = useMemo(() => filterData(data), [data]);
 
   const { categories, series } = useMemo(() => {
-    const grouped = {};
+    if (!selectedRange) return { categories: [], series: [] };
 
+    // 🔹 Generar todas las fechas del rango
+    const start = dayjs(selectedRange.startDate);
+    const end = dayjs(selectedRange.endDate);
+
+    const allDates = [];
+    for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+      allDates.push(d.format("DD-MM"));
+    }
+
+    // 🔹 Agrupar datos por fecha y destino
+    const grouped = {};
     filteredData.forEach((item) => {
       if (!item.date || !item.destiny) return;
 
-      const dayMonth = `${new Date(item.date).getDate()}-${
-        new Date(item.date).getMonth() + 1
-      }`;
-
+      const dayMonth = dayjs(item.date).format("DD-MM");
       const destKey = item.destiny.trim().toLowerCase();
 
       if (!grouped[dayMonth]) grouped[dayMonth] = {};
@@ -24,27 +33,46 @@ export default function DestinyWeek({ data, isLoading, isError }) {
       grouped[dayMonth][destKey]++;
     });
 
-    const sortedDates = Object.keys(grouped).sort((a, b) => {
-      const [dayA, monthA] = a.split("-").map(Number);
-      const [dayB, monthB] = b.split("-").map(Number);
-      return monthA - monthB || dayA - dayB;
-    });
+    // 🔹 Destinos permitidos
+    const allowedDestinations = [
+      "dique 4",
+      "planta",
+      "pocket 3",
+      "parrilla 1",
+      "parrilla 2",
+      "cancha 100",
+      "faja 4",
+      "pahuaypite",
+      "labor a labor",
+    ];
 
     const allDestinations = Array.from(
       new Set(filteredData.map((item) => item.destiny.trim().toLowerCase()))
-    ).sort();
+    ).filter((dest) => allowedDestinations.includes(dest));
 
+    // 🔹 Construir series
     const series = allDestinations.map((destKey) => ({
       name: destKey.charAt(0).toUpperCase() + destKey.slice(1),
-      data: sortedDates.map((date) => grouped[date][destKey] || 0),
-      color: undefined,
+      data: allDates.map((date) => grouped[date]?.[destKey] || 0),
     }));
 
-    return { categories: sortedDates, series };
-  }, [filteredData]);
+    return { categories: allDates, series };
+  }, [filteredData, selectedRange]);
+
 
   const options = useMemo(
     () => ({
+      colors: [
+        "#6B46C1", // morado intenso
+        "#9F7AEA", // lila brillante
+        "#D6BCFA", // lila claro
+        "#F687B3", // rosa fuerte
+        "#FBB6CE", // rosa pastel
+        "#3B82F6", // azul vibrante
+        "#60A5FA", // azul medio
+        "#93C5FD", // azul claro
+        "#BFDBFE", // azul pastel luminoso
+      ],
       chart: { type: "column", backgroundColor: "transparent", height: 280 },
       title: { text: null },
       xAxis: {
@@ -133,17 +161,20 @@ export default function DestinyWeek({ data, isLoading, isError }) {
     [categories, series]
   );
 
-  if (isLoading)
-    return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse" />
-    );
+  const noData =
+  !categories.length || !series.length || series.every(s => s.data.every(d => d === 0));
 
-  if (isError)
+
+  if (isLoading || isError || noData) {
     return (
-      <div className="flex items-center justify-center h-[280px] w-full">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={noData}
+        height="280px"
+      />
     );
+  }
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 }
