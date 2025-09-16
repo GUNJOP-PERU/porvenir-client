@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useFetchData } from "../../hooks/useGlobalQuery";
+import { beaconsData } from "@/store/BeaconMac";
 import {
   useReactTable,
   getCoreRowModel,
@@ -112,12 +113,28 @@ const BeaconDetectionTable = () => {
     },
     {
       accessorKey: "mac",
-      header: "MAC Address",
-      cell: ({ getValue }) => (
-        <div className="font-mono text-sm text-gray-700">
-          {getValue()}
-        </div>
-      ),
+      header: "Ubicación Beacon",
+      cell: ({ getValue }) => {
+        const mac = beaconsData.find(b => b.mac.toLowerCase() === getValue().toLowerCase());
+        return (
+          <div className="font-mono text-sm text-gray-700">
+            {mac ? mac.location : getValue()}
+          </div>
+        )
+      },
+      size: 180,
+    },
+    {
+      accessorKey: "mac",
+      header: "Nombre del Beacon",
+      cell: ({ getValue }) => {
+        const mac = beaconsData.find(b => b.mac.toLowerCase() === getValue().toLowerCase());
+        return (
+          <div className="font-mono text-sm text-gray-700">
+            {mac ? mac.description : getValue()}
+          </div>
+        )
+      },
       size: 180,
     },
     {
