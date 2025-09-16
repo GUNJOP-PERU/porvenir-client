@@ -22,9 +22,9 @@ import { useEffect, useRef, useState } from "react";
 import IconWarning from "@/icons/IconWarning";
 import IconLoader from "@/icons/IconLoader";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { tableConfigs } from "@/components/Gestion/DataTableConfig";
+import { tableConfigs } from "@/components/Table/DataTableConfig";
 import { useIsMobile } from "@/hooks/use-mobile";
-import SkeletonWrapper from "@/components/SkeletonWrapper";
+import SkeletonWrapper from "@/components/Table/SkeletonWrapper";
 
 export function DataTable({
   columns,

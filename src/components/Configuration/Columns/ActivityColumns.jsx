@@ -1,5 +1,5 @@
-import { DataTableColumnHeader } from "@/components/Gestion/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/Gestion/DataTableRowActions";
+import { DataTableColumnHeader } from "@/components/Table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/Table/DataTableRowActions";
 import TimeAgo from "timeago-react";
 
 export const activityColumns = [

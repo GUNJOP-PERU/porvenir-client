@@ -42,11 +42,10 @@ export function useFetchInfinityScroll(queryKey, endpoint, limit = 12, filters =
   });
 }
 
-export function useFetchInfinityScrollTruck({ queryKey, endpoint, date, search, shift}) {
-  const filters = `vehicle=${search}&shift=${shift}&date=${date}`;
+export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
 
   return useInfiniteQuery({
-    queryKey: ["crud", queryKey, { date, search, shift }],
+    queryKey: ["crud", queryKey, { filters }],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await getDataRequest(
         `${endpoint}?page=${pageParam}&limit=12&${filters}`

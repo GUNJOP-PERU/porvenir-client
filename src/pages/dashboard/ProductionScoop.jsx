@@ -1,12 +1,12 @@
-import CardColumScoop from "@/components/Dashboard/CardColumScoop";
-import CardFlotaTime from "@/components/Dashboard/CardFloatTime/CardFlotaTime";
+import CardColumScoop from "@/components/Dashboard/ProductionScoop/CardColumScoop";
+import CardFlotaTime from "@/components/Dashboard/TimeDistribution/CardFlotaTime";
 import CardItem from "@/components/Dashboard/CardItem";
-import CardTable from "@/components/Dashboard/CardTable";
+import CardTable from "@/components/Dashboard/ProductionScoop/CardTable";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function ProductionScoop() {
+export default function ProductionScoop() {
   const { data } = useGraphicData(
     "scoop-progress-day",
     "dashboard/scoop/progress-day",
@@ -98,4 +98,4 @@ function ProductionScoop() {
   );
 }
 
-export default ProductionScoop;
+

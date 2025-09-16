@@ -3,7 +3,6 @@ import { memo } from "react";
 import NumberFlow from "@number-flow/react";
 import { cva } from "class-variance-authority";
 
-// Definir estilos con variantes
 const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {
   variants: {
     change: {
@@ -64,7 +63,7 @@ const tooltipArrowStyles = cva(
 );
 
 const CardItem = memo(
-  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 }) => {
+  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 ,subtitleUnid = "viajes"}) => {
     const getChangeVariant = (val) =>
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
@@ -75,8 +74,8 @@ const CardItem = memo(
         </span>
 
         <div className="flex items-center justify-between gap-1">
-          <h1 className={`${valueColor} font-extrabold text-2xl leading-5`}>
-            <NumberFlow value={value}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: decimals }} suffix={unid} className="!leading-4" />            
+          <h1 className={`${valueColor} font-extrabold text-2xl leading-none`}>
+            <NumberFlow value={value || 0}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: decimals }} suffix={unid} className="!leading-4" />            
           </h1>
          
         </div>
@@ -92,7 +91,7 @@ const CardItem = memo(
                   change: getChangeVariant(change),
                 })}
               >
-                <NumberFlow value={(100 - change)}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} className="!leading-[8px]"/>%
+                <NumberFlow  value={(100 - (change ?? 0))}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} className="!leading-[8px]"/>%
               </span>
             </div>
 
@@ -122,7 +121,7 @@ const CardItem = memo(
 
         {subtitle !== undefined && (
           <span className=" text-[10px] leading-[8px] font-semibold text-zinc-600">
-            De <NumberFlow value={subtitle}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> viajes
+            De <NumberFlow value={subtitle || 0}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> {subtitleUnid}
           </span>
         )}
       </div>

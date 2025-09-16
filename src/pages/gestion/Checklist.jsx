@@ -1,9 +1,8 @@
 import { columns } from "@/components/Gestion/Checklist/ChecklistTableColumns";
-import { DataTable } from "@/components/Gestion/DataTable";
-import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { useFetchInfinityScroll } from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
-import { RefreshCcw } from "lucide-react";
+import PageHeader from "../../components/PageHeader";
 
 function Checklist() {
   const {
@@ -18,33 +17,13 @@ function Checklist() {
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 justify-between">
-        <div>
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold leading-6">
-              Gestión de Checklist{" "}
-            </h1>
-            <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
-              {countItems(data)}
-            </span>{" "}
-          </div>
-          <p className="text-zinc-400 text-xs">
-            Administre los miembros de su equipo y los permisos de sus cuentas
-            aquí.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => refetch()}
-            variant="outline"
-            size="icon"
-            disabled={isFetching}
-          >
-            <RefreshCcw className="w-5 h-5 text-zinc-400" />
-          </Button>
-
-        </div>
-      </div>
+      <PageHeader
+        title="Gestión de Checklist"
+        description="Administre los checklists de su equipo aquí."
+        count={countItems(data)}
+        refetch={refetch}
+        isFetching={isFetching}
+      />
 
       <DataTable
         data={data}

@@ -1,11 +1,11 @@
-import CardColumUtilization from "@/components/Dashboard/CardColumUtilization";
+import CardColumUtilization from "@/components/Dashboard/Utilization/CardColumUtilization";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
-import CardVelocity from "@/components/Dashboard/CardVelocity";
+import CardVelocity from "@/components/Dashboard/Utilization/CardVelocity";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function Utilization() {
+export default function Utilization() {
   const { data = [] } = useGraphicData(
     "production-progress-velocity",
     "dashboard/production/progress-velocity"
@@ -58,39 +58,37 @@ function Utilization() {
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
-        <div className="xl:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-          <CardTitle
-            title="Produccion (Ton) / Utilizacion (%)"
-            subtitle="Relación entre tonelaje producido y porcentaje de uso."
-            icon={IconDash1}
-          />
+        <CardTitle
+          title="Produccion (Ton) / Utilizacion (%)"
+          subtitle="Relación entre tonelaje producido y porcentaje de uso."
+          icon={IconDash1}
+          className="xl:col-span-2"
+        >
           <CardColumUtilization />
-        </div>
-        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title="Análisis de velocidad rutas a Parrillas"
-            subtitle="Evaluación de la velocidad en rutas hacia Parrillas."
-            icon={IconDash1}
-          />
+        </CardTitle>
+        <CardTitle
+          title="Análisis de velocidad rutas a Parrillas"
+          subtitle="Evaluación de la velocidad en rutas hacia Parrillas."
+          icon={IconDash1}
+        >
           <CardVelocity
             symbol="production-velocity-analysis-parrila"
             endpoint="dashboard/production/velocity-analysis/parrilla"
           />
-        </div>
-        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title="Análisis de velocidad rutas a Canchas"
-            subtitle="Evaluación de la velocidad en rutas hacia Canchas."
-            icon={IconDash1}
-          />
+        </CardTitle>
+        <CardTitle
+          title="Análisis de velocidad rutas a Canchas"
+          subtitle="Evaluación de la velocidad en rutas hacia Canchas."
+          icon={IconDash1}
+        >
           <CardVelocity
             symbol="production-velocity-analysis-cancha"
             endpoint="dashboard/production/velocity-analysis/cancha"
           />
-        </div>
+        </CardTitle>
       </div>
     </>
   );
 }
 
-export default Utilization;
+

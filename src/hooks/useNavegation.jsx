@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import IconCompany from "@/icons/Dashboard/IconCompany";
-import IconUsers from "@/icons/Dashboard/IconUsers";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
 import IconLabor from "@/icons/Dashboard/IconLabor";
 import IconPlan from "@/icons/Dashboard/IconPlan";
@@ -10,12 +9,11 @@ import IconChecklist from "@/icons/Dashboard/IconChecklist";
 import IconCycle from "@/icons/Dashboard/IconCycle";
 import IconActivity from "@/icons/Dashboard/IconActivity";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
-import IconDash2 from "@/icons/Dashboard/IconDash2";
 import IconDash3 from "@/icons/Dashboard/IconDash3";
-import IconDash4 from "@/icons/Dashboard/IconDash4";
 import IconDash5 from "@/icons/Dashboard/IconDash5";
 import IconDash6 from "@/icons/Dashboard/IconDash6";
 import IconTimeline from "@/icons/Dashboard/IconTimeline";
+import { ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, FileChartPie } from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -27,113 +25,131 @@ export const useNavigation = () => {
         title: "Gestión",
         items: [
           {
-            name: "Compañia",
-            href: "/company",
-            icon: <IconCompany className="w-4 h-4 " />,
-            active: pathname === "/company",
+            name: "General",
+            icon: <IconCompany />,
+            items: [
+              {
+                name: "Compañia",
+                href: "/company",
+                active: pathname === "/company",
+              },
+              {
+                name: "Usuarios",
+                href: "/users",
+                active: pathname === "/users",
+              },
+              {
+                name: "Vehiculos",
+                href: "/vehicle",
+                active: pathname === "/vehicle",
+              },
+            ],
           },
           {
-            name: "Usuarios",
-            href: "/users",
-            icon: <IconUsers className="w-4 h-4 " />,
-            active: pathname === "/users",
+            name: "Ubicaciones",
+            icon: <IconLabor />,
+            items: [
+              {
+                name: "Origen / Labor",
+                href: "/labor",
+                active: pathname === "/labor",
+              },
+              {
+                name: "Destinos",
+                href: "/destiny",
+                active: pathname === "/destiny",
+              },
+              {
+                name: "Bocaminas",
+                href: "/ubications",
+                active: pathname === "/ubications",
+              },
+            ],
           },
           {
-            name: "Vehiculos",
-            href: "/vehicle",
-            icon: <IconVehicle className="w-4 h-4 " />,
-            active: pathname === "/vehicle",
+            name: "Planes",
+            icon: <IconPlan />,
+            items: [
+              {
+                name: "Plan Diario",
+                href: "/planDay",
+                active: pathname === "/planDay",
+              },
+              {
+                name: "Plan Semanal",
+                href: "/planWeek",
+                active: pathname === "/planWeek",
+              },
+              {
+                name: "Plan Mensual",
+                href: "/planMonth",
+                active: pathname === "/planMonth",
+              },
+            ],
           },
+          // {
+          //   name: "Scoop",
+          //   icon: <IconActivity />,
+          //   items: [
+          //     { name: "Ciclo Scoop", href: "/cycleScoop", active: pathname === "/cycleScoop" },
+          //     { name: "Actividades Scoop", href: "/activityScoop", active: pathname === "/activityScoop" },
+          //   ],
+          // },
           {
-            name: "Destino",
-            href: "/destiny",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/destiny",
+            name: "Conectividad",
+            icon: <IconCycle />,
+            items: [
+              {
+                name: "Beacon",
+                href: "/beacon",
+                icon: <IconActivity />,
+                active: pathname === "/beacon",
+              },
+              {
+                name: "WAP",
+                href: "/wap",
+                icon: <IconActivity />,
+                active: pathname === "/wap",
+              },
+            ],
           },
-          {
-            name: "Frente de Labor",
-            href: "/labor",
-            icon: <IconLabor className="w-4 h-4 " />,
-            active: pathname === "/labor",
-          },
-          {
-            name: "Plan Diario",
-            href: "/planDay",
-            icon: <IconPlan className="w-4 h-4 " />,
-            active: pathname === "/planDay",
-          },
-          {
-            name: "Plan Semanal",
-            href: "/planWeek",
-            icon: <IconPlan className="w-4 h-4 " />,
-            active: pathname === "/planWeek",
-          },
-
-          {
-            name: "Plan Mensual",
-            href: "/planMonth",
-            icon: <IconPlan className="w-4 h-4 " />,
-            active: pathname === "/planMonth",
-          },
+        ],
+      },
+      {
+        title: "Monitoreo",
+        items: [
           {
             name: "Trabajos planificados",
             href: "/workOrder",
-            icon: <IconWork className="w-4 h-4 " />,
+            icon: <IconWork />,
             active: pathname === "/workOrder",
           },
           {
             name: "Checklist",
             href: "/checklist",
-            icon: <IconChecklist className="w-4 h-4 " />,
+            icon: <IconChecklist />,
             active: pathname === "/checklist",
           },
           {
-            name: "Ciclo Truck",
-            href: "/cycleTruck",
-            icon: <IconCycle className="w-4 h-4 " />,
-            active: pathname === "/cycleTruck",
-          },
-          // {
-          //   name: "Ciclo Scoop",
-          //   href: "/cycleScoop",
-          //   icon: <IconCycle className="w-4 h-4 " />,
-          //   active: pathname === "/cycleScoop",
-          // },
-          {
-            name: "Actividades Truck",
-            href: "/activityTruck",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/activityTruck",
-          },
-          // {
-          //   name: "Actividades Scoop",
-          //   href: "/activityScoop",
-          //   icon: <IconActivity className="w-4 h-4 " />,
-          //   active: pathname === "/activityScoop",
-          // },
-          {
-            name: "Incidencias Truck | Scoop",
-            href: "/incidence",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/incidence",
-          },
-          {
-            name: "Ubicaciones",
-            href: "/ubications",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/ubications",
-          },
-          {
-            name: "Beacon",
-            href: "/beacon",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/beacon",
-          },
-          {
-            name: "WAP",
-            href: "/wap",
-            icon: <IconActivity className="w-4 h-4 " />,
-            active: pathname === "/wap",
+            name: "Truck",
+            icon: <IconVehicle />,
+            items: [
+              {
+                name: "Ciclos Truck",
+                href: "/cycleTruck",
+                active: pathname === "/cycleTruck",
+              },
+              {
+                name: "Actividades Truck",
+                href: "/activityTruck",
+                active: pathname === "/activityTruck",
+              },
+              {
+                name: "Incidencias Truck",
+                href: "/incidence",
+                active: pathname === "/incidence",
+              },
+            ],
           },
         ],
       },
@@ -141,77 +157,88 @@ export const useNavigation = () => {
         title: "Análisis",
         items: [
           {
-            name: "Producción Truck",
+            name: "Reporte de extracción",
             href: "/",
-            icon: <IconDash1 className="w-4 h-4 " />,
-            active: pathname === "/",
-          },
-          // {
-          //   name: "Producción Scoop",
-          //   href: "/dashboard/productionScoop",
-          //   icon: <IconDash2 className="w-4 h-4 fill-zinc-300" />,
-          //   active: pathname === "/dashboard/productionScoop",
-          // },
-          // {
-          //   name: "Timeline Scoop",
-          //   href: "/dashboard/timelineScoop",
-          //   icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
-          //   active: pathname === "/dashboard/timelineScoop",
-          // },
-          {
-            name: "Timeline Truck",
-            href: "/dashboard/timelineTruck",
-            icon: <IconTimeline className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/timelineTruck",
+            icon: <ChartColumnStacked />,
+            active: pathname === "/" || pathname.startsWith("/historical")
           },
           {
-            name: "Pareto Truck",
-            href: "/dashboard/paretoTruck",
-            icon: <IconDash3 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/paretoTruck",
+            name: "Distribución de tiempo",
+            href: "/dashboard/timeDistribution/realtime",
+            icon: <ChartBarStacked />,
+            active: pathname === "/dashboard/timeDistribution/realtime" || pathname === "/dashboard/timeDistribution/historical",
+          },
+          {
+            name: "Reporte Semanal",
+            href: "/dashboard/weekReport",
+            icon: <FileChartPie />,
+            active: pathname === "/dashboard/weekReport",
+          },
+          {
+            name: "Reporte de Improductivos",
+            href: "/dashboard/unproductiveReport",
+            icon: <ChartNoAxesCombined />,
+            active: pathname === "/dashboard/unproductiveReport",
           },
           // {
-          //   name: "Pareto Scoop",
-          //   href: "/dashboard/paretoScoop",
-          //   icon: <IconDash4 className="w-4 h-4 fill-zinc-300" />,
-          //   active: pathname === "/dashboard/paretoScoop",
+          //   name: "Producción Truck",
+          //   href: "/",
+          //   icon: <IconDash1 />,
+          //   active: pathname === "/",
+          // },
+          // {
+          //   name: "Timeline Truck",
+          //   href: "/dashboard/timelineTruck",
+          //   icon: <IconTimeline />,
+          //   active: pathname === "/dashboard/timelineTruck",
+          // },
+          // {
+          //   name: "Pareto Truck",
+          //   href: "/dashboard/paretoTruck",
+          //   icon: <IconDash3 />,
+          //   active: pathname === "/dashboard/paretoTruck",
           // },
           {
             name: "Producción Mensual",
             href: "/dashboard/productionMonth",
-            icon: <IconDash5 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash5 />,
             active: pathname === "/dashboard/productionMonth",
           },
           {
             name: "Utilización y Velocidad",
             href: "/dashboard/productionUV",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash6 />,
             active: pathname === "/dashboard/productionUV",
           },
+        ],
+      },
+      {
+        title: "Beacon",
+        items: [
           {
-            name: "Viajes Por Turno",
-            href: "/dashboard/real-time-trip-count",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
-            active: pathname === "/dashboard/real-time-trip-count",
-          },
-          {
-            name: "Acumulado por Hora",
-            href: "/dashboard/real-time-by-hour",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            name: "Acumulado por hora",
+            href: "dashboard/real-time-by-hour",
+            icon: <IconDash6 />,
             active: pathname === "/dashboard/real-time-by-hour",
           },
           {
-            name: "Acumulado por Dia",
+            name: "Acumulado por día",
             href: "/dashboard/real-time-by-day",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash6 />,
             active: pathname === "/dashboard/real-time-by-day",
           },
           {
-            name: "Acumulado por Mes",
+            name: "Acumulado por mes",
             href: "/dashboard/real-time-by-month",
-            icon: <IconDash6 className="w-4 h-4 fill-zinc-300" />,
+            icon: <IconDash6 />,
             active: pathname === "/dashboard/real-time-by-month",
-          }
+          },  
+          {
+            name: "Viajes por Turno",
+            href: "/dashboard/real-time-trip-count",
+            icon: <IconDash6 />,
+            active: pathname === "/dashboard/real-time-trip-count",
+          },  
         ],
       },
     ],

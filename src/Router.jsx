@@ -1,48 +1,50 @@
 import {
   createBrowserRouter,
-  RouterProvider,
   Navigate,
+  RouterProvider,
 } from "react-router-dom";
-import { useAuthStore } from "./store/AuthStore";
 import { ProtectedRoute } from "./hooks/useProtectedRoute";
+import { useAuthStore } from "./store/AuthStore";
 
-import Layout from "./pages/Layout";
 import PageError from "./pages/404";
+import Layout from "./pages/Layout";
 import Login from "./pages/login/Login";
 
-import HomeUsers from "./pages/gestion/Users";
-import HomeVehicles from "./pages/gestion/Vehicles";
-import HomeLabor from "./pages/gestion/Labor";
+import HomeLabor from "./pages/management/Labor";
+import HomeUsers from "./pages/management/Users";
+import HomeVehicles from "./pages/management/Vehicles";
 
+import Configuration from "./pages/Configuration";
+import ParetoTruck from "./pages/dashboard/ParetoTruck";
+import HistoricalExtract from "./pages/dashboard/ProduccionDashboard/HistoricalExtract";
+import ProductionLayout from "./pages/dashboard/ProduccionDashboard/ProductionLayout";
+import RealTimeExtract from "./pages/dashboard/ProduccionDashboard/RealTimeExtract";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
-import ProductionScoop from "./pages/dashboard/ProductionScoop";
-import TimelineScoop from "./pages/dashboard/TimelineScoop";
-import TimelineTruck from "./pages/dashboard/TimelineTruck";
-import ParetoTruck from "./pages/dashboard/ParetoTruck";
-import ParetoScoop from "./pages/dashboard/ParetoScoop";
-import Utilization from "./pages/dashboard/Utilization";
-import Checklist from "./pages/gestion/Checklist";
-import PlanMonth from "./pages/gestion/PlanMonth";
-import PlanDay from "./pages/gestion/PlanDay";
-import { NewPlanMonth } from "./pages/gestion/NewPlanMonth";
-import PageCompany from "./pages/gestion/Company";
-import PageCycleScoop from "./pages/gestion/CycleScoop";
-import PageCycleTruck from "./pages/gestion/CycleTruck";
-import PageActivityScoop from "./pages/gestion/ActivityScoop";
-import PageActivity from "./pages/gestion/ActivityTruck";
-import Configuration from "./pages/Configuration";
-import WorkerOrders from "./pages/gestion/WorkerOrders";
-import PageDestiny from "./pages/gestion/Destiny";
-import Incidence from "./pages/gestion/Incidences";
-import PlanWeek from "./pages/gestion/PlanWeek";
-import PageUbications from "./pages/gestion/Ubication";
-import PageBeacon from "./pages/gestion/Beacon";
-import PageWap from "./pages/gestion/Wap";
-import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
 import RealTimeByDay from "./pages/dashboard/RealTimeByDay";
+import RealTimeByHour from "./pages/dashboard/RealTimeByHour";
 import RealTimeByMonth from "./pages/dashboard/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/dashboard/RealTimeTripsCount";
+import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
+import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
+import TimelineTruck from "./pages/dashboard/TimelineTruck";
+import UnproductiveReport from "./pages/dashboard/UnproductiveReport";
+import Utilization from "./pages/dashboard/Utilization";
+import PageBeacon from "./pages/management/Beacon";
+import PageCompany from "./pages/management/Company";
+import PageDestiny from "./pages/management/Destiny";
+import { NewPlanMonth } from "./pages/management/NewPlanMonth";
+import PlanDay from "./pages/management/PlanDay";
+import PlanMonth from "./pages/management/PlanMonth";
+import PlanWeek from "./pages/management/PlanWeek";
+import PageUbications from "./pages/management/Ubication";
+import PageWap from "./pages/management/Wap";
+import PageActivity from "./pages/monitoring/ActivityTruck";
+import Checklist from "./pages/monitoring/Checklist";
+import PageCycleTruck from "./pages/monitoring/CycleTruck";
+import Incidence from "./pages/monitoring/Incidences";
+import WorkerOrders from "./pages/monitoring/WorkerOrders";
+import WeekReport from "./pages/dashboard/WeekReport";
 
 const protectedRoutes = [
   //Gestion
@@ -57,23 +59,52 @@ const protectedRoutes = [
   { path: "newPlanMonth", element: <NewPlanMonth /> },
   { path: "company", element: <PageCompany /> },
   { path: "cycleTruck", element: <PageCycleTruck /> },
-  { path: "cycleScoop", element: <PageCycleScoop /> },
   { path: "activityTruck", element: <PageActivity /> },
-  { path: "activityScoop", element: <PageActivityScoop /> },
   { path: "destiny", element: <PageDestiny /> },
   { path: "incidence", element: <Incidence /> },
   { path: "ubications", element: <PageUbications /> },
   { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
+  { path: "unproductiveReport", element: <UnproductiveReport /> },
 
   //Dashboard
-  { path: "dashboard/productionScoop", element: <ProductionScoop /> },
-  { path: "dashboard/timelineScoop", element: <TimelineScoop /> },
-  { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
-  { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
-  { path: "dashboard/paretoScoop", element: <ParetoScoop /> },
+  // { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
+  // { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
+  {
+    path: "/",
+    element: <ProductionLayout />,
+    handle: {
+      tabs: [
+        { to: "", label: "Tiempo Real" },
+        { to: "historical", label: "Histórico" },
+      ],
+    },
+    children: [
+      { index: true, element: <RealTimeExtract /> },
+      { path: "historical", element: <HistoricalExtract /> },
+    ],
+  },
+  {
+    path: "dashboard/timeDistribution",
+    element: <ProductionLayout />,
+    handle: {
+      tabs: [
+        { to: "realtime", label: "Tiempo Real" },
+        { to: "historical", label: "Histórico" },
+      ],
+    },
+    children: [
+      { index: true, element: <Navigate to="realtime" replace /> },
+      { path: "realtime", element: <TimeDistribution /> },
+      { path: "historical", element: <TimeDistributionHistorical /> },
+    ],
+  },
+  { path: "dashboard/weekReport", element: <WeekReport /> },
+  { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
   { path: "dashboard/productionUV", element: <Utilization /> },
+
+  //Dashboard-Beacon
   { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
@@ -93,7 +124,7 @@ export default function Router() {
 
   protectedChildren.push({
     index: true,
-    element: <ProductionTruck />,
+    element: <Navigate to="/" replace />, 
   });
 
   const router = createBrowserRouter([
@@ -106,7 +137,13 @@ export default function Router() {
       children: [
         {
           element: <Layout />,
-          children: protectedChildren,
+          children: [
+            ...protectedRoutes,
+            {
+              index: true,
+              element: <Navigate to="/" replace />,
+            },
+          ],
         },
       ],
     },

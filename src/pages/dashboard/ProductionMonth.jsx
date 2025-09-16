@@ -1,11 +1,11 @@
-import CardColum from "@/components/Dashboard/CardColum";
+import CardColum from "@/components/Dashboard/ProductionMonth/CardColum";
 import CardItem from "@/components/Dashboard/CardItem";
-import CardRange from "@/components/Dashboard/CardRange";
+import CardRange from "@/components/Dashboard/ProductionMonth/CardRange";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function ProductionMonth() {
+export default function ProductionMonth() {
   const { data = [] } = useGraphicData(
     "monthly-progress",
     "dashboard/monthly/accumulated-progress"
@@ -13,7 +13,6 @@ function ProductionMonth() {
   return (
     <>
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[150px_repeat(auto-fit,minmax(140px,1fr))]">
-       
         <CardItem
           value={data?.monthly_goal?.value || 0}
           title="Meta del mes"
@@ -63,39 +62,37 @@ function ProductionMonth() {
         />
       </div>
       <div className="flex-1 grid grid-cols-1 gap-2 xl:grid-cols-2">
-        <div className="xl:col-span-2  border border-[#F0F0F0] shadow-sm rounded-2xl flex flex-col justify-center gap-1 px-4 p-3">
-          <CardTitle
-            title=" Tonelaje / Planificado vs Ejecutado"
-            subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
-            icon={IconDash1}
-          />
+        <CardTitle
+          title=" Tonelaje / Planificado vs Ejecutado"
+          subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
+          icon={IconDash1}
+          className="xl:col-span-2"
+        >
           <CardColum />
-        </div>
-        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title=" Rango de horario de trabajo Camiones"
-            subtitle="Horario de operación del Camión."
-            icon={IconDash1}
-          />
+        </CardTitle>
+        <CardTitle
+          title=" Rango de horario de trabajo Camiones"
+          subtitle="Horario de operación del Camión."
+          icon={IconDash1}
+        >
           <CardRange
             symbol="monthly-average-journals-truck"
             endpoint="dashboard/monthly/average-journals?equipment=truck"
           />
-        </div>
-        <div className="flex flex-col justify-center gap-2   border border-[#F0F0F0] shadow-sm p-4 rounded-2xl">
-          <CardTitle
-            title=" Rango de horario de trabajo Scooptram"
-            subtitle="Horario de operación del Scooptram."
-            icon={IconDash1}
-          />
+        </CardTitle>
+        <CardTitle
+          title=" Rango de horario de trabajo Scooptram"
+          subtitle="Horario de operación del Scooptram."
+          icon={IconDash1}
+        >
           <CardRange
             symbol="monthly-average-journals-scoop"
             endpoint="dashboard/monthly/average-journals?equipment=scoop"
           />
-        </div>
+        </CardTitle>
       </div>
     </>
   );
 }
 
-export default ProductionMonth;
+

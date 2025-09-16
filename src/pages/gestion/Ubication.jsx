@@ -1,9 +1,8 @@
-import { RefreshCcw } from "lucide-react";
-import { DataTable } from "@/components/Gestion/DataTable";
+import { DataTable } from "@/components/Gestion/Table/DataTable";
 import { columns } from "@/components/Gestion/Ubication/UbicationColumns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { Button } from "../../components/ui/button";
+import PageHeader from "../../components/PageHeader";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItemsByType } from "../../lib/utilsGeneral";
 
@@ -29,34 +28,13 @@ function PageUbications() {
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg lg:text-xl font-bold leading-6">
-              Gestión de Ubicaciones{" "}
-            </h1>
-            <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-5 h-5 flex items-center justify-center font-bold ">
-            {countItemsByType(data, selectedTab)}
-            </span>{" "}
-          </div>
-          <p className="text-zinc-400 text-xs">
-            Administre las ubicaciones de su equipo aquí.
-          </p>
-        </div>
-
-        <div className="flex gap-2">
-          <Button
-            onClick={() => refetch()}
-            variant="outline"         
-            disabled={isFetching}
-          >
-            <RefreshCcw className="w-5 h-5 text-zinc-400" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Refrescar
-            </span>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Gestión de Ubicaciones"
+        description="Administre las ubicaciones de su equipo aquí."
+        count={countItemsByType(data, selectedTab)}
+        refetch={refetch}
+        isFetching={isFetching}        
+      />
       {selectedTab && (
       <Tabs
         value={selectedTab}

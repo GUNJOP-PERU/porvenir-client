@@ -1,12 +1,12 @@
-import CardActivitiesChart from "@/components/Dashboard/CardActivitiesChart";
-import CardColumImpact from "@/components/Dashboard/CardColumImpact";
-import CardColumParetoScoop from "@/components/Dashboard/CardColumParetoScoop";
+import CardActivitiesChart from "@/components/Dashboard/TimeDistribution/CardActivitiesChart";
+import CardColumImpact from "@/components/Dashboard/ParetoTruck/CardColumImpact";
+import CardColumParetoScoop from "@/components/Dashboard/ParetoScoop/CardColumParetoScoop";
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 
-function ParetoScoop() {
+export default function ParetoScoop() {
   const { data } = useGraphicData(
     "pareto-scoop-progress-monthly",
     "dashboard/pareto/progress-monthly?equipment=scoop",
@@ -83,4 +83,4 @@ function ParetoScoop() {
   );
 }
 
-export default ParetoScoop;
+

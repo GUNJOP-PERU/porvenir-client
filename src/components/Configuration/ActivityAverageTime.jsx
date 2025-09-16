@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { activityColumns } from "./Columns/ActivityColumns";
 import { DataTable } from "./Table/TurnDataTable";
 import { Button } from "@/components/ui/button";
-import {
-  useFetchData,
-} from "@/hooks/useGlobalQuery";
+import {useFetchData} from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
 import { MineralChargeModal } from "./Modal/MineralChargeModal";

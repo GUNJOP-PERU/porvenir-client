@@ -35,15 +35,6 @@ export function NavUser() {
               <IconCheck className="w-[8px] h-[8px] stroke-white" />
             </div>
           </Avatar>
-          {/* <div className="hidden md:flex flex-col gap-0.5 mr-2 ">
-            <span className="text-zinc-50 text-xs font-bold leading-3 truncate">
-              {profile.name || ""}
-            </span>
-            <span className="text-[9.5px] font-semibold text-custom-1700 truncate capitalize text-zinc-400 leading-3">
-              @{profile?.rol || ""}
-            </span>
-          </div> */}
-         
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -72,15 +63,7 @@ export function NavUser() {
           </div>
         </DropdownMenuLabel>
         <div className="mt-2 px-1 py-0.5 rounded-md">
-          {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
-               
-                Producción
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator /> */}
-
-          <DropdownMenuItem
+                 <DropdownMenuItem
             onClick={handleLogout}
             className="text-red-500 focus:text-red-500 focus:bg-red-50"
           >

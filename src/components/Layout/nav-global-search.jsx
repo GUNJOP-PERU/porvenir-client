@@ -11,8 +11,8 @@ import {
 } from "../ui/command";
 
 import { Button } from "../ui/button";
-import { ModalUser } from "../Gestion/Users/ModalUser";
-import { ModalCompany } from "../Gestion/Company/CompanyModal";
+import { ModalUser } from "../Management/Users/ModalUser";
+import { ModalCompany } from "../Management/Company/CompanyModal";
 import { Search } from "lucide-react";
 import IconMore from "@/icons/IconMore";
 
