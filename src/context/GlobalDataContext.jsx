@@ -3,10 +3,14 @@ import { useAuthStore } from "@/store/AuthStore";
 // Api
 import { getDataRequest } from "@/api/api";
 import { useState, useCallback, useRef } from "react";
+import { useChecklistAlert, useJournalChanged } from "@/hooks/useSocketValue";
 
 const GlobalDataContext = createContext();
 
 export const GlobalDataProvider = ({ children }) => {
+  useJournalChanged();
+  useChecklistAlert();
+  
   const isAuth = useAuthStore((state) => state.isAuth);
   const [data, setData] = useState({
     globalMineral: [
