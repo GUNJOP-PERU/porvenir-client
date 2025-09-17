@@ -112,7 +112,7 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
         backgroundColor: "transparent",
         height: 830,
         marginTop: 20,
-        marginBottom: 30,
+        marginBottom: 50,
       },
       title: {
         text: null,

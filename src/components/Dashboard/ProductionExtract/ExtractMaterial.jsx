@@ -207,8 +207,8 @@ export default function ExtractMaterial({
         floating: false,
         itemStyle: {
           color: "#A6A6A6",
-          fontSize: "9px",
-          fontWeight: "bold",
+          fontSize: "0.55em",
+          fontWeight: "600",
           textTransform: "uppercase",
         },
         itemHoverStyle: { color: "black" },
@@ -314,7 +314,7 @@ const ProgressChart = ({ percentage }) => {
           d="M26 6 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"
         />
       </svg>
-      <div className="percentage-text">{percentage}%</div>
+      {/* <div className="percentage-text">{percentage}%</div> */}
     </div>
   );
 };

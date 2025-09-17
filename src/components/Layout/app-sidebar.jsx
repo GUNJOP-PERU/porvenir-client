@@ -13,7 +13,7 @@ export function AppSidebar() {
       <div className="hidden md:flex items-center gap-1 ">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="border border-zinc-700 p-1.5 rounded-md hover:bg-[#1D1D1D] text-zinc-400 hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-[#1D1D1D] text-zinc-400 hover:text-white transition-colors"
           aria-label={isCollapsed ? "Expandir menú" : "Contraer menú"}
         >
           {isCollapsed ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}

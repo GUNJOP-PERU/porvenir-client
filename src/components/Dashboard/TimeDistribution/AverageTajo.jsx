@@ -18,7 +18,7 @@ export default function AverageTajo({ data, isLoading, isError }) {
     );
   }
   return (
-    <div className="grid grid-cols-4 gap-1 py-2 h-[250px] overflow-y-auto items-start auto-rows-min">
+    <div className="grid grid-cols-3 xl:grid-cols-4 gap-1 py-2 h-[250px] overflow-y-auto items-start auto-rows-min">
       {parsedData.map((item) => (
         <div
           key={item.equipment}

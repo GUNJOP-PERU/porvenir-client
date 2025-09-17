@@ -229,8 +229,8 @@ number-flow-react::part(suffix) {
 /*----------------Circular----------------*/
 .circular-container {
   position: relative;
-  width: 45px; /* Ajusta el tamaño del contenedor */
-  height: 45px;
+  width: 40px; /* Ajusta el tamaño del contenedor */
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,14 +244,14 @@ number-flow-react::part(suffix) {
 
 .circle-bg {
   fill: none;
-  stroke: #d6d6df; /* Color del anillo de fondo */
-  stroke-width: 8;
+  stroke: #e4e4e4; /* Color del anillo de fondo */
+  stroke-width: 12;
 }
 
 .circle {
   fill: none;
   stroke: #04C286; /* Color del progreso */
-  stroke-width: 8;
+  stroke-width: 12;
   stroke-linecap: round; /* Bordes redondeados */
   transform: rotate(-90deg); /* Ajusta la posición inicial */
   transform-origin: 50% 50%; /* Punto de rotación en el centro */

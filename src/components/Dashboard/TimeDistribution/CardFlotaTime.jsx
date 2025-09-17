@@ -19,35 +19,31 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
   const [showModal, setShowModal] = useState(false);
   const chartRef = useRef(null);
 
-  useSocketTopicValue(symbol, [
-        "shift-variable",
-        symbol,
-      ]);
-      
+  useSocketTopicValue(symbol, ["shift-variable", symbol]);
+
   const {
     data = [],
     isLoading,
     isError,
   } = useGraphicData(symbol, endpoint, "shift-variable");
-  
 
   const fleetData = useMemo(() => {
     const regex = /(\d+)$/;
-  
+
     return [...data]
       .sort((a, b) => {
         const nameA = a.name.replace(/\s*-\s*/g, "-").trim();
         const nameB = b.name.replace(/\s*-\s*/g, "-").trim();
-  
+
         const matchA = nameA.match(regex);
         const matchB = nameB.match(regex);
-  
+
         const numA = matchA ? parseInt(matchA[1], 10) : 0;
         const numB = matchB ? parseInt(matchB[1], 10) : 0;
-  
+
         const prefixA = nameA.replace(regex, "");
         const prefixB = nameB.replace(regex, "");
-  
+
         return prefixA.localeCompare(prefixB) || numA - numB || a.id - b.id;
       })
       .map((item, index) => ({
@@ -55,7 +51,7 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
         x: index % 10,
         y: Math.floor(index / 10),
       }));
-  }, [data]);  
+  }, [data]);
 
   const fleetCounts = useMemo(() => {
     return fleetData.reduce(
@@ -110,9 +106,9 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
       // },
       colorAxis: {
         dataClasses: [
-          { from: 1, to: 1, color: "#81c784", name: "Operativo" }, 
-          { from: 2, to: 2, color: "#fff176", name: "Mantenimiento" }, 
-          { from: 3, to: 3, color: "#ff9999", name: "Inoperativo" }, 
+          { from: 1, to: 1, color: "#81c784", name: "Operativo" },
+          { from: 2, to: 2, color: "#fff176", name: "Mantenimiento" },
+          { from: 3, to: 3, color: "#ff9999", name: "Inoperativo" },
         ],
       },
       series: [
@@ -227,8 +223,8 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
   }
   return (
     <>
-      <div className="w-full flex justify-between ">
-        <div className="w-full flex flex-col gap-1">
+      <div className="w-full flex flex-wrap gap-2 justify-between ">
+        <div className="w-fit flex flex-col gap-1">
           <div className="flex items-end gap-2">
             <LandPlot className="text-green-500 w-4 h-4" />
             <h4 className="text-xs font-bold leading-3">Estado de Flota</h4>
@@ -238,43 +234,45 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
           </p>
         </div>
 
-        <div className="flex gap-4 items-center">
-          <div className="flex gap-2 items-center">
-            <div className="w-1 rounded-[5px] h-7 bg-[#81c784]"></div>
-            <div className="flex flex-col ">
-              <h4 className="text-xs leading-3 font-semibold">
-                {fleetCounts[1]}
-                <small>veh</small>
-              </h4>
-              <span className="text-[9px] text-[#A6A6A6] leading-3">
-                Operativo
-              </span>
+        <div className="w-full xl:w-fit flex gap-4 items-center justify-between">
+          <div className="flex gap-4 items-center">
+            <div className="flex gap-2 items-center">
+              <div className="w-1 rounded-[5px] h-7 bg-[#81c784]"></div>
+              <div className="flex flex-col ">
+                <h4 className="text-xs leading-3 font-semibold">
+                  {fleetCounts[1]}
+                  <small>veh</small>
+                </h4>
+                <span className="text-[9px] text-[#A6A6A6] leading-3">
+                  Operativo
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="w-1 rounded-[5px] h-7 bg-[#fff176]"></div>
+              <div className="flex flex-col ">
+                <h4 className="text-xs leading-3 font-semibold">
+                  {fleetCounts[2]}
+                  <small>veh</small>
+                </h4>
+                <span className="text-[9px] text-[#A6A6A6] leading-3">
+                  Mantenimiento
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="w-1 rounded-[5px] h-7 bg-[#ff9999]"></div>
+              <div className="flex flex-col ">
+                <h4 className="text-xs leading-3 font-semibold">
+                  {fleetCounts[3]}
+                  <small>veh</small>
+                </h4>
+                <span className="text-[9px] text-[#A6A6A6] leading-3">
+                  Inoperativo
+                </span>
+              </div>
             </div>
           </div>
-          <div className="flex gap-2 items-center">
-            <div className="w-1 rounded-[5px] h-7 bg-[#fff176]"></div>
-            <div className="flex flex-col ">
-              <h4 className="text-xs leading-3 font-semibold">
-                {fleetCounts[2]}
-                <small>veh</small>
-              </h4>
-              <span className="text-[9px] text-[#A6A6A6] leading-3">
-                Mantenimiento
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
-            <div className="w-1 rounded-[5px] h-7 bg-[#ff9999]"></div>
-            <div className="flex flex-col ">
-              <h4 className="text-xs leading-3 font-semibold">
-                {fleetCounts[3]}
-                <small>veh</small>
-              </h4>
-              <span className="text-[9px] text-[#A6A6A6] leading-3">
-                Inoperativo
-              </span>
-            </div>
-          </div>{" "}
           <div>
             <Button onClick={() => setShowModal(true)}>
               <Disc2 className="w-4 h-4" />

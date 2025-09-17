@@ -7,7 +7,6 @@ import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
 import { ChevronDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-
 export function NavMain() {
   const { isCollapsed } = useAuthStore();
   const paths = useNavigation();
@@ -22,12 +21,11 @@ export function NavMain() {
       )}
     >
       <nav className="h-screen w-full flex flex-col">
-        {/* Logo */}
-        <div className="w-full px-5 flex justify-between items-center h-14">
+        <div className={clsx("w-full  flex justify-center items-center h-14", isCollapsed ? "px-3" : "px-5")}>
         <img
           src={isCollapsed ? "/gunjop.svg" : "/logo-white.svg"}
           alt="logo"
-          className="h-7 mx-auto"
+          className={clsx(isCollapsed ? "size-6" : "h-6")}
         />
         </div>
 
@@ -63,7 +61,6 @@ export function NavMain() {
           ))}
         </div>
 
-        {/* Configuración */}
         <div className={clsx("py-2 ", isCollapsed ? "px-3" : "px-5")}>
           <NavItem
             name="Configuración"
@@ -109,61 +106,86 @@ const NavItem = ({ name, href, icon, active, isCollapsed }) => {
     </li>
   );
 
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        {href ? <Link to={href}>{itemContent}</Link> : itemContent}
-      </TooltipTrigger>
-      <TooltipContent side="right">
-        <p>{name}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {href ? <Link to={href}>{itemContent}</Link> : itemContent}
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{name}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return href ? <Link to={href}>{itemContent}</Link> : itemContent;
 };
+
 
 
 const NavGroup = ({ item, isCollapsed }) => {
   const hasActiveChild = item.items.some((sub) => sub.active);
+  const activeChild = item.items.find((sub) => sub.active);
+
+  const tooltipContent = hasActiveChild ? (
+    <div className="flex flex-col gap-1">
+      <p className="font-semibold">{item.name} / {activeChild?.name}</p>
+    </div>
+  ) : (
+    <p className="font-semibold">{item.name}</p>
+  );
+
+  const summary = (
+    <summary
+      className={clsx(
+        "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold list-none transition ease-in-out duration-200 relative select-none",
+        isCollapsed ? "px-1 w-8 justify-center" : "px-3 w-full",
+        "text-zinc-500",
+        hasActiveChild && "text-primary bg-primary/[0.25]",
+        !hasActiveChild && "hover:bg-zinc-900 hover:text-zinc-300"
+      )}
+    >
+      {React.cloneElement(item.icon, {
+        className: clsx(
+          "w-4 h-4 transition ease-in-out duration-200",
+          hasActiveChild
+            ? "text-primary animate-spin-once"
+            : "text-zinc-500 group-hover:text-zinc-300"
+        ),
+      })}
+      {!isCollapsed && (
+        <>
+          <span
+            className={clsx(
+              "flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5",
+              hasActiveChild && "text-primary"
+            )}
+          >
+            {item.name}
+          </span>
+          <ChevronDown
+            className={clsx(
+              "h-4 w-4 absolute top-1/2 -translate-y-1/2 right-1.5 transition-transform duration-200",
+              hasActiveChild ? "rotate-180 text-primary" : "text-zinc-500",
+              "group-open:rotate-180"
+            )}
+          />
+        </>
+      )}
+    </summary>
+  );
 
   return (
     <details className="relative group" open={hasActiveChild}>
-      <summary
-        className={clsx(
-          "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold list-none transition ease-in-out duration-200 relative select-none",
-          isCollapsed ? "px-1 w-8 justify-center" : "px-3 w-full",
-          "text-zinc-500",
-          hasActiveChild && "text-primary bg-primary/[0.25]",
-          !hasActiveChild && "hover:bg-zinc-900 hover:text-zinc-300"
-        )}
-      >
-        {React.cloneElement(item.icon, {
-          className: clsx(
-            "w-4 h-4 transition ease-in-out duration-200",
-            hasActiveChild
-              ? "text-primary animate-spin-once"
-              : "text-zinc-500 group-hover:text-zinc-300"
-          ),
-        })}
-        {!isCollapsed && (
-          <>
-            <span
-              className={clsx(
-                "flex max-w-[150px] truncate text-ellipsis leading-3 mt-0.5",
-                hasActiveChild && "text-primary"
-              )}
-            >
-              {item.name}
-            </span>
-            <ChevronDown
-              className={clsx(
-                "h-4 w-4 absolute top-1/2 -translate-y-1/2 right-1.5 transition-transform duration-200",
-                hasActiveChild ? "rotate-180 text-primary" : "text-zinc-500",
-                "group-open:rotate-180"
-              )}
-            />
-          </>
-        )}
-      </summary>
+      {isCollapsed ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{summary}</TooltipTrigger>
+          <TooltipContent side="right">{tooltipContent}</TooltipContent>
+        </Tooltip>
+      ) : (
+        summary
+      )}
 
       {!isCollapsed && (
         <ul className="ml-6 mt-1 relative after:absolute after:-left-1 after:w-px after:h-full after:bg-zinc-700 after:top-0">
