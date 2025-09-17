@@ -101,7 +101,7 @@ const HeatMap = ({ data, isLoading, isError }) => {
           style: {
             color: "#A1A1AA",
             fontSize: "0.6em",
-            fontWeight: "bold",
+            fontWeight: "600",
           },
           rotation: 0,
         },

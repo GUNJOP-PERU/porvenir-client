@@ -15,11 +15,12 @@ const CardCycleWork = React.memo(({ data, isLoading, isError }) => {
         isLoading={isLoading}
         isError={isError}
         noData={!data || data.length === 0}
+        height="250px"
       />
     );
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-[250px] flex justify-center items-center">
       <div className="w-full h-[200px] md:w-[80%] grid grid-cols-2 grid-rows-2 gap-y-10 relative">
         <div className="flex items-center justify-center gap-4 font-bold  flex-row ">
           <div className="flex flex-col items-center justify-center gap-1.5">

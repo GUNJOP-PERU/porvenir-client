@@ -80,6 +80,7 @@ export default function TravelsWeek({ data, selectedRange, isLoading, isError })
           style: {
             fontSize: "0.65rem",
             color: "#A6A6A6",
+            fontWeight: "600",
           },
         },
       },

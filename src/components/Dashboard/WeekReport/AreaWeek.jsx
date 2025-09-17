@@ -44,7 +44,6 @@ export default function AreaWeek({ data, isLoading, isError }) {
       series: [
         {
           enableMouseTracking: false,
-          colorByPoint: true,
           name: "Extracción",
           innerSize: "35%",
           colorByPoint: true,

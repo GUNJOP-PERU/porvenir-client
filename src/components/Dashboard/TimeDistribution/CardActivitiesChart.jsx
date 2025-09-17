@@ -27,6 +27,7 @@ export default function CardActivitiesChart({ data, isLoading, isError }) {
           style: {
             color: "#A6A6A6",
             fontSize: "0.6em",
+            fontWeight: "600",
           },
           rotation: 0,
         },
@@ -193,6 +194,7 @@ if (isLoading || isError || noData)
       isLoading={isLoading}
       isError={isError}
       noData={noData}
+      height="280px"
     />
   );
 

@@ -6,7 +6,7 @@ import highchartsTilemap from "highcharts/modules/tilemap";
 import { memo, useMemo, useRef, useState } from "react";
 import { ModalFloat } from "./ModalFloat";
 import { Button } from "@/components/ui/button";
-import { Disc2 } from "lucide-react";
+import { Disc2, LandPlot } from "lucide-react";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import { StatusDisplay } from "../StatusDisplay";
 
@@ -230,11 +230,11 @@ const CardFlotaTime = memo(({ symbol, endpoint }) => {
       <div className="w-full flex justify-between ">
         <div className="w-full flex flex-col gap-1">
           <div className="flex items-end gap-2">
-            <IconDash1 className="text-zinc-500 w-4 h-4" />
+            <LandPlot className="text-green-500 w-4 h-4" />
             <h4 className="text-xs font-bold leading-3">Estado de Flota</h4>
           </div>
           <p className="text-[10.5px] text-zinc-400 leading-3">
-            Disponibilidad y rendimiento de los vehículos.
+            Disponibilidad de los vehículos.
           </p>
         </div>
 

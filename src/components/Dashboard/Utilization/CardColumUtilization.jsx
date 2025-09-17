@@ -113,7 +113,7 @@ export default function CardColumUtilization() {
             padding: 3,
             borderWidth: 0,
             formatter: function () {
-              return formatThousands(this.y); // Asegúrate de formatear correctamente
+              return formatThousands(this.y);
             },
           },
         },

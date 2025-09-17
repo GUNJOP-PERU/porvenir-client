@@ -20,7 +20,6 @@ import { ChevronDown } from "lucide-react";
 import { es } from "date-fns/locale";
 import dayjs from "dayjs";
 import { DataExport } from "@/components/Table/DataExport";
-import { ButtonRefresh } from "@/components/ButtonRefresh";
 import PageHeader from "@/components/PageHeader";
 
 export default function HistoricalExtract() {

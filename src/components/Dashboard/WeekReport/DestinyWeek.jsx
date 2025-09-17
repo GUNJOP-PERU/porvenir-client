@@ -84,6 +84,7 @@ export default function DestinyWeek({ data, selectedRange, isLoading, isError })
           style: {
             color: "#A6A6A6",
             fontSize: "0.65em",
+            fontWeight: "600",
           },
           rotation: 0,
         },

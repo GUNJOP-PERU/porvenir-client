@@ -101,7 +101,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
           },
           style: {
             fontSize: "0.6rem",
-            fontWeight: "bold",
+            fontWeight: "600",
             color: "#A1A1AA",
             fontFamily: "Nunito, sans-serif",
             lineHeight: "10",

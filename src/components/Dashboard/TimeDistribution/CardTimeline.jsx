@@ -132,6 +132,7 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
           style: {
             color: "#A6A6A6",
             fontSize: "0.6em",
+            fontWeight: "600",
           },
           format: "{value:%H:%M}",
         },

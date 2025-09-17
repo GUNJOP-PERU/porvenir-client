@@ -8,7 +8,6 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
   const { categories, series } = useMemo(() => {
     if (!selectedRange) return { categories: [], series: [] };
 
-    // 🔹 Generar todas las fechas del rango
     const start = dayjs(selectedRange.startDate);
     const end = dayjs(selectedRange.endDate);
 
@@ -17,7 +16,6 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
       allDates.push(d.format("DD-MM"));
     }
 
-    // 🔹 Filtrar solo combinaciones permitidas
     const allowedPairs = [
       { origin: "cancha 100", destiny: "pahuaypite" },
       { origin: "cancha 100", destiny: "dique 4" },
@@ -40,7 +38,6 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
       return isExactAllowed || isBcAllowed;
     });
 
-    // 🔹 Agrupar por fecha y origen → destino
     const grouped = {};
     filtered.forEach((item) => {
       const dayMonth = dayjs(item.date).format("DD-MM");
@@ -53,7 +50,6 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
       grouped[dayMonth][key]++;
     });
 
-    // 🔹 Todas las combinaciones que existen en los datos filtrados
     const allKeys = Array.from(
       new Set(
         filtered.map((item) => {
@@ -64,7 +60,6 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
       )
     ).sort();
 
-    // 🔹 Construir series con todos los días
     const series = allKeys.map((key) => ({
       name: key
         .split(" → ")
@@ -98,6 +93,7 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
           style: {
             fontSize: "0.65em",
             color: "#A6A6A6",
+            fontWeight: "600",
           },
           rotation: 0,
         },

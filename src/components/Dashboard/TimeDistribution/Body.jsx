@@ -1,5 +1,4 @@
 import CardTitle from "../CardTitle";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import KPITimeDistribution from "./KPITimeDistribution";
 import CardCycleWork from "./CardCycleWork";
 import CardActivitiesChart from "./CardActivitiesChart";
@@ -7,6 +6,7 @@ import CardActivitiesChart from "./CardActivitiesChart";
 import CardFlotaTime from "./CardFlotaTime";
 import CardTimeline from "./CardTimeline";
 import AverageTajo from "./AverageTajo";
+import { ChartNoAxesColumn, ChartNoAxesGantt, RefreshCcwDot, Clock, ChartNoAxesCombined } from "lucide-react";
 
 export default function Body({
   progressDay,
@@ -23,11 +23,12 @@ export default function Body({
   return (
     <>
       <KPITimeDistribution data={progressDay} />
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+      <div className="flex-1 grid gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
           title="Ciclo de Trabajo (Tiempo Promedio)"
           subtitle=" Duración y fases del proceso operativo."
-          icon={IconDash1}
+          icon={RefreshCcwDot}
+          classIcon="text-[#F43F5E]"
         >
           <CardCycleWork
             data={jobCycle}
@@ -38,7 +39,8 @@ export default function Body({
         <CardTitle
           title="Tiempo promedio / Por Labor"
           subtitle="Promedio de tajo por equipo."
-          icon={IconDash1}
+          icon={Clock}
+          classIcon="text-sky-500"
         >
           <AverageTajo data={progressDay?.frontLaborAvg || {}} isLoading={isLoading} isError={isError} />
         </CardTitle>
@@ -49,9 +51,10 @@ export default function Body({
           />
         </div>
         <CardTitle
-          title=" Actividades Improductivas Promedio vs Acumulada por Turno"
+          title="Actividades Improductivas Promedio vs Acumulada por Turno"
           subtitle="Promedio del turno vs. acumulado de actividades improductivas."
-          icon={IconDash1}
+          icon={ChartNoAxesCombined}
+          classIcon="text-[#F43F5E]"
         >
           <CardActivitiesChart
             data={improductiveActivities}
@@ -62,7 +65,8 @@ export default function Body({
         <CardTitle
           title="Tiempos por hora de Trabajo de Camiones"
           subtitle="Horario de operacion del camión."
-          icon={IconDash1}
+          icon={ChartNoAxesGantt}
+          classIcon="text-[#F43F5E]"
           className="xl:col-span-2"
         >
           <CardTimeline
@@ -71,7 +75,6 @@ export default function Body({
             isError={isError}
           />
         </CardTitle>
-        
       </div>
     </>
   );
