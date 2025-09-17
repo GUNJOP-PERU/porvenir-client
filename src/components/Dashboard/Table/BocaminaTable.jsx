@@ -16,20 +16,20 @@ const TripsByBocaminaTable = ({ data }) => {
   };
 
   // Agrupar datos por unidad (truck)
-  const groupedData = data?.reduce((groups, item) => {
-    const truck = item.truck;
+  const groupedData = data?.filter(item => item.ubicationType === "Bocamina").reduce((groups, item) => {
+    const truck = item.tag;
     if (!groups[truck]) {
       groups[truck] = {
         truck: formatUnit(truck),
         trips: [],
-        bocaminas: item.bocaminas || [],
-        totalCycleDuration: 0,
-        avgCycleDuration: 0
+        bocamina: item.ubication,
+        entradas: [],
+        duration: 0,
       };
     }
     groups[truck].trips.push(item);
-    groups[truck].totalCycleDuration += item.cycleDuration || 0;
-    groups[truck].avgCycleDuration = groups[truck].totalCycleDuration / groups[truck].trips.length;
+    groups[truck].entradas.push(item);
+    groups[truck].duration += item.duration || 0;
     return groups;
   }, {}) || {};
 
@@ -56,15 +56,15 @@ const TripsByBocaminaTable = ({ data }) => {
     },
     { 
       headerName: 'Duración (min)', 
-      field: 'duration', 
+      field: 'durationMin', 
       sortable: true, 
       filter: 'agNumberColumnFilter',
       flex: 1,
-      valueFormatter: (params) => params.value ? params.value.toFixed(2) : ''
+      // valueFormatter: (params) => params.value ? params.value.toFixed(2) : ''
     },
     { 
       headerName: 'Inicio', 
-      field: 'start', 
+      field: 'tsStartDate', 
       sortable: true, 
       filter: true,
       flex: 1,
@@ -77,7 +77,7 @@ const TripsByBocaminaTable = ({ data }) => {
     },
     { 
       headerName: 'Fin', 
-      field: 'end', 
+      field: 'tsEndDate', 
       sortable: true, 
       filter: true,
       flex: 1,
@@ -121,7 +121,7 @@ const TripsByBocaminaTable = ({ data }) => {
                 {unitData.bocaminas.length > 0 ? (
                   <div className="h-64 w-full">
                     <AgGridReact
-                      rowData={unitData.bocaminas}
+                      rowData={unitData.entradas}
                       columnDefs={bocaminasColumnDefs}
                       defaultColDef={{
                         resizable: true,
@@ -147,36 +147,15 @@ const TripsByBocaminaTable = ({ data }) => {
 
 TripsByBocaminaTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
-    truck: PropTypes.string.isRequired,
-    origin: PropTypes.string.isRequired,
-    destination: PropTypes.string.isRequired,
-    salida_origen: PropTypes.string.isRequired,
-    cycleDuration: PropTypes.number.isRequired,
-    cycleRawDuration: PropTypes.number.isRequired,
-    maintenanceTime: PropTypes.number.isRequired,
-    shiftChangeTime: PropTypes.number.isRequired,
-    tiempo_vacio: PropTypes.number,
-    tiempo_carga: PropTypes.number,
-    tiempo_lleno: PropTypes.number,
-    tiempo_descarga: PropTypes.number,
-    path: PropTypes.arrayOf(PropTypes.shape({
-      ubication: PropTypes.string.isRequired,
-      ubicationType: PropTypes.string.isRequired,
-      entrada: PropTypes.string.isRequired,
-      salida: PropTypes.string.isRequired,
-      duration: PropTypes.string.isRequired,
-      durationMin: PropTypes.number.isRequired,
-      lastBeaconTimeMin: PropTypes.number,
-      lastBeaconTime: PropTypes.string.isRequired
-    })).isRequired,
-    frontLabors_ubication: PropTypes.string,
-    frontLabors: PropTypes.array.isRequired,
-    bocaminas: PropTypes.arrayOf(PropTypes.shape({
-      ubication: PropTypes.string.isRequired,
-      duration: PropTypes.number.isRequired,
-      start: PropTypes.string.isRequired,
-      end: PropTypes.string.isRequired
-    })).isRequired
+    tag: PropTypes.string.isRequired,
+    ubication: PropTypes.string.isRequired,
+    ubicationType: PropTypes.string.isRequired,
+    duration: PropTypes.number.isRequired,
+    durationMin: PropTypes.string.isRequired,
+    tsStart: PropTypes.number.isRequired,
+    tsEnd: PropTypes.number.isRequired,
+    tsStartDate: PropTypes.string.isRequired,
+    tsEndDate: PropTypes.string.isRequired
   })).isRequired,
 };
 
