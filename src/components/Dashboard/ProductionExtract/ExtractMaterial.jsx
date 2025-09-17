@@ -21,19 +21,19 @@ export default function ExtractMaterial({
     );
   }, [dataPlan, material]);
 
-  const filteredData = useMemo(() => {
-    if (!material) return data || [];
-    return (data || []).filter((d) =>
-      filteredPlan.map((p) => p.frontLabor).includes(d.origin)
-    );
-  }, [data, filteredPlan, material]);
+ const filteredData = useMemo(() => {
+  if (!material) return data || [];
+  return (data || []).filter(
+    (d) => d.material?.toLowerCase() === material.toLowerCase()
+  );
+}, [data, material]);
 
   const metrics = useMemo(
     () => getMetrics(filteredData, programmedTonnage, tonnageMaterial),
     [filteredData, programmedTonnage, tonnageMaterial]
   );
 
-  const { labels, totals, planValues } = useMemo(() => {
+  const { labels, totals, planValues, inPlanFlags } = useMemo(() => {
     const merged = {};
 
     filteredPlan.forEach((p) => {
@@ -41,13 +41,14 @@ export default function ExtractMaterial({
         origin: p.frontLabor,
         plan: p.tonnage || 0,
         executed: 0,
+        inPlan: true,
       };
     });
 
     filteredData.forEach((d) => {
       const origin = d.origin || "Sin tajo";
       if (!merged[origin]) {
-        merged[origin] = { origin, plan: 0, executed: d.tonnage || 0 };
+        merged[origin] = { origin, plan: 0, executed: d.tonnage || 0, inPlan: false };
       } else {
         merged[origin].executed += d.tonnage || 0;
       }
@@ -56,8 +57,9 @@ export default function ExtractMaterial({
     const labels = Object.keys(merged);
     const totals = labels.map((key) => merged[key].executed);
     const planValues = labels.map((key) => merged[key].plan);
+    const inPlanFlags = labels.map((key) => merged[key].inPlan);
 
-    return { labels, totals, planValues };
+    return { labels, totals, planValues, inPlanFlags };
   }, [filteredData, filteredPlan]);
 
   const getLabelsFromData = useCallback(() => labels, [labels]);
@@ -68,16 +70,19 @@ export default function ExtractMaterial({
         type: "areaspline",
         height: 280,
         backgroundColor: "transparent",
-        marginBottom: 60,
+        marginBottom: 70,
+        marginTop: 70,
+        marginLeft: 0,
+        marginRight: 0,
         spacing: [0, 0, 0, 0],
       },
       title: undefined,
       xAxis: [
         {
           categories: totals.map((v) => roundAndFormat(v)),
-          offset: 0,
+          offset: 13,
           opposite: true,
-          lineColor: "#9696ab",
+          lineColor: "transparent",
           labels: {
             formatter: function () {
               return roundAndFormat(totals[this.pos]);
@@ -91,7 +96,7 @@ export default function ExtractMaterial({
         },
         {
           categories: planValues.map(String),
-          offset: 15,
+          offset: 0,
           opposite: true,
           lineColor: "transparent",
           labels: {
@@ -113,7 +118,10 @@ export default function ExtractMaterial({
           labels: {
             // useHTML: true,
             formatter: function () {
-              return this.value.replace(/_/g, "_<br>");
+              const index = this.pos;
+              const label = this.value.replace(/_/g, "_<br>");
+              const color = inPlanFlags[index] ? "#9696ab" : "#FF4D4F";
+              return `<span style="color:${color}">${label}</span>`;
             },
             style: {
               fontSize: "0.6rem",
@@ -255,7 +263,9 @@ export default function ExtractMaterial({
             Toneladas Variación
           </span>
           <b className="text-[#FE7887] leading-none font-extrabold text-xl">
-            {roundAndFormat(metrics.variationTonnage)} <small>TM</small>
+            {metrics.variationTonnage > 0
+              ? `+${roundAndFormat(metrics.variationTonnage)}`
+              : roundAndFormat(metrics.variationTonnage)} <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
             en {metrics.variationTravels} viajes

@@ -8,6 +8,7 @@ import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
 import IconDash1 from "@/icons/Dashboard/IconDash1";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
+import { useFetchDataRealtime } from "@/hooks/useGraphicData";
 
 export default function ProductionTruck() {
   useSocketTopicValue("truck-progress-day", [
@@ -15,11 +16,22 @@ export default function ProductionTruck() {
     "truck-progress-day",
   ]);
 
+  useSocketTopicValue("truck-job-cycle", ["shift-variable", "truck-job-cycle-prod"]);
+  
   const { data } = useGraphicData(
     "truck-progress-day",
     "dashboard/truck/progress-day",
     "shift-variable"
   );
+
+  const {
+    data: jobCycle,
+    isLoading: isLoadingJobCycle,
+    isError: isErrorJobCycle,
+  } = useFetchDataRealtime({
+    queryKey: ["shift-variable", "truck-job-cycle-prod"],
+    endpoint: "dashboard/truck/job-cycle",
+  });
 
   return (
     <>
@@ -83,7 +95,11 @@ export default function ProductionTruck() {
           subtitle=" Duración y fases del proceso operativo."
           icon={IconDash1}
         >
-          <CardCycleWork />
+          <CardCycleWork
+            data={jobCycle}
+            isLoading={isLoadingJobCycle}
+            isError={isErrorJobCycle}
+          />
         </CardTitle>
 
         <CardTitle

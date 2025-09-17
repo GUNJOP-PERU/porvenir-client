@@ -181,12 +181,12 @@ export const useNavigation = () => {
             icon: <ChartNoAxesCombined />,
             active: pathname === "/dashboard/unproductiveReport",
           },
-          // {
-          //   name: "Producción Truck",
-          //   href: "/",
-          //   icon: <IconDash1 />,
-          //   active: pathname === "/",
-          // },
+          {
+            name: "Producción Truck",
+            href: "/dashboard/productionTruck",
+            icon: <IconDash1 />,
+            active: pathname === "/dashboard/productionTruck",
+          },
           // {
           //   name: "Timeline Truck",
           //   href: "/dashboard/timelineTruck",

@@ -24,11 +24,11 @@ export function NavMain() {
       <nav className="h-screen w-full flex flex-col">
         {/* Logo */}
         <div className="w-full px-5 flex justify-between items-center h-14">
-          <img
-            src={isCollapsed ? "./gunjop.svg" : "./logo-white.svg"}
-            alt="logo"
-            className="h-7 mx-auto"
-          />
+        <img
+          src={isCollapsed ? "/gunjop.svg" : "/logo-white.svg"}
+          alt="logo"
+          className="h-7 mx-auto"
+        />
         </div>
 
         <div className={clsx("w-full flex flex-col gap-3 flex-1 overflow-y-auto custom-scrollbar pt-2", isCollapsed ? "px-3" : "px-5")}>

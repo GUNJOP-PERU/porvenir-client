@@ -6,7 +6,7 @@ import CardActivitiesChart from "./CardActivitiesChart";
 import CardFlotaTime from "./CardFlotaTime";
 import CardTimeline from "./CardTimeline";
 import AverageTajo from "./AverageTajo";
-import { ChartNoAxesColumn, ChartNoAxesGantt, RefreshCcwDot, Clock, ChartNoAxesCombined } from "lucide-react";
+import { ChartNoAxesGantt, RefreshCcwDot, Clock, ChartNoAxesCombined } from "lucide-react";
 
 export default function Body({
   progressDay,

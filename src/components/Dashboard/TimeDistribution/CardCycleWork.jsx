@@ -33,7 +33,7 @@ const CardCycleWork = React.memo(({ data, isLoading, isError }) => {
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row-reverse ">
           <div className="flex flex-col items-center justify-center gap-1.5">
-            <h4 className="text-zinc-400 text-xs leading-3">Viaje vacio</h4>
+            <h4 className="text-zinc-400 text-xs leading-3">Viaje Vacío</h4>
             <span className="font-extrabold leading-4">
               {formatDurationMinutes(data?.avg_time_empty?.value || 0)} 
             </span>
@@ -42,7 +42,7 @@ const CardCycleWork = React.memo(({ data, isLoading, isError }) => {
         </div>
         <div className="flex items-center justify-center gap-4 font-bold flex-row ">
           <div className="flex flex-col items-center justify-center gap-1.5">
-            <h4 className="text-zinc-400 text-xs leading-3">Viaje cargado</h4>
+            <h4 className="text-zinc-400 text-xs leading-3">Viaje Lleno</h4>
             <span className="font-extrabold leading-4">
               {formatDurationMinutes(data?.avg_time_transport?.value || 0)} 
             </span>
