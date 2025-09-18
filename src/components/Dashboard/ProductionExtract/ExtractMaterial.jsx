@@ -224,12 +224,12 @@ export default function ExtractMaterial({
     [totals, planValues, roundAndFormat, getLabelsFromData, colorPoint]
   );
 
-  if (isLoading || isError || !data || data.length === 0)
+  if (isLoading || isError || !filteredData || filteredData.length === 0)
     return (
       <StatusDisplay
         isLoading={isLoading}
         isError={isError}
-        noData={!data || data.length === 0}
+        noData={!filteredData || filteredData.length === 0}
       />
     );
 
@@ -251,7 +251,7 @@ export default function ExtractMaterial({
           <span className="text-[10px] text-zinc-400 leading-none mb-1">
             Toneladas Ejecutadas
           </span>
-          <b className="text-[#04C286] leading-none font-extrabold text-xl">
+          <b className={`text-[${colorPoint}] leading-none font-extrabold text-xl`}>
             {roundAndFormat(metrics.executedTonnage)} <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">

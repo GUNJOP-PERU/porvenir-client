@@ -24,8 +24,6 @@ export default function WeekReport() {
     if (week) setSelectedRange(week);
   };
 
-  console.log(selectedRange);
-
   const {
     data = [],
     isFetching,
