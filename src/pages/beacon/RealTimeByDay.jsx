@@ -41,7 +41,7 @@ const RealTimeByHour = () => {
     refetch,
   } = useFetchData(
     "trip-group-by-days",
-    `trip/stats-by-days?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
+    `beacon-track/trip?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
   );
 
   const {

@@ -10,7 +10,6 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 const BeaconDetectionTable = () => {
   const [sorting, setSorting] = useState([]);
@@ -211,17 +210,16 @@ const BeaconDetectionTable = () => {
     //     const rssiData = getValue() || [];
     //     return (
     //       <div className="text-xs space-y-1 max-w-48">
-    //         {rssiData.slice(0, 3).map((reading, index) => (
+    //         {rssiData.slice(0, 30).map((reading, index) => (
     //           <div key={index} className="flex justify-between bg-gray-50 px-2 py-1 rounded">
-    //             <span className="font-mono">{reading.rssi} dBm</span>
-    //             <span className="text-gray-500">{reading.distance?.toFixed(1)}m</span>
+    //             <span className="font-mono">{format(new Date(reading.datetime), "HH:mm:ss")}</span>
     //           </div>
     //         ))}
-    //         {rssiData.length > 3 && (
+    //         {/* {rssiData.length > 3 && (
     //           <div className="text-gray-400 text-center">
     //             +{rssiData.length - 3} más...
     //           </div>
-    //         )}
+    //         )} */}
     //       </div>
     //     );
     //   },
@@ -234,7 +232,7 @@ const BeaconDetectionTable = () => {
         const timestamp = getValue();
         return (
           <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss", { locale: es })}
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
           </div>
         );
       },
@@ -247,12 +245,38 @@ const BeaconDetectionTable = () => {
         const timestamp = getValue();
         return (
           <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss", { locale: es })}
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
           </div>
         );
       },
       size: 160,
     },
+    // {
+    //   accessorKey: "createdAt",
+    //   header: "Hora de creación",
+    //   cell: ({ getValue }) => {
+    //     const timestamp = getValue();
+    //     return (
+    //       <div className="text-sm">
+    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+    //       </div>
+    //     );
+    //   },
+    //   size: 160,
+    // },
+    // {
+    //   accessorKey: "updatedAt",
+    //   header: "Hora de creación",
+    //   cell: ({ getValue }) => {
+    //     const timestamp = getValue();
+    //     return (
+    //       <div className="text-sm">
+    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+    //       </div>
+    //     );
+    //   },
+    //   size: 160,
+    // },
   ], []);
 
   // Configuración de la tabla
