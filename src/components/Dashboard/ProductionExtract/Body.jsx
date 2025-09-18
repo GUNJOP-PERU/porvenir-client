@@ -93,6 +93,7 @@ export default function Body({
             data={data}
             isLoading={isLoading}
             isError={isError}
+            shift={shift}
           />
         </CardTitle>
         {/* <CardTitle title="Observaciones" subtitle="">

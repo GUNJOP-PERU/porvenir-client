@@ -46,7 +46,11 @@ export default function RealTimeExtract() {
   );
 
   const filteredData = useMemo(() => filterData(currentData), [currentData]);
-
+  const shift = useMemo(() => {
+    if (!dataPlanRealtime?.length) return "dia";
+    return dataPlanRealtime[0].shift || "dia";
+  }, [dataPlanRealtime]);
+  
   return (
     <>
       <PageHeader
@@ -61,7 +65,7 @@ export default function RealTimeExtract() {
         data={filteredData}
         isLoading={isLoading}
         isError={isError}
-        shift="dia"
+        shift={shift}
       />
     </>
   );

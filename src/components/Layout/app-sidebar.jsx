@@ -9,7 +9,7 @@ import { PanelRightClose, PanelRightOpen } from "lucide-react";
 export function AppSidebar() {
   const { isCollapsed, setIsCollapsed } = useAuthStore();
   return (
-    <div className="bg-[#000000] w-full h-14 flex items-center justify-between pr-4  ">
+    <div className="bg-[#000000] w-full h-14 flex items-center justify-between pr-4 pl-4 xl:pl-0  ">
       <div className="hidden md:flex items-center gap-1 ">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}

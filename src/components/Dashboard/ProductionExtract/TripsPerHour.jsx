@@ -3,7 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { StatusDisplay } from "../StatusDisplay";
 
-const TripsPerHour = ({ data, isLoading, isError }) => {
+const TripsPerHour = ({ data, shift = "dia", isLoading, isError }) => {
   const formatHourRange = (hr) => {
     const start = hr % 12 || 12;
     const end = (hr + 1) % 12 || 12;
@@ -11,32 +11,14 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     return `${start} a ${end} ${ampm}`;
   };
 
-  const detectedShift = useMemo(() => {
-    if (!data?.length) return "dia"; 
-
-    const horas = data.map((item) =>
-      new Date(item.start).getHours()
-    );
-
-    // Calcular hora promedio
-    const avgHora =
-      horas.reduce((acc, h) => acc + h, 0) / horas.length;
-
-    return avgHora >= 7 && avgHora < 19 ? "dia" : "noche";
-  }, [data]);
-  
-
   const dataChart = useMemo(() => {
     const agrupado = {};
 
     // Precrear todas las horas del turno con 0 viajes
     const horasTurno =
-      detectedShift === "dia"
-        ? Array.from({ length: 12 }, (_, i) => i + 7) // 6 a 17
-        : [
-            ...Array.from({ length: 6 }, (_, i) => i + 19),
-            ...Array.from({ length: 6 }, (_, i) => i),
-          ]; // 18 a 23 y 0 a 5
+      shift === "dia"
+        ? Array.from({ length: 12 }, (_, i) => i + 7) // 7 a 18
+        : [...Array.from({ length: 6 }, (_, i) => i + 19), ...Array.from({ length: 6 }, (_, i) => i)]; // 19-23 y 0-5
 
     horasTurno.forEach((h) => {
       const rango = formatHourRange(h);
@@ -50,8 +32,8 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     const dataFiltrada = data.filter((item) => {
       const fecha = new Date(item.start);
       const hora = fecha.getHours();
-      if (detectedShift === "dia") return hora >= 7 && hora < 19;
-      if (detectedShift === "noche") return hora >= 19 || hora < 7;
+      if (shift === "dia") return hora >= 7 && hora < 19;
+      if (shift === "noche") return hora >= 19 || hora < 7;
       return true;
     });
 
@@ -61,7 +43,15 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
       const hora = fecha.getHours();
       const rango = formatHourRange(hora);
       const material = item.material?.toLowerCase() || "otros";
-
+    
+      // Crear rango si no existe
+      if (!agrupado[rango]) {
+        agrupado[rango] = {
+          mineral: { viajes: 0, toneladas: 0 },
+          desmonte: { viajes: 0, toneladas: 0 },
+        };
+      }
+    
       if (material.includes("mineral")) {
         agrupado[rango].mineral.viajes += 1;
         agrupado[rango].mineral.toneladas += item.tonnage || 0;
@@ -70,6 +60,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
         agrupado[rango].desmonte.toneladas += item.tonnage || 0;
       }
     });
+    
 
     const categorias = Object.keys(agrupado);
 
@@ -80,7 +71,7 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
       valoresDesmonte: categorias.map((r) => agrupado[r].desmonte.viajes),
       toneladasDesmonte: categorias.map((r) => agrupado[r].desmonte.toneladas),
     };
-  }, [data, detectedShift]);
+  }, [data, shift]);
 
   const options = useMemo(
     () => ({
@@ -211,15 +202,19 @@ const TripsPerHour = ({ data, isLoading, isError }) => {
     }),
     [dataChart]
   );
+  const noData =
+    isLoading ||
+    isError ||
+    !data ||
+    data.length === 0 ||
+    !dataChart.categorias ||
+    dataChart.categorias.length === 0;
 
-  if (isLoading || isError || !data || data.length === 0)
+  if (noData) {
     return (
-      <StatusDisplay
-        isLoading={isLoading}
-        isError={isError}
-        noData={!data || data.length === 0}
-      />
+      <StatusDisplay isLoading={isLoading} isError={isError} noData={noData} />
     );
+  }
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
 
