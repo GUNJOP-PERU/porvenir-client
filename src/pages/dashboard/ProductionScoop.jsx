@@ -4,7 +4,7 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardTable from "@/components/Dashboard/ProductionScoop/CardTable";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { ChartArea } from "lucide-react";
 
 export default function ProductionScoop() {
   const { data } = useGraphicData(
@@ -74,7 +74,7 @@ export default function ProductionScoop() {
           <CardTitle
             title="Tonelaje Mineral / Avance"
             subtitle="Relación entre tonelaje mineral y avance."
-            icon={IconDash1}
+            icon={ChartArea}
           />
           <CardColumScoop />
         </div>
@@ -83,7 +83,7 @@ export default function ProductionScoop() {
           <CardTitle
             title="Eventos "
             subtitle="Registro y análisis de eventos."
-            icon={IconDash1}
+            icon={ChartArea}
           />
           <CardTable symbol="scoop-events" endpoint="dashboard/scoop/events" />
         </div>

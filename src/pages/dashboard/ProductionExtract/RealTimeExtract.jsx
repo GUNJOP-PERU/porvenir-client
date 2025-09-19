@@ -34,9 +34,9 @@ export default function RealTimeExtract() {
       dataPlanRealtime.reduce(
         (acc, item) => {
           const tonnage = item.tonnage || 0;
-          if (item.phase?.toLowerCase() === "mineral")
+          if (item.phase?.toLowerCase() === "mineral" || item.phase?.toLowerCase() === "extracción / producción")
             acc.programmedTonnageMineral += tonnage;
-          if (item.phase?.toLowerCase() === "desmonte")
+          if (item.phase?.toLowerCase() === "desmonte" || item.phase?.toLowerCase() === "avance")
             acc.programmedTonnageDesmonte += tonnage;
           return acc;
         },

@@ -47,6 +47,7 @@ import RealTimeByDay from "./pages/beacon/RealTimeByDay";
 import RealTimeByHour from "./pages/beacon/RealTimeByHour";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
+import Tracking from "./pages/beacon/Tracking";
 
 const protectedRoutes = [
   //Gestion
@@ -112,6 +113,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
+  { path: "dashboard/tracking", element: <Tracking /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

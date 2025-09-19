@@ -198,16 +198,9 @@ number-flow-react::part(suffix) {
 }
 
 /* ----------------Estilos ----------------*/
-.scroll-style::-webkit-scrollbar-track {
-  background-color: #ffffff00;
-}
 
-.scroll-style::-webkit-scrollbar-thumb {
-  background-color: #6c6c6c;
-}
 .custom-scrollbar {
   overflow-y: auto; 
-  height: 200px;
   scrollbar-width: thin;
   scrollbar-color: #ffffff40 transparent;
 }

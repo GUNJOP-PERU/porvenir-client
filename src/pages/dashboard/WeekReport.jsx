@@ -89,6 +89,7 @@ export default function WeekReport() {
 
       <KPIWeek
         data={data}
+        isLoading={isLoading}
         programmedMineral={programmedMineral}
         programmedDesmonte={programmedDesmonte}
       />
@@ -96,7 +97,7 @@ export default function WeekReport() {
         <div className="flex-1 flex flex-col col-span-1">
           <CardTitle
             title="Comparativo de viaje semanal"
-            subtitle="Remanejo Semanal - Viajes"
+            subtitle="Últimas 4 semanas"
             icon={TrendingUp}
             classIcon="text-[#0FC47A]"
             className="h-full bg-[#F0FFF7]/50 border-[#B3F1D8] shadow-[#B3F1D8]"

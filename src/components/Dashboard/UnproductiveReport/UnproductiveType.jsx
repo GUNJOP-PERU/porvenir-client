@@ -21,10 +21,13 @@ export default function UnproductiveType({ data, isLoading, isError }) {
       if (code >= 200 && code < 700) {
         const groupKey = Math.floor(code / 100) * 100;
         if (groups[groupKey] !== undefined) {
-          groups[groupKey] += 1;
+          // Sumamos duración en horas
+          const horas = (item.duration || 0) / 3600; 
+          groups[groupKey] += horas;
         }
       }
     });
+    
 
     const colors = {
       200: "#26b969",
@@ -49,10 +52,6 @@ export default function UnproductiveType({ data, isLoading, isError }) {
         type: "pie",
         backgroundColor: "transparent",
         height: 330,
-        // marginRight: 0,
-        // marginLeft: 0,
-        // marginTop: 0,
-        // marginBottom: 10,
       },
       title: { text: "" },
       series: [
@@ -76,10 +75,10 @@ export default function UnproductiveType({ data, isLoading, isError }) {
               distance: 15,
               formatter: function () {
                 return (
-                  `<b><span style="color:${this.point.color}">CÓDIGO ${this.point.name}</span></b><br>` +
-                  `<span style="font-size:14px;">${roundAndFormat(this.point.y)} <small style="font-size:12px">viajes</small></span><br>`
+                  `<b><span style="color:${this.point.color}">COD ${this.point.name}</span></b><br>` +
+                  `<span style="font-size:14px;">${roundAndFormat(this.point.y)} <small style="font-size:12px">hrs</small></span><br>`
                 );
-              },
+              },              
               style: {
                 fontSize: "0.7rem",
                 color: "#000",

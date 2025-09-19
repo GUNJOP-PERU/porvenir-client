@@ -5,44 +5,65 @@ import { StatusDisplay } from "../StatusDisplay";
 import { roundAndFormat } from "@/lib/utilsGeneral";
 
 export default function ParetoTime({ data, limit = 10, isLoading, isError }) {
-  const chartData = useMemo(() => {
+
+  const { categories, series } = useMemo(() => {
     if (!data || data.length === 0) {
       return {
-        labors: [],
-        sum_cola_origin: [],
-        cumulative_percent: [],
+        categories: [],
+        series: [],
       };
     }
-
+  
     const grouped = data.reduce((acc, curr) => {
       const name = curr.activityName || "Sin Nombre";
       if (!acc[name]) acc[name] = [];
       acc[name].push(curr.duration ?? 0);
       return acc;
     }, {});
-
+  
     const laborsRaw = Object.keys(grouped).map((name) => ({
       name,
       sum: grouped[name].reduce((a, b) => a + b, 0),
     }));
     laborsRaw.sort((a, b) => b.sum - a.sum);
-
+  
     const topLaborsRaw = laborsRaw.slice(0, limit);
-
+  
     const labors = topLaborsRaw.map((item) => item.name);
     const sum_cola_origin = labors.map((name) =>
       grouped[name].reduce((a, b) => a + b, 0)
     );
-
+  
     const total = sum_cola_origin.reduce((a, b) => a + b, 0);
     let cumulative = 0;
     const cumulative_percent = sum_cola_origin.map((val) => {
       cumulative += val;
       return (cumulative / total) * 100;
     });
-
-    return { labors, sum_cola_origin, cumulative_percent, topLaborsRaw };
-  }, [data]);
+  
+    const series = [
+      {
+        type: "column",
+        name: "Horas acumuladas",
+        data: sum_cola_origin.map((val, i) => ({
+          y: val,
+          color: i < 3 ? "#41b3ff" : "#D9D9D9",
+        })),
+        total: total, // total de horas
+        yAxis: 0,
+      },
+      {
+        type: "spline",
+        name: "% acumulado",
+        data: cumulative_percent,
+        color: "#4070EB",
+        total: 100, // % siempre será 100
+        yAxis: 1,
+      },
+    ];
+  
+    return { categories: labors, series };
+  }, [data, limit]);
 
   const options = useMemo(
     () => ({
@@ -53,7 +74,7 @@ export default function ParetoTime({ data, limit = 10, isLoading, isError }) {
       },
       title: { text: null },
       xAxis: {
-        categories: chartData.labors,
+        categories,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -167,31 +188,12 @@ export default function ParetoTime({ data, limit = 10, isLoading, isError }) {
           },
         },
       },
-      series: [
-        {
-          type: "column",
-          name: "Horas acumuladas",
-          data: chartData.sum_cola_origin.map((val, i) => ({
-            y: val,
-            color: i < 3 ? "#41b3ff" : "#D9D9D9",
-          })),
-          yAxis: 0,
-        },
-        {
-          type: "spline",
-          name: "% acumulado",
-          data: chartData.cumulative_percent,
-          color: "#4070EB",
-          yAxis: 1,
-          tooltip: {
-            valueSuffix: "%",
-          },
-        },
-      ],
+      series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
+        floating: false,
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -202,14 +204,15 @@ export default function ParetoTime({ data, limit = 10, isLoading, isError }) {
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
-        itemMarginTop: 1,
-        itemMarginBottom: 1,
+        labelFormatter: function () {
+          return `<b style="color:#000">${roundAndFormat(this.options.total)}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
       exporting: { enabled: false },
       accessibility: { enabled: false },
     }),
-    [chartData]
+    [categories, series]
   );
 
   if (isLoading || isError || !data || data.length === 0)

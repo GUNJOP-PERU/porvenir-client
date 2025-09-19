@@ -1,5 +1,4 @@
 import CardTitle from "@/components/Dashboard/CardTitle";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import ExtractMaterial from "@/components/Dashboard/ProductionExtract/ExtractMaterial";
 import HeatMap from "@/components/Dashboard/ProductionExtract/Heatmap";
 import TripsPerHour from "@/components/Dashboard/ProductionExtract/TripsPerHour";
@@ -26,8 +25,10 @@ export default function Body({
         filteredData={data}
         programmedTonnageMineral={programmedTonnageMineral}
         programmedTonnageDesmonte={programmedTonnageDesmonte}
+        isLoading={isLoading}
+        
       />
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+      <div className="flex-1 grid gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
           title="Extracción de Mineral"
           subtitle="Tonelaje proyectado vs transportado."
@@ -49,7 +50,7 @@ export default function Body({
           title="Extracción de Desmonte"
           subtitle="Tonelaje proyectado vs transportado."
           icon={IconClearance}
-          classIcon="text-[#F59E0B] fill-[#F59E0B]"
+          classIcon="fill-[#F59E0B]"
         >
           <ExtractMaterial
             material="desmonte"

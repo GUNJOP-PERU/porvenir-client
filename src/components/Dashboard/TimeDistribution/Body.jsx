@@ -10,6 +10,7 @@ import { ChartNoAxesGantt, RefreshCcwDot, Clock, ChartNoAxesCombined } from "luc
 
 export default function Body({
   progressDay,
+  isLoadingProgressDay,
   jobCycle,
   isLoadingJobCycle,
   isErrorJobCycle,
@@ -22,7 +23,7 @@ export default function Body({
 }) {
   return (
     <>
-      <KPITimeDistribution data={progressDay} />
+      <KPITimeDistribution data={progressDay} isLoading={isLoadingProgressDay}   />
       <div className="flex-1 grid gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
           title="Ciclo de Trabajo (Tiempo Promedio)"

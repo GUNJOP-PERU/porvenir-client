@@ -2,7 +2,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 import dayjs from "dayjs";
-import { roundAndFormat } from "@/lib/utilsGeneral";
+import { formatShortDay, roundAndFormat } from "@/lib/utilsGeneral";
 import { StatusDisplay } from "../StatusDisplay";
 
 export default function UnproductiveTime({
@@ -11,18 +11,20 @@ export default function UnproductiveTime({
   isLoading,
   isError,
 }) {
-  const chartData = useMemo(() => {
+  const { dates, series } = useMemo(() => {
     if (!data || data.length === 0 || !selectedRange) {
       return {
         dates: [],
-        t_improductivo: [],
-        perc_improductivo: [],
+        series: [
+          { type: "column", name: "T_IMPRODUCTIVO", data: [], total: 0 },
+          { type: "spline", name: "%_IMPRODUCTIVO", data: [], total: 0 },
+        ],
       };
     }
-
+  
     const start = dayjs(selectedRange.startDate);
     const end = dayjs(selectedRange.endDate);
-
+  
     const allDates = [];
     for (
       let d = start.clone();
@@ -31,7 +33,7 @@ export default function UnproductiveTime({
     ) {
       allDates.push(d.format("YYYY-MM-DD"));
     }
-
+  
     const grouped = data.reduce((acc, curr) => {
       const date = curr.dateStr || curr.date?.substring(0, 10) || "Sin Fecha";
       if (!acc[date]) acc[date] = { sum: 0, total: 0 };
@@ -39,19 +41,38 @@ export default function UnproductiveTime({
       acc[date].total += 1;
       return acc;
     }, {});
-
+  
     const t_improductivo = allDates.map((date) => grouped[date]?.sum ?? 0);
-
     const totalHoras = t_improductivo.reduce((a, b) => a + b, 0);
-
     const perc_improductivo = allDates.map((date) =>
       totalHoras > 0 ? ((grouped[date]?.sum ?? 0) / totalHoras) * 100 : 0
     );
-
-    const displayDates = allDates.map((d) => dayjs(d).format("DD-MM"));
-
-    return { dates: displayDates, t_improductivo, perc_improductivo };
+  
+    const displayDates = allDates.map(formatShortDay);
+    
+    return {
+      dates: displayDates,
+      series: [
+        {
+          type: "column",
+          name: "T_IMPRODUCTIVO",
+          data: t_improductivo,
+          color: "#0FC47A",
+          total: totalHoras, // total listo aquí
+          yAxis: 0,
+        },
+        {
+          type: "spline",
+          name: "%_IMPRODUCTIVO",
+          data: perc_improductivo,
+          color: "#FCB03C",
+          total: perc_improductivo.reduce((a, b) => a + b, 0), // total %
+          yAxis: 1,
+        },
+      ],
+    };
   }, [data, selectedRange]);
+  
 
   const options = useMemo(
     () => ({
@@ -64,7 +85,7 @@ export default function UnproductiveTime({
       },
       title: { text: null },
       xAxis: {
-        categories: chartData.dates,
+        categories: dates,
         lineColor: "transparent",
         tickWidth: 0,
         tickLength: 0,
@@ -73,8 +94,6 @@ export default function UnproductiveTime({
             fontSize: "0.6rem",
             fontWeight: "600",
             color: "#A1A1AA",
-            fontFamily: "Nunito, sans-serif",
-            lineHeight: "10",
           },
         },
       },
@@ -154,29 +173,12 @@ export default function UnproductiveTime({
           },
         },
       },
-      series: [
-        {
-          type: "column",
-          name: "T_IMPRODUCTIVO",
-          data: chartData.t_improductivo,
-          color: "#0FC47A",
-          yAxis: 0,
-        },
-        {
-          type: "spline",
-          name: "%_IMPRODUCTIVO",
-          data: chartData.perc_improductivo,
-          color: "#FCB03C",
-          yAxis: 1,
-        },
-      ],
+      series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
         floating: false,
-        itemMarginTop: 0,
-        itemMarginBottom: 0,
         itemStyle: {
           color: "#A6A6A6",
           fontSize: "9px",
@@ -187,10 +189,14 @@ export default function UnproductiveTime({
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
+        labelFormatter: function () {
+          return `<b style="color:#000">${roundAndFormat(this.options.total)}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
+      accessibility: { enabled: false },
     }),
-    [chartData]
+    [dates, series]
   );
 
   if (isLoading || isError || !data || data.length === 0)

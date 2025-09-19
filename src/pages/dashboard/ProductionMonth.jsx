@@ -3,7 +3,7 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardRange from "@/components/Dashboard/ProductionMonth/CardRange";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { ChartArea } from "lucide-react";
 
 export default function ProductionMonth() {
   const { data = [] } = useGraphicData(
@@ -65,7 +65,7 @@ export default function ProductionMonth() {
         <CardTitle
           title=" Tonelaje / Planificado vs Ejecutado"
           subtitle="Tonelaje proyectado vs. transportado,  evaluando desviaciones y eficiencia operativa."
-          icon={IconDash1}
+          icon={ChartArea}
           className="xl:col-span-2"
         >
           <CardColum />
@@ -73,7 +73,7 @@ export default function ProductionMonth() {
         <CardTitle
           title=" Rango de horario de trabajo Camiones"
           subtitle="Horario de operación del Camión."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardRange
             symbol="monthly-average-journals-truck"
@@ -83,7 +83,7 @@ export default function ProductionMonth() {
         <CardTitle
           title=" Rango de horario de trabajo Scooptram"
           subtitle="Horario de operación del Scooptram."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardRange
             symbol="monthly-average-journals-scoop"

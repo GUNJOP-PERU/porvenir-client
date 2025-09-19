@@ -3,6 +3,7 @@ import { getMetrics, roundAndFormat } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { StatusDisplay } from "../StatusDisplay";
+import { AnimatedNumber } from "../CardItem";
 
 export default function ExtractMaterial({
   data,
@@ -230,21 +231,23 @@ export default function ExtractMaterial({
         isLoading={isLoading}
         isError={isError}
         noData={!filteredData || filteredData.length === 0}
+        height="346px"
       />
     );
 
   return (
-    <div className="flex flex-col gap-2 py-2">
+    <>
       <div className="w-full grid md:grid-cols-4 grid-cols-2 gap-2">
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
           <span className="text-[10px] text-zinc-400 leading-none mb-1">
             Toneladas Programadas
           </span>
           <b className="text-[#1EE0EE] leading-none font-extrabold text-xl">
-            {roundAndFormat(programmedTonnage)} <small>TM</small>
+            <AnimatedNumber value={programmedTonnage} loading={isLoading} /> 
+            <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            para {metrics.programmedTravels} viajes
+            para <AnimatedNumber value={metrics.programmedTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
@@ -252,10 +255,10 @@ export default function ExtractMaterial({
             Toneladas Ejecutadas
           </span>
           <b className={`text-[${colorPoint}] leading-none font-extrabold text-xl`}>
-            {roundAndFormat(metrics.executedTonnage)} <small>TM</small>
+          <AnimatedNumber value={metrics.executedTonnage} loading={isLoading} />  <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            en {metrics.executedTravels} viajes
+            en <AnimatedNumber value={metrics.executedTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
@@ -263,12 +266,10 @@ export default function ExtractMaterial({
             Toneladas Variación
           </span>
           <b className="text-[#FE7887] leading-none font-extrabold text-xl">
-            {metrics.variationTonnage > 0
-              ? `+${roundAndFormat(metrics.variationTonnage)}`
-              : roundAndFormat(metrics.variationTonnage)} <small>TM</small>
+            <AnimatedNumber value={metrics.variationTonnage} loading={isLoading} /> <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            en {metrics.variationTravels} viajes
+            en <AnimatedNumber value={metrics.variationTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex justify-between items-center bg-zinc-50 px-4 py-2 rounded-lg pr-3">
@@ -277,10 +278,10 @@ export default function ExtractMaterial({
               %Cumplimiento
             </span>
             <b className="text-[#1E64FA] leading-none font-extrabold text-xl">
-              {metrics.goalCompletionPercentage.toFixed(2)} <small>%</small>
+              <AnimatedNumber value={metrics.goalCompletionPercentage} loading={isLoading} decimals={2} /> <small>%</small>
             </b>
             <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-              {(100 - metrics.goalCompletionPercentage).toFixed(2)}%
+              <AnimatedNumber value={(100 - metrics.goalCompletionPercentage)} loading={isLoading} decimals={2} />%
             </span>
           </div>
           <ProgressChart
@@ -289,7 +290,7 @@ export default function ExtractMaterial({
         </div>
       </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
+    </>
   );
 }
 

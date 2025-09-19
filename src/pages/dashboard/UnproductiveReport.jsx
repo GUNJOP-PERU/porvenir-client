@@ -37,7 +37,7 @@ export default function UnproductiveReport() {
   return (
     <>
       <PageHeader
-        title="Reporte de Inproductivos Semanal"
+        title="Reporte de Improductivos Semanal"
         description="Viajes de remanejo no considerados"
         refetch={refetch}
         isFetching={isFetching}
@@ -88,7 +88,7 @@ export default function UnproductiveReport() {
           </CardTitle>
           <CardTitle
             title="Tiempo Improductivo (Hrs)"
-            subtitle="Total de inproductividad"
+            subtitle="Total de improductividad"
             icon={TrendingUp}
             classIcon="text-[#0FC47A]"
           >

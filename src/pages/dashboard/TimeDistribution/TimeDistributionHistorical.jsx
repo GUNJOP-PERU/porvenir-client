@@ -21,7 +21,7 @@ export default function TimeDistributionHistorical() {
     shift: getDefaultShift(),
   });
 
-  const { data: progressDay = [], refetch: refetchProgressDay } = useFetchGraphicData({
+  const { data: progressDay = [], isLoading: isLoadingProgressDay, refetch: refetchProgressDay } = useFetchGraphicData({
     queryKey: "progress-day-history",
     endpoint: "dashboard-dates/progress-day",
     filters: `equipment=truck&startDate=${form.date}&endDate=${form.date}&shift=${form.shift}`,
@@ -132,6 +132,7 @@ export default function TimeDistributionHistorical() {
 
       <Body
         progressDay={progressDay}
+        isLoadingProgressDay={isLoadingProgressDay}
         jobCycle={jobCycle}
         isLoadingJobCycle={isLoadingJobCycle || isFetchingJobCycle}
         isErrorJobCycle={isErrorJobCycle}

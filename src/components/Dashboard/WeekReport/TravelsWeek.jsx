@@ -3,6 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { filterData, filterValidTrips } from "@/lib/utilsGeneral";
 import { StatusDisplay } from "../StatusDisplay";
+import { formatShortDay } from "@/lib/utilsGeneral";
 import dayjs from "dayjs";
 
 export default function TravelsWeek({ data, selectedRange, isLoading, isError }) {
@@ -12,66 +13,61 @@ export default function TravelsWeek({ data, selectedRange, isLoading, isError })
 
   const { categories, series } = useMemo(() => {
     if (!selectedRange) return { categories: [], series: [] };
-
-    // 🔹 Todas las fechas del rango
+  
     const start = dayjs(selectedRange.startDate);
     const end = dayjs(selectedRange.endDate);
     const allDates = [];
     for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
-      allDates.push(d.format("DD-MM"));
+      allDates.push(d.format("YYYY-MM-DD")); 
     }
-
+  
     const grouped = {};
-
-    // Inicializar cada día con 0
+  
     allDates.forEach((date) => {
       grouped[date] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
     });
-
-    // Viajes válidos de mineral
+  
     filteredMineral.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = dayjs(item.date).format("DD-MM");
-      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
-      grouped[dayMonth].mineral++;
+      const dayKey = dayjs(item.date).format("YYYY-MM-DD");
+      if (!grouped[dayKey]) grouped[dayKey] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
+      grouped[dayKey].mineral++;
     });
-
-    // Viajes válidos de desmonte
+  
     filteredDesmonte.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = dayjs(item.date).format("DD-MM");
-      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
-      grouped[dayMonth].desmonte++;
+      const dayKey = dayjs(item.date).format("YYYY-MM-DD");
+      if (!grouped[dayKey]) grouped[dayKey] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
+      grouped[dayKey].desmonte++;
     });
-
-    // Remanejo mineral y desmonte
+  
     filteredInvalidData.forEach((item) => {
       if (!item.date) return;
-      const dayMonth = dayjs(item.date).format("DD-MM");
-      if (!grouped[dayMonth]) grouped[dayMonth] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
+      const dayKey = dayjs(item.date).format("YYYY-MM-DD");
+      if (!grouped[dayKey]) grouped[dayKey] = { mineral: 0, desmonte: 0, remMineral: 0, remDesmonte: 0 };
       const mat = item.material?.toLowerCase();
-      if (mat === "mineral") grouped[dayMonth].remMineral++;
-      if (mat === "desmonte") grouped[dayMonth].remDesmonte++;
+      if (mat === "mineral") grouped[dayKey].remMineral++;
+      if (mat === "desmonte") grouped[dayKey].remDesmonte++;
     });
-
-    const sortedDates = allDates; // ya vienen ordenadas
-
+  
+    const displayDates = allDates.map(formatShortDay);
+  
     const series = [
-      { name: "Mineral", data: sortedDates.map((d) => grouped[d].mineral), color: "#14B8A6" },
-      { name: "Desmonte", data: sortedDates.map((d) => grouped[d].desmonte), color: "#F59E0B" },
-      { name: "Remanejo Mineral", data: sortedDates.map((d) => grouped[d].remMineral), color: "#6EE7B7" },
-      { name: "Remanejo Desmonte", data: sortedDates.map((d) => grouped[d].remDesmonte), color: "#FFD580" },
+      { name: "Mineral", data: allDates.map((d) => grouped[d].mineral), color: "#14B8A6", total: allDates.reduce((total, d) => total + grouped[d].mineral, 0) },
+      { name: "Desmonte", data: allDates.map((d) => grouped[d].desmonte), color: "#F59E0B", total: allDates.reduce((total, d) => total + grouped[d].desmonte, 0) },
+      { name: "Remanejo Mineral", data: allDates.map((d) => grouped[d].remMineral), color: "#6EE7B7", total: allDates.reduce((total, d) => total + grouped[d].remMineral, 0) },
+      { name: "Remanejo Desmonte", data: allDates.map((d) => grouped[d].remDesmonte), color: "#FFD580", total: allDates.reduce((total, d) => total + grouped[d].remDesmonte, 0) },
     ];
-
-    return { categories: sortedDates, series };
-  }, [data, selectedRange]);
+  
+    return { categories: displayDates, series };
+  }, [data, selectedRange]);  
 
   const options = useMemo(
     () => ({
       chart: { type: "column", backgroundColor: "transparent", height: 280 },
       title: { text: null },
       xAxis: {
-        categories,
+        categories: categories,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
@@ -144,7 +140,7 @@ export default function TravelsWeek({ data, selectedRange, isLoading, isError })
       },
       series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
         floating: false,
@@ -154,15 +150,13 @@ export default function TravelsWeek({ data, selectedRange, isLoading, isError })
           fontWeight: "bold",
           textTransform: "uppercase",
         },
-        itemHoverStyle: {
-          color: "#1EE0EE",
-        },
+        itemHoverStyle: { color: "#1EE0EE" },
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
-        itemMarginTop: 0,
-        itemMarginBottom: 0,
-        zIndex: 10,
+        labelFormatter: function () {
+          return `<b style="color:#000">${this.options.total}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
       exporting: { enabled: false },
