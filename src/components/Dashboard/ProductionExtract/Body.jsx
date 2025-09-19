@@ -28,7 +28,7 @@ export default function Body({
         isLoading={isLoading}
         
       />
-      <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
+      <div className="flex-1 grid gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
           title="Extracción de Mineral"
           subtitle="Tonelaje proyectado vs transportado."
@@ -50,7 +50,7 @@ export default function Body({
           title="Extracción de Desmonte"
           subtitle="Tonelaje proyectado vs transportado."
           icon={IconClearance}
-          classIcon="text-[#F59E0B] fill-[#F59E0B]"
+          classIcon="fill-[#F59E0B]"
         >
           <ExtractMaterial
             material="desmonte"

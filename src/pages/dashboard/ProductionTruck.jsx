@@ -54,17 +54,19 @@ export default function ProductionTruck() {
           decimals={0}
         />
         <CardItem
-          value={data?.percentage_success || 0}
+          value={Number(data?.percentage_success || 0)}
           title="% Cumplimiento"
-          change={data?.percentage_success || 0}
+          change={Number(data?.percentage_success || 0)}
           valueColor="text-green-600"
           unid={"%"}
+          decimals={2}
         />
         <CardItem
-          value={data?.avg_time_cycle_min || 0}
+          value={Number(data?.avg_time_cycle_min || 0)}
           title="Tiempo Prom. / Ciclo"
           valueColor="text-amber-600"
           unid={"min"}
+          decimals={2}
         />
         <CardItem
           value={data?.disponibility?.value || 0}
@@ -72,6 +74,7 @@ export default function ProductionTruck() {
           change={data?.disponibility?.value || 0}
           valueColor="text-purple-600"
           unid={"%"}
+          decimals={2}
         />
         <CardItem
           value={data?.utilization?.value || 0}
@@ -79,6 +82,7 @@ export default function ProductionTruck() {
           change={data?.utilization?.value || 0}
           valueColor="text-pink-600"
           unid={"%"}
+          decimals={2}
         />
       </div>
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">

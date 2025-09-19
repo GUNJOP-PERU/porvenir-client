@@ -37,7 +37,7 @@ export default function UnproductiveReport() {
   return (
     <>
       <PageHeader
-        title="Reporte de Inproductivos Semanal"
+        title="Reporte de Improductivos Semanal"
         description="Viajes de remanejo no considerados"
         refetch={refetch}
         isFetching={isFetching}

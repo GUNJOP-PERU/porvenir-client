@@ -1,6 +1,6 @@
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useRef,memo } from "react";
-import { TrendingUp } from "lucide-react";
+import { ArrowDownLeft, ArrowUp, TrendingUp } from "lucide-react";
 import { cva } from "class-variance-authority";
 
 const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {
@@ -31,7 +31,7 @@ const iconStyles = cva("w-3.5 h-3.5", {
     change: {
       high: "text-green-500",
       medium: "text-yellow-500",
-      low: "text-red-500 rotate-180",
+      low: "text-red-500",
     },
   },
 });
@@ -68,7 +68,7 @@ const CardItem = memo(
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
     return (
-      <div className="flex flex-col justify-center relative border border-zinc-100 shadow-sm rounded-xl py-2 px-4 h-24 md:h-[90px] bg-zinc-50/50">
+      <div className={`flex flex-col justify-center relative border border-zinc-100 shadow-sm rounded-xl py-2 px-4 h-24 md:h-[90px] bg-zinc-50 ${loading ? "opacity-50" : "opacity-100"}`}>
         <span className="text-[10px] leading-none font-semibold text-zinc-400 line-clamp-2 max-w-[150px] mb-1">
           {title}
         </span>
@@ -83,7 +83,7 @@ const CardItem = memo(
         {change !== undefined && (
           <>
             <div className={cardStyles({ change: getChangeVariant(change) })}>
-              <TrendingUp
+              <ArrowDownLeft
                 className={iconStyles({ change: getChangeVariant(change) })}
               />
               <div
@@ -134,10 +134,10 @@ export default CardItem;
 
 
 
-function AnimatedNumber({
+export function AnimatedNumber({
   value,
   decimals = 0,
-  duration = 0.7,
+  duration = 0.6,
   loading = false,
 }) {
   const count = useMotionValue(value);
@@ -165,6 +165,6 @@ function AnimatedNumber({
     return () => controls.stop();
   }, [value, duration, loading]);
 
-  return <motion.span className={`leading-none ${loading ? "opacity-30" : "opacity-100"}`} >{formatted}</motion.span>;
+  return <motion.span className="leading-none">{formatted}</motion.span>;
 }
 
