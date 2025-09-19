@@ -3,6 +3,7 @@ import { getMetrics, roundAndFormat } from "@/lib/utilsGeneral";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { StatusDisplay } from "../StatusDisplay";
+import { AnimatedNumber } from "../CardItem";
 
 export default function ExtractMaterial({
   data,
@@ -21,19 +22,19 @@ export default function ExtractMaterial({
     );
   }, [dataPlan, material]);
 
-  const filteredData = useMemo(() => {
-    if (!material) return data || [];
-    return (data || []).filter((d) =>
-      filteredPlan.map((p) => p.frontLabor).includes(d.origin)
-    );
-  }, [data, filteredPlan, material]);
+ const filteredData = useMemo(() => {
+  if (!material) return data || [];
+  return (data || []).filter(
+    (d) => d.material?.toLowerCase() === material.toLowerCase()
+  );
+}, [data, material]);
 
   const metrics = useMemo(
     () => getMetrics(filteredData, programmedTonnage, tonnageMaterial),
     [filteredData, programmedTonnage, tonnageMaterial]
   );
 
-  const { labels, totals, planValues } = useMemo(() => {
+  const { labels, totals, planValues, inPlanFlags } = useMemo(() => {
     const merged = {};
 
     filteredPlan.forEach((p) => {
@@ -41,13 +42,14 @@ export default function ExtractMaterial({
         origin: p.frontLabor,
         plan: p.tonnage || 0,
         executed: 0,
+        inPlan: true,
       };
     });
 
     filteredData.forEach((d) => {
       const origin = d.origin || "Sin tajo";
       if (!merged[origin]) {
-        merged[origin] = { origin, plan: 0, executed: d.tonnage || 0 };
+        merged[origin] = { origin, plan: 0, executed: d.tonnage || 0, inPlan: false };
       } else {
         merged[origin].executed += d.tonnage || 0;
       }
@@ -56,8 +58,9 @@ export default function ExtractMaterial({
     const labels = Object.keys(merged);
     const totals = labels.map((key) => merged[key].executed);
     const planValues = labels.map((key) => merged[key].plan);
+    const inPlanFlags = labels.map((key) => merged[key].inPlan);
 
-    return { labels, totals, planValues };
+    return { labels, totals, planValues, inPlanFlags };
   }, [filteredData, filteredPlan]);
 
   const getLabelsFromData = useCallback(() => labels, [labels]);
@@ -68,16 +71,19 @@ export default function ExtractMaterial({
         type: "areaspline",
         height: 280,
         backgroundColor: "transparent",
-        marginBottom: 60,
+        marginBottom: 70,
+        marginTop: 70,
+        marginLeft: 0,
+        marginRight: 0,
         spacing: [0, 0, 0, 0],
       },
       title: undefined,
       xAxis: [
         {
           categories: totals.map((v) => roundAndFormat(v)),
-          offset: 0,
+          offset: 13,
           opposite: true,
-          lineColor: "#9696ab",
+          lineColor: "transparent",
           labels: {
             formatter: function () {
               return roundAndFormat(totals[this.pos]);
@@ -91,7 +97,7 @@ export default function ExtractMaterial({
         },
         {
           categories: planValues.map(String),
-          offset: 15,
+          offset: 0,
           opposite: true,
           lineColor: "transparent",
           labels: {
@@ -113,7 +119,10 @@ export default function ExtractMaterial({
           labels: {
             // useHTML: true,
             formatter: function () {
-              return this.value.replace(/_/g, "_<br>");
+              const index = this.pos;
+              const label = this.value.replace(/_/g, "_<br>");
+              const color = inPlanFlags[index] ? "#9696ab" : "#FF4D4F";
+              return `<span style="color:${color}">${label}</span>`;
             },
             style: {
               fontSize: "0.6rem",
@@ -199,8 +208,8 @@ export default function ExtractMaterial({
         floating: false,
         itemStyle: {
           color: "#A6A6A6",
-          fontSize: "9px",
-          fontWeight: "bold",
+          fontSize: "0.55em",
+          fontWeight: "600",
           textTransform: "uppercase",
         },
         itemHoverStyle: { color: "black" },
@@ -216,38 +225,40 @@ export default function ExtractMaterial({
     [totals, planValues, roundAndFormat, getLabelsFromData, colorPoint]
   );
 
-  if (isLoading || isError || !data || data.length === 0)
+  if (isLoading || isError || !filteredData || filteredData.length === 0)
     return (
       <StatusDisplay
         isLoading={isLoading}
         isError={isError}
-        noData={!data || data.length === 0}
+        noData={!filteredData || filteredData.length === 0}
+        height="346px"
       />
     );
 
   return (
-    <div className="flex flex-col gap-2 py-2">
+    <>
       <div className="w-full grid md:grid-cols-4 grid-cols-2 gap-2">
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
           <span className="text-[10px] text-zinc-400 leading-none mb-1">
             Toneladas Programadas
           </span>
           <b className="text-[#1EE0EE] leading-none font-extrabold text-xl">
-            {roundAndFormat(programmedTonnage)} <small>TM</small>
+            <AnimatedNumber value={programmedTonnage} loading={isLoading} /> 
+            <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            para {metrics.programmedTravels} viajes
+            para <AnimatedNumber value={metrics.programmedTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
           <span className="text-[10px] text-zinc-400 leading-none mb-1">
             Toneladas Ejecutadas
           </span>
-          <b className="text-[#04C286] leading-none font-extrabold text-xl">
-            {roundAndFormat(metrics.executedTonnage)} <small>TM</small>
+          <b className={`text-[${colorPoint}] leading-none font-extrabold text-xl`}>
+          <AnimatedNumber value={metrics.executedTonnage} loading={isLoading} />  <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            en {metrics.executedTravels} viajes
+            en <AnimatedNumber value={metrics.executedTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
@@ -255,10 +266,10 @@ export default function ExtractMaterial({
             Toneladas Variación
           </span>
           <b className="text-[#FE7887] leading-none font-extrabold text-xl">
-            {roundAndFormat(metrics.variationTonnage)} <small>TM</small>
+            <AnimatedNumber value={metrics.variationTonnage} loading={isLoading} /> <small>TM</small>
           </b>
           <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-            en {metrics.variationTravels} viajes
+            en <AnimatedNumber value={metrics.variationTravels} loading={isLoading} /> viajes
           </span>
         </div>
         <div className="flex justify-between items-center bg-zinc-50 px-4 py-2 rounded-lg pr-3">
@@ -267,10 +278,10 @@ export default function ExtractMaterial({
               %Cumplimiento
             </span>
             <b className="text-[#1E64FA] leading-none font-extrabold text-xl">
-              {metrics.goalCompletionPercentage.toFixed(2)} <small>%</small>
+              <AnimatedNumber value={metrics.goalCompletionPercentage} loading={isLoading} decimals={2} /> <small>%</small>
             </b>
             <span className="mt-1 text-xs leading-none text-zinc-500 font-bold">
-              {(100 - metrics.goalCompletionPercentage).toFixed(2)}%
+              <AnimatedNumber value={(100 - metrics.goalCompletionPercentage)} loading={isLoading} decimals={2} />%
             </span>
           </div>
           <ProgressChart
@@ -279,7 +290,7 @@ export default function ExtractMaterial({
         </div>
       </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
+    </>
   );
 }
 
@@ -304,7 +315,7 @@ const ProgressChart = ({ percentage }) => {
           d="M26 6 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"
         />
       </svg>
-      <div className="percentage-text">{percentage}%</div>
+      {/* <div className="percentage-text">{percentage}%</div> */}
     </div>
   );
 };

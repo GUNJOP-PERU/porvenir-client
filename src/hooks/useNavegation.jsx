@@ -1,20 +1,9 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
-import IconCompany from "@/icons/Dashboard/IconCompany";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
-import IconLabor from "@/icons/Dashboard/IconLabor";
 import IconPlan from "@/icons/Dashboard/IconPlan";
-import IconWork from "@/icons/Dashboard/IconWork";
-import IconChecklist from "@/icons/Dashboard/IconChecklist";
-import IconCycle from "@/icons/Dashboard/IconCycle";
-import IconActivity from "@/icons/Dashboard/IconActivity";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
-import IconDash3 from "@/icons/Dashboard/IconDash3";
-import IconDash5 from "@/icons/Dashboard/IconDash5";
-import IconDash6 from "@/icons/Dashboard/IconDash6";
-import IconTimeline from "@/icons/Dashboard/IconTimeline";
 import IconRadar from "@/icons/IconRadar";
-import { ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, FileChartPie } from "lucide-react";
+import { Building2, ChartArea, ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, CopyCheck, FileChartPie, MapPin, Pickaxe, Waypoints } from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -27,7 +16,7 @@ export const useNavigation = () => {
         items: [
           {
             name: "General",
-            icon: <IconCompany />,
+            icon: <Building2 />,
             items: [
               {
                 name: "Compañia",
@@ -48,7 +37,7 @@ export const useNavigation = () => {
           },
           {
             name: "Ubicaciones",
-            icon: <IconLabor />,
+            icon: <MapPin />,
             items: [
               {
                 name: "Origen / Labor",
@@ -90,7 +79,6 @@ export const useNavigation = () => {
           },
           // {
           //   name: "Scoop",
-          //   icon: <IconActivity />,
           //   items: [
           //     { name: "Ciclo Scoop", href: "/cycleScoop", active: pathname === "/cycleScoop" },
           //     { name: "Actividades Scoop", href: "/activityScoop", active: pathname === "/activityScoop" },
@@ -98,18 +86,16 @@ export const useNavigation = () => {
           // },
           {
             name: "Conectividad",
-            icon: <IconCycle />,
+            icon: <Waypoints />,
             items: [
               {
                 name: "Beacon",
                 href: "/beacon",
-                icon: <IconActivity />,
                 active: pathname === "/beacon",
               },
               {
                 name: "WAP",
                 href: "/wap",
-                icon: <IconActivity />,
                 active: pathname === "/wap",
               },
             ],
@@ -122,13 +108,13 @@ export const useNavigation = () => {
           {
             name: "Trabajos planificados",
             href: "/workOrder",
-            icon: <IconWork />,
+            icon: <Pickaxe />,
             active: pathname === "/workOrder",
           },
           {
             name: "Checklist",
             href: "/checklist",
-            icon: <IconChecklist />,
+            icon: <CopyCheck />,
             active: pathname === "/checklist",
           },
           {
@@ -181,12 +167,12 @@ export const useNavigation = () => {
             icon: <ChartNoAxesCombined />,
             active: pathname === "/dashboard/unproductiveReport",
           },
-          // {
-          //   name: "Producción Truck",
-          //   href: "/",
-          //   icon: <IconDash1 />,
-          //   active: pathname === "/",
-          // },
+          {
+            name: "Producción Truck",
+            href: "/dashboard/productionTruck",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/productionTruck",
+          },
           // {
           //   name: "Timeline Truck",
           //   href: "/dashboard/timelineTruck",
@@ -202,13 +188,13 @@ export const useNavigation = () => {
           {
             name: "Producción Mensual",
             href: "/dashboard/productionMonth",
-            icon: <IconDash5 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/productionMonth",
           },
           {
             name: "Utilización y Velocidad",
             href: "/dashboard/productionUV",
-            icon: <IconDash6 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/productionUV",
           },
         ],
@@ -219,25 +205,25 @@ export const useNavigation = () => {
           {
             name: "Acumulado por hora",
             href: "dashboard/real-time-by-hour",
-            icon: <IconDash6 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-hour",
           },
           {
             name: "Acumulado por día",
             href: "/dashboard/real-time-by-day",
-            icon: <IconDash6 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
           {
             name: "Acumulado por mes",
             href: "/dashboard/real-time-by-month",
-            icon: <IconDash6 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-month",
           },  
           {
             name: "Viajes por Turno",
             href: "/dashboard/real-time-trip-count",
-            icon: <IconDash6 />,
+            icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-trip-count",
           },  
           {
@@ -245,6 +231,12 @@ export const useNavigation = () => {
             href: "dashboard/beacon-detection-table",
             icon: <IconRadar />,
             active: pathname === "/dashboard/beacon-detection-table",
+          },
+          {
+            name: "Tracking",
+            href: "dashboard/tracking",
+            icon: <IconRadar />,
+            active: pathname === "/dashboard/tracking",
           },
         ],
       },

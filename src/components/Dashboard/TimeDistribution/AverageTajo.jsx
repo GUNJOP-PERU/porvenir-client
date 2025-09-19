@@ -13,22 +13,22 @@ export default function AverageTajo({ data, isLoading, isError }) {
         isLoading={isLoading}
         isError={isError}
         noData={!data || Object.keys(data).length === 0}
-     
+        height="250px"
       />
     );
-  }  
+  }
   return (
-    <div className="grid grid-cols-4 gap-2 py-2">
+    <div className="grid grid-cols-3 xl:grid-cols-4 gap-1 h-[250px] overflow-y-auto items-start auto-rows-min">
       {parsedData.map((item) => (
         <div
           key={item.equipment}
-          className="flex flex-col justify-between items-center bg-zinc-50 px-4 py-2 rounded-lg pr-3 gap-2"
+          className="flex flex-col bg-zinc-50 px-3 py-2 rounded-lg gap-1"
         >
-          <span className="text-xs leading-none text-zinc-400 font-bold">
-            {item.equipment}
-          </span>
-          <span className="text-sky-600 leading-none font-extrabold text-md">
+          <span className="text-sky-600 leading-none font-bold text-xs">
             {formatDurationMinutes(item.avg)}
+          </span>
+          <span className="text-[0.6em] leading-none text-zinc-400 font-semibold">
+            {item.equipment}
           </span>
         </div>
       ))}

@@ -101,7 +101,7 @@ const HeatMap = ({ data, isLoading, isError }) => {
           style: {
             color: "#A1A1AA",
             fontSize: "0.6em",
-            fontWeight: "bold",
+            fontWeight: "600",
           },
           rotation: 0,
         },
@@ -208,7 +208,7 @@ const HeatMap = ({ data, isLoading, isError }) => {
     );
 
   return (
-    <div className="flex flex-col gap-2 py-2">
+    <>
       <div className="w-full grid grid-cols-3 gap-2 mb-2">
         <div className="flex flex-col bg-zinc-50 px-4 py-2 rounded-lg">
           <span className="text-[10px] text-zinc-400">Parrillas</span>
@@ -243,7 +243,7 @@ const HeatMap = ({ data, isLoading, isError }) => {
         highcharts={Highcharts}
         options={options}
       />
-    </div>
+    </>
   );
 };
 

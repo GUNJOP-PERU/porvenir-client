@@ -8,7 +8,7 @@ import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import IconToggle from "@/icons/IconToggle";
 import { dataLabor } from "@/lib/data";
-import { CircleFadingPlus } from "lucide-react";
+import { CircleFadingPlus, InfoIcon } from "lucide-react";
 import { Button } from "../../ui/button";
 import {
   Dialog,
@@ -43,8 +43,7 @@ const FormSchema = z.object({
   }),
   secondPart: z.string().min(1, { message: "*Requerida" }),
   thirdPart: z.string().min(1, { message: "*Requerida" }),
-  quarterPart: z.string().optional(),
-
+  quarterPart: z.string().min(1, { message: "*Requerida" }),
   description: z.string().optional(),
   type: z.string().optional(),
   status: z.boolean().default(true),
@@ -75,12 +74,12 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const thirdPart = watch("thirdPart");
   const quarterPart = watch("quarterPart");
 
-
   useEffect(() => {
     if (dataCrud) {
+      const second = dataCrud?.name?.split("_")[1] || "";
       reset({
         firstPart: dataCrud?.name?.split("_")[0] || "",
-        secondPart: dataCrud?.name?.split("_")[1] || "",
+        secondPart: second.toUpperCase().replace(/^OB/, ""), // le quita OB
         thirdPart: dataCrud?.name?.split("_")[2]?.split("-")[0] || "",
         quarterPart: dataCrud?.name?.split("_")[2]?.split("-")[1] || "",
         description: dataCrud?.description || "",
@@ -101,7 +100,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
-    const name = `${data.firstPart}_${data.secondPart}_${data.thirdPart}${
+    const name = `${data.firstPart}_OB${data.secondPart}_${data.thirdPart}${
       data.quarterPart ? `-${data.quarterPart}` : ""
     }`;
 
@@ -147,13 +146,20 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
-                <div className="text-center text-sm font-bold text-zinc-600 py-2 px-4  bg-zinc-100 rounded-xl flex items-center justify-between">
-                  <h4>Labor creado:</h4>
-                  <span>
-                    {`${firstPart || ""}_${secondPart || ""}_${
-                      thirdPart || ""
-                    }${quarterPart ? `-${quarterPart}` : ""}`}
-                  </span>
+                <div className="flex flex-col items-center">
+                  <div className="mb-1">
+                    <span className="text-xs text-sky-500 flex items-center gap-1">
+                      <InfoIcon className="w-3 h-3" />
+                      Labor a crear (el “OB” se agrega automáticamente)
+                    </span>
+                  </div>
+                  <div className="w-full py-2 px-4 bg-sky-50 rounded-lg">
+                    <h4 className="text-center text-md font-bold text-sky-600 leading-none">
+                      {`${firstPart || ""}_OB${secondPart || ""}_${
+                        thirdPart || ""
+                      }${quarterPart ? `-${quarterPart}` : ""}`}
+                    </h4>
+                  </div>
                 </div>
                 <div className="flex gap-1 justify-center">
                   <FormField
@@ -189,16 +195,13 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         <FormLabel>OB</FormLabel>
                         <Input
                           type="text"
-                          placeholder="Ej. OB9, OBX1"
+                          placeholder="Ej. 10 o 10B"
                           className="w-[80px]"
+                          maxLength={6}
                           disabled={loadingGlobal}
                           {...field}
                           onChange={(e) => {
-                            let value = e.target.value.toUpperCase();
-                            if (!value.startsWith("OB")) {
-                              value = "OB" + value.replace(/OB/gi, ""); // Asegura que siempre inicie con "OB"
-                            }
-                            field.onChange(value);
+                            field.onChange(e.target.value.toUpperCase());
                           }}
                         />
                         <FormMessage />

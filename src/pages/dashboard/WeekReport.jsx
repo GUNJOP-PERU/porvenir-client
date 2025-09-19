@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import CardTitle from "@/components/Dashboard/CardTitle";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import KPIWeek from "@/components/Dashboard/WeekReport/KPIWeek";
 import TravelsWeek from "@/components/Dashboard/WeekReport/TravelsWeek";
 import DestinyWeek from "@/components/Dashboard/WeekReport/DestinyWeek";
@@ -10,6 +9,7 @@ import RemanejoWeek from "@/components/Dashboard/WeekReport/RemanejoWeek";
 import SharedWeek from "@/components/Dashboard/WeekReport/SharedWeek";
 import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 import PageHeader from "@/components/PageHeader";
+import { ChartNoAxesColumn, ChartPie, TrendingUp } from "lucide-react";
 
 export default function WeekReport() {
   const { allWeeks, currentWeek } = generateNormalWeeks();
@@ -23,8 +23,6 @@ export default function WeekReport() {
     const week = allWeeks.find((w) => w.weekNumber.toString() === weekNumber);
     if (week) setSelectedRange(week);
   };
-
-  console.log(selectedRange);
 
   const {
     data = [],
@@ -91,6 +89,7 @@ export default function WeekReport() {
 
       <KPIWeek
         data={data}
+        isLoading={isLoading}
         programmedMineral={programmedMineral}
         programmedDesmonte={programmedDesmonte}
       />
@@ -98,9 +97,10 @@ export default function WeekReport() {
         <div className="flex-1 flex flex-col col-span-1">
           <CardTitle
             title="Comparativo de viaje semanal"
-            subtitle="Remanejo Semanal - Viajes"
-            icon={IconDash1}
-            className="h-full"
+            subtitle="Últimas 4 semanas"
+            icon={TrendingUp}
+            classIcon="text-[#0FC47A]"
+            className="h-full bg-[#F0FFF7]/50 border-[#B3F1D8] shadow-[#B3F1D8]"
           >
             <SharedWeek />
           </CardTitle>
@@ -109,28 +109,32 @@ export default function WeekReport() {
           <CardTitle
             title="Evolución de viajes de la semana"
             subtitle="Total de viajes por dia"
-            icon={IconDash1}
+           icon={ChartNoAxesColumn}
+            classIcon="text-[#0FC47A]"
           >
             <TravelsWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
             title="Zona destino de viajes"
             subtitle="Viajes mina y Superficie"
-            icon={IconDash1}
+            icon={ChartPie}
+            classIcon="text-[#019cfe]"
           >
             <AreaWeek data={data} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
             title="Extracción Semanal - Viajes por Destino"
             subtitle="Tiempo de espera en la cola"
-            icon={IconDash1}
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#6B46C1]"
           >
             <DestinyWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
             title="Remanejo Semanal - Viajes"
             subtitle="Remanejo Semanal - Viajes"
-            icon={IconDash1}
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#b3685b]"
           >
             <RemanejoWeek data={data} selectedRange={selectedRange} isLoading={isLoading} isError={isError} />
           </CardTitle>

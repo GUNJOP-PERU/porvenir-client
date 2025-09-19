@@ -1,75 +1,149 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
+import { StatusDisplay } from "../StatusDisplay";
+import { roundAndFormat } from "@/lib/utilsGeneral";
 
-export default function ParetoTime({ data, isLoading, isError }) {
+export default function ParetoTime({ data, limit = 10, isLoading, isError }) {
 
-    const mockData = {
-    labors: [
-      "Espera el primer inicio de carguío",
-      "Espera para inicio de carguío",
-      "Espera para reinicio de carguío",
-      "Tráfico en la vía",
-      "Falta de Scoop",
-      "Espera en Parrilla",
-      "Obstrucción de Vías con agua/equipos",
-      "Espera zona de descarga Planta cancha",
-      "Cambio de Orden",
-      "Espera Operador Scoop",
-    ],
-    sum_cola_origin: [162.52, 135.39, 52.05, 37.14, 29.14, 15.22, 9.35, 7.8, 7.69, 6.7],
-    avg_cola_cycle: [34.8, 74.94, 82.89, 89.13, 92.28, 94.3, 96.8, 97.7, 99.1, 100],
-  };
-
-  const chartData = data ?? mockData;
+  const { categories, series } = useMemo(() => {
+    if (!data || data.length === 0) {
+      return {
+        categories: [],
+        series: [],
+      };
+    }
+  
+    const grouped = data.reduce((acc, curr) => {
+      const name = curr.activityName || "Sin Nombre";
+      if (!acc[name]) acc[name] = [];
+      acc[name].push(curr.duration ?? 0);
+      return acc;
+    }, {});
+  
+    const laborsRaw = Object.keys(grouped).map((name) => ({
+      name,
+      sum: grouped[name].reduce((a, b) => a + b, 0),
+    }));
+    laborsRaw.sort((a, b) => b.sum - a.sum);
+  
+    const topLaborsRaw = laborsRaw.slice(0, limit);
+  
+    const labors = topLaborsRaw.map((item) => item.name);
+    const sum_cola_origin = labors.map((name) =>
+      grouped[name].reduce((a, b) => a + b, 0)
+    );
+  
+    const total = sum_cola_origin.reduce((a, b) => a + b, 0);
+    let cumulative = 0;
+    const cumulative_percent = sum_cola_origin.map((val) => {
+      cumulative += val;
+      return (cumulative / total) * 100;
+    });
+  
+    const series = [
+      {
+        type: "column",
+        name: "Horas acumuladas",
+        data: sum_cola_origin.map((val, i) => ({
+          y: val,
+          color: i < 3 ? "#41b3ff" : "#D9D9D9",
+        })),
+        total: total, // total de horas
+        yAxis: 0,
+      },
+      {
+        type: "spline",
+        name: "% acumulado",
+        data: cumulative_percent,
+        color: "#4070EB",
+        total: 100, // % siempre será 100
+        yAxis: 1,
+      },
+    ];
+  
+    return { categories: labors, series };
+  }, [data, limit]);
 
   const options = useMemo(
     () => ({
       chart: {
         type: "column",
         backgroundColor: "transparent",
-        height: 280,
-        marginTop: 45,
-        marginBottom: 25,
+        height: 330,
       },
       title: { text: null },
       xAxis: {
-        categories: chartData.labors,
+        categories,
         lineColor: "transparent",
         crosshair: true,
         tickWidth: 0,
         tickLength: 0,
         labels: {
-          style: { color: "#A6A6A6", fontSize: "0.6em" },
-          rotation: 0,
+          useHTML: true,
+          formatter: function () {
+            const maxChars = 10; // máx. caracteres por línea
+            const words = this.value.split(" ");
+            let line = "";
+            let lines = [];
+
+            words.forEach((word) => {
+              if ((line + word).length > maxChars) {
+                // si pasaríamos del límite, cerramos línea
+                lines.push(line.trim());
+                line = word + " ";
+              } else {
+                line += word + " ";
+              }
+            });
+            if (line.trim().length > 0) lines.push(line.trim());
+
+            return lines.join("<br>");
+          },
+          style: {
+            display: "block",
+            textAlign: "center",
+            whiteSpace: "normal",
+            fontSize: "0.6rem",
+            fontWeight: "600",
+            color: "#A1A1AA",
+            fontFamily: "Nunito, sans-serif",
+            lineHeight: "10px",
+          },
         },
       },
+
       yAxis: [
         {
           title: { text: null },
-          labels: { enabled: false },
-          min: 0,
-          gridLineWidth: 0.5,
+          labels: {
+            enabled: false,
+          },
           gridLineColor: "#D9D9D9",
+          gridLineWidth: 0.5,
+          gridLineDashStyle: "Dash",
         },
         {
           title: { text: null },
-          labels: { enabled: false },
-          min: 0,
-          gridLineWidth: 0,
-          opposite: true,
+          labels: {
+            enabled: false,
+          },
+          gridLineColor: "#D9D9D9",
+          gridLineWidth: 0.5,
+          gridLineDashStyle: "Dash",
         },
       ],
       tooltip: {
-        shared: true,
         backgroundColor: "#111214",
         borderWidth: 0,
         shadow: false,
         borderRadius: 10,
-        padding: 15,
-        style: { color: "#FFFFFF", fontSize: "11px" },
+        padding: 10,
+        style: { color: "#FFFFFF", fontSize: "0.65em" },
+        shared: true,
         formatter: function () {
-          const category = this.series.chart.xAxis[0].categories[this.point.x] || this.x;
+          const category =
+            this.series.chart.xAxis[0].categories[this.point.x] || this.x;
           let tooltipText = `<b>${category}</b><br/>`;
           this.points.forEach((point) => {
             tooltipText += `<span style="color:${point.color}">●</span> <b>${
@@ -82,74 +156,73 @@ export default function ParetoTime({ data, isLoading, isError }) {
       plotOptions: {
         column: {
           borderRadius: "15%",
-          pointPadding: 0.1,
-          groupPadding: 0.1,
+          pointPadding: 0.02,
+          groupPadding: 0.02,
           borderWidth: 0,
           dataLabels: {
             enabled: true,
             inside: true,
             verticalAlign: "middle",
-            style: { fontSize: "9px", color: "#000", textOutline: "none" },
+            style: { fontSize: "0.6rem", color: "#000", textOutline: "none" },
             formatter: function () {
-              return this.y.toFixed(1);
+              return this.y == 0 ? "" : roundAndFormat(this.y);
             },
           },
         },
         spline: {
-          marker: { enabled: true, radius: 3, symbol: "circle" },
+          marker: { enabled: true, radius: 4, symbol: "circle" },
           dataLabels: {
             enabled: true,
-            style: { fontSize: "9px", color: "#A1A1AA", fontWeight: "bold", textOutline: "none" },
-            formatter: function () {
-              return this.y.toFixed(1);
+            style: {
+              fontSize: "0.6rem",
+              color: "#4070EB",
+              fontWeight: "600",
+              textOutline: "none",
             },
+            formatter: function () {
+              return `${this.y.toFixed(2)}%`;
+            },
+            backgroundColor: "#eaeaea80",
+            borderRadius: 3,
+            padding: 3,
           },
         },
       },
-      series: [
-        {
-          type: "column",
-          name: "Suma de Cola por Origen",
-          data: chartData.sum_cola_origin,
-          color: "#F43F5E",
-          yAxis: 0,
-        },
-        {
-          type: "spline",
-          name: "Prom. de Cola por Ciclo",
-          data: chartData.avg_cola_cycle,
-          color: "#40CEEB",
-          yAxis: 1,
-        },
-      ],
+      series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
-        itemStyle: { color: "#A6A6A6", fontSize: "9px", fontWeight: "bold", textTransform: "uppercase" },
+        floating: false,
+        itemStyle: {
+          color: "#A6A6A6",
+          fontSize: "9px",
+          fontWeight: "bold",
+          textTransform: "uppercase",
+        },
         itemHoverStyle: { color: "#1EE0EE" },
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
-        itemMarginTop: 1,
-        itemMarginBottom: 1,
+        labelFormatter: function () {
+          return `<b style="color:#000">${roundAndFormat(this.options.total)}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
       exporting: { enabled: false },
       accessibility: { enabled: false },
     }),
-    [chartData]
+    [categories, series]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || data.length === 0)
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[280px] w-full animate-pulse"></div>
-    );
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[280px] w-full ">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || data.length === 0}
+        height={280}
+      />
     );
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;

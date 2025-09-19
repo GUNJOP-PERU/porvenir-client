@@ -16,9 +16,9 @@ import HomeVehicles from "./pages/management/Vehicles";
 
 import Configuration from "./pages/Configuration";
 import ParetoTruck from "./pages/dashboard/ParetoTruck";
-import HistoricalExtract from "./pages/dashboard/ProduccionDashboard/HistoricalExtract";
-import ProductionLayout from "./pages/dashboard/ProduccionDashboard/ProductionLayout";
-import RealTimeExtract from "./pages/dashboard/ProduccionDashboard/RealTimeExtract";
+import HistoricalExtract from "./pages/dashboard/ProductionExtract/HistoricalExtract";
+import ProductionLayout from "./pages/dashboard/ProductionExtract/ProductionLayout";
+import RealTimeExtract from "./pages/dashboard/ProductionExtract/RealTimeExtract";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
 import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
@@ -47,6 +47,7 @@ import RealTimeByDay from "./pages/beacon/RealTimeByDay";
 import RealTimeByHour from "./pages/beacon/RealTimeByHour";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
+import Tracking from "./pages/beacon/Tracking";
 
 const protectedRoutes = [
   //Gestion
@@ -67,7 +68,6 @@ const protectedRoutes = [
   { path: "ubications", element: <PageUbications /> },
   { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
-  { path: "unproductiveReport", element: <UnproductiveReport /> },
 
   //Dashboard
   // { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
@@ -105,6 +105,7 @@ const protectedRoutes = [
   { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
   { path: "dashboard/productionUV", element: <Utilization /> },
+  { path: "dashboard/productionTruck", element: <ProductionTruck /> },
 
   //Dashboard-Beacon
   { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
@@ -112,6 +113,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
+  { path: "dashboard/tracking", element: <Tracking /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

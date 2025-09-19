@@ -86,8 +86,8 @@ function PageActivity() {
         isFetching={isFetching}
         />
 
-      <div className="flex flex-wrap justify-between items-center">
-        <div className="relative">
+      <div className="flex flex-wrap xl:justify-between items-center gap-1">
+        <div className="relative xl:w-fit w-full">
           <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4 text-zinc-300" />
           <input
             type="text"

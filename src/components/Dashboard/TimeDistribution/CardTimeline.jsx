@@ -41,8 +41,8 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
         x2: endTime,
         y: data?.rows?.indexOf(item.y) ?? -1,
         color: item.color || "gray",
-        tajo: item.tajo || "N/A",
-        title: item.title || "N/A",
+        tajo: item.tajo || "",
+        title: item.title || "",
       };
     });
 
@@ -90,8 +90,8 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
               x2: item.x,
               y: categoryIndex,
               color: "red",
-              tajo: "N/A",
-              title: "N/A",
+              tajo: "",
+              title: "",
             });
           }
           previousEnd = item.x2;
@@ -112,7 +112,7 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
         backgroundColor: "transparent",
         height: 830,
         marginTop: 20,
-        marginBottom: 30,
+        marginBottom: 50,
       },
       title: {
         text: null,
@@ -132,6 +132,7 @@ const CardTimeline = memo(({ data = [], isLoading, isError }) => {
           style: {
             color: "#A6A6A6",
             fontSize: "0.6em",
+            fontWeight: "600",
           },
           format: "{value:%H:%M}",
         },

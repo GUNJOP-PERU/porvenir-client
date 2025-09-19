@@ -1,7 +1,6 @@
 import IconCheck from "@/icons/IconCheck";
-import IconLogout from "@/icons/IconLogout";
 import { useAuthStore } from "@/store/AuthStore";
-import { ChevronsUpDown } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import {
@@ -67,7 +66,7 @@ export function NavUser() {
             onClick={handleLogout}
             className="text-red-500 focus:text-red-500 focus:bg-red-50"
           >
-            <IconLogout className="stroke-red-600 " />
+            <LogOut className="text-red-600 " />
             Cerrar Sesión
           </DropdownMenuItem>
         </div>

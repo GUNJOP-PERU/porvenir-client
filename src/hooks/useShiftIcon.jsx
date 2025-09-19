@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
+
 export const useShiftIcon = () => {
   const [isDayShift, setIsDayShift] = useState(null);
 

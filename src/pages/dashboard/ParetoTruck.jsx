@@ -6,7 +6,7 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { ChartArea } from "lucide-react";
 
 export default function ParetoTruck() {
   const { data } = useGraphicData(
@@ -59,7 +59,7 @@ export default function ParetoTruck() {
         <CardTitle
           title="Actividades Improductivas Mes"
           subtitle="Resumen de las actividades improductivas durante el mes."
-          icon={IconDash1}
+          icon={ChartArea}
           className="xl:col-span-2"
         >
           <CardColumParetoTruck />
@@ -68,7 +68,7 @@ export default function ParetoTruck() {
         <CardTitle
           title=" Actividades Improductivas Promedio vs Acumulada"
           subtitle="Promedio mensual vs. acumulado de actividades improductivas."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardActivitiesChart
             symbol="pareto-truck-improductive-activities"
@@ -78,7 +78,7 @@ export default function ParetoTruck() {
         <CardTitle
           title=" Análisis de Pareto con Índice de Impacto Ponderado"
           subtitle="Pareto con Índice de Impacto Ponderado."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardColumImpact
             symbol="pareto-truck-impact-diagram"

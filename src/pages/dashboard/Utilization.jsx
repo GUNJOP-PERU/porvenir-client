@@ -3,7 +3,7 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import CardVelocity from "@/components/Dashboard/Utilization/CardVelocity";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { ChartArea } from "lucide-react";
 
 export default function Utilization() {
   const { data = [] } = useGraphicData(
@@ -61,7 +61,7 @@ export default function Utilization() {
         <CardTitle
           title="Produccion (Ton) / Utilizacion (%)"
           subtitle="Relación entre tonelaje producido y porcentaje de uso."
-          icon={IconDash1}
+          icon={ChartArea}
           className="xl:col-span-2"
         >
           <CardColumUtilization />
@@ -69,7 +69,7 @@ export default function Utilization() {
         <CardTitle
           title="Análisis de velocidad rutas a Parrillas"
           subtitle="Evaluación de la velocidad en rutas hacia Parrillas."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardVelocity
             symbol="production-velocity-analysis-parrila"
@@ -79,7 +79,7 @@ export default function Utilization() {
         <CardTitle
           title="Análisis de velocidad rutas a Canchas"
           subtitle="Evaluación de la velocidad en rutas hacia Canchas."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardVelocity
             symbol="production-velocity-analysis-cancha"

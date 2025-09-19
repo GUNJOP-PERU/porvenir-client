@@ -58,7 +58,6 @@ export default function TimeDistribution() {
         title="Distribución de tiempos / Tiempo Real"
         description="Viajes de remanejo no considerados"
       />
-
       <Body
         progressDay={progressDay}
         jobCycle={jobCycle}

@@ -4,6 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import { filterData, filterValidTrips } from "@/lib/utilsGeneral";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import { getLast4WeeksIncludingCurrent } from "./MiningWeeksSelect";
+import { StatusDisplay } from "../StatusDisplay";
 
 export default function SharedWeek() {
   const last4Weeks = getLast4WeeksIncludingCurrent();
@@ -17,7 +18,7 @@ export default function SharedWeek() {
   } = useFetchGraphicData({
     queryKey: ["comparative-week", start, end],
     endpoint: "cycle/by-date-range",
-    filters: start && end ? `startDate=${start}&endDate=${end}` : "",
+    filters: `startDate=${start}&endDate=${end}`,
   });
 
   const filteredInvalidData = useMemo(() => filterValidTrips(data), [data]);
@@ -27,12 +28,10 @@ export default function SharedWeek() {
   const { categories, series, tableData } = useMemo(() => {
     const grouped = {};
 
-    // Agrupar por semana (weekNumber)
     last4Weeks.forEach((w) => {
       grouped[w.weekNumber] = { mineral: 0, desmonte: 0, remanejo: 0 };
     });
 
-    // Viajes mineral
     filteredMineral.forEach((item) => {
       if (!item.date) return;
       const dateMs = new Date(item.date).getTime();
@@ -42,7 +41,6 @@ export default function SharedWeek() {
       if (week) grouped[week.weekNumber].mineral++;
     });
 
-    // Viajes desmonte
     filteredDesmonte.forEach((item) => {
       if (!item.date) return;
       const dateMs = new Date(item.date).getTime();
@@ -52,17 +50,16 @@ export default function SharedWeek() {
       if (week) grouped[week.weekNumber].desmonte++;
     });
 
-    // Remanejo (todas las unidades juntas)
     filteredInvalidData.forEach((item) => {
       if (!item.date) return;
-      const dateMs = new Date(item.date).getTime(); // <-- convertir
+      const dateMs = new Date(item.date).getTime();
       const week = last4Weeks.find(
         (w) => dateMs >= w.startTimestamp && dateMs <= w.endTimestamp
       );
       if (week) grouped[week.weekNumber].remanejo++;
     });
 
-    const categories = last4Weeks.map((w) => `Semana ${w.weekNumber}`);
+    const categories = last4Weeks.map((w) => `Sem ${w.weekNumber}`);
 
     const series = [
       {
@@ -70,17 +67,19 @@ export default function SharedWeek() {
         type: "column",
         data: last4Weeks.map((w) => grouped[w.weekNumber].mineral),
         color: "#14B8A6",
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].mineral, 0),
       },
       {
         name: "Desmonte",
         type: "column",
         data: last4Weeks.map((w) => grouped[w.weekNumber].desmonte),
         color: "#F59E0B",
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].desmonte, 0),
       },
       {
         name: "% Remanejo",
         type: "line",
-        yAxis: 1, // <--- usar segundo eje
+        yAxis: 1,
         data: last4Weeks.map((w) => {
           const total =
             grouped[w.weekNumber].mineral + grouped[w.weekNumber].desmonte;
@@ -89,6 +88,7 @@ export default function SharedWeek() {
         }),
         color: "black",
         marker: { enabled: true },
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].remanejo, 0),
       },
     ];
     const tableData = last4Weeks.map((w) => {
@@ -192,7 +192,7 @@ export default function SharedWeek() {
       },
       series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
         floating: false,
@@ -202,15 +202,13 @@ export default function SharedWeek() {
           fontWeight: "bold",
           textTransform: "uppercase",
         },
-        itemHoverStyle: {
-          color: "#1EE0EE",
-        },
+        itemHoverStyle: { color: "#1EE0EE" },
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
-        itemMarginTop: 0,
-        itemMarginBottom: 0,
-        zIndex: 10,
+        labelFormatter: function () {
+          return `<b style="color:#000">${this.options.total}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
       exporting: { enabled: false },
@@ -219,36 +217,35 @@ export default function SharedWeek() {
     [categories, series]
   );
 
-  if (isLoading)
+  if (isLoading || isError || !data || Object.keys(data).length === 0) {
     return (
-      <div className="bg-zinc-200 rounded-2xl flex items-center justify-center h-[320px] w-full animate-pulse" />
+      <StatusDisplay
+        isLoading={isLoading}
+        isError={isError}
+        noData={!data || Object.keys(data).length === 0}
+        height="100%"
+      />
     );
-
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-[320px] w-full">
-        <span className="text-[10px] text-red-500">Ocurrió un error</span>
-      </div>
-    );
+  }
 
   return (
     <>
       <HighchartsReact highcharts={Highcharts} options={options} />
-      <div className="flex items-center justify-center w-full">
-        <table className="w-full text-xs mt-4 border border-zinc-300 rounded-lg overflow-hidden">
-          <thead className="bg-zinc-100 text-zinc-400">
-            <tr >
-              <th className="py-2">Semana</th>
-              <th className="py-2">Viajes</th>
-              <th className="py-2">%Viajes de Remanejo</th>
+      <div className="mt-2 flex items-center justify-center w-full border border-[#B3F1D8]/50 rounded-lg overflow-hidden">
+        <table className="min-w-full  bg-white/50">
+          <thead className="bg-[#B3F1D8]/50 text-[#0FC47A] font-semibold sticky top-0">
+            <tr className="text-left text-[10px] leading-[.8rem]">
+              <th className="px-4 py-2 first:rounded-l-md last:rounded-r-md">Semana</th>
+              <th className="px-4 py-2 first:rounded-l-md last:rounded-r-md">Viajes</th>
+              <th className="px-4 py-2 first:rounded-l-md last:rounded-r-md">%Viajes de Remanejo</th>
             </tr>
           </thead>
           <tbody>
             {tableData.map((w, i) => (
-              <tr key={i} className="text-center border-t">
-                <td className="py-2">Semana {w.week}</td>
-                <td className="py-2">{w.totalTrips}</td>
-                <td className="py-2">{w.percentRemanejo}%</td>
+              <tr key={i} className="border-b border-[#B3F1D8]/50 first:rounded-l-md last:rounded-r-md last:border-b-0 text-[11px] leading-[.8rem]">
+                <td className="px-4 py-2">Sem {w.week}</td>
+                <td className="px-4 py-2">{w.totalTrips}</td>
+                <td className="px-4 py-2">{w.percentRemanejo}%</td>
               </tr>
             ))}
           </tbody>
