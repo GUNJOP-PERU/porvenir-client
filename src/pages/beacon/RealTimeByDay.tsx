@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-// import DonutChart from "@/components/Dashboard/Charts/DonutChart";
+import { useFetchData } from "../../hooks/useGlobalQueryV2";
+// Components
 import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
 import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
-import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart"
-import { useFetchData } from "../../hooks/useGlobalQueryV2";
+import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import CardItem from "@/components/Dashboard/CardItem";
 // Types
 import type { BeaconCycle, BeaconTrip } from "../../types/Beacon";
@@ -11,8 +11,10 @@ import type { Mineral } from "@/types/Mineral";
 // Utils
 import { getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 import { format } from "date-fns";
+import { getISODay } from "date-fns";
 
 const RealTimeByHour = () => {
+  const isoDayNumber = getISODay(new Date());
   const [baseStats, setBaseStats] = useState({
     totalUnits: 0,
     totalUnitsDay: 0,
@@ -20,6 +22,8 @@ const RealTimeByHour = () => {
     totalTrips: 0,
     totalTM: 0,
     totalDuration: 0,
+    totalDurationNight: 0,
+    totalDurationDay: 0,
     dayTrips: 0,
     nightTrips: 0,
     totalTMNight: 0,
@@ -70,6 +74,8 @@ const RealTimeByHour = () => {
       const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
       const totalTM = data.reduce((acc, day) => acc + (day.totalTrips * baseData.mineral), 0);
       const totalDuration = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
+      const totalDurationNight = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.filter((trip) => trip.shift === "noche").reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
+      const totalDurationDay = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.filter((trip) => trip.shift === "dia").reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
       const dayTrips = data.reduce((acc, day) => acc + day.trips.filter(trip => trip.shift === "dia").length, 0);
       const nightTrips = data.reduce((acc, day) => acc + day.trips.filter(trip => trip.shift === "noche").length, 0);
       const totalTMDay = dayTrips * baseData.mineral;
@@ -82,6 +88,8 @@ const RealTimeByHour = () => {
         totalTrips,
         totalTM,
         totalDuration,
+        totalDurationNight,
+        totalDurationDay,
         dayTrips,
         nightTrips,
         totalTMDay,
@@ -104,107 +112,146 @@ const RealTimeByHour = () => {
   if(!data || !mineralData) return <p>cargando</p>
 
   return (
-    <div className="flex flex-col h-full gap-10">
-      <div className="grid grid-cols-6 gap-4">
-        <CardItem
-          value={baseStats.totalUnits}
-          title="Total de Camiones"
-          valueColor= "text-[#000000]"
-          unid="camiones"
+    <div className="grid grid-cols-[1fr_5fr] h-full gap-4">
+      <div className="flex flex-col justify-around p-4 card-shadow rounded-lg">
+        <DonutChart
+          title="Extracción de mineral en TM"
+          size= "medium"
+          donutData={{
+            total: 2400*7,
+            currentValue: baseStats.totalTM,
+            currentValueColor: "#01c284"
+          }}
+          progressBar={{
+            total: 2400*7,
+            currentValue: baseStats.totalTM,
+            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
+            currentValueColor: "#01c284",
+            showDifference: false,
+            forecastText: "Predicción"
+          }}
         />
-        <CardItem
-          value={baseStats.totalTrips}
-          title="Viajes Totales"
-          valueColor= "text-[#1E64FA]"
-          unid="viajes"
+
+        <DonutChart
+          title="Horas Trabajadas en la Semana"
+          size= "medium"
+          donutData={{
+            total: 24 * baseStats.totalUnits * isoDayNumber,
+            currentValue: Number((baseStats.totalDuration / 3600).toFixed(2)),
+            currentValueColor: "#01c284"
+          }}
+          progressBar={{
+            total: 24 * baseStats.totalUnits * isoDayNumber,
+            currentValue: Number((baseStats.totalDuration / 3600).toFixed(2)),
+            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
+            currentValueColor: "#01c284",
+            showDifference: false,
+            forecastText: "Predicción",
+            unit: "horas"
+          }}
         />
-        <CardItem
-          value={baseStats.dayTrips}
-          subtitle={baseStats.totalTMDay}
-          subtitleUnid="TM"
-          title="Viajes Diurnos"
-          valueColor= "text-[#fac34c]"
-          unid="viajes"
+
+        <DonutChart
+          title="Horas Trabajadas Turno Día"
+          size= "medium"
+          donutData={{
+            total: 12 * baseStats.totalUnitsDay * isoDayNumber,
+            currentValue: Number((baseStats.totalDurationDay / 3600).toFixed(2)),
+            currentValueColor: "#fac34c"
+          }}
+          progressBar={{
+            total: 12 * baseStats.totalUnitsDay * isoDayNumber,
+            currentValue: Number((baseStats.totalDurationDay / 3600).toFixed(2)),
+            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
+            currentValueColor: "#fac34c",
+            showDifference: false,
+            forecastText: "Predicción",
+            unit: "horas"
+          }}
         />
-        <CardItem
-          value={baseStats.nightTrips}
-          title="Viajes Nocturnos"
-          subtitle={baseStats.totalTMNight}
-          subtitleUnid="TM"
-          valueColor= "text-[#3c3f43]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.totalDuration/60}
-          title="Duración Total (horas)"
-          valueColor= "text-[#1E64FA]"
-          unid="horas"
-        />
-        <CardItem
-          value={baseStats.totalTM}
-          title="Tonelaje Total (TM)"
-          valueColor= "text-[#1E64FA]"
-          unid="TM"
+
+        <DonutChart
+          title="Horas Trabajadas Turno Noche"
+          size= "medium"
+          donutData={{
+            total: 12 * baseStats.totalUnitsNight * isoDayNumber,
+            currentValue: Number((baseStats.totalDurationNight / 3600).toFixed(2)),
+            currentValueColor: "#3c3f43"
+          }}
+          progressBar={{
+            total: 12 * baseStats.totalUnitsNight * isoDayNumber,
+            currentValue: Number((baseStats.totalDurationNight / 3600).toFixed(2)),
+            prediction: (baseStats.totalTM / baseStats.totalUnitsNight) * 7,
+            currentValueColor: "#3c3f43",
+            showDifference: false,
+            forecastText: "Predicción",
+            unit: "horas"
+          }}
         />
       </div>
+
       <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-[1fr_1fr] rounded-lg p-4 gap-4 card-shadow">
-          <DonutAndSplineChartByDay
-            title="Acumulado de Extracción de mineral Turno Día en TM"
-            donutData={{
-              total: 1200*7,
-              currentValue: baseStats.totalTMDay,
-              currentValueColor: "#fac34c",
-            }}
-            progressBarData= {{
-              total: 1200*7,
-              currentValue: baseStats.totalTMDay,
-              prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
-              currentValueColor: "#ff7989",
-              showDifference: false,
-              forecastText: "Predicción"
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={{
-              totalTrips: baseStats.dayTrips,
-              statsByDay: tripsByDay.map(dayGroup => ({
-                date: dayGroup.date,
-                totalTrips: dayGroup.trips.filter(trip => trip.shift === "dia").length
-              }))
-            }}
+        <div className="grid grid-cols-6 gap-4">
+          <CardItem
+            value={baseStats.totalUnits}
+            title="Total de Camiones"
+            valueColor= "text-[#000000]"
+            unid="camiones"
           />
-          <DonutAndSplineChartByDay
-            title="Acumulado de Extracción de mineral Turno Noche en TM"
-            donutData={{
-              total: 1200*7,
-              currentValue: baseStats.totalTMNight,
-              currentValueColor: "#3c3f43",
-            }}
-            progressBarData= {{
-              total: 1200*7,
-              currentValue: baseStats.totalTMNight,
-              prediction: (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-              currentValueColor: "#ff7989",
-              showDifference: false,
-              forecastText: "Predicción"
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={{
-              totalTrips: baseStats.nightTrips,
-              statsByDay: tripsByDay.map(dayGroup => ({
-                date: dayGroup.date,
-                totalTrips: dayGroup.trips.filter(trip => trip.shift === "noche").length
-              }))
-            }}
+          <CardItem
+            value={baseStats.totalTrips}
+            title="Viajes Totales"
+            valueColor= "text-[#1E64FA]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.dayTrips}
+            subtitle={baseStats.totalTMDay}
+            subtitleUnid="TM"
+            title="Viajes Diurnos"
+            valueColor= "text-[#fac34c]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.nightTrips}
+            title="Viajes Nocturnos"
+            subtitle={baseStats.totalTMNight}
+            subtitleUnid="TM"
+            valueColor= "text-[#3c3f43]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.totalDuration/3600}
+            title="Duración Total (horas)"
+            valueColor= "text-[#1E64FA]"
+            unid="horas"
+          />
+          <CardItem
+            value={baseStats.totalTM}
+            title="Tonelaje Total (TM)"
+            valueColor= "text-[#1E64FA]"
+            unid="TM"
           />
         </div>
 
-        <div className="grid grid-cols-[1fr_1fr] gap-4">
-          <div className="card-shadow rounded-lg p-2">
-            <LineAndBarChartByDay
-              title="Extracción de mineral turno Dia en TM"
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-[1fr_1fr] rounded-lg p-4 gap-4 card-shadow">
+            <DonutAndSplineChartByDay
+              title="Acumulado de Extracción de mineral Turno Día en TM"
+              donutData={{
+                total: 1200*7,
+                currentValue: baseStats.totalTMDay,
+                currentValueColor: "#fac34c",
+              }}
+              progressBarData= {{
+                total: 1200*7,
+                currentValue: baseStats.totalTMDay,
+                prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
+                currentValueColor: "#ff7989",
+                showDifference: false,
+                forecastText: "Predicción"
+              }}
               mineralWeight={baseData.mineral}
-              chartColor="#fac34c"
               chartData={{
                 totalTrips: baseStats.dayTrips,
                 statsByDay: tripsByDay.map(dayGroup => ({
@@ -213,13 +260,22 @@ const RealTimeByHour = () => {
                 }))
               }}
             />
-          </div>
-
-          <div className="card-shadow rounded-lg p-2">
-            <LineAndBarChartByDay
-              title="Extracción de mineral turno Noche en TM"
+            <DonutAndSplineChartByDay
+              title="Acumulado de Extracción de mineral Turno Noche en TM"
+              donutData={{
+                total: 1200*7,
+                currentValue: baseStats.totalTMNight,
+                currentValueColor: "#3c3f43",
+              }}
+              progressBarData= {{
+                total: 1200*7,
+                currentValue: baseStats.totalTMNight,
+                prediction: (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
+                currentValueColor: "#ff7989",
+                showDifference: false,
+                forecastText: "Predicción"
+              }}
               mineralWeight={baseData.mineral}
-              chartColor="#3c3f43"
               chartData={{
                 totalTrips: baseStats.nightTrips,
                 statsByDay: tripsByDay.map(dayGroup => ({
@@ -229,68 +285,39 @@ const RealTimeByHour = () => {
               }}
             />
           </div>
-        </div>
 
-        {/* <div className="grid grid-cols-[1fr] gap-4">
-          <div className="card-shadow rounded-lg p-4 ">
-            <LineAndBarChartByDay
-              title="Extracción de mineral por dia en TM"
-              chartData={data}
-              mineralWeight={baseData.mineral}
-            />
+          <div className="grid grid-cols-[1fr_1fr] gap-4">
+            <div className="card-shadow rounded-lg p-4">
+              <LineAndBarChartByDay
+                title="Extracción de mineral turno Dia en TM"
+                mineralWeight={baseData.mineral}
+                chartColor="#fac34c"
+                chartData={{
+                  totalTrips: baseStats.dayTrips,
+                  statsByDay: tripsByDay.map(dayGroup => ({
+                    date: dayGroup.date,
+                    totalTrips: dayGroup.trips.filter(trip => trip.shift === "dia").length
+                  }))
+                }}
+              />
+            </div>
+
+            <div className="card-shadow rounded-lg p-4">
+              <LineAndBarChartByDay
+                title="Extracción de mineral turno Noche en TM"
+                mineralWeight={baseData.mineral}
+                chartColor="#3c3f43"
+                chartData={{
+                  totalTrips: baseStats.nightTrips,
+                  statsByDay: tripsByDay.map(dayGroup => ({
+                    date: dayGroup.date,
+                    totalTrips: dayGroup.trips.filter(trip => trip.shift === "noche").length
+                  }))
+                }}
+              />
+            </div>
           </div>
-          <div className="card-shadow rounded-lg p-4 ">
-            <DonutAndTableChart
-              title="Tiempos promedio del ciclo por Dia"
-              donutData={[
-                { title: "Tiempo Disponible",
-                  total: 24 * data.totalUnits * data.statsByDay.length,
-                  currentValue: Number((24 * data.totalUnits * data.statsByDay.length) - data.statsByDay.reduce((acc, day) => acc + day.totalMaintenanceTime, 0).toFixed(1)) || 0,
-                  currentValueColor: "#04c285"
-                },
-                { title: "Tiempo Trabajado",
-                  total: 24 * data.totalUnits * data.statsByDay.length,
-                  currentValue: Number(data.statsByDay.reduce((acc, day) => acc + day.totalCycleTime, 0).toFixed(1)) || 0,
-                  currentValueColor: "#04c285"
-                }
-              ]}
-              tableData={[{
-                  title: "Tiempo promedio del Ciclo",
-                  currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1),
-                  total: 300,
-                  subData: [
-                    { title: "Viaje Vació (min)",
-                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgEmptyTime/data.statsByDay.length, 0).toFixed(1),
-                      total: 300
-                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
-                    },
-                    { title: "Tiempo de Carga (min)",
-                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgLoadTime/data.statsByDay.length, 0).toFixed(1),
-                      total: 300
-                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
-                    },
-                    { title: "Viaje Lleno (min)",
-                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgFullTime/data.statsByDay.length, 0).toFixed(1),
-                      total: 300
-                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
-                    },
-                    { title: "Tiempo de Descarga (min)",
-                      currentValue: data.statsByDay.reduce((acc, day) => acc + day.avgDischargeTime/data.statsByDay.length, 0).toFixed(1),
-                      total: 300
-                      // total: data.statsByDay.reduce((acc, day) => acc + day.avgCycleTime/data.statsByDay.length, 0).toFixed(1)
-                    },
-                  ]
-                },
-                // {
-                //   title: "FACT",
-                //   currentValue: 68,
-                //   total: 100,
-                //   subData: []
-                // }
-              ]}
-            />
-          </div>
-        </div> */}
+        </div>
       </div>
     </div>
   )

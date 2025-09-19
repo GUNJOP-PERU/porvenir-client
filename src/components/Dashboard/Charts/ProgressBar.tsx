@@ -18,7 +18,7 @@ const ProgressBar = ({progressBarData, showPrediction, unit} : ProgressBarProps)
   return (
     <div className="progress-bar--container">
       <span className="progress-bar-label">
-        Extraído <b>{progressBarData.currentValue} {unit}</b> de <b>{progressBarData.total} {unit ? unit:"TM"}</b>
+        Extraído <b>{progressBarData.currentValue} {unit ? unit:"TM"}</b> de <b>{progressBarData.total} {unit ? unit:"TM"}</b>
       </span>
       {progressBarData.showDifference &&
         <>

@@ -1,10 +1,29 @@
-import PropTypes from "prop-types";
 import ProgressBar from "@/components/Dashboard/Charts/ProgressBar"
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useEffect, useRef, useCallback } from "react";
 
-const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
+interface DonutChartProps {
+  title: string,
+  size: "mini" | "small" | "medium",
+  donutData: {
+    total: number,
+    currentValue: number,
+    currentValueColor: string
+  },
+  showPrediction?: boolean,
+  progressBar?: {
+    unit: string,
+    total: number,
+    currentValue: number,
+    prediction: number,
+    currentValueColor: string,
+    showDifference: boolean,
+    forecastText: string
+  }
+}
+
+const DonutChart = ({ title, donutData, progressBar, showPrediction = false, size = "medium" } : DonutChartProps) => {
   const sizeMap = {
     mini: 60,
     small: 80,
@@ -111,31 +130,16 @@ const DonutChart = ({ title, donutData, progressBar, size = "medium" }) => {
       />
       {progressBar ?
         <ProgressBar
+          unit={progressBar.unit}
+          showPrediction={showPrediction}
           progressBarData={{
-            ...progressBar,
-            showDifference: true
+            ...progressBar
           }}
         />
         :<></>
       }
     </div>
   );
-};
-
-DonutChart.propTypes = {
-  title: PropTypes.string,
-  size: "mini" | "small" | "medium",
-  donutData: PropTypes.shape({
-    total: PropTypes.number.isRequired,
-    currentValue: PropTypes.number.isRequired,
-    currentValueColor: PropTypes.string
-  }),
-  progressBar: PropTypes.shape({
-    total: PropTypes.number.isRequired,
-    currentValue: PropTypes.number.isRequired,
-    prediction: PropTypes.number.isRequired,
-    currentValueColor: PropTypes.string
-  })
 };
 
 export default DonutChart;
