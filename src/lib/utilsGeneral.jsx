@@ -62,27 +62,26 @@ export function formatDurationHour(durationInSeconds) {
   const seconds = durationInSeconds % 60;
 
   if (durationInSeconds < 60) {
-    return `${seconds}seg`; // Solo segundos
+    return `${seconds}s`; // Solo segundos
   } else if (durationInSeconds < 3600) {
-    return `${minutes}min ${seconds}seg`; // Minutos y segundos
+    return `${minutes}m ${seconds}s`; // Minutos y segundos
   } else {
-    return `${hours}h ${minutes}min ${seconds}seg`; // Horas, minutos y segundos
+    return `${hours}h ${minutes}m ${seconds}s`; // Horas, minutos y segundos
   }
 }
 
 export function formatDurationMinutes(value) {
   if (value == null) return "-";
 
-  // Convertir minutos a segundos
   let totalSeconds = Math.round(value * 60);
 
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  if (totalSeconds < 60) return `${seconds}seg`;
-  if (totalSeconds < 3600) return `${minutes}min ${seconds}seg`;
-  return `${hours}h ${minutes}min ${seconds}seg`;
+  if (totalSeconds < 60) return `${seconds}s`;
+  if (totalSeconds < 3600) return `${minutes}m ${seconds}s`;
+  return `${hours}h ${minutes}m ${seconds}s`;
 }
 
 
@@ -212,6 +211,11 @@ export function getShiftRangeMs(baseDate, shift) {
   };
 }
 
-
-
 export const toInputDate = (d) => dayjs(d).format("YYYY-MM-DD");
+
+export function formatShortDay(dateStr) {
+  const day = dayjs(dateStr);
+  const abbr = day.format("ddd").replace(/\./g, "");
+  const abbrCap = abbr.charAt(0).toUpperCase() + abbr.slice(1);
+  return `${abbrCap} ${day.date()}`;
+}

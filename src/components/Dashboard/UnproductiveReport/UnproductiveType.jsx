@@ -76,7 +76,7 @@ export default function UnproductiveType({ data, isLoading, isError }) {
               distance: 15,
               formatter: function () {
                 return (
-                  `<b><span style="color:${this.point.color}">CÓDIGO ${this.point.name}</span></b><br>` +
+                  `<b><span style="color:${this.point.color}">COD ${this.point.name}</span></b><br>` +
                   `<span style="font-size:14px;">${roundAndFormat(this.point.y)} <small style="font-size:12px">viajes</small></span><br>`
                 );
               },

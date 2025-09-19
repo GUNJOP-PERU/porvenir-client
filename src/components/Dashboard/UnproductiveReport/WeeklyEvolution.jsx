@@ -87,12 +87,9 @@ export default function WeeklyEvolution() {
         crosshair: true,
         tickWidth: 0,
         tickLength: 0,
-        labels: {
-          formatter: function () {
-            return this.value.replace(/ /g, "<br>");
-          },
+        labels: {          
           style: {
-            fontSize: "0.6rem",
+            fontSize: "0.65rem",
             fontWeight: "600",
             color: "#A1A1AA",
             fontFamily: "Nunito, sans-serif",

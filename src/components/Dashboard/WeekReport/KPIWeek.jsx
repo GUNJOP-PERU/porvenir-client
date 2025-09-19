@@ -6,6 +6,7 @@ export default function KPIWeek({
   data = [],
   programmedMineral,
   programmedDesmonte,
+  isLoading,
 }) {
   const getMetrics = (data = [], programmedMineral) => {
     const totalTravels = data.length;
@@ -62,7 +63,6 @@ export default function KPIWeek({
       title: "Viajes Totales",
       valueColor: "text-[#1E64FA]",
       unid: "viajes",
-      decimals: 2,
       subtitle: metrics.totalTonnage,
       subtitleUnid: "TM",
     },
@@ -99,7 +99,7 @@ export default function KPIWeek({
     },
     {
       value: metrics.mineralPercentage,
-      title: "%Cumplimiento Programado de Mineral",
+      title: "Cumplimiento de Mineral",
       valueColor: "text-[#00a0ff]",
       unid: "%",
       decimals: 2,
@@ -116,7 +116,7 @@ export default function KPIWeek({
     },
     {
       value: metrics.desmontePercentage,
-      title: "%Cumplimiento Programado de Desmonte",
+      title: "Cumplimiento de Desmonte",
       valueColor: "text-[#00a0ff]",
       unid: "%",
       decimals: 2,
@@ -138,6 +138,7 @@ export default function KPIWeek({
           subtitle={item.subtitle}
           decimals={item.decimals}
           subtitleUnid={item.subtitleUnid}
+          loading={isLoading}
         />
       ))}
     </div>

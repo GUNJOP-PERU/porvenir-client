@@ -59,7 +59,7 @@ export default function SharedWeek() {
       if (week) grouped[week.weekNumber].remanejo++;
     });
 
-    const categories = last4Weeks.map((w) => `Semana ${w.weekNumber}`);
+    const categories = last4Weeks.map((w) => `Sem ${w.weekNumber}`);
 
     const series = [
       {
@@ -67,12 +67,14 @@ export default function SharedWeek() {
         type: "column",
         data: last4Weeks.map((w) => grouped[w.weekNumber].mineral),
         color: "#14B8A6",
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].mineral, 0),
       },
       {
         name: "Desmonte",
         type: "column",
         data: last4Weeks.map((w) => grouped[w.weekNumber].desmonte),
         color: "#F59E0B",
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].desmonte, 0),
       },
       {
         name: "% Remanejo",
@@ -86,6 +88,7 @@ export default function SharedWeek() {
         }),
         color: "black",
         marker: { enabled: true },
+        total: last4Weeks.reduce((total, w) => total + grouped[w.weekNumber].remanejo, 0),
       },
     ];
     const tableData = last4Weeks.map((w) => {
@@ -189,7 +192,7 @@ export default function SharedWeek() {
       },
       series,
       legend: {
-        align: "right",
+        align: "left",
         verticalAlign: "top",
         layout: "horizontal",
         floating: false,
@@ -199,15 +202,13 @@ export default function SharedWeek() {
           fontWeight: "bold",
           textTransform: "uppercase",
         },
-        itemHoverStyle: {
-          color: "#1EE0EE",
-        },
+        itemHoverStyle: { color: "#1EE0EE" },
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
-        itemMarginTop: 0,
-        itemMarginBottom: 0,
-        zIndex: 10,
+        labelFormatter: function () {
+          return `<b style="color:#000">${this.options.total}</b> | ${this.name}`; 
+        },
       },
       credits: { enabled: false },
       exporting: { enabled: false },
@@ -242,7 +243,7 @@ export default function SharedWeek() {
           <tbody>
             {tableData.map((w, i) => (
               <tr key={i} className="border-b border-[#B3F1D8]/50 first:rounded-l-md last:rounded-r-md last:border-b-0 text-[11px] leading-[.8rem]">
-                <td className="px-4 py-2">Semana {w.week}</td>
+                <td className="px-4 py-2">Sem {w.week}</td>
                 <td className="px-4 py-2">{w.totalTrips}</td>
                 <td className="px-4 py-2">{w.percentRemanejo}%</td>
               </tr>

@@ -6,9 +6,9 @@ import CardItem from "@/components/Dashboard/CardItem";
 import CardPie from "@/components/Dashboard/ProductionTruck/CardPie";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import { useFetchDataRealtime } from "@/hooks/useGraphicData";
+import { ChartArea } from "lucide-react";
 
 export default function ProductionTruck() {
   useSocketTopicValue("truck-progress-day", [
@@ -85,7 +85,7 @@ export default function ProductionTruck() {
         <CardTitle
           title="Ruta vs Tonelaje"
           subtitle="   Comparación del tonelaje transportado en distintas rutas."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardHeatMap />
         </CardTitle>
@@ -93,7 +93,7 @@ export default function ProductionTruck() {
         <CardTitle
           title="Ciclo de Trabajo"
           subtitle=" Duración y fases del proceso operativo."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardCycleWork
             data={jobCycle}
@@ -105,7 +105,7 @@ export default function ProductionTruck() {
         <CardTitle
           title="Tiempos productivos vs Improductivos"
           subtitle="Comparación entre trabajo efectivo y tiempo perdido."
-          icon={IconDash1}
+          icon={ChartArea}
         >
           <CardPie
             symbol="truck-chart-productivity"

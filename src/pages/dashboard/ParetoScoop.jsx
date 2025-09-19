@@ -4,7 +4,7 @@ import CardColumParetoScoop from "@/components/Dashboard/ParetoScoop/CardColumPa
 import CardItem from "@/components/Dashboard/CardItem";
 import CardTitle from "@/components/Dashboard/CardTitle";
 import { useGraphicData } from "@/hooks/useGraphicData";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
+import { ChartArea } from "lucide-react";
 
 export default function ParetoScoop() {
   const { data } = useGraphicData(
@@ -52,7 +52,7 @@ export default function ParetoScoop() {
           <CardTitle
             title="Actividades Improductivas Mes"
             subtitle="Resumen de las actividades improductivas durante el mes."
-            icon={IconDash1}
+            icon={ChartArea}
           />
           <CardColumParetoScoop />
         </div>
@@ -60,7 +60,7 @@ export default function ParetoScoop() {
           <CardTitle
             title=" Actividades Improductivas Promedio vs Acumulada"
             subtitle="Promedio mensual vs. acumulado de actividades improductivas."
-            icon={IconDash1}
+            icon={ChartArea}
           />
           <CardActivitiesChart
             endpoint="dashboard/pareto/scoop/no-productive-activities-chart?quantity=7"
@@ -71,7 +71,7 @@ export default function ParetoScoop() {
           <CardTitle
             title=" Análisis de Pareto con Índice de Impacto Ponderado"
             subtitle="Pareto con Índice de Impacto Ponderado."
-            icon={IconDash1}
+            icon={ChartArea}
           />
           <CardColumImpact
             endpoint="dashboard/pareto/scoop/impact-diagram?quantity=7"

@@ -3,6 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { StatusDisplay } from "../StatusDisplay";
 import dayjs from "dayjs";
+import { formatShortDay } from "@/lib/utilsGeneral";
 
 export default function RemanejoWeek({ data, selectedRange, isLoading, isError }) {
   const { categories, series } = useMemo(() => {
@@ -13,7 +14,7 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
 
     const allDates = [];
     for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
-      allDates.push(d.format("DD-MM"));
+      allDates.push(d.format("YYYY-MM-DD"));
     }
 
     const allowedPairs = [
@@ -40,7 +41,7 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
 
     const grouped = {};
     filtered.forEach((item) => {
-      const dayMonth = dayjs(item.date).format("DD-MM");
+      const dayMonth = dayjs(item.date).format("YYYY-MM-DD");
       const origin = item.origin.trim().toLowerCase();
       const destiny = item.destiny.trim().toLowerCase();
       const key = `${origin} → ${destiny}`;
@@ -60,27 +61,35 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
       )
     ).sort();
 
-    const series = allKeys.map((key) => ({
-      name: key
-        .split(" → ")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" → "),
-      data: allDates.map((date) => grouped[date]?.[key] || 0),
-      color: undefined,
-    }));
+    const series = allKeys.map((key) => {
+      const dataArray = allDates.map((date) => grouped[date]?.[key] || 0);
+      const total = dataArray.reduce((a, b) => a + b, 0);
+      return {
+        name: key
+          .split(" → ")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" → "),
+        data: dataArray,
+        total, 
+        color: undefined,
+      };
+    });
+    
 
-    return { categories: allDates, series };
+    const displayDates = allDates.map(formatShortDay);
+
+    return { categories: displayDates, series };
   }, [data, selectedRange]);
 
   const options = useMemo(
     () => ({
       colors: [
-        "#663532",
-        "#834943",
-        "#b3685b",
-        "#f79885",
         "#ffdbb6",
-        "#c5986b"
+        "#f79885",
+        "#c5986b",
+        "#b3685b",
+        "#834943",
+        "#663532",
       ],
       chart: { type: "column", backgroundColor: "transparent", height: 280 },
       title: { text: null },
@@ -171,6 +180,9 @@ export default function RemanejoWeek({ data, selectedRange, isLoading, isError }
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
+        labelFormatter: function () {
+          return `<b style="color:#000">${this.options.total}</b> | ${this.name}`; 
+        },        
       },
       credits: { enabled: false },
       exporting: { enabled: false },

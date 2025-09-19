@@ -1,6 +1,6 @@
-import IconArrowUp from "@/icons/IconArrowUp";
-import { memo } from "react";
-import NumberFlow from "@number-flow/react";
+import { animate, motion, useMotionValue, useTransform } from "motion/react";
+import { useEffect, useRef,memo } from "react";
+import { TrendingUp } from "lucide-react";
 import { cva } from "class-variance-authority";
 
 const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {
@@ -14,7 +14,7 @@ const textColorStyles = cva("text-[10px] leading-[8px] font-bold", {
 });
 
 const cardStyles = cva(
-  "mt-0.5 flex items-center px-1 py-[2px] w-fit rounded-[5px]",
+  "mt-1.5 flex items-center px-1 py-[2px] w-fit rounded-[5px]",
   {
     variants: {
       change: {
@@ -29,9 +29,9 @@ const cardStyles = cva(
 const iconStyles = cva("w-3.5 h-3.5", {
   variants: {
     change: {
-      high: "fill-green-500",
-      medium: "fill-yellow-500",
-      low: "fill-red-500 rotate-180",
+      high: "text-green-500",
+      medium: "text-yellow-500",
+      low: "text-red-500 rotate-180",
     },
   },
 });
@@ -63,36 +63,36 @@ const tooltipArrowStyles = cva(
 );
 
 const CardItem = memo(
-  ({ value, title, change, valueColor, unid, subtitle, decimals = 2 ,subtitleUnid = "viajes"}) => {
+  ({ value, title, change, valueColor, unid, subtitle, decimals = 0 ,subtitleUnid = "viajes", loading = false }) => {
     const getChangeVariant = (val) =>
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
     return (
-      <div className="flex flex-col justify-center relative border border-[#ededed] shadow rounded-xl py-2 px-4 h-[100px] md:h-[90px]">
-        <span className="text-[10px] leading-3 font-semibold text-zinc-400 line-clamp-2 max-w-[150px]">
+      <div className="flex flex-col justify-center relative border border-zinc-100 shadow-sm rounded-xl py-2 px-4 h-24 md:h-[90px] bg-zinc-50/50">
+        <span className="text-[10px] leading-none font-semibold text-zinc-400 line-clamp-2 max-w-[150px] mb-1">
           {title}
         </span>
 
         <div className="flex items-center justify-between gap-1">
-          <h1 className={`${valueColor} font-extrabold text-2xl leading-none`}>
-            <NumberFlow value={value || 0}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: decimals }} suffix={unid} className="!leading-4" />            
-          </h1>
-         
+          <h1 className={`${valueColor} flex items-end gap-0.5 font-extrabold text-xl md:text-2xl`}>
+            <AnimatedNumber value={value || 0}  decimals={decimals} loading={loading} />     
+            <small className="leading-none text-base">{unid}</small>       
+          </h1>         
         </div>
 
         {change !== undefined && (
           <>
             <div className={cardStyles({ change: getChangeVariant(change) })}>
-              <IconArrowUp
+              <TrendingUp
                 className={iconStyles({ change: getChangeVariant(change) })}
               />
-              <span
+              <div
                 className={textColorStyles({
                   change: getChangeVariant(change),
                 })}
               >
-                <NumberFlow  value={(100 - (change ?? 0))}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} className="!leading-[8px]"/>%
-              </span>
+                <AnimatedNumber  value={(100 - (change ?? 0))} decimals={2} loading={loading} className="!leading-[8px]"/>%
+              </div>
             </div>
 
             <div className="absolute -top-2 right-0 flex flex-col group-focus-within:visible group-active:visible z-20">
@@ -120,9 +120,9 @@ const CardItem = memo(
         )}
 
         {subtitle !== undefined && (
-          <span className=" text-[10px] leading-[8px] font-semibold text-zinc-600">
-            De <NumberFlow value={subtitle || 0}  format={{ notation:'standard', style: 'decimal', maximumFractionDigits: 2 }} /> {subtitleUnid}
-          </span>
+          <div className="mt-1.5 text-[10px] leading-[8px] font-semibold text-zinc-700">
+            De <AnimatedNumber value={subtitle || 0} loading={loading} /> {subtitleUnid}
+          </div>
         )}
       </div>
     );
@@ -131,3 +131,40 @@ const CardItem = memo(
 
 CardItem.displayName = "CardItem";
 export default CardItem;
+
+
+
+function AnimatedNumber({
+  value,
+  decimals = 0,
+  duration = 0.7,
+  loading = false,
+}) {
+  const count = useMotionValue(value);
+  const previous = useRef(value);
+
+  const formatted = useTransform(count, (v) => {
+    let rounded = Math.round(v * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    if (Object.is(rounded, -0)) rounded = 0;
+    return (
+      rounded.toLocaleString("es-MX", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })
+    );
+  });
+
+  useEffect(() => {
+    if (loading) return;
+    count.set(previous.current);
+    const controls = animate(count, value, {
+      duration,
+      ease: "linear",
+    });
+    previous.current = value;
+    return () => controls.stop();
+  }, [value, duration, loading]);
+
+  return <motion.span className={`leading-none ${loading ? "opacity-30" : "opacity-100"}`} >{formatted}</motion.span>;
+}
+

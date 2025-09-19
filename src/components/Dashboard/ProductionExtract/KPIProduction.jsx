@@ -1,13 +1,22 @@
 import { getMetrics } from "@/lib/utilsGeneral";
 import CardItem from "../CardItem";
 
-export default function KPIProduction({ filteredData, programmedTonnageMineral, programmedTonnageDesmonte }) {
-  
+export default function KPIProduction({
+  filteredData,
+  programmedTonnageMineral,
+  programmedTonnageDesmonte,
+  isLoading,
+}) {
   const programmedTravels =
-  Math.round(programmedTonnageMineral / 36) +
-  Math.round(programmedTonnageDesmonte / 35);
-  
-  const metricsGeneral = getMetrics(filteredData, programmedTonnageMineral + programmedTonnageDesmonte, programmedTravels, true);
+    Math.round(programmedTonnageMineral / 36) +
+    Math.round(programmedTonnageDesmonte / 35);
+
+  const metricsGeneral = getMetrics(
+    filteredData,
+    programmedTonnageMineral + programmedTonnageDesmonte,
+    programmedTravels,
+    true
+  );
 
   const cardData = [
     {
@@ -58,17 +67,18 @@ export default function KPIProduction({ filteredData, programmedTonnageMineral, 
   ];
   return (
     <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
-    {cardData.map((card, index) => (
-      <CardItem
-      key={index}
-        value={card.value}
-        title={card.title}
-        change={card.change}
-        valueColor={card.valueColor}
-        unid={card.unid}
-        decimals={card.decimals}
-      />
-    ))}
+      {cardData.map((card, index) => (
+        <CardItem
+          key={index}
+          value={card.value}
+          title={card.title}
+          change={card.change}
+          valueColor={card.valueColor}
+          unid={card.unid}
+          decimals={card.decimals}
+          loading={isLoading}
+        />
+      ))}
     </div>
   );
 }

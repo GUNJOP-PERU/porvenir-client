@@ -3,8 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import { useAuthStore } from "@/store/AuthStore";
 import { useNavigation } from "@/hooks/useNavegation";
-import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Settings } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function NavMain() {
@@ -65,7 +64,7 @@ export function NavMain() {
           <NavItem
             name="Configuración"
             href="/configuration"
-            icon={<IconConfiguration />}
+            icon={<Settings />}
             active={pathname === "/configuration"}
             isCollapsed={isCollapsed}
           />

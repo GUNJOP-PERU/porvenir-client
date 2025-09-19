@@ -4,6 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import { filterData } from "@/lib/utilsGeneral";
 import { StatusDisplay } from "../StatusDisplay";
 import dayjs from "dayjs";
+import { formatShortDay } from "@/lib/utilsGeneral";
 
 export default function DestinyWeek({ data, selectedRange, isLoading, isError }) {
   const filteredData = useMemo(() => filterData(data), [data]);
@@ -11,21 +12,19 @@ export default function DestinyWeek({ data, selectedRange, isLoading, isError })
   const { categories, series } = useMemo(() => {
     if (!selectedRange) return { categories: [], series: [] };
 
-    // 🔹 Generar todas las fechas del rango
     const start = dayjs(selectedRange.startDate);
     const end = dayjs(selectedRange.endDate);
 
     const allDates = [];
     for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
-      allDates.push(d.format("DD-MM"));
+      allDates.push(d.format("YYYY-MM-DD"));
     }
 
-    // 🔹 Agrupar datos por fecha y destino
     const grouped = {};
     filteredData.forEach((item) => {
       if (!item.date || !item.destiny) return;
 
-      const dayMonth = dayjs(item.date).format("DD-MM");
+      const dayMonth = dayjs(item.date).format("YYYY-MM-DD");
       const destKey = item.destiny.trim().toLowerCase();
 
       if (!grouped[dayMonth]) grouped[dayMonth] = {};
@@ -33,7 +32,6 @@ export default function DestinyWeek({ data, selectedRange, isLoading, isError })
       grouped[dayMonth][destKey]++;
     });
 
-    // 🔹 Destinos permitidos
     const allowedDestinations = [
       "dique 4",
       "planta",
@@ -50,13 +48,15 @@ export default function DestinyWeek({ data, selectedRange, isLoading, isError })
       new Set(filteredData.map((item) => item.destiny.trim().toLowerCase()))
     ).filter((dest) => allowedDestinations.includes(dest));
 
-    // 🔹 Construir series
     const series = allDestinations.map((destKey) => ({
       name: destKey.charAt(0).toUpperCase() + destKey.slice(1),
       data: allDates.map((date) => grouped[date]?.[destKey] || 0),
+      total: allDates.reduce((total, date) => total + (grouped[date]?.[destKey] || 0), 0),
     }));
 
-    return { categories: allDates, series };
+    const displayDates = allDates.map(formatShortDay);
+
+    return { categories: displayDates, series };
   }, [filteredData, selectedRange]);
 
 
@@ -154,7 +154,11 @@ export default function DestinyWeek({ data, selectedRange, isLoading, isError })
         symbolWidth: 10,
         symbolHeight: 9,
         symbolRadius: 2,
+        labelFormatter: function () {
+          return `<b style="color:#000">${this.options.total}</b> | ${this.name}`; 
+        },
       },
+      
       credits: { enabled: false },
       exporting: { enabled: false },
       accessibility: { enabled: false },

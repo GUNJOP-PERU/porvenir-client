@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import IconGo from "@/icons/IconGo";
+import { SendHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function PageError() {
@@ -16,7 +16,7 @@ export default function PageError() {
         existe.
       </p>
       <Button onClick={() => navigate("/")}>
-        <IconGo className="w-5 h-5  fill-white rotate-180" /> Regresar al Inicio
+        <SendHorizontal className="w-5 h-5  text-white rotate-180" /> Regresar al Inicio
       </Button>
     </div>
   );

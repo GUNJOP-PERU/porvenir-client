@@ -1,5 +1,4 @@
 import CardTitle from "@/components/Dashboard/CardTitle";
-import IconDash1 from "@/icons/Dashboard/IconDash1";
 import ExtractMaterial from "@/components/Dashboard/ProductionExtract/ExtractMaterial";
 import HeatMap from "@/components/Dashboard/ProductionExtract/Heatmap";
 import TripsPerHour from "@/components/Dashboard/ProductionExtract/TripsPerHour";
@@ -26,6 +25,8 @@ export default function Body({
         filteredData={data}
         programmedTonnageMineral={programmedTonnageMineral}
         programmedTonnageDesmonte={programmedTonnageDesmonte}
+        isLoading={isLoading}
+        
       />
       <div className="flex-1 grid grid-rows-2 gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle

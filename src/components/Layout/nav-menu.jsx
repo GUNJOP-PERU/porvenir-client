@@ -1,9 +1,8 @@
 import { useNavigation } from "@/hooks/useNavegation";
-import IconConfiguration from "@/icons/Dashboard/IconConfiguration";
 import IconClose from "@/icons/IconClose";
 import IconMenu from "@/icons/IconMenu";
 import clsx from "clsx";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -83,7 +82,7 @@ export function NavMenu() {
                     <NavItem
                       name="Configuración"
                       href="/configuration"
-                      icon={<IconConfiguration />}
+                      icon={<Settings />}
                       active={pathname === "/configuration"}
                       onClose={() => setIsOpen(false)} 
                     />

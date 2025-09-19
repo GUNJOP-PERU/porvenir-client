@@ -90,7 +90,7 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!anyItemLoading) onClose(open);
     }}>
-      <DialogContent className="w-[670px]">
+      <DialogContent className="xl:w-[670px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <div>
@@ -113,7 +113,7 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
             disabled={anyItemLoading}
           />
         </div>
-        <div className="grid grid-cols-4 gap-1 h-[35vh] overflow-y-auto pr-2">
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-1 md:h-[30vh] h-[50vh] items-start auto-rows-min overflow-y-auto  pr-2">
           {filteredItems.length === 0 ? (
             <span className="text-[10px] text-zinc-400 text-center col-span-4">
               No existen resultados.
