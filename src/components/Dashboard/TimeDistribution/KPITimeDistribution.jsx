@@ -18,7 +18,7 @@ export default function KPITimeDistribution({ data, isLoading }) {
       decimals: 2,
     },
     {
-      value: data?.materialAvg?.Desmonte,
+      value: Number(data?.materialAvg?.Desmonte),
       title: "Tiempo promedio / Desmonte",
       valueColor: "text-[#F59E0B]",
       unid: "min",

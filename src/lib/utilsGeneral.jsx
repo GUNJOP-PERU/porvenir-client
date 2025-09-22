@@ -169,26 +169,36 @@ export function filterValidTrips(data, material = null) {
 
 // Métricas
 export function getMetrics(filtered, programmedTonnage, value, isTravels = false) {
-  const executedTonnage = filtered.reduce((sum, i) => sum + (i.tonnage || 0), 0);
+  const safeProgrammedTonnage = Number(programmedTonnage) || 0;
+  const safeValue = Number(value) || 0;
+
+  const executedTonnage = filtered.reduce(
+    (sum, i) => sum + (Number(i.tonnage) || 0),
+    0
+  );
+
   const executedTravels = filtered.length;
 
   const programmedTravels = isTravels
-    ? value 
-    : (programmedTonnage / value).toFixed(0); 
+    ? safeValue
+    : safeValue !== 0
+      ? Math.round(safeProgrammedTonnage / safeValue)
+      : 0;
 
-  const goalCompletionPercentage = programmedTonnage
-    ? (executedTonnage / programmedTonnage) * 100
+  const goalCompletionPercentage = safeProgrammedTonnage
+    ? (executedTonnage / safeProgrammedTonnage) * 100
     : 0;
 
   return {
-    executedTonnage,
-    executedTravels,
-    programmedTravels,
-    goalCompletionPercentage,
-    variationTonnage: executedTonnage - programmedTonnage,
-    variationTravels: executedTravels - programmedTravels,
+    executedTonnage: Number(executedTonnage),
+    executedTravels: Number(executedTravels),
+    programmedTravels: Number(programmedTravels),
+    goalCompletionPercentage: Number(goalCompletionPercentage),
+    variationTonnage: Number(executedTonnage - safeProgrammedTonnage),
+    variationTravels: Number(executedTravels - programmedTravels),
   };
 }
+
 
 // Rango de horas
 export function getShiftRangeMs(baseDate, shift) {
