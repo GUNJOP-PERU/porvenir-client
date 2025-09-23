@@ -62,10 +62,10 @@ const HeatMap = ({ data, isLoading, isError }) => {
   const totalSuperficie = useMemo(() => {
     const viajes =
       data?.filter((item) => {
-        const destino = item.destiny?.toLowerCase() || "";
-        return destino.includes("cancha 100") || destino.includes("faja 4");
+        const destino = (item.destiny || "").toLowerCase().replace(/\s+/g, ""); // eliminar espacios
+        return destino.includes("cancha100") || destino.includes("faja4");
       }) || [];
-
+  
     return {
       viajes: viajes.length,
       toneladas: viajes.reduce((sum, item) => sum + (item.tonnage || 0), 0),
