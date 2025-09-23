@@ -72,7 +72,7 @@ const BeaconTripTable = () => {
 
         console.log("trips inicio", startTrip, endTrip)
 
-        if(startTrip && beacon.mac.toLowerCase() === "bc:57:29:08:08:26" && ((hour === 7) || (hour === 19)) ) {
+        if(beacon.mac.toLowerCase() === "bc:57:29:08:08:26" && ((hour === 7) || (hour === 19)) ) {
           trips.push({
             startUbication: "BC:57:29:08:08:26",
             startUbicationName: "Ruta Parqueo de Volquetes",
