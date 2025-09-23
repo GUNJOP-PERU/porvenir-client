@@ -183,6 +183,26 @@ const BeaconDetectionTable = () => {
       ),
       size: 130,
     },
+    {
+      accessorKey: "wap",
+      header: "WAP",
+      cell: ({ getValue }) => (
+        <div className="text-center font-mono">
+          {getValue()}
+        </div>
+      ),
+      size: 130,
+    },
+    {
+      accessorKey: "wap_mac",
+      header: "WAP MAC",
+      cell: ({ getValue }) => (
+        <div className="text-center font-mono">
+          {getValue()}
+        </div>
+      ),
+      size: 130,
+    },
     // {
     //   accessorKey: "rssi_min",
     //   header: "RSSI Min",
@@ -215,11 +235,6 @@ const BeaconDetectionTable = () => {
     //             <span className="font-mono">{format(new Date(reading.datetime), "HH:mm:ss")}</span>
     //           </div>
     //         ))}
-    //         {/* {rssiData.length > 3 && (
-    //           <div className="text-gray-400 text-center">
-    //             +{rssiData.length - 3} más...
-    //           </div>
-    //         )} */}
     //       </div>
     //     );
     //   },
