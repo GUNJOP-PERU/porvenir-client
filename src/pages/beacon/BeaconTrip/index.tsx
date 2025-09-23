@@ -73,10 +73,9 @@ const BeaconTripTable = () => {
         console.log("trips inicio", startTrip, endTrip)
 
         if(startTrip && beacon.mac.toLowerCase() === "bc:57:29:08:08:26" && ((hour === 7) || (hour === 19)) ) {
-          console.log("trips volquetes")
           trips.push({
-            startUbication: beacon.mac,
-            startUbicationName: startTrip.name,
+            startUbication: "BC:57:29:08:08:26",
+            startUbicationName: "Ruta Parqueo de Volquetes",
             endUbication: '',
             endUbicationName: '',
             startTime: beacon.f_inicio,

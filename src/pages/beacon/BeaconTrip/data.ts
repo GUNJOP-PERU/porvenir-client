@@ -1,6 +1,6 @@
 
 export const validStartRoutes = [
-  { name: "Ruta Parqueo de Volquetes", mac: "BC:57:29:08:08:26" },
+  // { name: "Ruta Parqueo de Volquetes", mac: "BC:57:29:08:08:26" },
   { name: "Taller Saturno", mac: "BC:57:29:06:01:DF" },
   { name: "Taller Saturno", mac: "BC:57:29:03:5C:7D" },
   { name: "Planta", mac: "BC:57:29:01:C8:F1" },
