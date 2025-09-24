@@ -113,7 +113,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
-  { path: "dashboard/real-time-trip-count", element: <RealTimeTripsCount /> },
+  { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
   { path: "dashboard/tracking", element: <Tracking /> },
 

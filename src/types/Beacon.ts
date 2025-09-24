@@ -1,10 +1,11 @@
 export type BeaconCycle= {
   unit: string,
   totalTrips: number,
-  trips: BeaconTrip[]
+  bocaminaStats: {name: string, count: number}[],
+  trips: BeaconUnitTrip[]
 }
 
-export type BeaconTrip = {
+export type BeaconUnitTrip = {
   totalDistance: number,
   totalDuration: string,
   shift: "dia" | "noche",
@@ -12,19 +13,21 @@ export type BeaconTrip = {
   endDate: Date,
   startUbication: string,
   endUbication: string,
-  trip: {
-    _id: string,
-    mac: string,
-    unit: string,
-    f_inicio: Date,
-    f_final: Date,
-    duration: number,
-    distance: number,
-    uuid: string,
-    connection: string,
-    ubication: string,
-    ubicationType: string
-  }[]
+  trip: BeaconDetection[]
+}
+
+export type BeaconDetection = {
+  _id: string,
+  mac: string,
+  unit: string,
+  f_inicio: Date,
+  f_final: Date,
+  duration: number,
+  distance: number,
+  uuid: string,
+  connection: string,
+  ubication: string,
+  ubicationType: string
 }
 
 export type UnitBeaconDetection = {

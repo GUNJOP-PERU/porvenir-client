@@ -221,10 +221,10 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/real-time-by-month",
           },  
           {
-            name: "Viajes por Turno",
-            href: "/dashboard/real-time-trip-count",
+            name: "Detección de Viajes",
+            href: "/dashboard/trip-count",
             icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-trip-count",
+            active: pathname === "/dashboard/trip-count",
           },  
           {
             name: "Tabla de Detección",

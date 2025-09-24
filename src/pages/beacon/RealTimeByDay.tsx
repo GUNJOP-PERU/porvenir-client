@@ -6,7 +6,7 @@ import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartB
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import CardItem from "@/components/Dashboard/CardItem";
 // Types
-import type { BeaconCycle, BeaconTrip } from "../../types/Beacon";
+import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
 import { getCurrentWeekStartEndDates } from "@/utils/dateUtils";
@@ -34,7 +34,7 @@ const RealTimeByHour = () => {
     startDate: getCurrentWeekStartEndDates().startDateString,
     endDate: getCurrentWeekStartEndDates().endDateString,
   });
-  const [tripsByDay, setTripsByDay] = useState<{ date: string, trips: BeaconTrip[]}[]>([]);
+  const [tripsByDay, setTripsByDay] = useState<{ date: string, trips: BeaconUnitTrip[]}[]>([]);
 
   const {
     data,
@@ -98,12 +98,12 @@ const RealTimeByHour = () => {
     }
     if(data){
       const trips = data.map((unitGroup) => unitGroup.trips).flat();
-      const grouped: Record<string, BeaconTrip[]> = trips.reduce((acc, trip) => {
+      const grouped: Record<string, BeaconUnitTrip[]> = trips.reduce((acc, trip) => {
         const day = format(new Date(trip.startDate), 'yyyy-MM-dd');
         if (!acc[day]) acc[day] = [];
         acc[day].push(trip);
         return acc;
-      }, {} as Record<string, BeaconTrip[]>);
+      }, {} as Record<string, BeaconUnitTrip[]>);
       const groupedArray = Object.entries(grouped).map(([date, trips]) => ({ date, trips }));
       setTripsByDay(groupedArray);
     }
