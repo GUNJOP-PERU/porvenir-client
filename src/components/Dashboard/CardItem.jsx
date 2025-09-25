@@ -68,13 +68,13 @@ const CardItem = memo(
       val >= 85 ? "high" : val >= 60 ? "medium" : "low";
 
     return (
-      <div className={`flex flex-col justify-center relative border border-zinc-100 shadow-sm rounded-xl py-2 px-4 h-24 md:h-[90px] bg-zinc-50 ${loading ? "opacity-50" : "opacity-100"}`}>
+      <div className={`flex flex-col justify-center relative border border-zinc-100 shadow-sm rounded-xl py-2 px-4 h-[85px] lg:h-[90px] bg-zinc-50 ${loading ? "opacity-50" : "opacity-100"}`}>
         <span className="text-[10px] leading-none font-semibold text-zinc-400 line-clamp-2 max-w-[150px] mb-1">
           {title}
         </span>
 
         <div className="flex items-center justify-between gap-1">
-          <h1 className={`${valueColor} flex items-end gap-0.5 font-extrabold text-xl md:text-2xl`}>
+          <h1 className={`${valueColor} flex items-end gap-1 font-extrabold text-2xl lg:text-2xl`}>
             <AnimatedNumber value={value || 0}  decimals={decimals} loading={loading} />     
             <small className="leading-none text-base">{unid}</small>       
           </h1>         

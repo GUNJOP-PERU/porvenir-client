@@ -1,39 +1,41 @@
-import DonutChart from "./DonutChart"
-import ProgressBar from "./ProgressBar"
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 //Utils
-import { getCurrentWeekDates, getCurrentWeekDatesFormatted } from "@/utils/dateUtils";
+import {
+  getCurrentWeekDates,
+  getCurrentWeekDatesFormatted,
+} from "@/utils/dateUtils";
+import { roundAndFormat } from "@/lib/utilsGeneral";
+import Progress from "./Progress";
 
 interface IDonutAndSplineChartByDayProps {
-  title: string,
-  mineralWeight: number,
-  donutData: {
-    total: number,
-    currentValue: number,
-    currentValueColor: string,
-  },
+  title?: string;
+  mineralWeight: number;
   progressBarData: {
-    total: number,
-    currentValue: number,
-    prediction: number,
-    currentValueColor: string,
-    showDifference: boolean,
-    forecastText: string,
-  },
+    total: number;
+    currentValue: number;
+    prediction: number;
+    currentValueColor: string;
+    showDifference: boolean;
+    forecastText: string;
+  };
   chartData: {
-    totalTrips: number,
+    totalTrips: number;
     statsByDay: {
-      date: string,
-      totalTrips: number,
-    }[],
-  },
+      date: string;
+      totalTrips: number;
+    }[];
+  };
 }
 
-const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartData, mineralWeight } : IDonutAndSplineChartByDayProps) => {
-  const sortDataByDay = (data: IDonutAndSplineChartByDayProps['chartData']) => {
+const DonutAndSplineChartByDay = ({
+  progressBarData,
+  chartData,
+  mineralWeight,
+}: IDonutAndSplineChartByDayProps) => {
+  const sortDataByDay = (data: IDonutAndSplineChartByDayProps["chartData"]) => {
     const weekDates = getCurrentWeekDates();
-    const dataMap : any = {};
+    const dataMap: any = {};
     data.statsByDay.forEach((item) => {
       dataMap[item.date] = item.totalTrips;
     });
@@ -41,148 +43,170 @@ const DonutAndSplineChartByDay = ({ title, donutData , progressBarData, chartDat
     const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
 
     const acumulativeData = completedStatsByDays.map((day, index) => {
-      const sum = completedStatsByDays.slice(0, index + 1).reduce((acc, val) => acc + (val || 0), 0);
+      const sum = completedStatsByDays
+        .slice(0, index + 1)
+        .reduce((acc, val) => acc + (val || 0), 0);
       return day ? sum : "";
     });
 
     return {
-      data: completedStatsByDays.map(e => e ? e * mineralWeight : ""),
-      acumulativeData: acumulativeData.map(e => e ? e * mineralWeight : ""),
-      dataText: completedStatsByDays.map(e => e ? `${e * mineralWeight} TM` : ""),
-      acumulativeDataText: acumulativeData.map(e => e ? `${e * mineralWeight} TM` : "")
+      data: completedStatsByDays.map((e) => (e ? e * mineralWeight : "")),
+      acumulativeData: acumulativeData.map((e) => (e ? e * mineralWeight : "")),
+      dataText: completedStatsByDays.map((e) =>
+        e ? `${e * mineralWeight} ` : ""
+      ),
+      acumulativeDataText: acumulativeData.map((e) =>
+        e ? `${e * mineralWeight} ` : ""
+      ),
     };
   };
 
+  const planDaily = 1200;
+  const planData = Array.from({ length: 7 }, (_, i) => planDaily * (i + 1));
+
   const options = {
     chart: {
-        type: "areaspline",
-        height: 250
+      type: "areaspline",
+      height: 250,
+      marginBottom: 70,
+      marginTop: 70,
+      marginLeft: 0,
+      marginRight: 0,
+      spacing: [0, 0, 0, 0],
     },
     title: "",
     xAxis: [
-        {
-          title: "",
-          categories: sortDataByDay(chartData).acumulativeDataText,
-          opposite: false,
-          labels: {
-            style: {
-                color: '#000000',
-                fontSize: '14px',
-                fontWeight: 'bold'
-            }
-          }
+      {
+        categories: sortDataByDay(chartData).acumulativeDataText,
+        opposite: false,
+        lineColor: "transparent",
+        labels: {
+          style: {
+            color: "#000000",
+            fontSize: "0.8em",
+            fontWeight: "bold",
+          },
         },
-        {
-          title: "",
-          categories: new Array(7).fill(1200).map((e,i) => `${e * (i+1)} TM`),
-          tickPositioner: function () { return [0, 1, 2, 3, 4, 5, 6]; },
-          opposite: false,
-          lineColor: 'transparent',
-          labels: {
-            y: 0,
-            style: {
-              color: '#9696ab',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }
-          }
+      },
+      {
+        categories: planData.map((e) => `${roundAndFormat(e)}`),
+        tickPositioner: function () {
+          return [0, 1, 2, 3, 4, 5, 6];
         },
-        {
-          title: "",
-          categories: getCurrentWeekDatesFormatted(),
-          opposite: true,
-          linkedTo:1,
-          labels: {
-            style: {
-              color: '#9696ab',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }
-          }
-        }
+        opposite: false,
+        lineColor: "transparent",
+        labels: {
+          y: 0,
+          style: {
+            color: "#00000080",
+            fontSize: "0.8em",
+            fontWeight: "bold",
+          },
+        },
+      },
+      {
+        categories: getCurrentWeekDatesFormatted(),
+        opposite: true,
+
+        linkedTo: 1,
+        lineColor: "transparent",
+        labels: {
+          style: {
+            color: "#00000080",
+            fontSize: "0.8em",
+            fontWeight: "bold",
+          },
+        },
+      },
     ],
     yAxis: {
-      title: {
-        text: "Toneladas" // Agrega la unidad al título del eje Y
-      },
+      title: { text: "" },
       opposite: true,
-      labels: {
-        formatter:  (e : any) => {
-          return `${e.value} t`; 
-        },
-        style: {
-          color: '#9696ab',
-          fontSize: '14px',
-          fontWeight: 'bold'
-        }
-      }
+      labels: { enabled: false },
+      gridLineColor: "#D9D9D9",
+      gridLineWidth: 0.5,
+      gridLineDashStyle: "Dash",
     },
     series: [
       {
-          name: "Fact",
-          data: sortDataByDay(chartData).acumulativeData,
-          color: "#000000",
-          xAxis: 0,
-          fillColor: "#bfefe1",
-          marker: {
-            fillColor: 'white',
-            lineWidth: 2,
-            lineColor: '#000000'
-          },
-          tooltip: {
-            pointFormatter: (e : any) => {
-              return `<span style="color:${e.color}">●</span> ${e.series.name}: <b>${e.y} TM</b><br/>`; // Agrega la unidad al tooltip
-            }
-          }
+        name: "Fact",
+        data: sortDataByDay(chartData).acumulativeData,
+        xAxis: 0,
+        fillColor: "#bfefe1",
+        color: "#04c286",
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: "#04c286",
+        },
       },
       {
-          name: "Plan",
-          data: new Array(7).fill(18720).map((e,i) => e * (i+1)),
-          color: "#9696ab",
-          xAxis: 1,
-          fillColor: "#ffd0d63d",
-          marker: {
-            fillColor: 'white',
-            lineWidth: 2,
-            lineColor: '#9696ab'
-          },
-          tooltip: {
-            pointFormatter: (e : any) => {
-              return `<span style="color:${e.color}">●</span> ${e.series.name}: <b>${e.y} TM</b><br/>`; // Agrega la unidad al tooltip
-            }
-          }
+        name: "Plan",
+        data: planData,
+        xAxis: 1,
+        fillColor: "#ffd0d63d",
+        color: "#fe7887",
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: "#fe7887",
+        },
       },
     ],
+    tooltip: {
+      shared: true,
+      backgroundColor: "#111214",
+      borderWidth: 0,
+      shadow: false,
+      borderRadius: 10,
+      padding: 12,
+      style: {
+        color: "#FFFFFF",
+        fontSize: "0.65em",
+      },
+      pointFormatter: function () {
+        return `<span style="color:${this.color}">●</span> ${
+          this.series.name
+        }: <b>${roundAndFormat(this.y)} TM</b><br/>`;
+      },
+    },
+
     legend: {
-      layout: "vertical",
-      align: "left",
-      verticalAlign: "bottom",
-      x: 0,
-      y: 0
+      align: "right",
+      verticalAlign: "top",
+      layout: "horizontal",
+      floating: false,
+      itemStyle: {
+        color: "#A6A6A6",
+        fontSize: "0.55em",
+        fontWeight: "600",
+        textTransform: "uppercase",
+      },
+      itemHoverStyle: { color: "black" },
+      symbolWidth: 10,
+      symbolHeight: 9,
+      symbolRadius: 2,
+      itemMarginTop: 0,
+      itemMarginBottom: 0,
     },
     credits: {
-        enabled: false
-    }
-};
+      enabled: false,
+    },
+  };
 
   return (
     <div className="flex flex-col gap-0">
-      <h3 className="font-bold text-center">
-        {title}
-      </h3>
-      <div className="flex flex-row items-center">
-        <DonutChart
-          donutData={donutData}
-          size="small"
-        />
-        <ProgressBar
-          showPrediction={false}
-          progressBarData= {progressBarData}
-        />
-      </div>
+      <Progress
+        title=""
+        value={progressBarData.currentValue}
+        total={progressBarData.total}
+        color={progressBarData.currentValueColor}
+        unit="TM"
+        className="py-0 px-2"
+      />
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
-  )
-}
+  );
+};
 
-export default DonutAndSplineChartByDay
+export default DonutAndSplineChartByDay;

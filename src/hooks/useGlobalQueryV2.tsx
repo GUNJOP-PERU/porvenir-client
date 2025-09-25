@@ -5,7 +5,7 @@ import type { UseQueryOptions } from "@tanstack/react-query";
 export function useFetchData<T = any>(
   queryKey: string,
   endpoint: string,
-  options?: UseQueryOptions<T, Error, T, readonly unknown[]>
+  options?: Partial<UseQueryOptions<T, Error, T, readonly unknown[]>>
 ) {
   return useQuery<T>({
     queryKey: ["crud", queryKey],
@@ -20,5 +20,6 @@ export function useFetchData<T = any>(
     retry: 1,
     retryDelay: 2000,
     ...(options || {}),
+
   });
 }
