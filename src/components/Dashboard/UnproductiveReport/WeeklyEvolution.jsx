@@ -220,7 +220,7 @@ export default function WeeklyEvolution() {
         isLoading={isLoading}
         isError={isError}
         noData={!data || data.length === 0}
-        height={"100%"}
+        height={"78vh"}
       />
     );
 
