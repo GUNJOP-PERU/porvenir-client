@@ -39,14 +39,12 @@ const BeaconTripTable = () => {
     endDate: ''
   });
 
-  console.log("trips", groupedUnits)
-
   const {
     data = [],
     isLoading,
     isError,
     refetch,
-  } = useFetchData<UnitBeaconDetection[]>("beacon-detection", "beacon-track?startDate=2025-09-22&endDate=2025-09-23");
+  } = useFetchData<UnitBeaconDetection[]>("beacon-detection", "beacon-track?startDate=2025-09-24&endDate=2025-09-24");
 
   const tripsByUnit = () => {
     const grouped: Record<string, any[]> = {};

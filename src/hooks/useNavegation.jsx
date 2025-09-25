@@ -202,24 +202,24 @@ export const useNavigation = () => {
       {
         title: "Beacon",
         items: [
-          {
-            name: "Acumulado por hora",
-            href: "dashboard/real-time-by-hour",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-hour",
-          },
+          // {
+          //   name: "Acumulado por hora",
+          //   href: "dashboard/real-time-by-hour",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/dashboard/real-time-by-hour",
+          // },
           {
             name: "Acumulado por día",
             href: "/dashboard/real-time-by-day",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
-          {
-            name: "Acumulado por mes",
-            href: "/dashboard/real-time-by-month",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-month",
-          },  
+          // {
+          //   name: "Acumulado por mes",
+          //   href: "/dashboard/real-time-by-month",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/dashboard/real-time-by-month",
+          // },  
           {
             name: "Detección de Viajes",
             href: "/dashboard/trip-count",
