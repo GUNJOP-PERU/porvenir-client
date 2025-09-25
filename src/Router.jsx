@@ -47,6 +47,7 @@ import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
 import RealTimeByDay from "./pages/beacon/RealTimeByDay";
 import RealTimeByHour from "./pages/beacon/RealTimeByHour";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
+import BocaminaDetection from "./pages/beacon/BocaminaDetection";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
 import Tracking from "./pages/beacon/Tracking";
 
@@ -115,6 +116,7 @@ const protectedRoutes = [
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
+  { path: "dashboard/bocamina-detection", element: <BocaminaDetection /> },
   { path: "dashboard/tracking", element: <Tracking /> },
 
   //Configuración

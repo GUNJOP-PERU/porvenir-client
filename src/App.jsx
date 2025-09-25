@@ -5,12 +5,13 @@ import Router from "./Router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { register } from "timeago.js";
-
+import { TooltipProvider } from "./components/ui/tooltip";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
 // Styles
 import "handsontable/styles/handsontable.min.css";
 import "handsontable/styles/ht-theme-main.min.css";
-import { TooltipProvider } from "./components/ui/tooltip";
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const customLocale = function (_number, index) {

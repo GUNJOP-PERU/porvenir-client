@@ -3,7 +3,19 @@ import { useMemo } from "react";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
-import { Building2, ChartArea, ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, CopyCheck, FileChartPie, MapPin, Pickaxe, Waypoints } from "lucide-react";
+import { SiRedmine } from "react-icons/si";
+import {
+  Building2,
+  ChartArea,
+  ChartBarStacked,
+  ChartColumnStacked,
+  ChartNoAxesCombined,
+  CopyCheck,
+  FileChartPie,
+  MapPin,
+  Pickaxe,
+  Waypoints
+} from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -225,7 +237,13 @@ export const useNavigation = () => {
             href: "/dashboard/trip-count",
             icon: <ChartArea />,
             active: pathname === "/dashboard/trip-count",
-          },  
+          },
+          {
+            name: "Detección de Bocamina",
+            href: "/dashboard/bocamina-detection",
+            icon: <SiRedmine />,
+            active: pathname === "/dashboard/bocamina-detection",
+          },
           {
             name: "Tabla de Detección",
             href: "dashboard/beacon-detection-table",
