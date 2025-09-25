@@ -235,7 +235,6 @@ export default function ExtractMaterial({
       />
     );
 
-    console.log(metrics);
   return (
     <>
       <div className="w-full grid md:grid-cols-4 grid-cols-2 gap-2">

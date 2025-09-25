@@ -16,8 +16,8 @@ interface ProgressBarProps {
 const ProgressBar = ({progressBarData, showPrediction, unit} : ProgressBarProps) => {
   const differenceStatus = progressBarData.prediction - progressBarData.total
   return (
-    <div className="progress-bar--container">
-      <span className="progress-bar-label">
+    <div className="progress-bar--container overflow-hidden rounded-md">
+      <span className="progress-bar-label leading-none text-[10px]">
         Extraído <b>{progressBarData.currentValue} {unit ? unit:"TM"}</b> de <b>{progressBarData.total} {unit ? unit:"TM"}</b>
       </span>
       {progressBarData.showDifference &&
