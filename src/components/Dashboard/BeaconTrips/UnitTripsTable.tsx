@@ -10,6 +10,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { format } from 'date-fns';
+import { ArrowDown, ArrowUp, ChevronLeftIcon, ChevronRightIcon, ChevronsLeft, ChevronsRight, ChevronsUpDown } from "lucide-react";
 
 interface UnitTripsTableProps {
   data: BeaconCycle[]
@@ -142,16 +143,15 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
   });
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full pb- gap-1">
       <div className="bg-gray-50 p-4 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Filtro de Unidad */}
           <div className="flex flex-col">
-            <label className="text-xs font-medium text-gray-600 mb-1">Unidad</label>
+            <label className="text-xs font-medium text-zinc-600 mb-1">Unidad</label>
             <select
               value={filters.unit}
               onChange={(e) => setFilters(prev => ({ ...prev, unit: e.target.value }))}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="h-8 px-2 py-0 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
             >
               <option value="">Todas las unidades</option>
               {unitList.map((unit, index) => (
@@ -186,13 +186,13 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
 
       <div className="flex-1 overflow-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 sticky top-0 z-10">
+          <thead className="bg-zinc-50 text-[10px] py-2 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200"
+                    className="h-10 px-2 text-left align-middle font-medium text-zinc-400 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] first:rounded-l-lg last:rounded-r-lg uppercase"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
@@ -209,10 +209,10 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                         {header.column.getCanSort() && (
                           <span className="text-gray-400">
                             {header.column.getIsSorted() === 'asc'
-                              ? ' ↑'
+                              ? <ArrowUp className="ml-2 h-4 w-4" />
                               : header.column.getIsSorted() === 'desc'
-                              ? ' ↓'
-                              : ' ↕️'}
+                              ? <ArrowDown className="ml-2 h-4 w-4" />
+                              : <ChevronsUpDown className="ml-2 h-4 w-4" />}
                           </span>
                         )}
                       </div>
@@ -282,10 +282,10 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
         </table>
       </div>
 
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+      <div className="px-4 py-2 border-zinc-200 bg-zinc-50 rounded-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-xs text-zinc-400">
               Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
               {Math.min(
                 (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
@@ -295,23 +295,23 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
             </span>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className=" size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
             >
-              {'<<'}
+              <ChevronsLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
             >
-              Anterior
+             <ChevronLeftIcon className="w-4 h-4" />
             </button>
             
-            <span className="px-3 py-1 text-sm font-medium">
+            <span className="px-1 py-1 text-xs text-zinc-500 font-medium">
               Página {table.getState().pagination.pageIndex + 1} de{' '}
               {table.getPageCount()}
             </span>
@@ -319,16 +319,16 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
             >
-              Siguiente
+              <ChevronRightIcon className="w-4 h-4" />
             </button>
             <button
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
-              className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
             >
-              {'>>'}
+              <ChevronsRight className="w-4 h-4" />
             </button>
           </div>
         </div>
