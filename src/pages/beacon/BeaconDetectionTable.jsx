@@ -317,7 +317,7 @@ const BeaconDetectionTable = () => {
   return (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="border-b border-gray-200">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>

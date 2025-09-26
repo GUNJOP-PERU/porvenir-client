@@ -1,97 +1,204 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 import { format } from "date-fns";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChart";
-import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDetectionChart";
 import UnitTripTable from "@/components/Dashboard/BeaconTrips/UnitTripsTable";
-import { DateRange } from 'react-date-range';
 // Types
 import type { BeaconCycle, BeaconDetection } from "../../types/Beacon";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { es } from "date-fns/locale";
 
+interface BaseStats {
+  totalUnits: number;
+  totalUnitsDay: number;
+  totalUnitsNight: number;
+  totalTrips: number;
+  totalDuration: number;
+  totalDurationNight: number;
+  totalDurationDay: number;
+  dayTrips: number;
+  nightTrips: number;
+  unitWithLessTrips: string;
+  averageDuration: number;
+  totalDistance: number;
+}
 const BocaminaDetection = () => {
-  const [unitTrips, setUnitTrips] = useState<BeaconDetection[]>([]);
-  const [bocaminaStats, setBocaminaStats] = useState<Record<string, number>>({});
-  const [baseStats, setBaseStats] = useState({
-    totalUnits: 0,
-    totalUnitsDay: 0,
-    totalUnitsNight: 0,
-    totalTrips: 0,
-    totalDuration: 0,
-    totalDurationNight: 0,
-    totalDurationDay: 0,
-    dayTrips: 0,
-    nightTrips: 0,
-    unitWithLessTrips: ""
-  });
-  const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
+  const [dateFilter, setDateFilter] = useState<
+    [{ startDate: Date; endDate: Date; key: string }]
+  >([
     {
       startDate: new Date(),
       endDate: new Date(),
       key: "selection",
-    }
+    },
   ]);
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
-  const {
-      data,
-      refetch,
-      isFetching
-  } = useFetchData<BeaconCycle[]>(
+  const { data, refetch, isFetching } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days",
-    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}`
+    `beacon-track/trip?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    { refetchInterval: 30000 }
   );
 
-  useEffect(() => {
-    if(data) {
-      const totalUnits = data.length;
-      const totalUnitsDay = data.length;
-      const totalUnitsNight = data.length
-      const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
-      const totalDuration = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
-      const totalDurationNight = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.filter((trip) => trip.shift === "noche").reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
-      const totalDurationDay = data.reduce((acc, tripsTruck) => acc + tripsTruck.trips.filter((trip) => trip.shift === "dia").reduce((innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration), 0), 0);
-      const dayTrips = data.reduce((acc, day) => acc + day.trips.filter(trip => trip.shift === "dia").length, 0);
-      const nightTrips = data.reduce((acc, day) => acc + day.trips.filter(trip => trip.shift === "noche").length, 0);
-      const unitWithLessTrips = data.reduce((minUnit : any, currentUnit) => {
-        const minTrips = minUnit.trips.length;
-        const currentTrips = currentUnit.trips.length;
-        return currentTrips < minTrips ? currentUnit : minUnit;
-      }, data[0]);
+  const { baseStats, unitTrips, bocaminaStats, viajesBocaminaPorUnidad } =
+    useMemo(() => {
+      if (!data || data.length === 0) {
+        const defaultBaseStats: BaseStats = {
+          totalUnits: 0,
+          totalUnitsDay: 0,
+          totalUnitsNight: 0,
+          totalTrips: 0,
+          totalDuration: 0,
+          totalDurationNight: 0,
+          totalDurationDay: 0,
+          dayTrips: 0,
+          nightTrips: 0,
+          unitWithLessTrips: "",
+          averageDuration: 0,
+          totalDistance: 0,
+        };
+        return {
+          baseStats: defaultBaseStats,
+          unitTrips: [],
+          bocaminaStats: {},
+        };
+      }
 
-      setBaseStats({
-        totalUnits,
-        totalUnitsDay,
-        totalUnitsNight,
+      // 🔹 FILTRADO PRINCIPAL
+      const viajesBocaminaPorUnidad = data.map((unit) => ({
+        ...unit,
+        trips: unit.trips.filter(
+          (trip) => trip.bocaminaList && trip.bocaminaList.length > 0
+        ),
+      }));
+
+      // Usa esta variable en vez de `data` en todos los cálculos
+      const filteredData = viajesBocaminaPorUnidad;
+
+      // 🔹 CALCULOS usando filteredData
+      const totalTrips = filteredData.reduce(
+        (acc, day) => acc + day.trips.length,
+        0
+      );
+
+      const totalDuration = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips.reduce(
+            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+            0
+          ),
+        0
+      );
+
+      const totalDistance = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips.reduce(
+            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDistance),
+            0
+          ),
+        0
+      );
+
+      const averageDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
+
+      const totalDurationNight = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips
+            .filter((trip) => trip.shift === "noche")
+            .reduce(
+              (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+              0
+            ),
+        0
+      );
+
+      const totalDurationDay = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips
+            .filter((trip) => trip.shift === "dia")
+            .reduce(
+              (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+              0
+            ),
+        0
+      );
+
+      const dayTrips = filteredData.reduce(
+        (acc, day) =>
+          acc + day.trips.filter((trip) => trip.shift === "dia").length,
+        0
+      );
+
+      const nightTrips = filteredData.reduce(
+        (acc, day) =>
+          acc + day.trips.filter((trip) => trip.shift === "noche").length,
+        0
+      );
+
+      const unitWithLessTripsObject = filteredData.reduce(
+        (minUnit, currentUnit) => {
+          if (!minUnit) return currentUnit;
+
+          const minTrips = minUnit.trips.length;
+          const currentTrips = currentUnit.trips.length;
+          return currentTrips < minTrips ? currentUnit : minUnit;
+        },
+        filteredData[0]
+      );
+
+      const calculatedBaseStats: BaseStats = {
+        totalUnits: filteredData.length,
+        totalUnitsDay: filteredData.length,
+        totalUnitsNight: filteredData.length,
         totalTrips,
         totalDuration,
         totalDurationNight,
         totalDurationDay,
         dayTrips,
         nightTrips,
-        unitWithLessTrips: unitWithLessTrips ? unitWithLessTrips.unit : ""
-      });
-      setUnitTrips(data.map((unit) => unit.trips.flatMap((trip => trip.trip))).flat().filter(trip => trip.ubicationType === "bocaminas"));
-      setBocaminaStats(
-        data.reduce((acc, curr) => {
+        unitWithLessTrips: unitWithLessTripsObject
+          ? unitWithLessTripsObject.unit
+          : "",
+        averageDuration,
+        totalDistance,
+      };
+
+      const calculatedUnitTrips: BeaconDetection[] = filteredData
+        .map((unit) => unit.trips.flatMap((trip) => trip.trip))
+        .flat()
+        .filter((trip) => trip.ubicationType === "bocaminas");
+
+      const calculatedBocaminaStats: Record<string, number> =
+        filteredData.reduce((acc, curr) => {
           curr.bocaminaStats.forEach(({ name, count }) => {
             acc[name] = (acc[name] || 0) + count;
           });
           return acc;
-        }, {} as Record<string, number>)
-      );
-    }
-  }, [data])
+        }, {} as Record<string, number>);
 
-  useEffect(() => {    
-    const interval = setInterval(() => {
-      refetch();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
+      return {
+        baseStats: calculatedBaseStats,
+        unitTrips: calculatedUnitTrips,
+        bocaminaStats: calculatedBocaminaStats,
+        viajesBocaminaPorUnidad: filteredData, // aquí ya es data filtrada
+      };
+    }, [data]);
 
   useEffect(() => {
     refetch();
@@ -100,82 +207,122 @@ const BocaminaDetection = () => {
   if (!data) return null;
 
   return (
-    <div className="w-full h-full flex flex-col bg-white">
+    <>
       <PageHeader
         title="Detección de Bocaminas"
-        description=""
+        description="Monitoreo y Ubicación de Entradas a Minas"
         refetch={refetch}
         isFetching={isFetching}
         count={data.length}
         setDialogOpen={false}
         actions={
-          <div className="relative">
-            <button
-              onClick={() => setIsTooltipOpen(!isTooltipOpen)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              {dateFilter[0] &&
-                `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
-                  dateFilter[0].endDate,
-                  "dd/MM/yyyy"
-                )}`}
-            </button>
-            {isTooltipOpen && (
-              <div className="absolute right-0 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
-                <DateRange
-                  editableDateInputs={false}
-                  onChange={(item) =>
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  id="date"
+                  className="w-40 justify-between font-normal capitalize"
+                  disabled={isFetching}
+                >
+                  {dateFilter[0]?.startDate ? (
+                    <>
+                      {format(dateFilter[0].startDate, "dd MMM", {
+                        locale: es,
+                      })}{" "}
+                      -{" "}
+                      {format(dateFilter[0].endDate, "dd MMM", { locale: es })}
+                    </>
+                  ) : (
+                    <span>Seleccionar Rango</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2 z-[99999]" align="end">
+                <Calendar
+                  mode="range"
+                  disabled={{ after: new Date() }}
+                  defaultMonth={dateFilter[0].startDate}
+                  selected={{
+                    from: dateFilter[0].startDate,
+                    to: dateFilter[0].endDate,
+                  }}
+                  captionLayout="dropdown"
+                  locale={es}
+                  onSelect={(date) => {
                     setDateFilter([
                       {
-                        startDate: item.selection?.startDate || new Date(),
-                        endDate: item.selection?.endDate || new Date(),
+                        startDate: date?.from || new Date(),
+                        endDate: date?.to || new Date(),
                         key: "selection",
                       },
-                    ])
-                  }
-                  moveRangeOnFirstSelection={false}
-                  ranges={dateFilter}
+                    ]);
+                  }}
                 />
-              </div>
-            )}
-          </div>
+              </PopoverContent>
+            </Popover>
+          </>
         }
       />
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-8 gap-2">
         <CardItem
           value={baseStats.totalUnits}
           title="Cantidad de Unidades"
-          valueColor= "text-[#000000]"
+          valueColor="text-[#000000]"
           unid="camiones"
         />
         <CardItem
           value={baseStats.totalTrips}
           title="Viajes Totales"
-          valueColor= "text-[#1E64FA]"
+          valueColor="text-[#1E64FA]"
           unid="viajes"
         />
         <CardItem
           value={baseStats.dayTrips}
           subtitleUnid="TM"
           title="Turno Dia"
-          valueColor= "text-[#fac34c]"
+          valueColor="text-[#fac34c]"
           unid="viajes"
         />
         <CardItem
           value={baseStats.nightTrips}
           subtitleUnid="TM"
           title="Turno Noche"
-          valueColor= "text-[#3c3f43]"
+          valueColor="text-[#3c3f43]"
           unid="viajes"
         />
+        <CardItem
+          value={Math.round(baseStats.averageDuration / 60)}
+          title="Duración Promedio"
+          valueColor="text-[#007F5F]"
+          unid="min"
+        />
+        <CardItem
+          value={baseStats.totalDistance}
+          title="Kilómetros Totales"
+          valueColor="text-[#28A745]"
+          unid="km"
+        />
+        <CardItem
+          value={baseStats.totalDuration / 3600}
+          title="Horas trabajadas"
+          subtitle={baseStats.totalUnits * 24}
+          valueColor="text-[#3c3f43]"
+          unid="hrs"
+          subtitleUnid="hrs"
+        />
+        <CardItem
+          value={baseStats.unitWithLessTrips}
+          title="Unidad con menos viajes"
+          subtitleUnid="TM"
+          valueColor="text-[#3c3f43]"
+          unid=""
+        />
       </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <BocaminaDetectionChart data={bocaminaStats} />
-      </div>
-
-      <UnitTripTable data={data} />
-    </div>
+      <BocaminaDetectionChart data={bocaminaStats} />
+      <UnitTripTable data={viajesBocaminaPorUnidad} />
+    </>
   );
 };
 
