@@ -29,7 +29,7 @@ const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "
     () => ({
       chart: {
         backgroundColor: "transparent",
-        height: 280,
+        height: 300,
         marginTop: 40,
         marginBottom: 40,
       },

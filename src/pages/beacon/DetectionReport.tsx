@@ -4,6 +4,7 @@ import { useFetchData } from "../../hooks/useGlobalQueryV2";
 import { DateRange } from 'react-date-range';
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
+import BocaminaDetectionTable from "@/components/Dashboard/BeaconTrips/BocaminaDetectionTableV2";
 import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
 import UnitTripChart from "@/components/Dashboard/BeaconTrips/UnitTripChart";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChartV2";
@@ -255,7 +256,7 @@ const DetectionReport = () => {
         />
         <CardItem
           value={baseStats.totalDuration / 3600}
-          title="Duración Total (horas)"
+          title="Horas Trabajadas"
           valueColor="text-[#000000]"
           unid="horas"
         />
@@ -290,8 +291,8 @@ const DetectionReport = () => {
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
         <CardTitle
-          title="Extracción de mineral turno Dia en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
+          title="Análisis de datos de unidades"
+          subtitle="Análisis basado en la detección de beacons"
           className="row-span-2"
           icon={ChartNoAxesColumn}
           classIcon="text-[#fac34c]"
@@ -346,31 +347,13 @@ const DetectionReport = () => {
           }
         </CardTitle>
         <CardTitle
-          title="Acumulado de Extracción de mineral Turno Noche en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
+          title="Tabla de Detección de Bocaminas"
+          subtitle="Registro detallado de bocaminas detectadas en los viajes"
           icon={ChartNoAxesColumn}
           classIcon="text-[#3c3f43]"
         >
-          <DonutAndSplineChartByDay
-            progressBarData={{
-              total: 1200 * 7,
-              currentValue: baseStats.totalTMNight,
-              prediction:
-                (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-              currentValueColor: "#00000050",
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={{
-              totalTrips: baseStats.nightTrips,
-              statsByDay: tripsByDay.map((dayGroup) => ({
-                date: dayGroup.date,
-                totalTrips: dayGroup.trips.filter(
-                  (trip) => trip.shift === "noche"
-                ).length,
-              })),
-            }}
+          <BocaminaDetectionTable
+            data={unitTrips.filter((detection) => detection.ubicationType === "bocamina" )}
           />
         </CardTitle>
       </div>
