@@ -42,6 +42,7 @@ import Incidence from "./pages/monitoring/Incidences";
 import WorkerOrders from "./pages/monitoring/WorkerOrders";
 import WeekReport from "./pages/dashboard/WeekReport";
 // Beacon
+import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconTrip from "./pages/beacon/BeaconTrip";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
 import RealTimeByDay from "./pages/beacon/RealTimeByDay";
@@ -110,6 +111,7 @@ const protectedRoutes = [
   { path: "dashboard/productionTruck", element: <ProductionTruck /> },
 
   //Dashboard-Beacon
+  { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/beacon-trip-v2", element: <BeaconTrip /> },
   { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },

@@ -4,6 +4,7 @@ import IconVehicle from "@/icons/Dashboard/IconVehicle";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
 import { SiRedmine } from "react-icons/si";
+import { TbReportAnalytics } from "react-icons/tb";
 import {
   Building2,
   ChartArea,
@@ -214,12 +215,18 @@ export const useNavigation = () => {
       {
         title: "Beacon",
         items: [
-          // {
-          //   name: "Acumulado por hora",
-          //   href: "dashboard/real-time-by-hour",
-          //   icon: <ChartArea />,
-          //   active: pathname === "/dashboard/real-time-by-hour",
-          // },
+          {
+            name: "Reporte de detección",
+            href: "dashboard/detection-report",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/detection-report",
+          },
+          {
+            name: "Acumulado por hora",
+            href: "dashboard/real-time-by-hour",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour",
+          },
           {
             name: "Acumulado por día",
             href: "/dashboard/real-time-by-day",

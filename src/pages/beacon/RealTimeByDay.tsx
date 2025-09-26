@@ -3,8 +3,7 @@ import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
 import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
-import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import CardItem from "@/components/Dashboard/CardItem";
+import CardItem from "@/components/Dashboard/CardItemV2";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
@@ -16,7 +15,7 @@ import { ChartNoAxesColumn } from "lucide-react";
 import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 import Progress from "@/components/Dashboard/Charts/Progress";
 
-const RealTimeByHour = () => {
+const RealTimeByDay = () => {
   const isoDayNumber = getISODay(new Date());
   const [dateFilter] = useState({
     startDate: getCurrentWeekStartEndDates().startDateString,
@@ -333,87 +332,4 @@ const RealTimeByHour = () => {
   );
 };
 
-export default RealTimeByHour;
-
-
-        {/* <DonutChart
-          title="Extracción de mineral en TM"
-          size="medium"
-          donutData={{
-            total: 2400 * 7,
-            currentValue: baseStats.totalTM,
-            currentValueColor: "#01c284",
-          }}
-          progressBar={{
-            total: 2400 * 7,
-            currentValue: baseStats.totalTM,
-            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
-            currentValueColor: "#01c284",
-            showDifference: false,
-            forecastText: "Predicción",
-          }}
-        />
-        <DonutChart
-          title="Horas Trabajadas en la Semana"
-          size="medium"
-          donutData={{
-            total: 24 * baseStats.totalUnits * isoDayNumber,
-            currentValue: Number((baseStats.totalDuration / 3600).toFixed(2)),
-            currentValueColor: "#01c284",
-          }}
-          progressBar={{
-            total: 24 * baseStats.totalUnits * isoDayNumber,
-            currentValue: Number((baseStats.totalDuration / 3600).toFixed(2)),
-            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
-            currentValueColor: "#01c284",
-            showDifference: false,
-            forecastText: "Predicción",
-            unit: "horas",
-          }}
-        />
-
-        <DonutChart
-          title="Horas Trabajadas Turno Día"
-          size="medium"
-          donutData={{
-            total: 12 * baseStats.totalUnitsDay * isoDayNumber,
-            currentValue: Number(
-              (baseStats.totalDurationDay / 3600).toFixed(2)
-            ),
-            currentValueColor: "#fac34c",
-          }}
-          progressBar={{
-            total: 12 * baseStats.totalUnitsDay * isoDayNumber,
-            currentValue: Number(
-              (baseStats.totalDurationDay / 3600).toFixed(2)
-            ),
-            prediction: (baseStats.totalTM / baseStats.totalUnitsDay) * 7,
-            currentValueColor: "#fac34c",
-            showDifference: false,
-            forecastText: "Predicción",
-            unit: "horas",
-          }}
-        />
-
-        <DonutChart
-          title="Horas Trabajadas Turno Noche"
-          size="medium"
-          donutData={{
-            total: 12 * baseStats.totalUnitsNight * isoDayNumber,
-            currentValue: Number(
-              (baseStats.totalDurationNight / 3600).toFixed(2)
-            ),
-            currentValueColor: "#3c3f43",
-          }}
-          progressBar={{
-            total: 12 * baseStats.totalUnitsNight * isoDayNumber,
-            currentValue: Number(
-              (baseStats.totalDurationNight / 3600).toFixed(2)
-            ),
-            prediction: (baseStats.totalTM / baseStats.totalUnitsNight) * 7,
-            currentValueColor: "#3c3f43",
-            showDifference: false,
-            forecastText: "Predicción",
-            unit: "horas",
-          }}
-        /> */}
+export default RealTimeByDay;
