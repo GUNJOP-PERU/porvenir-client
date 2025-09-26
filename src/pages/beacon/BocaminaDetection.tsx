@@ -52,130 +52,153 @@ const BocaminaDetection = () => {
     { refetchInterval: 30000 }
   );
 
-  const { baseStats, unitTrips, bocaminaStats } = useMemo(() => {
-    if (!data || data.length === 0) {
-      const defaultBaseStats: BaseStats = {
-        totalUnits: 0,
-        totalUnitsDay: 0,
-        totalUnitsNight: 0,
-        totalTrips: 0,
-        totalDuration: 0,
-        totalDurationNight: 0,
-        totalDurationDay: 0,
-        dayTrips: 0,
-        nightTrips: 0,
-        unitWithLessTrips: "",
-        averageDuration: 0,
-        totalDistance: 0,
+  const { baseStats, unitTrips, bocaminaStats, viajesBocaminaPorUnidad } =
+    useMemo(() => {
+      if (!data || data.length === 0) {
+        const defaultBaseStats: BaseStats = {
+          totalUnits: 0,
+          totalUnitsDay: 0,
+          totalUnitsNight: 0,
+          totalTrips: 0,
+          totalDuration: 0,
+          totalDurationNight: 0,
+          totalDurationDay: 0,
+          dayTrips: 0,
+          nightTrips: 0,
+          unitWithLessTrips: "",
+          averageDuration: 0,
+          totalDistance: 0,
+        };
+        return {
+          baseStats: defaultBaseStats,
+          unitTrips: [],
+          bocaminaStats: {},
+        };
+      }
+
+      // 🔹 FILTRADO PRINCIPAL
+      const viajesBocaminaPorUnidad = data.map((unit) => ({
+        ...unit,
+        trips: unit.trips.filter(
+          (trip) => trip.bocaminaList && trip.bocaminaList.length > 0
+        ),
+      }));
+
+      // Usa esta variable en vez de `data` en todos los cálculos
+      const filteredData = viajesBocaminaPorUnidad;
+
+      // 🔹 CALCULOS usando filteredData
+      const totalTrips = filteredData.reduce(
+        (acc, day) => acc + day.trips.length,
+        0
+      );
+
+      const totalDuration = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips.reduce(
+            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+            0
+          ),
+        0
+      );
+
+      const totalDistance = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips.reduce(
+            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDistance),
+            0
+          ),
+        0
+      );
+
+      const averageDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
+
+      const totalDurationNight = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips
+            .filter((trip) => trip.shift === "noche")
+            .reduce(
+              (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+              0
+            ),
+        0
+      );
+
+      const totalDurationDay = filteredData.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.trips
+            .filter((trip) => trip.shift === "dia")
+            .reduce(
+              (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
+              0
+            ),
+        0
+      );
+
+      const dayTrips = filteredData.reduce(
+        (acc, day) =>
+          acc + day.trips.filter((trip) => trip.shift === "dia").length,
+        0
+      );
+
+      const nightTrips = filteredData.reduce(
+        (acc, day) =>
+          acc + day.trips.filter((trip) => trip.shift === "noche").length,
+        0
+      );
+
+      const unitWithLessTripsObject = filteredData.reduce(
+        (minUnit, currentUnit) => {
+          if (!minUnit) return currentUnit;
+
+          const minTrips = minUnit.trips.length;
+          const currentTrips = currentUnit.trips.length;
+          return currentTrips < minTrips ? currentUnit : minUnit;
+        },
+        filteredData[0]
+      );
+
+      const calculatedBaseStats: BaseStats = {
+        totalUnits: filteredData.length,
+        totalUnitsDay: filteredData.length,
+        totalUnitsNight: filteredData.length,
+        totalTrips,
+        totalDuration,
+        totalDurationNight,
+        totalDurationDay,
+        dayTrips,
+        nightTrips,
+        unitWithLessTrips: unitWithLessTripsObject
+          ? unitWithLessTripsObject.unit
+          : "",
+        averageDuration,
+        totalDistance,
       };
-      return { baseStats: defaultBaseStats, unitTrips: [], bocaminaStats: {} };
-    }
 
-    const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+      const calculatedUnitTrips: BeaconDetection[] = filteredData
+        .map((unit) => unit.trips.flatMap((trip) => trip.trip))
+        .flat()
+        .filter((trip) => trip.ubicationType === "bocaminas");
 
-    const totalDuration = data.reduce(
-      (acc, tripsTruck) =>
-        acc +
-        tripsTruck.trips.reduce(
-          (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-          0
-        ),
-      0
-    );
-    const totalDistance = data.reduce(
-      (acc, tripsTruck) =>
-        acc +
-        tripsTruck.trips.reduce(
-          (innerAcc, trip) => innerAcc + parseFloat(trip.totalDistance),
-          0
-        ),
-      0
-    );
+      const calculatedBocaminaStats: Record<string, number> =
+        filteredData.reduce((acc, curr) => {
+          curr.bocaminaStats.forEach(({ name, count }) => {
+            acc[name] = (acc[name] || 0) + count;
+          });
+          return acc;
+        }, {} as Record<string, number>);
 
-    const averageDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
-
-    const totalDurationNight = data.reduce(
-      (acc, tripsTruck) =>
-        acc +
-        tripsTruck.trips
-          .filter((trip) => trip.shift === "noche")
-          .reduce(
-            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
-          ),
-      0
-    );
-
-    const totalDurationDay = data.reduce(
-      (acc, tripsTruck) =>
-        acc +
-        tripsTruck.trips
-          .filter((trip) => trip.shift === "dia")
-          .reduce(
-            (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
-          ),
-      0
-    );
-
-    const dayTrips = data.reduce(
-      (acc, day) =>
-        acc + day.trips.filter((trip) => trip.shift === "dia").length,
-      0
-    );
-
-    const nightTrips = data.reduce(
-      (acc, day) =>
-        acc + day.trips.filter((trip) => trip.shift === "noche").length,
-      0
-    );
-
-    const unitWithLessTripsObject = data.reduce((minUnit, currentUnit) => {
-      if (!minUnit) return currentUnit;
-
-      const minTrips = minUnit.trips.length;
-      const currentTrips = currentUnit.trips.length;
-      return currentTrips < minTrips ? currentUnit : minUnit;
-    }, data[0]);
-
-    const calculatedBaseStats: BaseStats = {
-      totalUnits: data.length,
-      totalUnitsDay: data.length,
-      totalUnitsNight: data.length,
-      totalTrips,
-      totalDuration,
-      totalDurationNight,
-      totalDurationDay,
-      dayTrips,
-      nightTrips,
-      unitWithLessTrips: unitWithLessTripsObject
-        ? unitWithLessTripsObject.unit
-        : "",
-      averageDuration,
-      totalDistance,
-    };
-
-    const calculatedUnitTrips: BeaconDetection[] = data
-      .map((unit) => unit.trips.flatMap((trip) => trip.trip))
-      .flat()
-      .filter((trip) => trip.ubicationType === "bocaminas");
-
-    const calculatedBocaminaStats: Record<string, number> = data.reduce(
-      (acc, curr) => {
-        curr.bocaminaStats.forEach(({ name, count }) => {
-          acc[name] = (acc[name] || 0) + count;
-        });
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    return {
-      baseStats: calculatedBaseStats,
-      unitTrips: calculatedUnitTrips,
-      bocaminaStats: calculatedBocaminaStats,
-    };
-  }, [data]);
+      return {
+        baseStats: calculatedBaseStats,
+        unitTrips: calculatedUnitTrips,
+        bocaminaStats: calculatedBocaminaStats,
+        viajesBocaminaPorUnidad: filteredData, // aquí ya es data filtrada
+      };
+    }, [data]);
 
   useEffect(() => {
     refetch();
@@ -242,7 +265,7 @@ const BocaminaDetection = () => {
           </>
         }
       />
-      <div className="grid grid-cols-2 xl:grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 xl:grid-cols-8 gap-2">
         <CardItem
           value={baseStats.totalUnits}
           title="Cantidad de Unidades"
@@ -273,7 +296,7 @@ const BocaminaDetection = () => {
           value={Math.round(baseStats.averageDuration / 60)}
           title="Duración Promedio"
           valueColor="text-[#007F5F]"
-          unid="minutos"
+          unid="min"
         />
         <CardItem
           value={baseStats.totalDistance}
@@ -281,9 +304,24 @@ const BocaminaDetection = () => {
           valueColor="text-[#28A745]"
           unid="km"
         />
+        <CardItem
+          value={baseStats.totalDuration / 3600}
+          title="Horas trabajadas"
+          subtitle={baseStats.totalUnits * 24}
+          valueColor="text-[#3c3f43]"
+          unid="hrs"
+          subtitleUnid="hrs"
+        />
+        <CardItem
+          value={baseStats.unitWithLessTrips}
+          title="Unidad con menos viajes"
+          subtitleUnid="TM"
+          valueColor="text-[#3c3f43]"
+          unid=""
+        />
       </div>
       <BocaminaDetectionChart data={bocaminaStats} />
-      <UnitTripTable data={data} />
+      <UnitTripTable data={viajesBocaminaPorUnidad} />
     </>
   );
 };

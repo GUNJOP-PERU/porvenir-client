@@ -9,25 +9,42 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { format } from 'date-fns';
-import { ArrowDown, ArrowUp, ChevronLeftIcon, ChevronRightIcon, ChevronsLeft, ChevronsRight, ChevronsUpDown } from "lucide-react";
+import { format } from "date-fns";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeftIcon,
+  ChevronRight,
+  ChevronRightIcon,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUpDown,
+  ChevronUp,
+} from "lucide-react";
+import { formatFecha, roundAndFormat } from "@/lib/utilsGeneral";
+import IconDay from "@/icons/IconDay";
+import IconNight from "@/icons/IconNight";
 
 interface UnitTripsTableProps {
-  data: BeaconCycle[]
+  data: BeaconCycle[];
 }
 
 const UnitTripTable = ({ data }: UnitTripsTableProps) => {
   const [unitList, setUnitList] = useState<string[]>([]);
-  const [sorting, setSorting] = useState<import('@tanstack/react-table').SortingState>([]);
+  const [sorting, setSorting] = useState<
+    import("@tanstack/react-table").SortingState
+  >([]);
   const [filteredData, setFilteredData] = useState<BeaconCycle[]>([]);
-  const [columnFilters, setColumnFilters] = useState<import('@tanstack/react-table').ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<
+    import("@tanstack/react-table").ColumnFiltersState
+  >([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
   const [filters, setFilters] = useState({
-    unit: '',
+    unit: "",
     onlyBocaminas: false,
   });
   const [expanded, setExpanded] = useState({});
@@ -36,83 +53,100 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
     let filtered = [...data];
 
     if (filters.unit) {
-      filtered = filtered.filter(item => 
-        item.unit === filters.unit
-      );
+      filtered = filtered.filter((item) => item.unit === filters.unit);
     }
 
     if (filters.onlyBocaminas) {
-      filtered = filtered.filter(item => item.bocaminaStats.length > 0);
+      filtered = filtered.filter((item) => item.bocaminaStats.length > 0);
     }
 
     setFilteredData(filtered);
   };
 
-  const columns = useMemo<ColumnDef<BeaconCycle>[]>(() => [
-    {
-      id: "index",
-      header: "#",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          {row.getCanExpand() && (
-            <button
-              onClick={row.getToggleExpandedHandler()}
-              className="mr-2 text-blue-600 hover:text-blue-800 text-xs"
-            >
-              {row.getIsExpanded() ? "▼" : "▶"}
-            </button>
-          )}
-          <span className="text-zinc-400 text-[10px] font-mono">
-            #{row.index + 1}
-          </span>
-        </div>
-      ),
-      enableSorting: false,
-      enableColumnFilter: false,
-      size: 60,
-    },
-    {
-      accessorKey: "unit",
-      header: "Unidad",
-      cell: ({ getValue }) => getValue()?.toString().toUpperCase(),
-      size: 150,
-    },
-    {
-      accessorKey: "totalTrips",
-      header: "Total de Viajes",
-      size: 150,
-    },
-    {
-      accessorKey: "trips",
-      header: "Tiempo Total (hrs)",
-      size: 150,
-      cell: ({ row }) => {
-        const totalDuration = row.original.trips.reduce((acc, trip) => acc + parseFloat(trip.totalDuration), 0)/3600;
-        return `${totalDuration.toFixed(2)} hrs`;
+  const columns = useMemo<ColumnDef<BeaconCycle>[]>(
+    () => [
+      {
+        id: "index",
+        header: "#",
+        cell: ({ row }) => (
+          <div className="flex items-center">
+            <span className="text-zinc-400 text-[10px]">
+              #{row.index + 1}
+            </span>
+            {row.getCanExpand() && (
+              <button
+                onClick={row.getToggleExpandedHandler()}
+                className="mr-2 text-blue-500 hover:text-blue-800 text-xs"
+              >
+                {/* {row.getIsExpanded() ? "▼" : "▶"} */}
+                <ChevronRight
+                  className={`ml-2 h-4 w-4 transition-transform ease-in-out duration-300 ${
+                    row.getIsExpanded() ? "rotate-90" : ""
+                  }`}
+                />
+              </button>
+            )}
+          </div>
+        ),
+        enableSorting: false,
+        enableColumnFilter: false,
+        size: 60,
       },
-    },
-    {
-      accessorKey: "bocaminaStats",
-      header: "Bocaminas Detectadas",
-      size: 150,
-      cell: ({ row }) => {
-        const bocaminas = row.original.bocaminaStats.map(b => b.name).join(", ");
-        return bocaminas
+      {
+        accessorKey: "unit",
+        header: "Unidad",
+        cell: ({ getValue }) => getValue()?.toString().toUpperCase(),
+       
       },
-    },
-    {
-      accessorKey: "trips",
-      header: "Total de puntos detectados",
-      size: 150,
-      cell: ({ row }) => {
-        const puntos = row.original.trips.reduce((acc, trip) => acc + trip.trip.length, 0);
-        return puntos
+      {
+        accessorKey: "totalTrips",
+        header: "Total de Viajes",
+       
       },
-    },
-  ], []);
+      {
+        accessorKey: "trips",
+        header: "Tiempo Total (hrs)",
+       
+        cell: ({ row }) => {
+          const totalDuration =
+            row.original.trips.reduce(
+              (acc, trip) => acc + parseFloat(trip.totalDuration),
+              0
+            ) / 3600;
+          return `${totalDuration.toFixed(2)} hrs`;
+        },
+      },
+      {
+        accessorKey: "bocaminaStats",
+        header: "Bocaminas Detectadas",
+       
+        cell: ({ row }) => {
+          const bocaminas = row.original.bocaminaStats
+            .map((b) => b.name)
+            .join(", ");
+          return bocaminas;
+        },
+      },
+      {
+        accessorKey: "trips",
+        header: "Total de puntos detectados",
+       
+        cell: ({ row }) => {
+          const puntos = row.original.trips.reduce(
+            (acc, trip) => acc + trip.trip.length,
+            0
+          );
+          return puntos;
+        },
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
-    setUnitList(data.map(item => item.unit).sort((a,b) => a.localeCompare(b)));
+    setUnitList(
+      data.map((item) => item.unit).sort((a, b) => a.localeCompare(b))
+    );
     applyFilters();
   }, [data]);
 
@@ -144,14 +178,18 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
 
   return (
     <div className="flex flex-col h-full pb- gap-1">
-      <div className="bg-gray-50 p-4 rounded-lg">
+      <div className="bg-zinc-50 px-2 py-2 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="flex flex-col">
-            <label className="text-xs font-medium text-zinc-600 mb-1">Unidad</label>
+            {/* <label className="text-xs font-medium text-zinc-600 mb-1">
+              Unidad
+            </label> */}
             <select
               value={filters.unit}
-              onChange={(e) => setFilters(prev => ({ ...prev, unit: e.target.value }))}
-              className="h-8 px-2 py-0 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, unit: e.target.value }))
+              }
+              className="h-8 px-2 py-0 text-xs border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
             >
               <option value="">Todas las unidades</option>
               {unitList.map((unit, index) => (
@@ -163,7 +201,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
           </div>
 
           {/* Filtro Solo Bocaminas */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-xs font-medium text-gray-600 mb-1 flex items-center">
               <span className="mr-2">Solo Bocaminas</span>
               <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
@@ -180,7 +218,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                 ></label>
               </div>
             </label>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -198,7 +236,9 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                     {header.isPlaceholder ? null : (
                       <div
                         className={`flex items-center gap-2 ${
-                          header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                          header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : ""
                         }`}
                         onClick={header.column.getToggleSortingHandler()}
                       >
@@ -208,11 +248,13 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                         )}
                         {header.column.getCanSort() && (
                           <span className="text-gray-400">
-                            {header.column.getIsSorted() === 'asc'
-                              ? <ArrowUp className="ml-2 h-4 w-4" />
-                              : header.column.getIsSorted() === 'desc'
-                              ? <ArrowDown className="ml-2 h-4 w-4" />
-                              : <ChevronsUpDown className="ml-2 h-4 w-4" />}
+                            {header.column.getIsSorted() === "asc" ? (
+                              <ArrowUp className="ml-2 h-4 w-4" />
+                            ) : header.column.getIsSorted() === "desc" ? (
+                              <ArrowDown className="ml-2 h-4 w-4" />
+                            ) : (
+                              <ChevronsUpDown className="ml-2 h-4 w-4" />
+                            )}
                           </span>
                         )}
                       </div>
@@ -222,17 +264,14 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
               </tr>
             ))}
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-zinc-100">
             {table.getRowModel().rows.map((row) => (
               <>
-                <tr
-                  key={row.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
+                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-4 py-3 whitespace-nowrap text-sm"
+                      className="px-4 py-3 whitespace-nowrap text-xs"
                       style={{ width: cell.column.getSize() }}
                     >
                       {flexRender(
@@ -243,32 +282,71 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                   ))}
                 </tr>
                 {row.getIsExpanded() && (
-                  <tr>
+                  <tr className="">
                     <td colSpan={row.getAllCells().length}>
-                      <table className="w-full text-sm text-left text-gray-500">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                      <table className="w-full  text-left text-zinc-400">
+                        <thead className="bg-sky-50 text-[10px] h-8 px-2 text-left align-middle font-medium text-blue-400 uppercase">
                           <tr>
-                            <th scope="col" className="px-4 py-2">Unidad</th>
-                            <th scope="col" className="px-4 py-2">Inicio</th>
-                            <th scope="col" className="px-4 py-2">Fin</th>
-                            <th scope="col" className="px-4 py-2">Duración</th>
-                            <th scope="col" className="px-4 py-2">Turno</th>
-                            <th scope="col" className="px-4 py-2">Detecciones</th>
-                            <th scope="col" className="px-4 py-2">Hora de Inicio</th>
-                            <th scope="col" className="px-4 py-2">Hora de Fin</th>
+                            <th scope="col" className=" w-[20px] first:rounded-l-lg last:rounded-r-lg">
+                             
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Unidad
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Origen
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Destino
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Duración
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Turno
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Detecciones
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Hora de Inicio
+                            </th>
+                            <th scope="col" className="px-4 py-2 first:rounded-l-lg last:rounded-r-lg">
+                              Hora de Fin
+                            </th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="text-xs divide-y divide-blue-50 ">
                           {row.original.trips.map((trip, index) => (
-                            <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                              <td className="px-4 py-2">{row.original.unit.toUpperCase()}</td>
-                              <td className="px-4 py-2">{trip.startUbication}</td>
-                              <td className="px-4 py-2">{trip.endUbication}</td>
-                              <td className="px-4 py-2">{trip.totalDuration}</td>
-                              <td className="px-4 py-2">{trip.shift}</td>
-                              <td className="px-4 py-2">{trip.trip.length}</td>
-                              <td className="px-4 py-2">{format(new Date(trip.startDate), 'dd-MM-yyyy, HH:mm')}</td>
-                              <td className="px-4 py-2">{format(new Date(trip.endDate), 'dd-MM-yyyy, HH:mm')}</td>
+                            <tr
+                              key={index}
+                              className="bg-blue-50/20  hover:bg-sky-50  cursor-default "
+                            >
+                              <td className="first:rounded-l-lg last:rounded-r-lg"></td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {row.original.unit.toUpperCase()}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {trip.startUbication}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">{trip.endUbication}</td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {roundAndFormat(trip.totalDuration)}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {trip.shift === "dia" ? (
+                                  <IconDay className="h-5 w-5 fill-orange-400" />
+                                ) : (
+                                  <IconNight className="h-5 w-5 fill-sky-400" />
+                                )}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">{trip.trip.length}</td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">                              
+                                 {formatFecha(trip.startDate)}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {formatFecha(trip.endDate)}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -286,15 +364,20 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-400">
-              Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
+              Mostrando{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              a{" "}
               {Math.min(
-                (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
                 table.getFilteredRowModel().rows.length
-              )}{' '}
+              )}{" "}
               de {table.getFilteredRowModel().rows.length} registros
             </span>
           </div>
-          
+
           <div className="flex items-center gap-1">
             <button
               onClick={() => table.setPageIndex(0)}
@@ -308,14 +391,14 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
               disabled={!table.getCanPreviousPage()}
               className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
             >
-             <ChevronLeftIcon className="w-4 h-4" />
+              <ChevronLeftIcon className="w-4 h-4" />
             </button>
-            
+
             <span className="px-1 py-1 text-xs text-zinc-500 font-medium">
-              Página {table.getState().pagination.pageIndex + 1} de{' '}
+              Página {table.getState().pagination.pageIndex + 1} de{" "}
               {table.getPageCount()}
             </span>
-            
+
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -335,6 +418,6 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default UnitTripTable;

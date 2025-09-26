@@ -94,9 +94,9 @@ const CardItem = memo(
         </span>
 
         <div className="flex items-center justify-between gap-1">
-          <h1 className={`${valueColor} flex items-end gap-0.5 font-extrabold text-xl md:text-2xl`}>
+          <h1 className={`${valueColor} flex items-end gap-0.5 font-extrabold text-xl md:text-2xl uppercase`}>
             {typeof(value) === "string" ? value : <AnimatedNumber value={value || 0}  decimals={decimals} loading={loading} />}
-            <small className="leading-none text-base">{unid}</small>
+            <small className="leading-none text-base lowercase">{unid}</small>
           </h1>
         </div>
 
