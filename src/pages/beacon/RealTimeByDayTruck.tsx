@@ -1,32 +1,42 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
+import { DateRange } from 'react-date-range';
+import PageHeader from "@/components/PageHeaderV2";
 import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
 import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
 import CardItem from "@/components/Dashboard/CardItemV2";
-import CardTitle from "@/components/Dashboard/CardTitle";
+import CardTitle from "@/components/Dashboard/CardTitleV2";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
+import { format } from "date-fns";
 import { ChartNoAxesColumn } from "lucide-react";
 import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import { getCurrentDay } from "@/utils/dateUtils";
 
 const RealTimeByHour = () => {
-  const dateFilter  = {
-    startDate: getCurrentDay().startDate,
-    endDate: getCurrentDay().endDate,
-  };
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  // const [shiftFilter, setShiftFilter] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
+    {
+      startDate: new Date(getCurrentDay().startDate),
+      endDate: new Date(getCurrentDay().endDate),
+      key: "selection",
+    }
+  ]);
 
   const {
-    data,
+    data = [],
+    refetch,
+    isFetching,
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day",
-    `beacon-track/trip?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`,
+    "trip-group-by-current-day-truck",
+    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}`,
     { refetchInterval: 10000 }
   );
 
@@ -154,18 +164,77 @@ const RealTimeByHour = () => {
     return grouped;
   }, [data]);
 
-  if (tripsLoading || tripsError || !data || data.length === 0) {
-    return (
-      <StatusDisplay
-        isLoading={tripsLoading}
-        isError={tripsError}
-        noData={!data || data.length === 0}
-      />
-    );
-  }
+  useEffect(() => {
+    refetch();
+  }, [dateFilter]);
+
+  // if (tripsLoading || tripsError || !data || data.length === 0) {
+  //   return (
+  //     <StatusDisplay
+  //       isLoading={tripsLoading}
+  //       isError={tripsError}
+  //       noData={!data || data.length === 0}
+  //     />
+  //   );
+  // }
 
   return (
     <div className="grid grid-cols-1 flex-1 w-full gap-2">
+      <PageHeader
+        title="Reporte por Diario de Viajes de Camiones"
+        description={`Reporte en tiempo real de los viajes realizados por los camiones. ${format(dateFilter[0].startDate, 'dd-MM-yyyy')} al ${format(dateFilter[0].endDate, 'dd-MM-yyyy')}`}
+        refetch={refetch}
+        isFetching={isFetching}
+        count={data.length}
+        setDialogOpen={false}
+        actions={
+          <div className="relative flex flex-row gap-2">
+            {/* <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="">Ambos</option>
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label> */}
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Rango de Fechas:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter[0] &&
+                  `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
+                    dateFilter[0].endDate,
+                    "dd/MM/yyyy"
+                  )}`}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <DateRange
+                  editableDateInputs={false}
+                  onChange={(item) =>
+                    setDateFilter([
+                      {
+                        startDate: item.selection?.startDate || new Date(),
+                        endDate: item.selection?.endDate || new Date(),
+                        key: "selection",
+                      },
+                    ])
+                  }
+                  moveRangeOnFirstSelection={false}
+                  ranges={dateFilter}
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
         <CardItem
           value={baseStats.totalUnits}
@@ -239,72 +308,76 @@ const RealTimeByHour = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-        <CardTitle
-          title="Acumulado de Extracción de mineral Turno Día en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#fac34c]"
-          className="custom-class"
-        >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: 1200,
-              currentValue: baseStats.totalTMDay,
-              prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
-              currentValueColor: "#fac34c",
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={tripsByShift.dia}
-          />
-        </CardTitle>
-        <CardTitle
-          title="Acumulado de Extracción de mineral Turno Noche en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#3c3f43]"
-        >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: 1200,
-              currentValue: baseStats.totalTMNight,
-              prediction:
-                (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-              currentValueColor: "#00000050",
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={tripsByShift.noche}
-          />
-        </CardTitle>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">{}
+        <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
+          <CardTitle
+            title="Acumulado de Extracción de mineral Turno Día en TM"
+            subtitle="Análisis de la cantidad de viajes realizados"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#fac34c]"
+            className="custom-class"
+          >
+            <DonutAndSplineChartByHour
+              progressBarData={{
+                total: 1200,
+                currentValue: baseStats.totalTMDay,
+                prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
+                currentValueColor: "#fac34c",
+                showDifference: false,
+                forecastText: "Predicción",
+              }}
+              mineralWeight={baseData.mineral}
+              chartData={tripsByShift.dia}
+            />
+          </CardTitle>
+          <CardTitle
+            title="Extracción de mineral turno Dia en TM"
+            subtitle="Análisis de la cantidad de viajes realizados"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#fac34c]"
+          >
+            <LineAndBarChartByHour
+              mineralWeight={baseData.mineral}
+              chartColor="#fac34c"
+              chartData={tripsByShift.dia}
+            />
+          </CardTitle>
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
+          <CardTitle
+            title="Acumulado de Extracción de mineral Turno Noche en TM"
+            subtitle="Análisis de la cantidad de viajes realizados"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#3c3f43]"
+          >
+            <DonutAndSplineChartByHour
+              progressBarData={{
+                total: 1200,
+                currentValue: baseStats.totalTMNight,
+                prediction:
+                  (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
+                currentValueColor: "#00000050",
+                showDifference: false,
+                forecastText: "Predicción",
+              }}
+              mineralWeight={baseData.mineral}
+              chartData={tripsByShift.noche}
+            />
+          </CardTitle>
 
-        <CardTitle
-          title="Extracción de mineral turno Dia en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#fac34c]"
-        >
-          <LineAndBarChartByHour
-            mineralWeight={baseData.mineral}
-            chartColor="#fac34c"
-            chartData={tripsByShift.dia}
-          />
-        </CardTitle>
-        <CardTitle
-          title="Extracción de mineral turno Noche en TM"
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#3c3f43]"
-        >
-          <LineAndBarChartByHour
-            mineralWeight={baseData.mineral}
-            chartColor="#3c3f43"
-            chartData={tripsByShift.noche}
-          />
-        </CardTitle>
+          <CardTitle
+            title="Extracción de mineral turno Noche en TM"
+            subtitle="Análisis de la cantidad de viajes realizados"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#3c3f43]"
+          >
+            <LineAndBarChartByHour
+              mineralWeight={baseData.mineral}
+              chartColor="#3c3f43"
+              chartData={tripsByShift.noche}
+            />
+          </CardTitle>
+        </div>
       </div>
     </div>
   );

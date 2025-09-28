@@ -5,7 +5,6 @@ import { DateRange } from 'react-date-range';
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionTable from "@/components/Dashboard/BeaconTrips/BocaminaDetectionTableV2";
-import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
 import UnitTripChart from "@/components/Dashboard/BeaconTrips/UnitTripChart";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChartV2";
 import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDetectionChart";
@@ -13,7 +12,7 @@ import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDet
 import type { BeaconCycle, BeaconUnitTrip, BeaconDetection } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
-import { format, getISODay } from "date-fns";
+import { format } from "date-fns";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
 import { ChartNoAxesColumn } from "lucide-react";
 import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
@@ -21,7 +20,6 @@ import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours"
 
 const DetectionReport = () => {
-  const isoDayNumber = getISODay(new Date());
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [currentUnitChart, setCurrentUnitChart] = useState<UnitChartProps>("trips");
   const [currentDetectionPlace, setCurrentDetectionPlace] = useState<string>("bocaminas");
@@ -201,7 +199,9 @@ const DetectionReport = () => {
         setDialogOpen={false}
         actions={
           <div className="relative flex flex-row gap-2">
-            <select
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
                 value={shiftFilter}
                 onChange={(e) => setShiftFilter(e.target.value)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
@@ -210,16 +210,20 @@ const DetectionReport = () => {
                 <option value="dia">Turno Día</option>
                 <option value="noche">Turno Noche</option>
               </select>
-            <button
-              onClick={() => setIsTooltipOpen(!isTooltipOpen)}
-              className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-            >
-              {dateFilter[0] &&
-                `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
-                  dateFilter[0].endDate,
-                  "dd/MM/yyyy"
-                )}`}
-            </button>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Rango de Fechas:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter[0] &&
+                  `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
+                    dateFilter[0].endDate,
+                    "dd/MM/yyyy"
+                  )}`}
+              </button>
+            </label>
             {isTooltipOpen && (
               <div className="absolute right-0 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
                 <DateRange

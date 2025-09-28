@@ -35,7 +35,6 @@ export default function PageHeader({
         {description && <p className="text-zinc-400 text-[10.5px] lg:text-xs">{description}</p>}
       </div>
       <div className="flex flex-wrap gap-2">
-        {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
         {setDialogOpen && (
           <Button onClick={() => setDialogOpen(true)} className="flex items-center gap-2 !min-w-9 md:!min-w-[100px] px-2 md:px-3 ">
             <CircleFadingPlus className="size-3.5" />
@@ -45,6 +44,9 @@ export default function PageHeader({
           </Button>
         )}
         {actions}
+        <div className="flex flex-col justify-end">
+          {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
+        </div>
       </div>
     </div>
   );

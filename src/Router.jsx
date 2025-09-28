@@ -45,8 +45,9 @@ import WeekReport from "./pages/dashboard/WeekReport";
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconTrip from "./pages/beacon/BeaconTrip";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
-import RealTimeByDay from "./pages/beacon/RealTimeByDay";
-import RealTimeByHour from "./pages/beacon/RealTimeByHour";
+import RealTimeByDay from "./pages/beacon/RealTimeByWeek";
+import RealTimeByHour from "./pages/beacon/RealTimeByDayTruck";
+import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import BocaminaDetection from "./pages/beacon/BocaminaDetection";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
@@ -113,7 +114,8 @@ const protectedRoutes = [
   //Dashboard-Beacon
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/beacon-trip-v2", element: <BeaconTrip /> },
-  { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-hour-scoop", element: <RealTimeByHourScoop /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },

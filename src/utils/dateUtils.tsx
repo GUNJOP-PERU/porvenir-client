@@ -61,7 +61,9 @@ export const getCurrentDay = () => {
   const isAfter6PM = currentDate.getHours() >= 18;
 
   return {
-      startDate: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
-      endDate: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
+    startDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
+    endDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
+    startDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
+    endDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
   };
 }

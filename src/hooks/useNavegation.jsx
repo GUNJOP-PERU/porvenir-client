@@ -222,10 +222,16 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/detection-report",
           },
           {
-            name: "Reporte por Dia",
-            href: "dashboard/real-time-by-hour",
+            name: "Reporte por Dia Camion",
+            href: "dashboard/real-time-by-hour-truck",
             icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-hour",
+            active: pathname === "/dashboard/real-time-by-hour-truck",
+          },
+          {
+            name: "Reporte por Dia Scoop",
+            href: "dashboard/real-time-by-hour-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour-scoop",
           },
           {
             name: "Reporte por Semana",
