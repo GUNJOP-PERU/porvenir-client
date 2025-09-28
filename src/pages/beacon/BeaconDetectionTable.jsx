@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { beaconsData } from "@/store/BeaconMac";
 import {
@@ -27,8 +27,6 @@ const BeaconDetectionTable = () => {
     endDate: ''
   });
 
-  const [filteredData, setFilteredData] = useState([]);
-
   const {
     data = [],
     isLoading,
@@ -36,21 +34,17 @@ const BeaconDetectionTable = () => {
     refetch,
   } = useFetchData("beacon-detection", "beacon-track");
 
-  // Obtener lista única de unidades para el filtro
-  const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))];
+  const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
-  // Función para aplicar filtros
-  const applyFilters = useCallback(() => {
+  const filteredData = useMemo(() => {
     let filtered = [...data];
 
-    // Filtro por unidad
     if (filters.unit) {
       filtered = filtered.filter(item => 
         item.unit && item.unit.toLowerCase().includes(filters.unit.toLowerCase())
       );
     }
 
-    // Filtro por fecha de inicio
     if (filters.startDate) {
       filtered = filtered.filter(item => {
         const itemDate = new Date(item.f_inicio);
@@ -59,7 +53,6 @@ const BeaconDetectionTable = () => {
       });
     }
 
-    // Filtro por fecha de fin
     if (filters.endDate) {
       filtered = filtered.filter(item => {
         const itemDate = new Date(item.f_final);
@@ -69,13 +62,8 @@ const BeaconDetectionTable = () => {
       });
     }
 
-    setFilteredData(filtered);
+    return filtered;
   }, [data, filters]);
-
-  // Aplicar filtros cuando cambien los datos o filtros
-  useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
 
   // Función para limpiar filtros
   const clearFilters = () => {
@@ -314,10 +302,22 @@ const BeaconDetectionTable = () => {
     },
   });
 
+  const [showModal, setShowModal] = useState(false);
+
+  const lastDetections = useMemo(() => {
+    const map = new Map();
+    data.forEach(item => {
+      const mac = beaconsData.find(b => b.mac.toLowerCase() === item.mac.toLowerCase());
+      if (!map.has(item.unit) || new Date(item.f_final) > new Date(map.get(item.unit).f_final)) {
+        map.set(item.unit, { ...item, mac });
+      }
+    });
+    return Array.from(map.values());
+  }, [data]);
+
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="border-b border-gray-200">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -328,38 +328,55 @@ const BeaconDetectionTable = () => {
                 Monitoreo en tiempo real de dispositivos beacon detectados
               </p>
             </div>
-            
-            {/* Búsqueda global */}
+
+            {/* Botón para mostrar el modal de últimas detecciones */}
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Buscar en todas las columnas..."
-                  value={globalFilter ?? ""}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
-                />
-                <svg
-                  className="absolute right-3 top-2.5 h-4 w-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              
-              {/* Badge con total de registros */}
-              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                {filteredData.length} de {data.length} registros
-              </div>
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Ver última detección por unidad
+              </button>
             </div>
           </div>
+
+          {/* Modal de últimas detecciones */}
+          {showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl h-[90%] relative overflow-auto">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+                >
+                  ×
+                </button>
+                <h2 className="text-lg font-bold mb-4">Última detección por unidad</h2>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr>
+                      <th className="text-left px-2 py-1">#</th>
+                      <th className="text-left px-2 py-1">Unidad</th>
+                      <th className="text-left px-2 py-1">Ubicación Beacon</th>
+                      <th className="text-left px-2 py-1">Fecha Final</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lastDetections.sort((a,b) => a.unit.localeCompare(b.unit)).map((item, idx) => {
+                      const isOld = (new Date() - new Date(item.f_final)) > 24 * 60 * 60 * 1000;
+                      return (
+                        <tr key={idx} className={`border-b ${isOld ? 'bg-red-100' : ''}`}>
+                          <td className="px-2 py-1 font-bold">{idx + 1}</td>
+                          <td className="px-2 py-1 font-bold">{item.unit}</td>
+                          <td className="px-2 py-1">{item.mac?.location || (typeof item.mac === 'string' ? item.mac : '')}</td>
+                          <td className="px-2 py-1">{format(new Date(item.f_final), "dd/MM/yyyy, HH:mm:ss")}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* Filtros */}
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -449,11 +466,11 @@ const BeaconDetectionTable = () => {
           <div className="flex-1 overflow-auto">
             <table className="w-full">
               <thead className="bg-gray-50 sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
+                {table.getHeaderGroups().map((headerGroup, index) => (
+                  <tr key={`${headerGroup.id}-${index}`}>
+                    {headerGroup.headers.map((header,index) => (
                       <th
-                        key={header.id}
+                        key={`${header.id}-${index}`}
                         className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200"
                         style={{ width: header.getSize() }}
                       >
@@ -484,15 +501,15 @@ const BeaconDetectionTable = () => {
                 ))}
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {table.getRowModel().rows.map((row) => (
+                {table.getRowModel().rows.map((row, index) => (
                   <tr
-                    key={row.id}
+                    key={`${row.id}-${index}`}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getVisibleCells().map((cell, index) => (
                       <td
-                        key={cell.id}
-                        className="px-4 py-3 whitespace-nowrap text-sm"
+                        key={`${cell.id}-${index}`}
+                        className="px-4 py-3 whitespace-nowrap text-sm" 
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(

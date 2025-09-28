@@ -90,7 +90,7 @@ const BeaconTripDashboard = () => {
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
         <CardItem
           value={baseStats.totalUnits}
           title="Cantidad de Unidades"
@@ -134,7 +134,7 @@ const BeaconTripDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <BocaminaDetectionChart data={bocaminaStats} />
         <GeneralDetectionChart
           data={unitTrips}

@@ -3,7 +3,20 @@ import { useMemo } from "react";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
-import { Building2, ChartArea, ChartBarStacked, ChartColumnStacked, ChartNoAxesCombined, CopyCheck, FileChartPie, MapPin, Pickaxe, Waypoints } from "lucide-react";
+import { SiRedmine } from "react-icons/si";
+import { TbReportAnalytics } from "react-icons/tb";
+import {
+  Building2,
+  ChartArea,
+  ChartBarStacked,
+  ChartColumnStacked,
+  ChartNoAxesCombined,
+  CopyCheck,
+  FileChartPie,
+  MapPin,
+  Pickaxe,
+  Waypoints
+} from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -203,29 +216,47 @@ export const useNavigation = () => {
         title: "Beacon",
         items: [
           {
-            name: "Acumulado por hora",
-            href: "dashboard/real-time-by-hour",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-hour",
+            name: "Reporte de detección",
+            href: "dashboard/detection-report",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/detection-report",
           },
           {
-            name: "Acumulado por día",
+            name: "Reporte por Dia Camion",
+            href: "dashboard/real-time-by-hour-truck",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour-truck",
+          },
+          {
+            name: "Reporte por Dia Scoop",
+            href: "dashboard/real-time-by-hour-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour-scoop",
+          },
+          {
+            name: "Reporte por Semana",
             href: "/dashboard/real-time-by-day",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
-          {
-            name: "Acumulado por mes",
-            href: "/dashboard/real-time-by-month",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-month",
-          },  
+          // {
+          //   name: "Acumulado por mes",
+          //   href: "/dashboard/real-time-by-month",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/dashboard/real-time-by-month",
+          // },  
           {
             name: "Detección de Viajes",
             href: "/dashboard/trip-count",
             icon: <ChartArea />,
             active: pathname === "/dashboard/trip-count",
-          },  
+          },
+          {
+            name: "Detección de Bocamina",
+            href: "/dashboard/bocamina-detection",
+            icon: <SiRedmine />,
+            active: pathname === "/dashboard/bocamina-detection",
+          },
           {
             name: "Tabla de Detección",
             href: "dashboard/beacon-detection-table",

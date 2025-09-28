@@ -42,11 +42,14 @@ import Incidence from "./pages/monitoring/Incidences";
 import WorkerOrders from "./pages/monitoring/WorkerOrders";
 import WeekReport from "./pages/dashboard/WeekReport";
 // Beacon
+import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconTrip from "./pages/beacon/BeaconTrip";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
-import RealTimeByDay from "./pages/beacon/RealTimeByDay";
-import RealTimeByHour from "./pages/beacon/RealTimeByHour";
+import RealTimeByDay from "./pages/beacon/RealTimeByWeek";
+import RealTimeByHour from "./pages/beacon/RealTimeByDayTruck";
+import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
+import BocaminaDetection from "./pages/beacon/BocaminaDetection";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
 import Tracking from "./pages/beacon/Tracking";
 
@@ -109,12 +112,15 @@ const protectedRoutes = [
   { path: "dashboard/productionTruck", element: <ProductionTruck /> },
 
   //Dashboard-Beacon
+  { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/beacon-trip-v2", element: <BeaconTrip /> },
-  { path: "dashboard/real-time-by-hour", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
+  { path: "dashboard/real-time-by-hour-scoop", element: <RealTimeByHourScoop /> },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
+  { path: "dashboard/bocamina-detection", element: <BocaminaDetection /> },
   { path: "dashboard/tracking", element: <Tracking /> },
 
   //Configuración

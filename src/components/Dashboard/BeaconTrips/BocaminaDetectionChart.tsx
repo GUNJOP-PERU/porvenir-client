@@ -2,15 +2,11 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 // Types
-import type { BeaconDetection } from "@/types/Beacon";
-
-
 interface BocaminaDetectionChart {
   data : Record<string, number>
 }
 
 const  BocaminaDetectionChart = ({ data } : BocaminaDetectionChart) => {
-  console.log(data)
   const chartData = useMemo(() => {
     return {
       labels: Object.keys(data),
@@ -22,7 +18,7 @@ const  BocaminaDetectionChart = ({ data } : BocaminaDetectionChart) => {
     () => ({
       chart: {
         backgroundColor: "transparent",
-        height: 300,
+        height: 280,
         marginTop: 40,
         marginBottom: 40,
       },
