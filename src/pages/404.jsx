@@ -14,7 +14,7 @@ export default function PageError() {
       </span>
       <p className="text-xs text-zinc-400 mb-4">
         La página que estabas buscando parece haber sido movida, eliminada o no
-        existe.
+        existe..
       </p>
       <Button onClick={() => navigate("/")}>
         <SendHorizontal className="w-5 h-5  text-white rotate-180" /> Regresar al Inicio
