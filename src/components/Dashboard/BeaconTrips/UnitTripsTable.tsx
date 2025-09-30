@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState,  useEffect } from "react";
 import type { BeaconCycle } from "@/types/Beacon";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -9,7 +9,6 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { format } from "date-fns";
 import {
   ArrowDown,
   ArrowUp,
@@ -19,7 +18,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
-  ChevronUp,
 } from "lucide-react";
 import { formatFecha, roundAndFormat } from "@/lib/utilsGeneral";
 import IconDay from "@/icons/IconDay";

@@ -86,7 +86,7 @@ const TravelBars = ({ data, filterKeywords = [], colorPoint = "#7cb5ec" }) => {
               lineHeight: "1",
             },
             formatter: function () {
-              return this.y === 0 ? null : this.y; // no mostrar si es 0
+              return this.y === 0 ? null : this.y; 
             },
           },
         },
