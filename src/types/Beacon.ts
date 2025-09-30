@@ -63,3 +63,17 @@ export type UnitBeaconDetection = {
     createdAt: string,
     updatedAt: string
 }
+
+export type BeaconTruckStatus = {
+  _id: string,
+  tag: string,
+  createdAt: string,
+  isActive: boolean,
+  lastDate: string,
+  lastUbication: string,
+  lastUbicationMac: string,
+  name: string,
+  status: "inoperativo" | "operativo" | "mantenimiento",
+  updatedAt: string,
+  comments: string[]
+}
