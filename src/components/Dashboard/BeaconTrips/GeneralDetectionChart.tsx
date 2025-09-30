@@ -4,25 +4,31 @@ import { useMemo } from "react";
 // Types
 import type { BeaconDetection } from "@/types/Beacon";
 
-
 interface GeneralDetectionChartPops {
-  data :BeaconDetection[],
-  filterValue: string,
-  chartTitle?: string,
-  chartColor?: string
+  data: BeaconDetection[];
+  filterValue: string;
+  chartTitle?: string;
+  chartColor?: string;
 }
 
-const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "", chartColor = "#42A3B1" } : GeneralDetectionChartPops) => {
+const GeneralDetectionChart = ({
+  data,
+  filterValue = "bocamina",
+  chartTitle = "",
+  chartColor = "#42A3B1",
+}: GeneralDetectionChartPops) => {
   const chartData = useMemo(() => {
-    const bocaminaData = data.filter((beaconDetection) => beaconDetection.ubicationType === filterValue);
+    const bocaminaData = data.filter(
+      (beaconDetection) => beaconDetection.ubicationType === filterValue
+    );
     const bocaminaCount = bocaminaData.reduce((acc, curr) => {
       acc[curr.ubication] = (acc[curr.ubication] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
     return {
       labels: Object.keys(bocaminaCount),
-      values: Object.values(bocaminaCount)
-    }
+      values: Object.values(bocaminaCount),
+    };
   }, [data]);
 
   const options = useMemo(
@@ -44,7 +50,7 @@ const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "
         crosshair: true,
         tickWidth: 0,
         tickLength: 0,
-        labels: {          
+        labels: {
           style: {
             fontSize: "0.65rem",
             fontWeight: "600",
@@ -99,7 +105,7 @@ const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "
               return this.y == 0 ? "" : this.y;
             },
           },
-        }
+        },
       },
       series: [
         {
@@ -108,7 +114,7 @@ const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "
           data: chartData.values,
           color: chartColor,
           yAxis: 0,
-        }
+        },
       ],
       legend: {
         align: "right",
@@ -134,11 +140,7 @@ const  GeneralDetectionChart = ({ data, filterValue = "bocamina", chartTitle = "
     [chartData]
   );
 
-  return (
-    <div className=" ">
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
-  );
-}
+  return <HighchartsReact highcharts={Highcharts} options={options} />;
+};
 
 export default GeneralDetectionChart;

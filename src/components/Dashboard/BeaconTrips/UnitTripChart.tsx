@@ -1,30 +1,40 @@
-import Highcharts, { chart, color } from "highcharts";
+import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { roundAndFormat } from "@/lib/utilsGeneral";
 // Types
 import type { BeaconCycle } from "@/types/Beacon";
 
-interface LineAndBarChartByHourProps {
-  title?: string;
+interface UnitTripChartProps {
   mineralWeight: number;
-  chartColor?: string;
   chartData: BeaconCycle[];
   currentChart?: "trips" | "tonnage" | "totalHours" | "maintenanceHours";
 }
 
-const UnitTripChart = ({ title, chartData, mineralWeight, chartColor = "#000000", currentChart }: LineAndBarChartByHourProps) => {
+const UnitTripChart = ({
+  chartData,
+  mineralWeight,
+  currentChart,
+}: UnitTripChartProps) => {
   const data = chartData.sort((a, b) => a.unit.localeCompare(b.unit));
-  const unitLabels = data.map(item => item.unit.toUpperCase());
-  const tripsCounts = data.map(item => item.trips.length);
-  const tonnageCounts = data.map(item => item.trips.length * mineralWeight);
-  const unitTotalHours = data.map(item => Math.round(item.trips.reduce((acc, trip) => acc + parseFloat(trip.totalDuration), 0) / 3600));
-  const maintenanceHours = data.map(item => Number((item.totalMaintanceTimeMin / 60).toFixed(2)));
+  const unitLabels = data.map((item) => item.unit.toUpperCase());
+  const tripsCounts = data.map((item) => item.trips.length);
+  const tonnageCounts = data.map((item) => item.trips.length * mineralWeight);
+  const unitTotalHours = data.map((item) =>
+    Math.round(
+      item.trips.reduce(
+        (acc, trip) => acc + parseFloat(trip.totalDuration),
+        0
+      ) / 3600
+    )
+  );
+  const maintenanceHours = data.map((item) =>
+    Number((item.totalMaintanceTimeMin / 60).toFixed(2))
+  );
 
   const options = {
     chart: {
       type: "bar",
       height: 650,
-      // margin: [50, 20, 70, 20]
+      marginBottom: 0,
     },
     title: "",
     xAxis: [
@@ -32,97 +42,80 @@ const UnitTripChart = ({ title, chartData, mineralWeight, chartColor = "#000000"
         title: "",
         categories: unitLabels,
         opposite: false,
-        lineColor: "#000000",
+        lineColor: "transparent",
         labels: {
+          step: 1,
+          reserveSpace: true,
+          allowOverlap: true,
           style: {
-            color: "#000000",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
+            color: "#A1A1AA",
+            lineHeight: "1",
           },
         },
       },
-      // {
-      //   title: "",
-      //   categories: plan.map((e) => `${roundAndFormat(e)} TM`),
-      //   opposite: false,
-      //   lineColor: "transparent",
-      //   labels: {
-      //     y: 0,
-      //     style: {
-      //       color: "#00000080",
-      //       fontSize: "0.8em",
-      //       fontWeight: "bold",
-      //     },
-      //   },
-      // },
-      // {
-      //   title: "",
-      //   categories: hourLabels,
-      //   opposite: true,
-      //   linkedTo: 0,
-      //   lineColor: "#D9D9D9",
-      //   labels: {
-      //     style: {
-      //       color: "#00000080",
-      //       fontSize: "0.8em",
-      //       fontWeight: "bold",
-      //     },
-      //   },
-      // },
     ],
     yAxis: {
       title: "Viajes",
       visible: true,
-      lineColor: "#000000",
+      gridLineColor: "#D9D9D9",
+      gridLineWidth: 0.5,
+      gridLineDashStyle: "Dash",
+      labels: {
+        enabled: false,
+      },
     },
     plotOptions: {
-      column: {
-        stacking: "normal",
-        pointPadding: 0,
-        groupPadding: 0.05,
-        borderWidth: 0,
+      series: {
         borderRadius: "20%",
+        valueSuffix: " viajes",
+        pointPadding: 0,
+        groupPadding: 0.1,
+        borderWidth: 0,
         dataLabels: {
           enabled: true,
-          inside: true,
+          inside: false,
+          crop: false,
+          overflow: "allow",
+          allowOverlap: true,
           style: {
             fontSize: "0.7em",
-            color: "#fff",
+            color: "#000",
             fontWeight: "bold",
             textOutline: "none",
             lineHeight: "1",
           },
-          backgroundColor: "#00000050",
-          borderRadius: 3,
-          padding: 2,
-          borderWidth: 0,
+          formatter: function () {
+            return this.y === 0 ? null : this.y;
+          },
         },
       },
     },
     series: [
       {
         name: "Viajes",
-        data: tripsCounts,  
-        color: "#2b88f1",
-        visible: currentChart === "trips"
+        data: tripsCounts,
+        color: "#00a6fb",
+        visible: currentChart === "trips",
       },
       {
         name: "Tonelaje",
         data: tonnageCounts,
-        color: "#2b88f1",
-        visible: currentChart === "tonnage"
+        color: "#02c39a",
+        visible: currentChart === "tonnage",
       },
       {
         name: "Duración Total (hrs)",
         data: unitTotalHours,
-        color: "#2b88f1",
-        visible: currentChart === "totalHours"
+        color: "#d4a373",
+        visible: currentChart === "totalHours",
       },
       {
         name: "Mantenimiento (hrs)",
         data: maintenanceHours,
-        color: "#2b88f1",
-        visible: currentChart === "maintenanceHours"
+        color: "#f79d65",
+        visible: currentChart === "maintenanceHours",
       },
     ],
     tooltip: {
@@ -132,7 +125,7 @@ const UnitTripChart = ({ title, chartData, mineralWeight, chartColor = "#000000"
       borderWidth: 0,
       shadow: false,
       borderRadius: 10,
-      padding: 12,
+      padding: 10,
       style: {
         color: "#FFFFFF",
         fontSize: "0.65em",
@@ -173,10 +166,11 @@ const UnitTripChart = ({ title, chartData, mineralWeight, chartColor = "#000000"
   };
 
   return (
-    <>
-      <h3 className="font-bold text-center text-sm">{title}</h3>
-        <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={options}
+      updateArgs={[true, true, true]}
+    />
   );
 };
 

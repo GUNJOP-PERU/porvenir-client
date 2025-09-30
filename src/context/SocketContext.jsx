@@ -1,3 +1,68 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { io } from "socket.io-client";
+import { useAuthStore } from "@/store/AuthStore";
+
+const SocketContext = createContext(null);
+
+export const SocketProvider = ({ children }) => {
+  const { isAuth } = useAuthStore();
+  const [socket, setSocket] = useState(null);
+  const [topicList, setTopicList] = useState([]);
+  const [isSocketReady, setIsSocketReady] = useState(false);
+
+  useEffect(() => {
+    if (isAuth) {
+      const newSocket = io(import.meta.env.VITE_URL, { autoConnect: true });
+
+      newSocket.connect();
+
+      newSocket.on("connect", () => {
+        setSocket(newSocket);
+        setIsSocketReady(true);
+        console.log("✅ Socket conectado")
+      });
+
+      newSocket.on("topic-list", (topicList) => {
+        setTopicList(topicList);
+      });
+
+      newSocket.emit("get-topic-list");
+
+      return () => {
+        newSocket.disconnect();
+        setIsSocketReady(false);
+        setSocket(null);
+      };
+    } else {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+        setIsSocketReady(false);
+      }
+    }
+  }, [isAuth]);
+
+  return (
+    <SocketContext.Provider value={{ socket, isSocketReady, topicList }}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
+
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+
+  return { socket: context.socket, isSocketReady: context.isSocketReady, topicList: context.topicList };
+};
+
 // import {
 //   createContext,
 //   useContext,
@@ -111,71 +176,3 @@
 
 // // Hook para acceder al socket en otros componentes
 // export const useSocket = () => useContext(SocketContext);
-
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { io } from "socket.io-client";
-import { useAuthStore } from "@/store/AuthStore";
-
-// Crear el contexto
-const SocketContext = createContext(null);
-
-// Proveedor del contexto
-export const SocketProvider = ({ children }) => {
-  const { isAuth } = useAuthStore();
-  const [socket, setSocket] = useState(null);
-  const [topicList, setTopicList] = useState([]);
-  const [isSocketReady, setIsSocketReady] = useState(false);
-
-  useEffect(() => {
-    if (isAuth) {
-      const newSocket = io(import.meta.env.VITE_URL, { autoConnect: true });
-
-      newSocket.connect();
-
-      newSocket.on("connect", () => {
-        setSocket(newSocket);
-        setIsSocketReady(true);
-        console.log("✅ Socket conectado")
-      });
-
-      newSocket.on("topic-list", (topicList) => {
-        setTopicList(topicList);
-      });
-
-      newSocket.emit("get-topic-list");
-
-      return () => {
-        newSocket.disconnect();
-        setIsSocketReady(false);
-        setSocket(null);
-      };
-    } else {
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-        setIsSocketReady(false);
-      }
-    }
-  }, [isAuth]);
-
-  return (
-    <SocketContext.Provider value={{ socket, isSocketReady, topicList }}>
-      {children}
-    </SocketContext.Provider>
-  );
-};
-
-// Hook para usar el contexto
-export const useSocket = () => {
-  const context = useContext(SocketContext);
-  if (!context) {
-    throw new Error("useSocket must be used within a SocketProvider");
-  }
-
-  return { socket: context.socket, isSocketReady: context.isSocketReady, topicList: context.topicList };
-};
