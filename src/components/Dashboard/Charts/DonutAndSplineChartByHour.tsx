@@ -2,6 +2,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { roundAndFormat } from "@/lib/utilsGeneral";
 import Progress from "./Progress";
+import DonutChart from "./DonutChart";
 // Types
 import type { BeaconUnitTrip } from "@/types/Beacon";
 
@@ -25,9 +26,14 @@ interface IDonutAndSplineChartByHourProps {
 const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }: IDonutAndSplineChartByHourProps) => {
   const hourLabels = chartData.map(item => item.hour);
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-  const acummulativeTripsCounts = tripsCounts.map((_, index) =>
-    tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
-  );
+  const acummulativeTripsCounts = tripsCounts.map((trip, index) => {
+    if(trip === 0){
+      return NaN
+    } else {
+      return tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+    }
+  });
+
   const planData = new Array(12).fill(100);
   const accumulativePlanData = planData.map((_, index) =>
     planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
@@ -36,10 +42,10 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
   const options = {
     chart: {
       type: "areaspline",
-      height: 250,
-      marginBottom: 70,
-      marginTop: 70,
-      marginLeft: 0,
+      height: 280,
+      marginBottom: 50,
+      marginTop: 40,
+      marginLeft: 50,
       marginRight: 0,
       spacing: [0, 0, 0, 0],
     },
@@ -52,7 +58,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
@@ -65,7 +71,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
@@ -94,7 +100,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
     },
     series: [
       {
-        name: "Fact",
+        name: "Real",
         data: acummulativeTripsCounts,
         xAxis: 0,
         fillColor: "#bfefe1",
@@ -137,10 +143,18 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
     },
 
     legend: {
-      align: "right",
-      verticalAlign: "top",
-      layout: "horizontal",
+      align: "left",
+      verticalAlign: "bottom",
+      layout: "vertical",
       floating: false,
+      labelFormatter: function () {
+        if (this.index === 0) {
+          return `<span style='color:#000000'>${this.name}</span>`;
+        } else {
+          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+        }
+      },
+      useHTML: true,
       itemStyle: {
         color: "#A6A6A6",
         fontSize: "0.55em",
@@ -151,8 +165,10 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
       symbolWidth: 10,
       symbolHeight: 9,
       symbolRadius: 2,
-      itemMarginTop: 0,
+      itemMarginTop: 4,
       itemMarginBottom: 0,
+      x: 0,
+      y: 0,
     },
     credits: {
       enabled: false,
@@ -161,14 +177,26 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
 
   return (
     <div className="flex flex-col gap-0">
-      <Progress
-        title=""
-        value={progressBarData.currentValue}
-        total={progressBarData.total}
-        color={progressBarData.currentValueColor}
-        unit="TM"
-        className="py-0 px-2"
-      />
+      <div className="flex flex-row items-center w-full">
+        <DonutChart
+          title=""
+          size="mini"
+          donutData={{
+            currentValue: progressBarData.currentValue,
+            total: progressBarData.total,
+            currentValueColor: progressBarData.currentValueColor,
+          }}
+        />
+        <Progress
+          title=""
+          value={progressBarData.currentValue}
+          total={progressBarData.total}
+          color={progressBarData.currentValueColor}
+          unit="TM"
+          className="py-0 px-2 w-full"
+          showLegend={false}
+        />
+      </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

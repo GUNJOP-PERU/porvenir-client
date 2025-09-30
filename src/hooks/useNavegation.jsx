@@ -213,6 +213,35 @@ export const useNavigation = () => {
         ],
       },
       {
+        title: "Beacon RT",
+        items: [
+          {
+            name: "Reporte de detección",
+            href: "/dashboard/beacon/detection-report-rt",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/beacon/detection-report-rt",
+          },
+          {
+            name: "Reporte por Turno",
+            href: "/dashboard/beacon/detection-report-turn-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-turn-rt",
+          },
+          {
+            name: "Reporte por Semana",
+            href: "/dashboard/beacon/detection-report-week-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-week-rt",
+          },
+          {
+            name: "Tracking",
+            href: "/dashboard/tracking",
+            icon: <IconRadar />,
+            active: pathname === "/dashboard/tracking",
+          },
+        ],
+      },
+      {
         title: "Beacon",
         items: [
           {
@@ -239,12 +268,6 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
-          // {
-          //   name: "Acumulado por mes",
-          //   href: "/dashboard/real-time-by-month",
-          //   icon: <ChartArea />,
-          //   active: pathname === "/dashboard/real-time-by-month",
-          // },  
           {
             name: "Detección de Viajes",
             href: "/dashboard/trip-count",

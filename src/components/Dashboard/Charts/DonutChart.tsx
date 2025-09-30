@@ -58,9 +58,7 @@ const DonutChart = ({
       margin: [-6, -6, -6, -6],
     },
     title: {
-      text: `${(
-        (donutData?.currentValue / donutData?.total) * 100 || 0
-      ).toFixed(1)}%`,
+      text: `${Math.round((donutData?.currentValue / donutData?.total) * 100)}%`,
       verticalAlign: "middle",
       style: {
         fontSize: fontSizeMap[size],
@@ -70,14 +68,14 @@ const DonutChart = ({
     },
     plotOptions: {
       pie: {
-        innerSize: "65%",
+        innerSize: "75%",
         size: "100%",
         center: ["50%", "50%"],
         borderWidth: 1,
         borderRadius: 10,
         dataLabels: { enabled: false },
-        startAngle: -90,
-        endAngle: 90,
+        startAngle: -0,
+        endAngle: 0,
         states: {
           hover: {
             enabled: false,
@@ -130,7 +128,7 @@ const DonutChart = ({
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      <div className="flex flex-col items-center justify-center max-w-28">
+      <div className="flex flex-col items-center justify-center w-full">
         {title && (
           <h3
             className={`font-bold text-center leading-none text-[${fontSizeTitleMap[size]}]`}

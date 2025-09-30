@@ -6,10 +6,11 @@ interface  PageHeaderProps {
   title: string,
   description: string,
   count: number,
-  actions: JSX.Element,
+  actions?: JSX.Element,
   refetch: () => void,
   isFetching: boolean,
   setDialogOpen: boolean,
+  className?: string
 }
 
 export default function PageHeader({
@@ -20,9 +21,10 @@ export default function PageHeader({
   refetch,
   isFetching,
   setDialogOpen,
+  className
 } : PageHeaderProps ) {
   return (
-    <div className="flex flex-wrap gap-2 justify-between">
+    <div className={`flex flex-wrap gap-2 justify-between ${className}`}>
       <div>
         <div className="flex items-center gap-2">
           <h1 className="text-md lg:text-xl font-bold leading-none">{title}</h1>

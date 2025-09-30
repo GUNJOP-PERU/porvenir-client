@@ -39,19 +39,23 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     chart: {
       type: "column",
       height: 280,
-      // margin: [50, 20, 70, 20]
+      marginBottom: 50,
+      marginTop: 40,
+      marginLeft: 50,
+      marginRight: 0,
+      spacing: [0, 0, 0, 0],
     },
     title: "",
     xAxis: [
       {
         title: "",
-        categories: tripsCounts.map(value => `${roundAndFormat(value)} TM`),
+        categories: tripsCounts.map(value => `${value ? roundAndFormat(value) : "-"} TM`),
         opposite: false,
         lineColor: "transparent",
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
@@ -65,7 +69,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
@@ -116,7 +120,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     },
     series: [
       {
-        name: "Faltante",
+        name: "Diferencia",
         data: diff,
         colorByPoint: true,
         colors: diffColor,
@@ -128,10 +132,17 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           },
         },
       },
+      // {
+      //   name: "Extraído",
+      //   data: tripsCounts,  
+      //   color: chartColor,
+      //   visible: false,
+      // },
       {
-        name: "Extraído",
-        data: tripsCounts,  
+        name: "Plan",
+        data: tripsCounts.map((e,i) => e > plan[i] ? plan[i] : e),  
         color: chartColor,
+        visible: true,
       },
     ],
     tooltip: {
@@ -147,21 +158,35 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         fontSize: "0.65em",
         zIndex: 10,
       },
-      formatter: function () {
-        const categoryName =
-          this.points[0].point.category || hourLabels[this.x];
+      formatter: function (this: any) {
+        const categoryName = this.points[0]?.point?.category || hourLabels[this.x];
         let tooltipText = `<b>${categoryName}</b><br/>`;
+        // Mostrar siempre el valor de "Extraído"
+        const extraido = this.points.find((p: any) => p.series.name === "Extraído");
+        if (extraido) {
+          tooltipText += `<span style='color:${extraido.color}'>●</span> Extraído: <b>${extraido.y} TM</b><br/>`;
+        }
         this.points.forEach(function (point: any) {
-          tooltipText += `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y} TM</b><br/>`;
+          if (point.series.name !== "Extraído") {
+            tooltipText += `<span style='color:${point.color}'>●</span> ${point.series.name}: <b>${point.y} TM</b><br/>`;
+          }
         });
         return tooltipText;
       },
     },
     legend: {
-      align: "right",
-      verticalAlign: "top",
-      layout: "horizontal",
+      align: "left",
+      verticalAlign: "bottom",
+      layout: "vertical",
       floating: false,
+      labelFormatter: function () {
+        if (this.index === 0) {
+          return `<span style='color:#000000'>Real</span>`;
+        } else {
+          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+        }
+      },
+      useHTML: true,
       itemStyle: {
         color: "#A6A6A6",
         fontSize: "0.55em",
@@ -169,11 +194,13 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         textTransform: "uppercase",
       },
       itemHoverStyle: { color: "black" },
-      symbolWidth: 10,
-      symbolHeight: 9,
+      symbolWidth: 0,
+      symbolHeight: 0,
       symbolRadius: 2,
-      itemMarginTop: 0,
+      itemMarginTop: 4,
       itemMarginBottom: 0,
+      x: 0,
+      y: 0,
     },
     credits: {
       enabled: false,

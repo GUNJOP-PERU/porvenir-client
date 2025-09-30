@@ -57,10 +57,18 @@ export const getHoursByTurns = () => {
 };
 
 export const getCurrentDay = () => {
+  let currentShift = "dia";
   const currentDate = new Date();
   const isAfter6PM = currentDate.getHours() >= 18;
 
+  if (currentDate.getHours() < 18 && currentDate.getHours() >= 6) {
+    currentShift = "dia";
+  } else {
+    currentShift = "noche";
+  }
+
   return {
+    shift: currentShift,
     startDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
     endDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
     startDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),

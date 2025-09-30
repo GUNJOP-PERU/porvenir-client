@@ -15,7 +15,7 @@ import HomeUsers from "./pages/management/Users";
 import HomeVehicles from "./pages/management/Vehicles";
 
 import Configuration from "./pages/Configuration";
-import ParetoTruck from "./pages/dashboard/ParetoTruck";
+// import ParetoTruck from "./pages/dashboard/ParetoTruck";
 import HistoricalExtract from "./pages/dashboard/ProductionExtract/HistoricalExtract";
 import ProductionLayout from "./pages/dashboard/ProductionExtract/ProductionLayout";
 import RealTimeExtract from "./pages/dashboard/ProductionExtract/RealTimeExtract";
@@ -23,7 +23,7 @@ import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
 import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
 import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
-import TimelineTruck from "./pages/dashboard/TimelineTruck";
+// import TimelineTruck from "./pages/dashboard/TimelineTruck";
 import UnproductiveReport from "./pages/dashboard/UnproductiveReport";
 import Utilization from "./pages/dashboard/Utilization";
 import PageBeacon from "./pages/management/Beacon";
@@ -41,6 +41,11 @@ import PageCycleTruck from "./pages/monitoring/CycleTruck";
 import Incidence from "./pages/monitoring/Incidences";
 import WorkerOrders from "./pages/monitoring/WorkerOrders";
 import WeekReport from "./pages/dashboard/WeekReport";
+// Beacon Real Time
+import DetectionReportRT from "./pages/beaconRT/DetectionReport";
+import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
+import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
+import TrackingRT from "./pages/beaconRT/Tracking";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconTrip from "./pages/beacon/BeaconTrip";
@@ -51,7 +56,7 @@ import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import BocaminaDetection from "./pages/beacon/BocaminaDetection";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
-import Tracking from "./pages/beacon/Tracking";
+// import Tracking from "./pages/beacon/Tracking";
 
 const protectedRoutes = [
   //Gestion
@@ -111,6 +116,12 @@ const protectedRoutes = [
   { path: "dashboard/productionUV", element: <Utilization /> },
   { path: "dashboard/productionTruck", element: <ProductionTruck /> },
 
+  // Beacon RT
+  { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
+  { path: "dashboard/beacon/detection-report-turn-rt", element: <RealTimeByHourRT /> },
+  { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
+  { path: "dashboard/tracking", element: <TrackingRT /> },
+
   //Dashboard-Beacon
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/beacon-trip-v2", element: <BeaconTrip /> },
@@ -121,7 +132,7 @@ const protectedRoutes = [
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
   { path: "dashboard/bocamina-detection", element: <BocaminaDetection /> },
-  { path: "dashboard/tracking", element: <Tracking /> },
+  // { path: "dashboard/tracking", element: <Tracking /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },
