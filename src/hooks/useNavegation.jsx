@@ -13,6 +13,7 @@ import {
   ChartNoAxesCombined,
   CopyCheck,
   FileChartPie,
+  LandPlot,
   MapPin,
   Pickaxe,
   Waypoints
@@ -291,6 +292,12 @@ export const useNavigation = () => {
             href: "dashboard/tracking",
             icon: <IconRadar />,
             active: pathname === "/dashboard/tracking",
+          },
+          {
+            name: "Estado de la flota",
+            href: "dashboard/fleet-status",
+            icon: <LandPlot />,
+            active: pathname === "/dashboard/fleet-status",
           },
         ],
       },

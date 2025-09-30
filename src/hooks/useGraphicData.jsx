@@ -35,7 +35,3 @@ export function useFetchDataRealtime({ queryKey, endpoint }) {
     retryDelay: 2000,
   });
 }
-
-   //  staleTime: Infinity,
-    // cacheTime: Infinity,
-       //  refetchOnMount: false,

@@ -1,7 +1,7 @@
 import { getDataRequest } from "@/api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-export function useFetchData(queryKey, endpoint) {
+export function useFetchData(queryKey, endpoint, options = {}) {
   return useQuery({
     queryKey: ["crud",queryKey],
     queryFn: () => getDataRequest(endpoint),
@@ -15,6 +15,7 @@ export function useFetchData(queryKey, endpoint) {
     select: (response) => {
       return response.data;
     },
+    ...options,
   });
 }
 

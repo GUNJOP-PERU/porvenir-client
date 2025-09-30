@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
-import { DateRange } from 'react-date-range';
+import { DateRange } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionTable from "@/components/Dashboard/BeaconTrips/BocaminaDetectionTableV2";
@@ -9,29 +9,39 @@ import UnitTripChart from "@/components/Dashboard/BeaconTrips/UnitTripChart";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChartV2";
 import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDetectionChart";
 // Types
-import type { BeaconCycle, BeaconUnitTrip, BeaconDetection } from "../../types/Beacon";
+import type {
+  BeaconCycle,
+  BeaconUnitTrip,
+  BeaconDetection,
+} from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format } from "date-fns";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
-import { ChartNoAxesColumn } from "lucide-react";
+import { ChartNoAxesColumn, TableProperties } from "lucide-react";
 import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 
-type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours"
+type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours";
 
 const DetectionReport = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [currentUnitChart, setCurrentUnitChart] = useState<UnitChartProps>("trips");
-  const [currentDetectionPlace, setCurrentDetectionPlace] = useState<string>("bocaminas");
-  const [bocaminaStats, setBocaminaStats] = useState<Record<string, number>>({});
+  const [currentUnitChart, setCurrentUnitChart] =
+    useState<UnitChartProps>("trips");
+  const [currentDetectionPlace, setCurrentDetectionPlace] =
+    useState<string>("bocaminas");
+  const [bocaminaStats, setBocaminaStats] = useState<Record<string, number>>(
+    {}
+  );
   const [unitTrips, setUnitTrips] = useState<BeaconDetection[]>([]);
   const [shiftFilter, setShiftFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
+  const [dateFilter, setDateFilter] = useState<
+    [{ startDate: Date; endDate: Date; key: string }]
+  >([
     {
       startDate: new Date(),
       endDate: new Date(),
       key: "selection",
-    }
+    },
   ]);
 
   const {
@@ -42,7 +52,12 @@ const DetectionReport = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days",
-    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
+      shiftFilter ? `&shift=${shiftFilter}` : ""
+    }`,
     { refetchInterval: 30000 }
   );
 
@@ -131,7 +146,9 @@ const DetectionReport = () => {
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
-    setUnitTrips(data.map((unit) => unit.trips.flatMap((trip => trip.trip))).flat());
+    setUnitTrips(
+      data.map((unit) => unit.trips.flatMap((trip) => trip.trip)).flat()
+    );
     setBocaminaStats(
       data.reduce((acc, curr) => {
         curr.bocaminaStats.forEach(({ name, count }) => {
@@ -158,22 +175,6 @@ const DetectionReport = () => {
     };
   }, [data, baseData]);
 
-  const tripsByDay = useMemo(() => {
-    if (!data) return [];
-
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
-    const grouped: Record<string, BeaconUnitTrip[]> = trips.reduce((acc, trip) => {
-      const day = format(new Date(trip.startDate), "yyyy-MM-dd");
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(trip);
-      return acc;
-    }, {} as Record<string, BeaconUnitTrip[]>);
-    return Object.entries(grouped).map(([date, trips]) => ({
-      date,
-      trips,
-    }));
-  }, [data]);
-
   useEffect(() => {
     refetch();
   }, [dateFilter, shiftFilter]);
@@ -189,19 +190,17 @@ const DetectionReport = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 flex-1 w-full gap-2">
+    <>
       <PageHeader
-        title="Detección de Bocaminas"
-        description=""
+        title="Reporte de Detección de Bocaminas y Destinos "
+        description="Visualización en tiempo real de puntos de acceso y seguimiento de rutas logísticas."
         refetch={refetch}
         isFetching={isFetching}
         count={data.length}
         setDialogOpen={false}
         actions={
           <div className="relative flex flex-row gap-2">
-            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Turno:
-              <select
+            <select
                 value={shiftFilter}
                 onChange={(e) => setShiftFilter(e.target.value)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
@@ -210,20 +209,16 @@ const DetectionReport = () => {
                 <option value="dia">Turno Día</option>
                 <option value="noche">Turno Noche</option>
               </select>
-            </label>
-            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Rango de Fechas:
-              <button
-                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
-                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-              >
-                {dateFilter[0] &&
-                  `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
-                    dateFilter[0].endDate,
-                    "dd/MM/yyyy"
-                  )}`}
-              </button>
-            </label>
+            <button
+              onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+              className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+            >
+              {dateFilter[0] &&
+                `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
+                  dateFilter[0].endDate,
+                  "dd/MM/yyyy"
+                )}`}
+            </button>
             {isTooltipOpen && (
               <div className="absolute right-0 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
                 <DateRange
@@ -245,123 +240,135 @@ const DetectionReport = () => {
           </div>
         }
       />
-      <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
-        <CardItem
-          value={baseStats.totalUnits}
-          title="Total de Camiones"
-          valueColor="text-[#000000]"
-          unid="camiones"
-        />
-        <CardItem
-          value={baseStats.totalMantanceTimeMin / 60}
-          title="Horas en Mantenimiento"
-          valueColor="text-[#000000]"
-          unid="horas"
-        />
-        <CardItem
-          value={baseStats.totalDuration / 3600}
-          title="Horas Trabajadas"
-          valueColor="text-[#000000]"
-          unid="horas"
-        />
-        <CardItem
-          value={baseStats.totalTrips}
-          title="Viajes Totales"
-          valueColor="text-[#1E64FA]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.dayTrips}
-          subtitle={baseStats.totalTMDay}
-          subtitleUnid="TM"
-          title="Viajes Diurnos"
-          valueColor="text-[#fac34c]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.nightTrips}
-          title="Viajes Nocturnos"
-          subtitle={baseStats.totalTMNight}
-          subtitleUnid="TM"
-          valueColor="text-[#3c3f43]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.totalTM}
-          title="Tonelaje Total (TM)"
-          valueColor="text-[#000000]"
-          unid="TM"
-        />
-      </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-        <CardTitle
-          title="Análisis de datos de unidades"
-          subtitle="Análisis basado en la detección de beacons"
-          className="row-span-2"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#fac34c]"
-          actions={<div>
-              <select
-                value={currentUnitChart}
-                onChange={(e) => setCurrentUnitChart(e.target.value as UnitChartProps)}
-                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-              >
-                <option value="trips">Viajes</option>
-                <option value="tonnage">Tonelaje</option>
-                <option value="totalHours">Duración Total (hrs)</option>
-                <option value="maintenanceHours">Horas en Mantenimiento</option>
-              </select>
-            </div>
-          }
-        >
-          <UnitTripChart
-            mineralWeight={baseData.mineral}
-            chartColor="#fac34c"
-            chartData={data}
-            currentChart={currentUnitChart}
+      <div className="grid grid-cols-1 flex-1 w-full gap-2">
+        <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
+          <CardItem
+            value={baseStats.totalUnits}
+            title="Total de Camiones"
+            valueColor="text-[#000000]"
+            unid="camiones"
           />
-        </CardTitle>
-
-        <CardTitle
-          title="Detección de Bocaminas"
-          subtitle="Registro de bocaminas detectadas en los viajes"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#fac34c]"
-          actions={<div>
-              <select
-                value={currentDetectionPlace}
-                onChange={(e) => setCurrentDetectionPlace(e.target.value)}
-                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-              >
-                <option value="bocaminas">Bocaminas</option>
-                <option value="destinations">Destinos</option>
-              </select>
-            </div>}
+          <CardItem
+            value={baseStats.totalMantanceTimeMin / 60}
+            title="Horas en Mantenimiento"
+            valueColor="text-[#f79d65]"
+            unid="hrs"
+          />
+          <CardItem
+            value={baseStats.totalDuration / 3600}
+            title="Horas Trabajadas"
+            valueColor="text-[#d4a373]"
+            unid="hrs"
+          />
+          <CardItem
+            value={baseStats.totalTrips}
+            title="Viajes Totales"
+            valueColor="text-[#00a6fb]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.dayTrips}
+            subtitle={baseStats.totalTMDay}
+            subtitleUnid="TM"
+            title="Viajes Diurnos"
+            valueColor="text-[#fac34c]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.nightTrips}
+            title="Viajes Nocturnos"
+            subtitle={baseStats.totalTMNight}
+            subtitleUnid="TM"
+            valueColor="text-[#3c3f43]"
+            unid="viajes"
+          />
+          <CardItem
+            value={baseStats.totalTM}
+            title="Tonelaje Total (TM)"
+            valueColor="text-[#02c39a]"
+            unid="TM"
+          />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
+          <CardTitle
+            title="Análisis de datos de unidades"
+            subtitle="Análisis basado en la detección de beacons"
+            className="row-span-2"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#fac34c]"
+            actions={
+              <div>
+                <select
+                  value={currentUnitChart}
+                  onChange={(e) =>
+                    setCurrentUnitChart(e.target.value as UnitChartProps)
+                  }
+                  className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+                >
+                  <option value="trips">Viajes</option>
+                  <option value="tonnage">Tonelaje</option>
+                  <option value="totalHours">Duración Total (hrs)</option>
+                  <option value="maintenanceHours">
+                    Horas en Mantenimiento
+                  </option>
+                </select>
+              </div>
+            }
           >
-          {currentDetectionPlace === "bocaminas" ? 
-              <BocaminaDetectionChart data={bocaminaStats} />  
-            : currentDetectionPlace === "destinations" ?
+            <UnitTripChart
+              mineralWeight={baseData.mineral}
+              chartColor="#fac34c"
+              chartData={data}
+              currentChart={currentUnitChart}
+            />
+          </CardTitle>
+
+          <CardTitle
+            title="Detección de Bocaminas"
+            subtitle="Registro de bocaminas detectadas en los viajes"
+            icon={ChartNoAxesColumn}
+            classIcon="text-[#fac34c]"
+            actions={
+              <div>
+                <select
+                  value={currentDetectionPlace}
+                  onChange={(e) => setCurrentDetectionPlace(e.target.value)}
+                  className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+                >
+                  <option value="bocaminas">Bocaminas</option>
+                  <option value="destinations">Destinos</option>
+                </select>
+              </div>
+            }
+          >
+            {currentDetectionPlace === "bocaminas" ? (
+              <BocaminaDetectionChart data={bocaminaStats} />
+            ) : currentDetectionPlace === "destinations" ? (
               <GeneralDetectionChart
                 data={unitTrips}
                 filterValue="destinations"
                 chartTitle="Detección de Destinos"
                 chartColor="#0fc47a"
               />
-            : <BocaminaDetectionChart data={bocaminaStats} />
-          }
-        </CardTitle>
-        <CardTitle
-          title="Tabla de Detección de Bocaminas"
-          subtitle="Registro detallado de bocaminas detectadas en los viajes"
-          icon={ChartNoAxesColumn}
-          classIcon="text-[#3c3f43]"
-        >
-          <BocaminaDetectionTable
-            data={unitTrips.filter((detection) => detection.ubicationType === "bocamina" )}
-          />
-        </CardTitle>
+            ) : (
+              <BocaminaDetectionChart data={bocaminaStats} />
+            )}
+          </CardTitle>
+          <CardTitle
+            title="Tabla de Detección de Bocaminas"
+            subtitle="Registro detallado de bocaminas detectadas en los viajes"
+            icon={TableProperties}
+            classIcon="text-sky-500"
+          >
+            <BocaminaDetectionTable
+              data={unitTrips.filter(
+                (detection) => detection.ubicationType === "bocamina"
+              )}
+            />
+          </CardTitle>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
