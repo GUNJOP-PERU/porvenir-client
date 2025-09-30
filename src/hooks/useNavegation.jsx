@@ -28,27 +28,27 @@ export const useNavigation = () => {
       {
         title: "Gestión",
         items: [
-          {
-            name: "General",
-            icon: <Building2 />,
-            items: [
-              {
-                name: "Compañia",
-                href: "/company",
-                active: pathname === "/company",
-              },
-              {
-                name: "Usuarios",
-                href: "/users",
-                active: pathname === "/users",
-              },
-              {
-                name: "Vehiculos",
-                href: "/vehicle",
-                active: pathname === "/vehicle",
-              },
-            ],
-          },
+          // {
+          //   name: "General",
+          //   icon: <Building2 />,
+          //   items: [
+          //     {
+          //       name: "Compañia",
+          //       href: "/company",
+          //       active: pathname === "/company",
+          //     },
+          //     {
+          //       name: "Usuarios",
+          //       href: "/users",
+          //       active: pathname === "/users",
+          //     },
+          //     {
+          //       name: "Vehiculos",
+          //       href: "/vehicle",
+          //       active: pathname === "/vehicle",
+          //     },
+          //   ],
+          // },
           {
             name: "Ubicaciones",
             icon: <MapPin />,
@@ -70,32 +70,25 @@ export const useNavigation = () => {
               },
             ],
           },
-          {
-            name: "Planes",
-            icon: <IconPlan />,
-            items: [
-              {
-                name: "Plan Diario",
-                href: "/planDay",
-                active: pathname === "/planDay",
-              },
-              {
-                name: "Plan Semanal",
-                href: "/planWeek",
-                active: pathname === "/planWeek",
-              },
-              {
-                name: "Plan Mensual",
-                href: "/planMonth",
-                active: pathname === "/planMonth",
-              },
-            ],
-          },
           // {
-          //   name: "Scoop",
+          //   name: "Planes",
+          //   icon: <IconPlan />,
           //   items: [
-          //     { name: "Ciclo Scoop", href: "/cycleScoop", active: pathname === "/cycleScoop" },
-          //     { name: "Actividades Scoop", href: "/activityScoop", active: pathname === "/activityScoop" },
+          //     {
+          //       name: "Plan Diario",
+          //       href: "/planDay",
+          //       active: pathname === "/planDay",
+          //     },
+          //     {
+          //       name: "Plan Semanal",
+          //       href: "/planWeek",
+          //       active: pathname === "/planWeek",
+          //     },
+          //     {
+          //       name: "Plan Mensual",
+          //       href: "/planMonth",
+          //       active: pathname === "/planMonth",
+          //     },
           //   ],
           // },
           {
@@ -116,103 +109,103 @@ export const useNavigation = () => {
           },
         ],
       },
-      {
-        title: "Monitoreo",
-        items: [
-          {
-            name: "Trabajos planificados",
-            href: "/workOrder",
-            icon: <Pickaxe />,
-            active: pathname === "/workOrder",
-          },
-          {
-            name: "Checklist",
-            href: "/checklist",
-            icon: <CopyCheck />,
-            active: pathname === "/checklist",
-          },
-          {
-            name: "Truck",
-            icon: <IconVehicle />,
-            items: [
-              {
-                name: "Ciclos Truck",
-                href: "/cycleTruck",
-                active: pathname === "/cycleTruck",
-              },
-              {
-                name: "Actividades Truck",
-                href: "/activityTruck",
-                active: pathname === "/activityTruck",
-              },
-              {
-                name: "Incidencias Truck",
-                href: "/incidence",
-                active: pathname === "/incidence",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Análisis",
-        items: [
-          {
-            name: "Reporte de extracción",
-            href: "/",
-            icon: <ChartColumnStacked />,
-            active: pathname === "/" || pathname.startsWith("/historical")
-          },
-          {
-            name: "Distribución de tiempo",
-            href: "/dashboard/timeDistribution/realtime",
-            icon: <ChartBarStacked />,
-            active: pathname === "/dashboard/timeDistribution/realtime" || pathname === "/dashboard/timeDistribution/historical",
-          },
-          {
-            name: "Reporte Semanal",
-            href: "/dashboard/weekReport",
-            icon: <FileChartPie />,
-            active: pathname === "/dashboard/weekReport",
-          },
-          {
-            name: "Reporte de Improductivos",
-            href: "/dashboard/unproductiveReport",
-            icon: <ChartNoAxesCombined />,
-            active: pathname === "/dashboard/unproductiveReport",
-          },
-          {
-            name: "Producción Truck",
-            href: "/dashboard/productionTruck",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/productionTruck",
-          },
-          // {
-          //   name: "Timeline Truck",
-          //   href: "/dashboard/timelineTruck",
-          //   icon: <IconTimeline />,
-          //   active: pathname === "/dashboard/timelineTruck",
-          // },
-          // {
-          //   name: "Pareto Truck",
-          //   href: "/dashboard/paretoTruck",
-          //   icon: <IconDash3 />,
-          //   active: pathname === "/dashboard/paretoTruck",
-          // },
-          {
-            name: "Producción Mensual",
-            href: "/dashboard/productionMonth",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/productionMonth",
-          },
-          {
-            name: "Utilización y Velocidad",
-            href: "/dashboard/productionUV",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/productionUV",
-          },
-        ],
-      },
+      // {
+      //   title: "Monitoreo",
+      //   items: [
+      //     {
+      //       name: "Trabajos planificados",
+      //       href: "/workOrder",
+      //       icon: <Pickaxe />,
+      //       active: pathname === "/workOrder",
+      //     },
+      //     {
+      //       name: "Checklist",
+      //       href: "/checklist",
+      //       icon: <CopyCheck />,
+      //       active: pathname === "/checklist",
+      //     },
+      //     {
+      //       name: "Truck",
+      //       icon: <IconVehicle />,
+      //       items: [
+      //         {
+      //           name: "Ciclos Truck",
+      //           href: "/cycleTruck",
+      //           active: pathname === "/cycleTruck",
+      //         },
+      //         {
+      //           name: "Actividades Truck",
+      //           href: "/activityTruck",
+      //           active: pathname === "/activityTruck",
+      //         },
+      //         {
+      //           name: "Incidencias Truck",
+      //           href: "/incidence",
+      //           active: pathname === "/incidence",
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Análisis",
+      //   items: [
+      //     {
+      //       name: "Reporte de extracción",
+      //       href: "/",
+      //       icon: <ChartColumnStacked />,
+      //       active: pathname === "/" || pathname.startsWith("/historical")
+      //     },
+      //     {
+      //       name: "Distribución de tiempo",
+      //       href: "/dashboard/timeDistribution/realtime",
+      //       icon: <ChartBarStacked />,
+      //       active: pathname === "/dashboard/timeDistribution/realtime" || pathname === "/dashboard/timeDistribution/historical",
+      //     },
+      //     {
+      //       name: "Reporte Semanal",
+      //       href: "/dashboard/weekReport",
+      //       icon: <FileChartPie />,
+      //       active: pathname === "/dashboard/weekReport",
+      //     },
+      //     {
+      //       name: "Reporte de Improductivos",
+      //       href: "/dashboard/unproductiveReport",
+      //       icon: <ChartNoAxesCombined />,
+      //       active: pathname === "/dashboard/unproductiveReport",
+      //     },
+      //     {
+      //       name: "Producción Truck",
+      //       href: "/dashboard/productionTruck",
+      //       icon: <ChartArea />,
+      //       active: pathname === "/dashboard/productionTruck",
+      //     },
+      //     // {
+      //     //   name: "Timeline Truck",
+      //     //   href: "/dashboard/timelineTruck",
+      //     //   icon: <IconTimeline />,
+      //     //   active: pathname === "/dashboard/timelineTruck",
+      //     // },
+      //     // {
+      //     //   name: "Pareto Truck",
+      //     //   href: "/dashboard/paretoTruck",
+      //     //   icon: <IconDash3 />,
+      //     //   active: pathname === "/dashboard/paretoTruck",
+      //     // },
+      //     {
+      //       name: "Producción Mensual",
+      //       href: "/dashboard/productionMonth",
+      //       icon: <ChartArea />,
+      //       active: pathname === "/dashboard/productionMonth",
+      //     },
+      //     {
+      //       name: "Utilización y Velocidad",
+      //       href: "/dashboard/productionUV",
+      //       icon: <ChartArea />,
+      //       active: pathname === "/dashboard/productionUV",
+      //     },
+      //   ],
+      // },
       {
         title: "Beacon RT",
         items: [

@@ -9,16 +9,24 @@ interface LineAndBarChartByHourProps {
   mineralWeight: number;
   chartColor?: string;
   chartData: {
-    hour: string,
-    trips: BeaconUnitTrip[]
+    hour?: string;
+    label?: string;
+    trips: BeaconUnitTrip[];
   }[];
+  mode?: "hour" | "day";
 }
 
-const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000" }: LineAndBarChartByHourProps) => {
-  const hourLabels = chartData.map(item => item.hour);
+const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", mode = "hour" }: LineAndBarChartByHourProps) => {
+
+  const xLabels = mode === "day" 
+    ? chartData.map(item => item.label ?? "")
+    : chartData.map(item => item.hour ?? "");
+
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
 
-  const plan = new Array(12).fill(100);
+  const planValue = mode === "day" ? 1200 : 100;
+  const plan = new Array(chartData.length).fill(planValue);
+  
   const diff = plan.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
@@ -76,7 +84,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         title: "",
-        categories: hourLabels,
+        categories: xLabels,
         opposite: true,
         linkedTo: 0,
         lineColor: "#D9D9D9",
