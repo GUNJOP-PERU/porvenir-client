@@ -174,9 +174,9 @@ const RealTimeByHourRT = () => {
     return grouped;
   }, [data]);
 
-  useEffect(() => {
-    refetch();
-  }, [dateFilter, shiftFilter]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [dateFilter, shiftFilter]);
 
   useEffect(() => {
     const interval = setInterval(() => {

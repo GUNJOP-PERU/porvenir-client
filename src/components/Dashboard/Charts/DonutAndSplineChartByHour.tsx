@@ -18,32 +18,46 @@ interface IDonutAndSplineChartByHourProps {
     forecastText: string;
   };
   chartData: {
-    hour: string;
+    hour?: string;
+    label?: string;
     trips: BeaconUnitTrip[];
   }[];
+  mode?: "hour" | "day";
 }
 
-const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }: IDonutAndSplineChartByHourProps) => {
-  const hourLabels = chartData.map(item => item.hour);
-  const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-  const acummulativeTripsCounts = tripsCounts.map((trip, index) => {
-    if(trip === 0){
-      return NaN
-    } else {
-      return tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
-    }
-  });
+const DonutAndSplineChartByHour = ({
+  progressBarData,
+  chartData,
+  mineralWeight,
+  mode = "hour",
+}: IDonutAndSplineChartByHourProps) => {
+  console.log(chartData);
+  const xLabels =
+    mode === "day"
+      ? chartData.map((item) => item.label) 
+      : chartData.map((item) => item.hour ?? "");
 
-  const planData = new Array(12).fill(100);
+  const tripsCounts = chartData.map(
+    (item) => item.trips.length * mineralWeight
+  );
+  const acummulativeTripsCounts = tripsCounts.map((trip, index) =>
+    trip === 0
+      ? NaN
+      : tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  );
+
+  const planValue = mode === "day" ? 1200 : 100;
+  const planData = new Array(chartData.length).fill(planValue);
   const accumulativePlanData = planData.map((_, index) =>
     planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
 
+  console.log(xLabels);
   const options = {
     chart: {
       type: "areaspline",
       height: 280,
-      marginBottom: 50,
+      marginBottom: 80,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -52,7 +66,9 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
     title: "",
     xAxis: [
       {
-        categories: acummulativeTripsCounts.map(value => `${roundAndFormat(value)} TM`),
+        categories: acummulativeTripsCounts.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ),
         opposite: false,
         lineColor: "transparent",
         labels: {
@@ -64,7 +80,9 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
         },
       },
       {
-        categories: accumulativePlanData.map(value => `${roundAndFormat(value)} TM`),
+        categories: accumulativePlanData.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ),
         opposite: false,
         lineColor: "transparent",
         labels: {
@@ -77,7 +95,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight }
         },
       },
       {
-        categories: hourLabels,
+        categories: xLabels,
         opposite: true,
         linkedTo: 0,
         lineColor: "transparent",
