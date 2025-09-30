@@ -398,6 +398,19 @@ const ubicationData : IBeaconUbication[] = [
     createdAt: "2024-07-21T19:09:00Z",
     updatedAt: "2024-08-21T19:09:00Z",
   },
+  {
+    id: 34,
+    mac: "bc:57:29:01:c9:03",
+    name: "Parqueo Volquetes",
+    location: "destinations",
+    description: "Parqueo Volquetes",
+    position: {
+      latitud: -13.083333,
+      longitud: -75.998056,
+    },
+    createdAt: "2024-07-21T19:09:00Z",
+    updatedAt: "2024-08-21T19:09:00Z",
+  }
 ]
 
 export default ubicationData;
