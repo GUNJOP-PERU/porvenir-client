@@ -210,6 +210,12 @@ export const useNavigation = () => {
         title: "Beacon Tiempo Real",
         items: [
           {
+            name: "Tracking",
+            href: "/",
+            icon: <IconRadar />,
+            active: pathname === "/",
+          },
+          {
             name: "Reporte de detección",
             href: "/dashboard/beacon/detection-report-rt",
             icon: <TbReportAnalytics />,
@@ -226,12 +232,6 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/detection-report-week-rt",
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/detection-report-week-rt",
-          },
-          {
-            name: "Tracking",
-            href: "/dashboard/tracking",
-            icon: <IconRadar />,
-            active: pathname === "/dashboard/tracking",
           },
         ],
       },

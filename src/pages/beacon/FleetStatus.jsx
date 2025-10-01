@@ -8,6 +8,12 @@ import { ModalComment } from "@/components/Dashboard/FleetStatus/ModalComment";
 import IconTruck from "@/icons/IconTruck";
 import PageHeader from "@/components/PageHeader";
 
+const extractNumber = (tag) => {
+  const match = tag.match(/(\d+)/);
+  return match ? parseInt(match[0], 10) : 0;
+};
+
+
 export default function FleetStatus() {
   const { addToast } = useToast();
   const {
@@ -60,6 +66,10 @@ export default function FleetStatus() {
       else inoperativoItems.push(item);
     });
 
+    operativoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
+  mantenimientoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
+  inoperativoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
+
     setColumns((prev) => ({
       ...prev,
       operativo: { ...prev.operativo, items: operativoItems },
@@ -81,22 +91,7 @@ export default function FleetStatus() {
 
       setSelectedTruck({ id: draggableId, status: newStatus });
       setIsOpen(true);
-    } else {
-      setColumns((prev) => {
-        const column = prev[source.droppableId];
-        const copiedItems = [...column.items];
-        const [removed] = copiedItems.splice(source.index, 1);
-        copiedItems.splice(destination.index, 0, removed);
-
-        return {
-          ...prev,
-          [source.droppableId]: {
-            ...column,
-            items: copiedItems,
-          },
-        };
-      });
-    }
+    } 
   }, []);
 
   const itemColors = {
