@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 
 export default function Layout() {
   const location = useLocation();
-  const isTrackingPage = location.pathname === "/dashboard/tracking" || location.pathname === "/dashboard/fleet-status";
+  const isTrackingPage = location.pathname === "/" || location.pathname === "/dashboard/fleet-status";
   return (
     <main className="h-screen flex w-full overflow-hidden bg-black">
       <NavMain />

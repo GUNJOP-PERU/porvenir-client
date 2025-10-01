@@ -61,20 +61,20 @@ import FleetStatus from "./pages/beacon/FleetStatus";
 
 const protectedRoutes = [
   //Gestion
-  { path: "users", element: <HomeUsers /> },
+  // { path: "users", element: <HomeUsers /> },
+  // { path: "vehicle", element: <HomeVehicles /> },
+  // { path: "workOrder", element: <WorkerOrders /> },
+  // { path: "checklist", element: <Checklist /> },
+  // { path: "planDay", element: <PlanDay /> },
+  // { path: "planMonth", element: <PlanMonth /> },
+  // { path: "planWeek", element: <PlanWeek /> },
+  // { path: "newPlanMonth", element: <NewPlanMonth /> },
+  // { path: "company", element: <PageCompany /> },
+  // { path: "cycleTruck", element: <PageCycleTruck /> },
+  // { path: "activityTruck", element: <PageActivity /> },
+  // { path: "incidence", element: <Incidence /> },
   { path: "labor", element: <HomeLabor /> },
-  { path: "vehicle", element: <HomeVehicles /> },
-  { path: "workOrder", element: <WorkerOrders /> },
-  { path: "checklist", element: <Checklist /> },
-  { path: "planDay", element: <PlanDay /> },
-  { path: "planMonth", element: <PlanMonth /> },
-  { path: "planWeek", element: <PlanWeek /> },
-  { path: "newPlanMonth", element: <NewPlanMonth /> },
-  { path: "company", element: <PageCompany /> },
-  { path: "cycleTruck", element: <PageCycleTruck /> },
-  { path: "activityTruck", element: <PageActivity /> },
   { path: "destiny", element: <PageDestiny /> },
-  { path: "incidence", element: <Incidence /> },
   { path: "ubications", element: <PageUbications /> },
   { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
@@ -82,35 +82,35 @@ const protectedRoutes = [
   //Dashboard
   // { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
   // { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
-  {
-    path: "/",
-    element: <ProductionLayout />,
-    handle: {
-      tabs: [
-        { to: "", label: "Tiempo Real" },
-        { to: "historical", label: "Histórico" },
-      ],
-    },
-    children: [
-      { index: true, element: <RealTimeExtract /> },
-      { path: "historical", element: <HistoricalExtract /> },
-    ],
-  },
-  {
-    path: "dashboard/timeDistribution",
-    element: <ProductionLayout />,
-    handle: {
-      tabs: [
-        { to: "realtime", label: "Tiempo Real" },
-        { to: "historical", label: "Histórico" },
-      ],
-    },
-    children: [
-      { index: true, element: <Navigate to="realtime" replace /> },
-      { path: "realtime", element: <TimeDistribution /> },
-      { path: "historical", element: <TimeDistributionHistorical /> },
-    ],
-  },
+  // {
+  //   path: "/",
+  //   element: <ProductionLayout />,
+  //   handle: {
+  //     tabs: [
+  //       { to: "", label: "Tiempo Real" },
+  //       { to: "historical", label: "Histórico" },
+  //     ],
+  //   },
+  //   children: [
+  //     { index: true, element: <RealTimeExtract /> },
+  //     { path: "historical", element: <HistoricalExtract /> },
+  //   ],
+  // },
+  // {
+  //   path: "dashboard/timeDistribution",
+  //   element: <ProductionLayout />,
+  //   handle: {
+  //     tabs: [
+  //       { to: "realtime", label: "Tiempo Real" },
+  //       { to: "historical", label: "Histórico" },
+  //     ],
+  //   },
+  //   children: [
+  //     { index: true, element: <Navigate to="realtime" replace /> },
+  //     { path: "realtime", element: <TimeDistribution /> },
+  //     { path: "historical", element: <TimeDistributionHistorical /> },
+  //   ],
+  // },
   { path: "dashboard/weekReport", element: <WeekReport /> },
   { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
   { path: "dashboard/productionMonth", element: <ProductionMonth /> },
@@ -121,9 +121,9 @@ const protectedRoutes = [
   { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
   { path: "dashboard/beacon/detection-report-turn-rt", element: <RealTimeByHourRT /> },
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
-  { path: "dashboard/tracking", element: <TrackingRT /> },
 
   //Dashboard-Beacon
+  { path: "/", element: <TrackingRT /> },
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/beacon-trip-v2", element: <BeaconTrip /> },
   { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
@@ -133,7 +133,6 @@ const protectedRoutes = [
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
   { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable/>,},
   { path: "dashboard/bocamina-detection", element: <BocaminaDetection /> },
-  { path: "dashboard/tracking", element: <Tracking /> },
   { path: "dashboard/fleet-status", element: <FleetStatus /> },
 
   //Configuración
@@ -142,16 +141,6 @@ const protectedRoutes = [
 
 export default function Router() {
   const isAuth = useAuthStore((state) => state.isAuth);
-
-  const protectedChildren = protectedRoutes.map(({ path, element }) => ({
-    path,
-    element,
-  }));
-
-  protectedChildren.push({
-    index: true,
-    element: <Navigate to="/" replace />, 
-  });
 
   const router = createBrowserRouter([
     {
@@ -165,10 +154,6 @@ export default function Router() {
           element: <Layout />,
           children: [
             ...protectedRoutes,
-            {
-              index: true,
-              element: <Navigate to="/" replace />,
-            },
           ],
         },
       ],
@@ -181,3 +166,4 @@ export default function Router() {
 
   return <RouterProvider router={router} />;
 }
+
