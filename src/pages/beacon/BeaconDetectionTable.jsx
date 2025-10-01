@@ -23,8 +23,8 @@ const BeaconDetectionTable = () => {
   // Filtros personalizados
   const [filters, setFilters] = useState({
     unit: '',
-    startDate: '',
-    endDate: ''
+    startDate: format(new Date(), "yyyy-MM-dd"),
+    endDate: format(new Date(), "yyyy-MM-dd")
   });
 
   const {
@@ -32,7 +32,7 @@ const BeaconDetectionTable = () => {
     isLoading,
     isError,
     refetch,
-  } = useFetchData("beacon-detection", "beacon-track");
+  } = useFetchData("beacon-detection", `beacon-track?startDate=${filters.startDate}&endDate=${filters.endDate}`);
 
   const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
@@ -45,33 +45,15 @@ const BeaconDetectionTable = () => {
       );
     }
 
-    if (filters.startDate) {
-      filtered = filtered.filter(item => {
-        const itemDate = new Date(item.f_inicio);
-        const startDate = new Date(filters.startDate);
-        return itemDate >= startDate;
-      });
-    }
-
-    if (filters.endDate) {
-      filtered = filtered.filter(item => {
-        const itemDate = new Date(item.f_final);
-        const endDate = new Date(filters.endDate);
-        endDate.setHours(23, 59, 59, 999); // Incluir todo el día
-        return itemDate <= endDate;
-      });
-    }
-
     return filtered;
   }, [data, filters]);
 
   // Función para limpiar filtros
   const clearFilters = () => {
-    setFilters({
+    setFilters((val) => ({
+      ...val,
       unit: '',
-      startDate: '',
-      endDate: ''
-    });
+    }));
   };
 
   // Definición de columnas
@@ -181,16 +163,16 @@ const BeaconDetectionTable = () => {
       ),
       size: 130,
     },
-    {
-      accessorKey: "wap_mac",
-      header: "WAP MAC",
-      cell: ({ getValue }) => (
-        <div className="text-center font-mono">
-          {getValue()}
-        </div>
-      ),
-      size: 130,
-    },
+    // {
+    //   accessorKey: "wap_mac",
+    //   header: "WAP MAC",
+    //   cell: ({ getValue }) => (
+    //     <div className="text-center font-mono">
+    //       {getValue()}
+    //     </div>
+    //   ),
+    //   size: 130,
+    // },
     // {
     //   accessorKey: "rssi_min",
     //   header: "RSSI Min",
@@ -254,32 +236,32 @@ const BeaconDetectionTable = () => {
       },
       size: 160,
     },
-    {
-      accessorKey: "createdAt",
-      header: "Hora de creación",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
-      },
-      size: 160,
-    },
-    {
-      accessorKey: "updatedAt",
-      header: "Hora de Update",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
-      },
-      size: 160,
-    },
+    // {
+    //   accessorKey: "createdAt",
+    //   header: "Hora de creación",
+    //   cell: ({ getValue }) => {
+    //     const timestamp = getValue();
+    //     return (
+    //       <div className="text-sm">
+    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+    //       </div>
+    //     );
+    //   },
+    //   size: 160,
+    // },
+    // {
+    //   accessorKey: "updatedAt",
+    //   header: "Hora de Update",
+    //   cell: ({ getValue }) => {
+    //     const timestamp = getValue();
+    //     return (
+    //       <div className="text-sm">
+    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+    //       </div>
+    //     );
+    //   },
+    //   size: 160,
+    // },
   ], []);
 
   // Configuración de la tabla

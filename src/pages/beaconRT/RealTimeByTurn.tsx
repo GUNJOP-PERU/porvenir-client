@@ -10,7 +10,7 @@ import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { ChartNoAxesColumn } from "lucide-react";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
@@ -35,8 +35,8 @@ const RealTimeByHourRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck",
-    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}`,
+    "trip-group-by-current-day-truck-rt",
+    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
@@ -72,7 +72,8 @@ const RealTimeByHourRT = () => {
         totalTMDay: 0,
         durationPerTrip: 0,
         durationPerTripDay: 0,
-        durationPerTripNight: 0
+        durationPerTripNight: 0,
+        avgUnloadTime: 0
       };
     }
 
@@ -145,6 +146,10 @@ const RealTimeByHourRT = () => {
       0
     );
 
+    const avgUnloadTime = data.reduce((acc, truck) => {
+      return acc + truck.avgUnloadTime/60;
+    }, 0) / data.length;
+
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
@@ -168,6 +173,7 @@ const RealTimeByHourRT = () => {
       nightTrips,
       totalTMDay,
       totalTMNight,
+      avgUnloadTime
     };
   }, [data, baseData]);
 
@@ -487,6 +493,11 @@ const RealTimeByHourRT = () => {
                 total: 100
               },
               {
+                title: "Tiempo de Descarga de Camión",
+                currentValue: 0,
+                total: 100
+              },
+              {
                 title: "Falta de Camiones para cargar",
                 currentValue: 0,
                 total: 100
@@ -533,27 +544,32 @@ const RealTimeByHourRT = () => {
               subData: [{
                 title: "Carga de Balde",
                 currentValue: 0,
-                total: 100
+                total: 10
               },
               {
                 title: "Tiempo de Carga de Camión",
                 currentValue: 0,
-                total: 100
+                total: 10
+              },
+              {
+                title: "Tiempo de Descarga de Camión",
+                currentValue: baseStats.avgUnloadTime ? Number(baseStats.avgUnloadTime.toFixed(2)) : 0,
+                total: 10
               },
               {
                 title: "Falta de Camiones para cargar",
                 currentValue: 0,
-                total: 100
+                total: 10
               },
               {
                 title: "Demoras por material",
                 currentValue: 0,
-                total: 100
+                total: 10
               },
               {
                 title: "Paradas de producción",
                 currentValue: 0,
-                total: 100
+                total: 10
               }
               ]},
               { title: "Real",

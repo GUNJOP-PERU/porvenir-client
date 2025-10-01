@@ -41,7 +41,7 @@ const DetectionReportRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-days",
+    "trip-group-by-days-rt",
     `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
@@ -53,7 +53,7 @@ const DetectionReportRT = () => {
     isLoading: bocaminaLoading,
     isError: bocaminaError,
   } = useFetchData<BocaminaByUnits[]>(
-    "trip-group-by-days-bc",
+    "trip-group-by-days-bc-rt",
     `beacon-track/trip/bc?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
@@ -215,7 +215,7 @@ const DetectionReportRT = () => {
   return (
     <div className="grid grid-cols-1 flex-1 w-full gap-2">
       <PageHeader
-        title="Detección de Bocaminas"
+        title="Reporte de Detección por turno"
         description=""
         refetch={refetch}
         isFetching={isFetching}

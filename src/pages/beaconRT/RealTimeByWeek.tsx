@@ -5,20 +5,22 @@
   import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
   import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
   import CardTitle from "@/components/Dashboard/CardTitleV2";
+  import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart";
   // Types
   import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
   import type { Mineral } from "@/types/Mineral";
   // Utils
-  import { startOfWeek, endOfWeek, format, eachDayOfInterval } from "date-fns";
+  import { startOfWeek, endOfWeek, format, eachDayOfInterval, getISODay } from "date-fns";
   import { ChartNoAxesColumn } from "lucide-react";
   import Progress from "@/components/Dashboard/Charts/Progress";
   import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-  import { getCurrentDay } from "@/utils/dateUtils";
+  import { getCurrentDay, getCurrentWeekStartEndDates  } from "@/utils/dateUtils";
   // Icons
   import { GiMineTruck } from "react-icons/gi";
   import { es } from "date-fns/locale";
 
   const RealTimeByWeek = () => {
+    const isoDay = getISODay(new Date());
     const [shiftFilter, setShiftFilter] = useState<string>("dia");
     const [dateFilter, setDateFilter] = useState<
       [
@@ -44,10 +46,7 @@
       isError: tripsError,
     } = useFetchData<BeaconCycle[]>(
       "trip-report-week",
-      `beacon-track/trip?startDate=${format(
-        dateFilter[0].startDate,
-        "yyyy-MM-dd"
-      )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+      `beacon-track/trip?startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
       { refetchInterval: 10000 }
     );
 
@@ -75,10 +74,17 @@
           totalDurationNight: 0,
           totalDurationDay: 0,
           totalMantanceTimeMin: 0,
+          totalMaintenanceTimeMinDay: 0,
+          totalMaintenanceTimeMinNight: 0,
+          totalMaintenanceTimeMin: 0,
           dayTrips: 0,
           nightTrips: 0,
           totalTMNight: 0,
           totalTMDay: 0,
+          durationPerTrip: 0,
+          durationPerTripDay: 0,
+          durationPerTripNight: 0,
+          avgUnloadTime: 0
         };
       }
 
@@ -133,6 +139,33 @@
         0
       );
 
+      const totalMaintenanceTimeMin = data.reduce(
+        (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
+        0
+      );
+
+      const totalMaintenanceTimeMinDay = data.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.maintance
+            .filter((mant) => mant.shift === "dia")
+            .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) / 60,
+        0
+      );
+
+      const totalMaintenanceTimeMinNight = data.reduce(
+        (acc, tripsTruck) =>
+          acc +
+          tripsTruck.maintance
+            .filter((mant) => mant.shift === "noche")
+            .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) / 60,
+        0
+      );
+
+      const avgUnloadTime = data.reduce((acc, truck) => {
+        return acc + truck.avgUnloadTime/60;
+      }, 0) / data.length;
+
       const totalTM = totalTrips * baseData.mineral;
       const totalTMDay = dayTrips * baseData.mineral;
       const totalTMNight = nightTrips * baseData.mineral;
@@ -147,10 +180,17 @@
         totalDurationNight,
         totalDurationDay,
         totalMantanceTimeMin,
+        totalMaintenanceTimeMinDay,
+        totalMaintenanceTimeMinNight,
+        totalMaintenanceTimeMin,
+        durationPerTrip: totalTrips ? (totalDuration/60)/totalTrips : 0,
+        durationPerTripDay: dayTrips ? (totalDurationDay/60)/dayTrips : 0,
+        durationPerTripNight: nightTrips ? (totalDurationNight/60)/nightTrips : 0,
         dayTrips,
         nightTrips,
         totalTMDay,
         totalTMNight,
+        avgUnloadTime
       };
     }, [data, baseData]);
 
@@ -198,8 +238,8 @@
           setShiftFilter(getCurrentDay().shift);
           setDateFilter([
             {
-              startDate: new Date(getCurrentDay().startDate),
-              endDate: new Date(getCurrentDay().endDate),
+              startDate: new Date(getCurrentWeekStartEndDates().startDate),
+              endDate: new Date(getCurrentWeekStartEndDates().endDate),
               key: "selection",
             },
           ]);
@@ -244,7 +284,7 @@
           setDialogOpen={false}
           className="col-span-2"
         />
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col justify-around">
           <div>
             <DonutChart
               title="Plan General (TM)"
@@ -300,9 +340,8 @@
               title=""
               size="medium"
               donutData={{
-                currentValue:
-                  24 * baseStats.totalUnits - baseStats.totalMantanceTimeMin / 60,
-                total: 24 * baseStats.totalUnits,
+                currentValue: 12 * isoDay * (baseStats.totalUnitsNight + baseStats.totalUnitsDay) - baseStats.totalMantanceTimeMin / 60,
+                total: 12 * isoDay * (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
                 currentValueColor: "#14B8A6",
               }}
             />
@@ -322,12 +361,8 @@
               title=""
               size="medium"
               donutData={{
-                currentValue:
-                  24 * baseStats.totalUnitsNight +
-                  24 * baseStats.totalUnitsDay -
-                  baseStats.totalDuration / 3600,
-                total:
-                  24 * baseStats.totalUnitsNight + 24 * baseStats.totalUnitsDay,
+                currentValue: 12 * isoDay * (baseStats.totalUnitsNight + baseStats.totalUnitsDay) - baseStats.totalDuration / 3600,
+                total: 12 * isoDay * (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
                 currentValueColor: "#14B8A6",
               }}
             />
@@ -391,7 +426,7 @@
               chartColor={active.color}
               chartData={active.trips.map((item) => ({
                 label: item.label,
-                trips: item.trips,
+                trips: [],
               }))}
               mode="day"  
             />
@@ -410,6 +445,124 @@
               mode="day"
             />
           </CardTitle>
+
+          <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
+          <DonutAndTableChart
+            title="Causas de Desviación del Plan %"
+            donutData={[{
+              title: "Disponibilidad",
+              total: 100,
+              currentValue: 0,
+              currentValueColor: "#14B8A6"
+            },
+            {
+              title: "Utilización",
+              total: 100,
+              currentValue: 0,
+              currentValueColor: "#14B8A6"
+            }]}
+            tableData={[{
+              title: "Plan",
+              currentValue: 0,
+              total: 100,
+              subData: [{
+                title: "Carga de Balde",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Tiempo de Carga de Camión",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Tiempo de Descarga de Camión",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Falta de Camiones para cargar",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Demoras por material",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Paradas de producción",
+                currentValue: 0,
+                total: 100
+              }
+              ]},
+              { title: "Real",
+                currentValue: 0,
+                total: 100,
+                subData: []
+              }
+            ]}
+          />
+        </div>
+
+        <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
+          <DonutAndTableChart
+            title="Causas de Desviación del Plan %"
+            donutData={[{
+              title: "Disponibilidad",
+              total: shiftFilter === "dia" ? (baseStats.totalUnitsDay * isoDay * 12) : (baseStats.totalUnitsNight * isoDay * 12),
+              currentValue: shiftFilter === "dia" ? (baseStats.totalUnitsDay * isoDay * 12) - baseStats.totalMaintenanceTimeMinDay / 60 : (baseStats.totalUnitsNight * isoDay * 12) - baseStats.totalMaintenanceTimeMinNight / 60,
+              currentValueColor: "#14B8A6"
+            },
+            {
+              title: "Utilización",
+              total: shiftFilter === "dia" ? (baseStats.totalUnitsDay * isoDay * 12) : (baseStats.totalUnitsNight * isoDay * 12),
+              currentValue: shiftFilter === "dia" ?  baseStats.totalDurationDay / 3600 : baseStats.totalDurationNight / 3600,
+              currentValueColor: "#14B8A6"
+            }]}
+            tableData={[{
+              title: "Plan",
+              currentValue: 60,
+              total: 100,
+              subData: [{
+                title: "Carga de Balde",
+                currentValue: 0,
+                total: 10
+              },
+              {
+                title: "Tiempo de Carga de Camión",
+                currentValue: 0,
+                total: 10
+              },
+              {
+                title: "Tiempo de Descarga de Camión",
+                currentValue: baseStats.avgUnloadTime ? Number(baseStats.avgUnloadTime.toFixed(2)) : 0,
+                total: 10
+              },
+              {
+                title: "Falta de Camiones para cargar",
+                currentValue: 0,
+                total: 10
+              },
+              {
+                title: "Demoras por material",
+                currentValue: 0,
+                total: 10
+              },
+              {
+                title: "Paradas de producción",
+                currentValue: 0,
+                total: 10
+              }
+              ]},
+              { title: "Real",
+                currentValue: shiftFilter === "dia" ? Number(baseStats.durationPerTripDay.toFixed(2)) : Number(baseStats.durationPerTripNight.toFixed(2)),
+                total: 100,
+                subData: []
+              }
+            ]}
+          />
+        </div>
         </div>
       </div>
     );

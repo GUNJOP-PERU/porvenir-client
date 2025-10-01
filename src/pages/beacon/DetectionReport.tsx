@@ -11,8 +11,8 @@ import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDet
 // Types
 import type {
   BeaconCycle,
-  BeaconUnitTrip,
   BeaconDetection,
+  BocaminaByUnits
 } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
@@ -58,11 +58,23 @@ const DetectionReport = () => {
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
       shiftFilter ? `&shift=${shiftFilter}` : ""
     }`,
-    { refetchInterval: 30000 }
+    { refetchInterval: 10000 }
+  );
+
+  const {
+    data: bocaminaData = [],
+    refetch : bocaminaRefetch,
+    isFetching : bocaminaIsFetching,
+    isLoading: bocaminaLoading,
+    isError: bocaminaError,
+  } = useFetchData<BocaminaByUnits[]>(
+    "trip-group-by-days-bc",
+    `beacon-track/trip/bc?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    { refetchInterval: 10000 }
   );
 
   const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
-    refetchInterval: 30000,
+    refetchInterval: 10000,
   });
 
   const baseData = useMemo(() => {
@@ -317,7 +329,6 @@ const DetectionReport = () => {
           >
             <UnitTripChart
               mineralWeight={baseData.mineral}
-              chartColor="#fac34c"
               chartData={data}
               currentChart={currentUnitChart}
             />
@@ -361,9 +372,7 @@ const DetectionReport = () => {
             classIcon="text-sky-500"
           >
             <BocaminaDetectionTable
-              data={unitTrips.filter(
-                (detection) => detection.ubicationType === "bocamina"
-              )}
+              data={bocaminaData}
             />
           </CardTitle>
         </div>

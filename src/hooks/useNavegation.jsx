@@ -207,7 +207,7 @@ export const useNavigation = () => {
       //   ],
       // },
       {
-        title: "Beacon RT",
+        title: "Beacon Tiempo Real",
         items: [
           {
             name: "Reporte de detección",
@@ -236,7 +236,7 @@ export const useNavigation = () => {
         ],
       },
       {
-        title: "Beacon",
+        title: "Beacon Histórico",
         items: [
           {
             name: "Reporte de detección",
