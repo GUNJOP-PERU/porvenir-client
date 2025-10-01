@@ -254,32 +254,32 @@ const BeaconDetectionTable = () => {
       },
       size: 160,
     },
-    // {
-    //   accessorKey: "createdAt",
-    //   header: "Hora de creación",
-    //   cell: ({ getValue }) => {
-    //     const timestamp = getValue();
-    //     return (
-    //       <div className="text-sm">
-    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-    //       </div>
-    //     );
-    //   },
-    //   size: 160,
-    // },
-    // {
-    //   accessorKey: "updatedAt",
-    //   header: "Hora de creación",
-    //   cell: ({ getValue }) => {
-    //     const timestamp = getValue();
-    //     return (
-    //       <div className="text-sm">
-    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-    //       </div>
-    //     );
-    //   },
-    //   size: 160,
-    // },
+    {
+      accessorKey: "createdAt",
+      header: "Hora de creación",
+      cell: ({ getValue }) => {
+        const timestamp = getValue();
+        return (
+          <div className="text-sm">
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+          </div>
+        );
+      },
+      size: 160,
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Hora de Update",
+      cell: ({ getValue }) => {
+        const timestamp = getValue();
+        return (
+          <div className="text-sm">
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+          </div>
+        );
+      },
+      size: 160,
+    },
   ], []);
 
   // Configuración de la tabla

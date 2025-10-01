@@ -1,19 +1,17 @@
 import { useMemo, useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
-import { DateRange } from 'react-date-range';
 import PageHeader from "@/components/PageHeaderV2";
 import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
 import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
-import CardItem from "@/components/Dashboard/CardItemV2";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
+import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format, set } from "date-fns";
 import { ChartNoAxesColumn } from "lucide-react";
-import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay } from "@/utils/dateUtils";
@@ -21,8 +19,7 @@ import { getCurrentDay } from "@/utils/dateUtils";
 import { GiMineTruck } from "react-icons/gi";
 
 const RealTimeByHourRT = () => {
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
     {
       startDate: new Date(getCurrentDay().startDate),
@@ -66,11 +63,16 @@ const RealTimeByHourRT = () => {
         totalDuration: 0,
         totalDurationNight: 0,
         totalDurationDay: 0,
-        totalMantanceTimeMin: 0,
+        totalMaintenanceTimeMinDay: 0,
+        totalMaintenanceTimeMinNight: 0,
+        totalMaintenanceTimeMin: 0,
         dayTrips: 0,
         nightTrips: 0,
         totalTMNight: 0,
         totalTMDay: 0,
+        durationPerTrip: 0,
+        durationPerTripDay: 0,
+        durationPerTripNight: 0
       };
     }
 
@@ -120,8 +122,26 @@ const RealTimeByHourRT = () => {
       0
     );
 
-    const totalMantanceTimeMin = data.reduce(
+    const totalMaintenanceTimeMin = data.reduce(
       (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
+      0
+    );
+
+    const totalMaintenanceTimeMinDay = data.reduce(
+      (acc, tripsTruck) =>
+        acc +
+        tripsTruck.maintance
+          .filter((mant) => mant.shift === "dia")
+          .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) / 60,
+      0
+    );
+
+    const totalMaintenanceTimeMinNight = data.reduce(
+      (acc, tripsTruck) =>
+        acc +
+        tripsTruck.maintance
+          .filter((mant) => mant.shift === "noche")
+          .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) / 60,
       0
     );
 
@@ -138,7 +158,12 @@ const RealTimeByHourRT = () => {
       totalDuration,
       totalDurationNight,
       totalDurationDay,
-      totalMantanceTimeMin,
+      totalMaintenanceTimeMinDay,
+      totalMaintenanceTimeMinNight,
+      totalMaintenanceTimeMin,
+      durationPerTrip: totalTrips ? (totalDuration/60)/totalTrips : 0,
+      durationPerTripDay: dayTrips ? (totalDurationDay/60)/dayTrips : 0,
+      durationPerTripNight: nightTrips ? (totalDurationNight/60)/nightTrips : 0,
       dayTrips,
       nightTrips,
       totalTMDay,
@@ -174,10 +199,6 @@ const RealTimeByHourRT = () => {
     return grouped;
   }, [data]);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [dateFilter, shiftFilter]);
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (getCurrentDay().shift !== shiftFilter) {
@@ -194,16 +215,6 @@ const RealTimeByHourRT = () => {
     return () => clearInterval(interval);
   }, [shiftFilter, refetch]);
 
-  // if (tripsLoading || tripsError || !data || data.length === 0) {
-  //   return (
-  //     <StatusDisplay
-  //       isLoading={tripsLoading}
-  //       isError={tripsError}
-  //       noData={!data || data.length === 0}
-  //     />
-  //   );
-  // }
-
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
@@ -215,7 +226,7 @@ const RealTimeByHourRT = () => {
         setDialogOpen={false}
         className="col-span-2"
       />
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-around">
         <div>
           <DonutChart
             title="Plan General (TM)"
@@ -271,7 +282,7 @@ const RealTimeByHourRT = () => {
             title=""
             size="medium"
             donutData={{
-              currentValue: 24 * baseStats.totalUnits - baseStats.totalMantanceTimeMin / 60,
+              currentValue: 24 * baseStats.totalUnits - baseStats.totalMaintenanceTimeMin / 60,
               total: 24 * baseStats.totalUnits,
               currentValueColor: "#14B8A6",
             }}
@@ -445,6 +456,114 @@ const RealTimeByHourRT = () => {
             </CardTitle>
           </div>
         )}
+
+        <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
+          <DonutAndTableChart
+            title="Causas de Desviación del Plan %"
+            donutData={[{
+              title: "Disponibilidad",
+              total: 100,
+              currentValue: 0,
+              currentValueColor: "#14B8A6"
+            },
+            {
+              title: "Utilización",
+              total: 100,
+              currentValue: 0,
+              currentValueColor: "#14B8A6"
+            }]}
+            tableData={[{
+              title: "Plan",
+              currentValue: 0,
+              total: 100,
+              subData: [{
+                title: "Carga de Balde",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Tiempo de Carga de Camión",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Falta de Camiones para cargar",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Demoras por material",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Paradas de producción",
+                currentValue: 0,
+                total: 100
+              }
+              ]},
+              { title: "Real",
+                currentValue: 0,
+                total: 100,
+                subData: []
+              }
+            ]}
+          />
+        </div>
+
+        <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
+          <DonutAndTableChart
+            title="Causas de Desviación del Plan %"
+            donutData={[{
+              title: "Disponibilidad",
+              total: shiftFilter === "dia" ? (baseStats.totalUnitsDay * 12) : (baseStats.totalUnitsNight * 12),
+              currentValue: shiftFilter === "dia" ? (baseStats.totalUnitsDay * 12) - baseStats.totalMaintenanceTimeMinDay / 60 : (baseStats.totalUnitsNight * 12) - baseStats.totalMaintenanceTimeMinNight / 60,
+              currentValueColor: "#14B8A6"
+            },
+            {
+              title: "Utilización",
+              total: shiftFilter === "dia" ? (baseStats.totalUnitsDay * 12) : (baseStats.totalUnitsNight * 12),
+              currentValue: shiftFilter === "dia" ?  baseStats.totalDurationDay / 3600 : baseStats.totalDurationNight / 3600,
+              currentValueColor: "#14B8A6"
+            }]}
+            tableData={[{
+              title: "Plan",
+              currentValue: 60,
+              total: 100,
+              subData: [{
+                title: "Carga de Balde",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Tiempo de Carga de Camión",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Falta de Camiones para cargar",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Demoras por material",
+                currentValue: 0,
+                total: 100
+              },
+              {
+                title: "Paradas de producción",
+                currentValue: 0,
+                total: 100
+              }
+              ]},
+              { title: "Real",
+                currentValue: shiftFilter === "dia" ? Number(baseStats.durationPerTripDay.toFixed(2)) : Number(baseStats.durationPerTripNight.toFixed(2)),
+                total: 100,
+                subData: []
+              }
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

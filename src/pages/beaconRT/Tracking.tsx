@@ -127,7 +127,6 @@ const TruckTracking = () => {
     }, []);
 
   const markers = useMemo(() => {
-    // Agrupar camiones por coordenada
     const coordMap = new Map<string, any[]>();
     data.forEach((truck) => {
       const findBeacon = ubicationData.find((beacon) => beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase());
@@ -137,18 +136,16 @@ const TruckTracking = () => {
       coordMap.get(key)!.push({ ...truck, coordinates: coord });
     });
 
-    // Distribuir en línea horizontal si hay más de uno en la misma coordenada
     const result: JSX.Element[] = [];
-    const offset = 0.00025; // Ajusta la separación entre marcadores
-
+    const offset = 0.00025;
     coordMap.forEach((trucks, key) => {
       const [latRaw, lngRaw] = key.split(",").map((v) => Number(v ?? "0"));
       const lat = !isNaN(latRaw) ? latRaw : 0;
       const lng = !isNaN(lngRaw) ? lngRaw : 0;
       const count = trucks.length;
       const perRow = 3;
-      const offsetX = 0.00025; // separación horizontal
-      const offsetY = 0.00025; // separación vertical
+      const offsetX = 0.00025; 
+      const offsetY = 0.00025;
 
       trucks.forEach((truck, i) => {
         const row = Math.floor(i / perRow);
@@ -223,55 +220,97 @@ const TruckTracking = () => {
     const components: React.JSX.Element[] = [];
   
     ubicationData.forEach((ubication) => {
-      components.push(
-        <Circle
-          key={`route-circle-${ubication.id}`}
-          center={[ubication.position.latitud, ubication.position.longitud]}
-          radius={50}
-          className="relative"
-          pathOptions={{
-            color: "#000000",
-            fillColor: "#00000030",
-            weight: 3,
-            opacity: 0.9,
-            fillOpacity: 0.3,
-            dashArray: "8, 4",
-          }}
-        >
-          {/* <Tooltip permanent direction="center" className="absolute bottom-40 route-tooltip">
-            <div
-              className="text-base font-extrabold bg-purple-700 text-white px-1.5 py-0.5 rounded shadow-lg"
-              style={{ fontSize: "0.7rem"}}
-            >
-              {ubication.description}
-            </div>
-          </Tooltip> */}
-          <Popup>
-            <div className="text-sm max-w-xs">
-              <h4 className="font-semibold mb-2 text-lg text-blue-600">
-                ⚫ {ubication.description}
-              </h4>
-              <div className="space-y-1">
-                <p>
-                  <strong>Tipo:</strong>{" "}
-                  <span className="text-black font-medium">
-                    {ubication.location}
-                  </span>
-                </p>
-                <p>
-                  <strong>ID:</strong> {ubication.id}
-                </p>
-                <p>
-                  <strong>Tramo:</strong>{" "}
-                  <span className="text-green-600 font-bold">
-                    {ubication.name}
-                  </span>
-                </p>
+      if(ubication.geocerca){
+        components.push(
+          <Polygon
+            key={`route-polygon-${ubication.id}`}
+            positions={ubication.geocerca}
+            pathOptions={{
+              color: "#000000",
+              fillColor: "#000000",
+              weight: 3,
+              opacity: 0.9,
+              fillOpacity: 0.3,
+              lineCap: "round",
+              lineJoin: "round",
+            }}
+          >
+            {/* <Tooltip permanent direction="center" className="route-tooltip">
+              <div
+                className="text-base font-extrabold bg-blue-600 text-white px-4 py-2 rounded shadow-lg"
+                style={{ fontSize: "2rem", minWidth: 60 }}
+              >
+                {ubication.description}
               </div>
-            </div>
-          </Popup>
-        </Circle>
-      )
+            </Tooltip> */}
+            <Popup>
+              <div className="text-sm max-w-xs">
+                <h4 className="font-semibold mb-2 text-lg text-blue-600">
+                  🔷 {ubication.description}
+                </h4>
+                <div className="space-y-1">
+                  <p>
+                    <strong>Tipo:</strong>{" "}
+                    <span className="text-blue-600 font-medium">
+                      Polígono
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </Popup>
+          </Polygon>
+        )
+      } else {
+        components.push(
+          <Circle
+            key={`route-circle-${ubication.id}`}
+            center={[ubication.position.latitud, ubication.position.longitud]}
+            radius={50}
+            className="relative"
+            pathOptions={{
+              color: "#000000",
+              fillColor: "#00000030",
+              weight: 3,
+              opacity: 0.9,
+              fillOpacity: 0.3,
+              dashArray: "8, 4",
+            }}
+          >
+            {/* <Tooltip permanent direction="center" className="absolute bottom-40 route-tooltip">
+              <div
+                className="text-base font-extrabold bg-purple-700 text-white px-1.5 py-0.5 rounded shadow-lg"
+                style={{ fontSize: "0.7rem"}}
+              >
+                {ubication.description}
+              </div>
+            </Tooltip> */}
+            <Popup>
+              <div className="text-sm max-w-xs">
+                <h4 className="font-semibold mb-2 text-lg text-blue-600">
+                  ⚫ {ubication.description}
+                </h4>
+                <div className="space-y-1">
+                  <p>
+                    <strong>Tipo:</strong>{" "}
+                    <span className="text-black font-medium">
+                      {ubication.location}
+                    </span>
+                  </p>
+                  <p>
+                    <strong>ID:</strong> {ubication.id}
+                  </p>
+                  <p>
+                    <strong>Tramo:</strong>{" "}
+                    <span className="text-green-600 font-bold">
+                      {ubication.name}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </Popup>
+          </Circle>
+        )
+      }
     })
     return components;
   };

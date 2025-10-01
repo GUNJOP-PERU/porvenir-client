@@ -13,7 +13,7 @@ interface DonutChartProps {
   };
   showPrediction?: boolean;
   progressBar?: {
-    unit?: string;
+    unit: string;
     total: number;
     currentValue: number;
     prediction: number;
@@ -140,7 +140,7 @@ const DonutChart = ({
           highcharts={Highcharts}
           options={options}
           callback={(chart) => {
-            chartRef.current = chart; // Guarda la referencia al gráfico
+            chartRef.current = chart;
             updateCenterText(chart);
           }}
         />

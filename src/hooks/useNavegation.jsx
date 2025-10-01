@@ -281,12 +281,6 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon-detection-table",
           },
           {
-            name: "Tracking",
-            href: "dashboard/tracking",
-            icon: <IconRadar />,
-            active: pathname === "/dashboard/tracking",
-          },
-          {
             name: "Estado de la flota",
             href: "dashboard/fleet-status",
             icon: <LandPlot />,

@@ -129,7 +129,9 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     series: [
       {
         name: "Diferencia",
-        data: diff,
+        data: diff.map((diff,i) => {
+          return tripsCounts[i] ? diff : NaN
+        }),
         colorByPoint: true,
         colors: diffColor,
         xAxis: 1,
@@ -140,15 +142,9 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           },
         },
       },
-      // {
-      //   name: "Extraído",
-      //   data: tripsCounts,  
-      //   color: chartColor,
-      //   visible: false,
-      // },
       {
         name: "Plan",
-        data: tripsCounts.map((e,i) => e > plan[i] ? plan[i] : e),  
+        data: tripsCounts.map((e,i) => e > plan[i] ? plan[i] : e === 0 ? NaN : e),  
         color: chartColor,
         visible: true,
       },

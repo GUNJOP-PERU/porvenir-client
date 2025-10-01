@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import "./styles.css"
 
 const ProgressBarSmall = ({progressBarData}) => {
+  const currentPercentage = (progressBarData.currentValue/progressBarData.total)*100
 
   return (
     <div className="progress-bar--container small">
@@ -9,7 +10,12 @@ const ProgressBarSmall = ({progressBarData}) => {
         <b>{progressBarData.showTitle ? progressBarData.title : ""}</b> 
         <b>{progressBarData.currentValue} min</b> 
       </span>
-      <div className="currentValue-bar" style={{ width: `${(progressBarData.currentValue/progressBarData.total)*100}%`}}></div>
+      <div
+        className="currentValue-bar"
+        style={{
+          width: `${currentPercentage > 100 ? 100 : currentPercentage}%`
+        }}
+      ></div>
     </div>
   )
 }

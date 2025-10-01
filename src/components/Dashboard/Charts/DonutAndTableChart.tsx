@@ -2,21 +2,41 @@ import DonutChart from "./DonutChart"
 import PropTypes from "prop-types"
 import ProgressBarSmall from "./ProgressBarSmall"
 
-const DonutAndTableChart = ({ title, donutData, tableData = [] }) => {
+interface DonutAndTableChartProps {
+  title: string,
+  donutData: {
+    title: string,
+    total: number,
+    currentValue: number,
+    currentValueColor: string
+  }[],
+  tableData: {
+    title: string,
+    currentValue: number,
+    total: number,
+    subData: {
+      title: string,
+      currentValue: number,
+      total: number
+    }[]
+  }[]
+}
+
+const DonutAndTableChart = ({ title, donutData, tableData = [] }: DonutAndTableChartProps) => {
   return (
-    <div className="flex flex-row gap-2">
-      <div>
+    <div className="flex flex-row gap-4">
+      <div className="flex flex-col gap-4 justify-around">
         {donutData.map((data,i) => (
           <DonutChart
             key={i}
             title={data.title}
-            showSmall={true}
             donutData={data}
+            size="small"
           />
         ))}
       </div>
       <div className="flex-1 flex flex-col gap-2">
-        <h3 className="font-bold text-center">
+        <h3 className="text-xs font-bold leading-3 text-center">
           {title}
         </h3>
         {tableData.map((data,i) => (
@@ -42,26 +62,5 @@ const DonutAndTableChart = ({ title, donutData, tableData = [] }) => {
     </div>
   )
 }
-
-DonutAndTableChart.propTypes = {
-  title: PropTypes.string.isRequired,
-  donutData: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    total: PropTypes.number.isRequired,
-    currentValue: PropTypes.number.isRequired,
-    currentValueColor: PropTypes.string.isRequired,
-  })),
-  tableData: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    currentValue: PropTypes.number.isRequired,
-    total: PropTypes.number.isRequired,
-    subData: PropTypes.arrayOf(PropTypes.shape({
-      title: PropTypes.string,
-      currentValue: PropTypes.number.isRequired,
-      total: PropTypes.number.isRequired
-    }))
-  }))
-}
-
 
 export default DonutAndTableChart

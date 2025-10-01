@@ -1,5 +1,5 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
-import type { BeaconDetection } from "@/types/Beacon";
+import { useMemo, useState, useEffect } from "react";
+import type { BocaminaByUnits } from "@/types/Beacon";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   useReactTable,
@@ -12,12 +12,14 @@ import {
 import { format } from 'date-fns';
 
 interface UnitTripsTableProps {
-  data: BeaconDetection[]
+  data: BocaminaByUnits[]
 }
 
 const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
+  const sortData = useMemo(() => {
+    return [...data].sort((a, b) => a.unit.localeCompare(b.unit));
+  }, [data]);
   const [sorting, setSorting] = useState<import('@tanstack/react-table').SortingState>([]);
-  const [filteredData, setFilteredData] = useState<{unit: string, detections: BeaconDetection[]}[]>([]);
   const [columnFilters, setColumnFilters] = useState<import('@tanstack/react-table').ColumnFiltersState>([]);
   const [expanded, setExpanded] = useState({});
   const [globalFilter, setGlobalFilter] = useState<string>("");
@@ -26,22 +28,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
     pageSize: 5,
   });
 
-  const applyFilters = () => {
-    let filtered = [...data].sort((a,b) => a.unit.localeCompare(b.unit));
-
-    const UnitDetections  = filtered.reduce((acc, curr) => {
-      const existingUnit = acc.find(item => item.unit === curr.unit);
-      if (!existingUnit) {
-        acc.push({ unit: curr.unit, detections: [curr] });
-      } else {
-        existingUnit.detections.push(curr);
-      }
-      return acc;
-    }, [] as { unit: string; detections: BeaconDetection[] }[]);
-    setFilteredData(UnitDetections);
-  };
-
-  const columns = useMemo<ColumnDef<{unit: string, detections: BeaconDetection[]}>[]>(() => [
+  const columns = useMemo<ColumnDef<BocaminaByUnits>[]>(() => [
     {
       id: "index",
       header: "#",
@@ -71,22 +58,18 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
       size: 150,
     },
     {
-      accessorKey: "detections",
+      accessorKey: "totalBC",
       header: "Total Lecturas",
       size: 150,
       cell: ({ row }) => {
-        const detections = row.original.detections.length;
+        const detections = row.original.totalBC;
         return `${detections} lecturas`;
       },
     }
-  ], []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [data]);
+  ], [data]);
 
   const table = useReactTable({
-    data: filteredData,
+    data: sortData,
     columns,
     getRowCanExpand: (row) => true,
     state: {
@@ -180,7 +163,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {row.original.detections.map((detection, index: number) => (
+                          {row.original.bc.map((detection, index: number) => (
                             <tr key={index} className="bg-white border-b hover:bg-gray-50">
                               <td className="px-4 py-2 text-[11px]">{row.original.unit.toUpperCase()}</td>
                               <td className="px-4 py-2 text-[11px]">{detection.ubication}</td>

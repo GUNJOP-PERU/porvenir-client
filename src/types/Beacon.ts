@@ -4,6 +4,21 @@ export type BeaconCycle= {
   totalMaintanceTimeMin: number,
   bocaminaStats: {name: string, count: number}[],
   trips: BeaconUnitTrip[]
+  maintance: {
+    unit: string,
+    shift: string,
+    ubication: string,
+    ubicationType: string,
+    f_inicio: string,
+    f_final: string,
+    duration: number,
+    distance: number,
+    consolidatedCount: number,
+    originalDates: {
+      f_inicio: string,
+      f_final: string
+    }[]
+  }[]
 }
 
 export type BeaconUnitTrip = {
@@ -76,4 +91,23 @@ export type BeaconTruckStatus = {
   status: "inoperativo" | "operativo" | "mantenimiento",
   updatedAt: string,
   comments: string[]
+}
+
+export type BocaminaByUnits = {
+  unit: string,
+  totalBC: number,
+  bc: {
+    _id: string,
+    mac: string,
+    unit: string,
+    f_inicio: string,
+    f_final: string,
+    duration: number,
+    distance: number,
+    uuid: string,
+    connection: string,
+    shift: string,
+    ubication: string,
+    ubicationType: string
+  }[]
 }

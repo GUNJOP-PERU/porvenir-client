@@ -31,7 +31,6 @@ const DonutAndSplineChartByHour = ({
   mineralWeight,
   mode = "hour",
 }: IDonutAndSplineChartByHourProps) => {
-  console.log(chartData);
   const xLabels =
     mode === "day"
       ? chartData.map((item) => item.label) 
@@ -52,12 +51,11 @@ const DonutAndSplineChartByHour = ({
     planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
 
-  console.log(xLabels);
   const options = {
     chart: {
       type: "areaspline",
       height: 280,
-      marginBottom: 80,
+      marginBottom: 50,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -134,11 +132,11 @@ const DonutAndSplineChartByHour = ({
         data: accumulativePlanData,
         xAxis: 1,
         fillColor: "#ffd0d63d",
-        color: "#fe7887",
+        color: "#00000080",
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#fe7887",
+          lineColor: "#00000080",
         },
       },
     ],
