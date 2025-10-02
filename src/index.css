@@ -282,4 +282,63 @@ number-flow-react::part(suffix) {
   pointer-events: none;
 }
 
-/*----------------Circular----------------*/
+/*----------------Zoom----------------*/
+/* Estilos para el control de zoom en modo oscuro */
+.leaflet-bar {
+  background-color: rgba(0, 0, 0, 0.8) !important; /* Color de fondo oscuro */
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  background-color: transparent !important;
+  color: #e5e7eb !important; /* Texto claro */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 30px !important;
+  font-size: 18px !important;
+  transition: all 0.2s ease;
+}
+
+.leaflet-bar a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.leaflet-bar a:first-child {
+  border-top-left-radius: 7px !important;
+  border-top-right-radius: 7px !important;
+}
+
+.leaflet-bar a:last-child {
+  border-bottom: none !important;
+  border-bottom-left-radius: 7px !important;
+  border-bottom-right-radius: 7px !important;
+}
+
+/*----------------Animación----------------*/
+.truck-inner.marker-highlight {
+  animation: truck-pulse 1.2s ease-out 3;
+  transform-origin: center center;
+}
+
+@keyframes truck-pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(255,200,0,0));
+  }
+  50% {
+    transform: scale(2);
+    filter: drop-shadow(0 0 20px rgba(162, 127, 0, 0.95));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(255,200,0,0));
+  }
+}
+
+.leaflet-map-pane {
+  transform: rotate(-25deg);
+  transform-origin: center center;
+}
