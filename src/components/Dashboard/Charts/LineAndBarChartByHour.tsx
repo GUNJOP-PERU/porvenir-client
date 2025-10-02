@@ -172,6 +172,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         colorByPoint: true,
         colors: diffColorPlanDay,
         visible: mode === "hour",
+        showInLegend: mode === "hour",
         xAxis: 1,
         dataLabels: {
           enabled: true,
@@ -184,7 +185,15 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         name: "Plan",
         data: tripsCounts.map((e,i) => e > plan[i] ? plan[i] : e === 0 ? NaN : e),  
         color: chartColor,
-        visible: true,
+        visible: mode === "day",
+        showInLegend: mode === "day",
+      },
+      {
+        name: "Plan",
+        data: tripsCounts.map((e,i) => e > currentPlanDay[i] ? currentPlanDay[i] : e === 0 ? NaN : e),
+        visible: mode === "hour",
+        showInLegend: mode === "hour",
+        color: chartColor,
       },
     ],
     tooltip: {

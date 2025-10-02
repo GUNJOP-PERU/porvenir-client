@@ -346,7 +346,7 @@ const RealTimeByHourRT = () => {
             >
               <DonutAndSplineChartByHour
                 progressBarData={{
-                  total: 1200,
+                  total: planDay.totalTonnage,
                   currentValue: 0,
                   prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
                   currentValueColor: "#fac34c",
@@ -382,7 +382,7 @@ const RealTimeByHourRT = () => {
             >
               <DonutAndSplineChartByHour
                 progressBarData={{
-                  total: 1200,
+                  total: planDay.totalTonnage,
                   currentValue: 0,
                   prediction:
                     (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
@@ -421,7 +421,7 @@ const RealTimeByHourRT = () => {
             >
               <DonutAndSplineChartByHour
                 progressBarData={{
-                  total: 1200,
+                  total: planDay.totalTonnage,
                   currentValue: baseStats.totalTMDay,
                   prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
                   currentValueColor: "#fac34c",
@@ -457,7 +457,7 @@ const RealTimeByHourRT = () => {
             >
               <DonutAndSplineChartByHour
                 progressBarData={{
-                  total: 1200,
+                  total: planDay.totalTonnage,
                   currentValue: baseStats.totalTMNight,
                   prediction:
                     (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
