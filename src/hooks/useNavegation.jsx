@@ -70,27 +70,27 @@ export const useNavigation = () => {
               },
             ],
           },
-          // {
-          //   name: "Planes",
-          //   icon: <IconPlan />,
-          //   items: [
-          //     {
-          //       name: "Plan Diario",
-          //       href: "/planDay",
-          //       active: pathname === "/planDay",
-          //     },
-          //     {
-          //       name: "Plan Semanal",
-          //       href: "/planWeek",
-          //       active: pathname === "/planWeek",
-          //     },
-          //     {
-          //       name: "Plan Mensual",
-          //       href: "/planMonth",
-          //       active: pathname === "/planMonth",
-          //     },
-          //   ],
-          // },
+          {
+            name: "Planes",
+            icon: <IconPlan />,
+            items: [
+              {
+                name: "Plan Diario",
+                href: "/planDay",
+                active: pathname === "/planDay",
+              },
+              {
+                name: "Plan Semanal",
+                href: "/planWeek",
+                active: pathname === "/planWeek",
+              },
+              {
+                name: "Plan Mensual",
+                href: "/planMonth",
+                active: pathname === "/planMonth",
+              },
+            ],
+          },
           {
             name: "Conectividad",
             icon: <Waypoints />,

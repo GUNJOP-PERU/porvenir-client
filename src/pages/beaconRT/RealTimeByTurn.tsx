@@ -9,12 +9,13 @@ import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
+import type { PlanDay } from "@/types/Plan";
 // Utils
 import { format } from "date-fns";
 import { ChartNoAxesColumn } from "lucide-react";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import { getCurrentDay } from "@/utils/dateUtils";
+import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
 // Icons
 import { GiMineTruck } from "react-icons/gi";
 
@@ -44,6 +45,12 @@ const RealTimeByHourRT = () => {
     refetchInterval: 10000,
   });
 
+  const {
+    data: planData = []
+  } = useFetchData<PlanDay[]>("planday-rt", `planDay/by-date-range?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}`, {
+    refetchInterval: 10000,
+  });
+
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -51,6 +58,16 @@ const RealTimeByHourRT = () => {
       mineralData?.find((charge) => charge.name === "Desmonte")?.value || 40;
     return { mineral, desmonte };
   }, [mineralData]);
+
+  const planDay = useMemo(() => {
+    const currentDate = format(getCurrentDay().startDate, 'yyyy-MM-dd');
+    const filteredPlanData = planData.filter((day) => (day.shift === shiftFilter) && (planDayDateParser(day.date) === currentDate));
+    return {
+      totalTonnage: filteredPlanData.reduce((acc, day) => acc + day.tonnage, 0),
+      planDayShift: filteredPlanData,
+      planDay: filteredPlanData
+    };
+  }, [planData, shiftFilter]);
 
   const baseStats = useMemo(() => {
     if (!data || !mineralData) {
@@ -336,6 +353,7 @@ const RealTimeByHourRT = () => {
                   showDifference: false,
                   forecastText: "Predicción",
                 }}
+                planDay={planDay}
                 mineralWeight={baseData.mineral}
                 chartData={tripsByShift.dia.map(item => ({ hour: item.hour, trips: [] }))}
               />
@@ -349,6 +367,7 @@ const RealTimeByHourRT = () => {
               <LineAndBarChartByHour
                 mineralWeight={baseData.mineral}
                 chartColor="#fac34c"
+                planDay={planDay}
                 chartData={tripsByShift.dia.map(item => ({ hour: item.hour, trips: [] }))}
               />
             </CardTitle>
@@ -386,6 +405,7 @@ const RealTimeByHourRT = () => {
                 mineralWeight={baseData.mineral}
                 chartColor="#3c3f43"
                 chartData={tripsByShift.noche.map(item => ({ hour: item.hour, trips: [] }))}
+                planDay={planDay}
               />
             </CardTitle>
           </div>
@@ -410,6 +430,7 @@ const RealTimeByHourRT = () => {
                 }}
                 mineralWeight={baseData.mineral}
                 chartData={tripsByShift.dia}
+                planDay={planDay}
               />
             </CardTitle>
             <CardTitle
@@ -422,6 +443,7 @@ const RealTimeByHourRT = () => {
                 mineralWeight={baseData.mineral}
                 chartColor="#fac34c"
                 chartData={tripsByShift.dia}
+                planDay={planDay}
               />
             </CardTitle>
           </div>
@@ -443,6 +465,7 @@ const RealTimeByHourRT = () => {
                   showDifference: false,
                   forecastText: "Predicción",
                 }}
+                planDay={planDay}
                 mineralWeight={baseData.mineral}
                 chartData={tripsByShift.noche}
               />
@@ -457,6 +480,7 @@ const RealTimeByHourRT = () => {
               <LineAndBarChartByHour
                 mineralWeight={baseData.mineral}
                 chartColor="#3c3f43"
+                planDay={planDay}
                 chartData={tripsByShift.noche}
               />
             </CardTitle>

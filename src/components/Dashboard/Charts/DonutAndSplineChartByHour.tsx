@@ -5,6 +5,7 @@ import Progress from "./Progress";
 import DonutChart from "./DonutChart";
 // Types
 import type { BeaconUnitTrip } from "@/types/Beacon";
+import type { PlanDay } from "@/types/Plan";
 
 interface IDonutAndSplineChartByHourProps {
   title?: string;
@@ -23,6 +24,11 @@ interface IDonutAndSplineChartByHourProps {
     trips: BeaconUnitTrip[];
   }[];
   mode?: "hour" | "day";
+  planDay?: {
+    totalTonnage: number;
+    planDayShift: PlanDay[];
+    planDay: PlanDay[];
+  }
 }
 
 const DonutAndSplineChartByHour = ({
@@ -30,6 +36,7 @@ const DonutAndSplineChartByHour = ({
   chartData,
   mineralWeight,
   mode = "hour",
+  planDay
 }: IDonutAndSplineChartByHourProps) => {
   const xLabels =
     mode === "day"
@@ -51,6 +58,10 @@ const DonutAndSplineChartByHour = ({
     planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
 
+  const currentPlanDay = planDay ? new Array(chartData.length).fill(planDay.totalTonnage/12) : [];
+  const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
+    currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  );
   const options = {
     chart: {
       type: "areaspline",
@@ -72,13 +83,15 @@ const DonutAndSplineChartByHour = ({
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.7em",
+            fontSize: "0.6em",
             fontWeight: "bold",
           },
         },
       },
       {
-        categories: accumulativePlanData.map(
+        categories: mode === "day" ? accumulativePlanData.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ) : accumulativeCurrentPlanDay.map(
           (value) => `${roundAndFormat(value)} TM`
         ),
         opposite: false,
@@ -87,7 +100,7 @@ const DonutAndSplineChartByHour = ({
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.7em",
+            fontSize: "0.6em",
             fontWeight: "bold",
           },
         },
@@ -129,7 +142,7 @@ const DonutAndSplineChartByHour = ({
       },
       {
         name: "Plan",
-        data: accumulativePlanData,
+        data: mode === "day" ? accumulativePlanData : accumulativeCurrentPlanDay,
         xAxis: 1,
         fillColor: "#ffd0d63d",
         color: "#00000080",

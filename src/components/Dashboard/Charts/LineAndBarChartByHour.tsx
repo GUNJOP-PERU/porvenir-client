@@ -1,8 +1,9 @@
-import Highcharts from "highcharts";
+import Highcharts, { Series } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { roundAndFormat } from "@/lib/utilsGeneral";
 // Types
 import type { BeaconUnitTrip } from "@/types/Beacon";
+import type { PlanDay } from "@/types/Plan";
 
 interface LineAndBarChartByHourProps {
   title?: string;
@@ -14,9 +15,14 @@ interface LineAndBarChartByHourProps {
     trips: BeaconUnitTrip[];
   }[];
   mode?: "hour" | "day";
+  planDay?: {
+    totalTonnage: number;
+    planDayShift: PlanDay[];
+    planDay: PlanDay[];
+  }
 }
 
-const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", mode = "hour" }: LineAndBarChartByHourProps) => {
+const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", mode = "hour", planDay }: LineAndBarChartByHourProps) => {
 
   const xLabels = mode === "day" 
     ? chartData.map(item => item.label ?? "")
@@ -42,6 +48,20 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       : "#fe7887";
   });
 
+  const currentPlanDay = planDay ? new Array(chartData.length).fill(planDay.totalTonnage/12) : [];
+  const diffPlanDay = currentPlanDay.map((exp, i) => {
+    const currentData = tripsCounts;
+    const value =
+      typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
+    const e = Math.abs(exp - value);
+    return +e;
+  });
+  const diffColorPlanDay = currentPlanDay.map((exp, i) => {
+    const currentData = tripsCounts;
+    return currentData[i] !== undefined && currentData[i] >= exp
+      ? "#04c286"
+      : "#fe7887";
+  });
 
   const options = {
     chart: {
@@ -63,21 +83,21 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.7em",
+            fontSize: "0.6em",
             fontWeight: "bold",
           },
         },
       },
       {
         title: "",
-        categories: plan.map((e) => `${roundAndFormat(e)} TM`),
+        categories: mode === "day" ? plan.map((e) => `${roundAndFormat(e)} TM`) : currentPlanDay.map((e) => `${roundAndFormat(e)} TM`),
         opposite: false,
         lineColor: "transparent",
         labels: {
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.7em",
+            fontSize: "0.6em",
             fontWeight: "bold",
           },
         },
@@ -135,6 +155,24 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         colorByPoint: true,
         colors: diffColor,
         xAxis: 1,
+        visible: mode === "day",
+        showInLegend: mode === "day",
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return `${roundAndFormat(diff[this.point.index])}`;
+          },
+        },
+      },
+      {
+        name: "Diferencia",
+        data: diffPlanDay.map((diff,i) => {
+          return tripsCounts[i] ? diff : NaN
+        }),
+        colorByPoint: true,
+        colors: diffColorPlanDay,
+        visible: mode === "hour",
+        xAxis: 1,
         dataLabels: {
           enabled: true,
           formatter: function () {
@@ -184,7 +222,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       layout: "vertical",
       floating: false,
       labelFormatter: function () {
-        if (this.index === 0) {
+        if (this.index === 0 || this.index === 1) {
           return `<span style='color:#000000'>Real</span>`;
         } else {
           return `<span style='color:#A6A6A6'>${this.name}</span>`;

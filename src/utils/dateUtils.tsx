@@ -1,4 +1,4 @@
-import { startOfWeek, endOfWeek, format, eachDayOfInterval, addDays } from "date-fns";
+import { startOfWeek, endOfWeek, format, eachDayOfInterval, addDays, addHours, add } from "date-fns";
 
 export const getCurrentWeekStartEndDates = () => {
   const currentDate = new Date();
@@ -74,4 +74,8 @@ export const getCurrentDay = () => {
     startDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
     endDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
   };
+}
+
+export const planDayDateParser = ( e : string) => {
+  return format(addHours(new Date(e), 5), 'yyyy-MM-dd');
 }
