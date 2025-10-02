@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { beaconsData } from "@/store/BeaconMac";
 import {
@@ -296,6 +296,10 @@ const BeaconDetectionTable = () => {
     });
     return Array.from(map.values());
   }, [data]);
+
+  useEffect(() => {
+    refetch()
+  }, [filters.startDate, filters.endDate]);
 
   return (
     <div className="w-full h-full flex flex-col bg-white">

@@ -296,4 +296,13 @@ export const beaconsData = [
     createdAt: "2024-07-21T19:09:00Z",
     updatedAt: "2024-08-21T19:09:00Z",
   },
+  {
+    id: 34,
+    mac: "bc:57:29:01:c9:03",
+    name: "PRQ_01",
+    location: "ruta superficie",
+    description: "Parqueo de Volquetes",
+    createdAt: "2024-07-23T12:27:00Z",
+    updatedAt: "2024-08-23T12:27:00Z",
+  },
 ];
