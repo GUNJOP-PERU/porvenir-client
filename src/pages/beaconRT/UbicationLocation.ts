@@ -523,15 +523,15 @@ const staticMarkers = [
   {
     id: "taller",
     name: "TALLER SATURNO",
-    position: [-13.07972, -75.99000],
+    position: [-13.07995, -75.98980],
     color: "#FACC15", 
   },
-  // {
-  //   id: "cancha-100",
-  //   name: "CANCHA 100",
-  //   position: [-13.08278, -75.99278],
-  //   color: "#FACC15", 
-  // },
+  {
+    id: "cancha-100",
+    name: "CANCHA 100",
+    position: [-13.08360, -75.99278],
+    color: "#FACC15", 
+  },
   {
     id: "cco-1",
     name: "CCOI",

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
-import { DateRange } from 'react-date-range';
+import { DateRange } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
 import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
@@ -14,19 +14,22 @@ import { getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 import { format, getISODay } from "date-fns";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
 import { ChartNoAxesColumn } from "lucide-react";
-import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 import Progress from "@/components/Dashboard/Charts/Progress";
+import { useFetchGraphicData } from "@/hooks/useGraphicData";
+import { es } from "date-fns/locale";
 
 const RealTimeByDay = () => {
   const isoDayNumber = getISODay(new Date());
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
-  const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
+  const [dateFilter, setDateFilter] = useState<
+    [{ startDate: Date; endDate: Date; key: string }]
+  >([
     {
       startDate: new Date(getCurrentWeekStartEndDates().startDate),
       endDate: new Date(getCurrentWeekStartEndDates().endDate),
       key: "selection",
-    }
+    },
   ]);
 
   const {
@@ -37,7 +40,10 @@ const RealTimeByDay = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-day-week",
-    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}`,
+    `beacon-track/trip?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
     { refetchInterval: 10000 }
   );
 
@@ -141,12 +147,15 @@ const RealTimeByDay = () => {
     if (!data) return [];
 
     const trips = data.map((unitGroup) => unitGroup.trips).flat();
-    const grouped: Record<string, BeaconUnitTrip[]> = trips.reduce((acc, trip) => {
-      const day = format(new Date(trip.startDate), "yyyy-MM-dd");
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(trip);
-      return acc;
-    }, {} as Record<string, BeaconUnitTrip[]>);
+    const grouped: Record<string, BeaconUnitTrip[]> = trips.reduce(
+      (acc, trip) => {
+        const day = format(new Date(trip.startDate), "yyyy-MM-dd");
+        if (!acc[day]) acc[day] = [];
+        acc[day].push(trip);
+        return acc;
+      },
+      {} as Record<string, BeaconUnitTrip[]>
+    );
     return Object.entries(grouped).map(([date, trips]) => ({
       date,
       trips,
@@ -157,21 +166,56 @@ const RealTimeByDay = () => {
     refetch();
   }, [dateFilter, shiftFilter]);
 
-  // if (tripsLoading || tripsError || !data || data.length === 0) {
-  //   return (
-  //     <StatusDisplay
-  //       isLoading={tripsLoading}
-  //       isError={tripsError}
-  //       noData={!data || data.length === 0}
-  //     />
-  //   );
-  // }
+  const { data: dataPlan = [] } = useFetchGraphicData({
+    queryKey: "plan-week-history",
+    endpoint: "planWeek",
+    filters: `startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
+      shiftFilter ? `&shift=${shiftFilter}` : ""
+    }`,
+  });
+
+  const planDay = useMemo(() => {
+    if (!dataPlan || dataPlan.length === 0) return null;
+
+    const plan = dataPlan[0];
+
+    const filteredDataGenerate = shiftFilter
+      ? plan.dataGenerate?.filter((item) => item.turno === shiftFilter)
+      : plan.dataGenerate;
+
+    const tonnageByDate =
+      filteredDataGenerate?.reduce((acc, item) => {
+        const label = format(new Date(item.date), "EEE dd", { locale: es });
+        if (!acc[label]) acc[label] = 0;
+        acc[label] += item.tonnage;
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+    const planDayData = Object.entries(tonnageByDate).map(
+      ([label, tonnage]) => ({
+        date: label,
+        tonnage,
+      })
+    );
+
+    return {
+      totalTonnage: plan.totalTonnage,
+      planDay: planDayData,
+      planDayShift: plan.planDayShift || [],
+    };
+  }, [dataPlan, shiftFilter]);
 
   return (
     <div className="grid grid-cols-1 flex-1 w-full gap-2">
       <PageHeader
         title="Reporte Semanal de Viajes"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones. ${format(dateFilter[0].startDate, 'dd-MM-yyyy')} al ${format(dateFilter[0].endDate, 'dd-MM-yyyy')}`}
+        description={`Reporte en tiempo real de los viajes realizados por los camiones. ${format(
+          dateFilter[0].startDate,
+          "dd-MM-yyyy"
+        )} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}`}
         refetch={refetch}
         isFetching={isFetching}
         count={data.length}
@@ -295,10 +339,9 @@ const RealTimeByDay = () => {
           color="#fac34c"
           unit="hrs"
         />
-
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-        { shiftFilter === "dia" ? (
+        {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
               title="Acumulado de Extracción de mineral Turno Día en TM de los Scoop"
@@ -310,7 +353,8 @@ const RealTimeByDay = () => {
                 progressBarData={{
                   total: 1200 * 7,
                   currentValue: 0,
-                  prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
+                  prediction:
+                    (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
                   currentValueColor: "#fac34c",
                   showDifference: false,
                   forecastText: "Predicción",
@@ -320,7 +364,7 @@ const RealTimeByDay = () => {
                   totalTrips: 0,
                   statsByDay: tripsByDay.map((dayGroup) => ({
                     date: dayGroup.date,
-                    totalTrips: 0
+                    totalTrips: 0,
                   })),
                 }}
               />
@@ -393,7 +437,7 @@ const RealTimeByDay = () => {
             </CardTitle>
           </div>
         )}
-        { shiftFilter === "dia" ? (
+        {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
               title="Acumulado de Extracción de mineral Turno Día en TM de los Camiones"
@@ -405,7 +449,8 @@ const RealTimeByDay = () => {
                 progressBarData={{
                   total: 1200 * 7,
                   currentValue: baseStats.totalTMDay,
-                  prediction: (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
+                  prediction:
+                    (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
                   currentValueColor: "#fac34c",
                   showDifference: false,
                   forecastText: "Predicción",

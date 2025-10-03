@@ -106,6 +106,7 @@ export type BeaconTruckStatus = {
   lastUbicationMac: string,
   name: string,
   status: "inoperativo" | "operativo" | "mantenimiento",
+  connectivity: "online" | "offline",
   updatedAt: string,
   comments: string[]
 }

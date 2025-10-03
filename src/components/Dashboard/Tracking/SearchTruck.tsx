@@ -1,3 +1,4 @@
+import { ubicationData } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
 import { useState, useMemo } from "react";
@@ -7,7 +8,6 @@ export default function SearchTruck({
   onTruckSelect,
   selectedTruck,
   isLoading,
-  trucksPerArea,
 }: {
   data: BeaconTruckStatus[];
   onTruckSelect: (truck: BeaconTruckStatus) => void;
@@ -17,9 +17,26 @@ export default function SearchTruck({
     position: [number, number];
   } | null;
   isLoading: boolean;
-  trucksPerArea: { area: string; count: number }[];
 }) {
   const [query, setQuery] = useState("");
+
+  const trucksPerArea = ubicationData.map((ubication) => {
+    const trucksInArea = data.filter(
+      (truck) =>
+        truck.lastUbicationMac &&
+        truck.lastUbicationMac.toLowerCase() === ubication.mac.toLowerCase()
+    );
+    const onlineCount = trucksInArea.filter(
+      (truck) => truck.connectivity === "online"
+    ).length;
+    const offlineCount = trucksInArea.length - onlineCount;
+    return {
+      area: ubication.name,
+      count: trucksInArea.length,
+      online: onlineCount,
+      offline: offlineCount,
+    };
+  });
 
   const filtered = useMemo(() => {
     if (!query) return [];
@@ -99,30 +116,42 @@ export default function SearchTruck({
       <div>
         <div className="flex justify-between gap-1 mb-1 px-1.5">
           <p className="text-[10px] text-sky-300 font-bold">
-            ÁREAS | {trucksPerArea.length} |
+            | {trucksPerArea.length} | ÁREAS
           </p>
-          <p className="text-[10px] text-orange-300 font-bold">
+          <p className="text-[10px] text-amber-400 font-bold">
             CAMIONES | {data.length} |
           </p>
         </div>
-        <div className="flex flex-col gap-1 bg-black/70 rounded-lg p-3 px-2">
+        <div className="flex flex-col gap-1 bg-black/70 rounded-lg py-2.5 px-2">
           {trucksPerArea.map((area, i) => (
-            <div className="flex items-center justify-between gap-1" key={i}>
-              <p className="text-[11px] text-[#0EB1D2] leading-none">{area.area}</p>
-              <p
-                className={`text-[11px] leading-none ${
-                  area.count === 0 ? "text-orange-800" : "text-orange-500"
-                }`}
-              >
-                {area.count}
+            <div className="flex items-center justify-between gap-1 hover:bg-white/20 cursor-pointer select-none" key={i}>
+              <p className="text-[11px] text-[#0EB1D2] leading-none">
+                {" "}
+                {area.area}{" "}
               </p>
+              <div className="flex gap-1">
+                <p
+                  className={clsx(
+                    "text-[11px] text-amber-400 leading-none",
+                    area.online === 0 && "opacity-50"
+                  )}
+                >
+                  {area.online}
+                </p>
+                <p
+                  className={clsx(
+                    "text-[11px] text-zinc-500 leading-none",
+                    area.offline === 0 && "opacity-50"
+                  )}
+                >
+                  {area.offline}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </div>
-      <div>
-
-      </div>
+      <div></div>
     </div>
   );
 }
