@@ -7,12 +7,12 @@ import { useToast } from "@/hooks/useToaster";
 import { ModalComment } from "@/components/Dashboard/FleetStatus/ModalComment";
 import IconTruck from "@/icons/IconTruck";
 import PageHeader from "@/components/PageHeader";
+import clsx from "clsx";
 
 const extractNumber = (tag) => {
   const match = tag.match(/(\d+)/);
   return match ? parseInt(match[0], 10) : 0;
 };
-
 
 export default function FleetStatus() {
   const { addToast } = useToast();
@@ -60,15 +60,22 @@ export default function FleetStatus() {
         content: truck.tag,
         lastUbication: truck.lastUbication,
         updatedAt: truck.updatedAt,
+        connectivity: truck.connectivity,
       };
       if (truck.status === "operativo") operativoItems.push(item);
       else if (truck.status === "mantenimiento") mantenimientoItems.push(item);
       else inoperativoItems.push(item);
     });
 
-    operativoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
-  mantenimientoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
-  inoperativoItems.sort((a, b) => extractNumber(a.content) - extractNumber(b.content));
+    operativoItems.sort(
+      (a, b) => extractNumber(a.content) - extractNumber(b.content)
+    );
+    mantenimientoItems.sort(
+      (a, b) => extractNumber(a.content) - extractNumber(b.content)
+    );
+    inoperativoItems.sort(
+      (a, b) => extractNumber(a.content) - extractNumber(b.content)
+    );
 
     setColumns((prev) => ({
       ...prev,
@@ -91,7 +98,7 @@ export default function FleetStatus() {
 
       setSelectedTruck({ id: draggableId, status: newStatus });
       setIsOpen(true);
-    } 
+    }
   }, []);
 
   const itemColors = {
@@ -114,7 +121,7 @@ export default function FleetStatus() {
 
   return (
     <>
-      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col">      
+      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 flex-1 grid-rows-3 xl:grid-rows-1 ">
           <DragDropContext onDragEnd={onDragEnd}>
             {Object.entries(columns).map(([columnId, column]) => (
@@ -163,7 +170,7 @@ export default function FleetStatus() {
                                 }`}
                               >
                                 <div
-                                  className={`${itemColors[columnId].inner} rounded-lg py-1 px-1 flex items-center gap-2`}
+                                  className={`${itemColors[columnId].inner} rounded-lg py-1 px-1 flex items-center gap-2 ${item.connectivity === "online" ? "opacity-100" : "opacity-50"}`}
                                 >
                                   <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0">
                                     <IconTruck
@@ -181,8 +188,17 @@ export default function FleetStatus() {
                                     </span>
                                   </div>
                                 </div>
-                                <span className="text-[10px] text-zinc-300 select-none leading-[10px] pl-2 pb-0.5 text-center">
-                                  En línea{" "}
+                                <span className={clsx("text-[9.5px] select-none leading-[10px] pl-1.5 pb-0.5 text-center flex items-center gap-1 truncate", item.connectivity === "online" ? "text-amber-400" : "text-zinc-300")}>
+                                  <div
+                                    className={`w-[4px] h-[4px] rounded-full ${
+                                      item.connectivity === "online"
+                                        ? "bg-amber-400"
+                                        : "bg-zinc-300"
+                                    }`}
+                                  ></div>{" "}
+                                  {item.connectivity === "online"
+                                    ? "En línea"
+                                    : "Fuera de línea"}
                                   <TimeAgo
                                     datetime={item.updatedAt}
                                     locale="es"

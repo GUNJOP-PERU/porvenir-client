@@ -33,6 +33,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const planValue = mode === "day" ? 1200 : 100;
   const plan = new Array(chartData.length).fill(planValue);
   
+  
   const diff = plan.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
@@ -48,7 +49,15 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       : "#fe7887";
   });
 
-  const currentPlanDay = planDay ? new Array(chartData.length).fill(planDay.totalTonnage/12) : [];
+  const currentPlanDay = planDay 
+  ? (
+      mode === "day"
+        ? planDay.planDay.map(p => p.tonnage)   
+        : new Array(12).fill(planDay.totalTonnage / 12) 
+    )
+  : [];
+
+
   const diffPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
@@ -90,7 +99,9 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         title: "",
-        categories: mode === "day" ? plan.map((e) => `${roundAndFormat(e)} TM`) : currentPlanDay.map((e) => `${roundAndFormat(e)} TM`),
+        categories: mode === "day" 
+        ? planDay?.planDay.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [] 
+        : currentPlanDay.map(e => `${roundAndFormat(e)} TM`),      
         opposite: false,
         lineColor: "transparent",
         labels: {
@@ -183,11 +194,18 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         name: "Plan",
-        data: tripsCounts.map((e,i) => e > plan[i] ? plan[i] : e === 0 ? NaN : e),  
+        data: tripsCounts.map((e,i) => 
+          e > currentPlanDay[i] 
+            ? currentPlanDay[i] 
+            : e === 0 
+              ? NaN 
+              : e
+        ),  
         color: chartColor,
         visible: mode === "day",
         showInLegend: mode === "day",
       },
+      
       {
         name: "Plan",
         data: tripsCounts.map((e,i) => e > currentPlanDay[i] ? currentPlanDay[i] : e === 0 ? NaN : e),

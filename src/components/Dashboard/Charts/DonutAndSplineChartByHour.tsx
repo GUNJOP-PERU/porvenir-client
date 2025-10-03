@@ -54,11 +54,21 @@ const DonutAndSplineChartByHour = ({
 
   const planValue = mode === "day" ? 1200 : 100;
   const planData = new Array(chartData.length).fill(planValue);
-  const accumulativePlanData = planData.map((_, index) =>
-    planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
-  );
+  const accumulativePlanData = mode === "day" && planDay
+  ? planDay.planDay.map((p, i) => 
+      planDay.planDay.slice(0, i + 1).reduce((acc, val) => acc + val.tonnage, 0)
+    )
+  : planData.map((_, index) =>
+      planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+    );
 
-  const currentPlanDay = planDay ? new Array(chartData.length).fill(planDay.totalTonnage/12) : [];
+  const currentPlanDay = planDay 
+  ? (
+      mode === "day"
+        ? planDay.planDay.map(p => p.tonnage)   
+        : new Array(12).fill(planDay.totalTonnage / 12) 
+    )
+  : [];
   const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
     currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
