@@ -154,14 +154,24 @@ const DonutAndSplineChartByHour = ({
         name: "Plan",
         data: mode === "day" ? accumulativePlanData : accumulativeCurrentPlanDay,
         xAxis: 1,
-        fillColor: "#ffd0d63d",
-        color: "#00000080",
-        areaColor: "#ffd0d63d",
+        fillColor: "#f5f5f580",
+        color: "#757575",
+        areaColor: "#f5f5f580",
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#00000080",
+          lineColor: "#757575",
         },
+        zones: acummulativeTripsCounts.map((realValue, index) => {
+          const hasRealData = realValue !== undefined && !isNaN(realValue) && realValue > 0;
+          return {
+            value: index + 1,
+            dashStyle: hasRealData ? 'Solid' : 'Dash',
+            color: hasRealData ? "#757575" : "#bdbdbd",
+            fillColor: hasRealData ? "#f5f5f580" : "#f5f5f520"
+          };
+        }),
+        zoneAxis: 'x',
       },
     ],
     tooltip: {
@@ -175,7 +185,7 @@ const DonutAndSplineChartByHour = ({
         color: "#FFFFFF",
         fontSize: "0.65em",
       },
-      pointFormatter: function () {
+      pointFormatter: function (this: any) {
         return `<span style="color:${this.color}">●</span> ${
           this.series.name
         }: <b>${roundAndFormat(this.y)} TM</b><br/>`;
@@ -187,7 +197,7 @@ const DonutAndSplineChartByHour = ({
       verticalAlign: "bottom",
       layout: "vertical",
       floating: false,
-      labelFormatter: function () {
+      labelFormatter: function (this: any) {
         if (this.index === 0) {
           return `<span style='color:#000000'>${this.name}</span>`;
         } else {

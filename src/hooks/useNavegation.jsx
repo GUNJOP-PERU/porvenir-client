@@ -235,9 +235,9 @@ export const useNavigation = () => {
           },
           {
             name: "Viajes detallados",
-            href: "dashboard/beacon/trips-description",
+            href: "/dashboard/beacon/trips-description",
             icon: <ChartArea />,
-            active: pathname === "dashboard/beacon/trips-description",
+            active: pathname === "/dashboard/beacon/trips-description",
           }
         ],
       },

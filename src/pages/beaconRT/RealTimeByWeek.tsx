@@ -53,12 +53,7 @@ const RealTimeByWeek = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
-    `beacon-track/trip?material=mineral&startDate=${format(
-      dateFilter[0].startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
-      shiftFilter ? `&shift=${shiftFilter}` : ""
-    }`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
     { refetchInterval: 10000 }
   );
 
@@ -77,9 +72,9 @@ const RealTimeByWeek = () => {
   const baseStats = useMemo(() => {
     if (!data || !mineralData) {
       return {
-        totalUnits: 0,
-        totalUnitsDay: 0,
-        totalUnitsNight: 0,
+        totalUnits: data.filter((unit) => unit.trips.length > 0).length,
+        totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
+        totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
         totalTrips: 0,
         totalTM: 0,
         totalDuration: 0,
@@ -356,14 +351,14 @@ const RealTimeByWeek = () => {
             size="medium"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: 2400,
+              total: planDay?.totalTonnage,
               currentValueColor: "#14B8A6",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={2400}
+            total={planDay?.totalTonnage}
             color="#14B8A6"
             showLegend={false}
             className="mt-2"
@@ -463,7 +458,7 @@ const RealTimeByWeek = () => {
         >
           <DonutAndSplineChartByHour
             progressBarData={{
-              total: 1200,
+              total: planDay?.totalTonnage,
               currentValue: active.tm,
               prediction: (active.tm / active.units) * 7,
               currentValueColor: active.color,

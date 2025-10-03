@@ -154,7 +154,7 @@ const DetectionReportRT = () => {
     );
 
     return {
-      totalUnits: data.length.filt,
+      totalUnits: data.length,
       totalUnitsDay: data.length,
       totalUnitsNight: data.length,
       totalTrips,

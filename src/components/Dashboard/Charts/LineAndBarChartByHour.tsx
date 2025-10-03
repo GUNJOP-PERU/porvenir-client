@@ -160,8 +160,14 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     series: [
       {
         name: "Diferencia",
-        data: diff.map((diff,i) => {
-          return tripsCounts[i] ? diff : NaN
+        data: diff.map((value, index) => {
+          const hasTrips = (tripsCounts[index] || 0) > 0;
+          return {
+            y: value,
+            color: hasTrips ? diffColorPlanDay[index] : 'transparent',
+            borderColor: hasTrips ? diffColorPlanDay[index] : '#6b7280',
+            borderWidth: hasTrips ? 0 : 2
+          };
         }),
         colorByPoint: true,
         colors: diffColor,
@@ -170,25 +176,29 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         showInLegend: mode === "day",
         dataLabels: {
           enabled: true,
-          formatter: function () {
+          formatter: function (this: any) {
             return `${roundAndFormat(diff[this.point.index])}`;
           },
         },
       },
       {
         name: "Diferencia",
-        data: diffPlanDay.map((diff,i) => {
-          return tripsCounts[i] ? diff : NaN
+        data: diffPlanDay.map((value, index) => {
+          const hasTrips = (tripsCounts[index] || 0) > 0;
+          return {
+            y: value,
+            color: hasTrips ? diffColorPlanDay[index] : 'transparent',
+            borderColor: hasTrips ? diffColorPlanDay[index] : '#6b7280',
+            borderWidth: hasTrips ? 0 : 2
+          };
         }),
-        colorByPoint: true,
-        colors: diffColorPlanDay,
         visible: mode === "hour",
         showInLegend: mode === "hour",
         xAxis: 1,
         dataLabels: {
           enabled: true,
-          formatter: function () {
-            return `${roundAndFormat(diff[this.point.index])}`;
+          formatter: function (this: any) {
+            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
           },
         },
       },
@@ -228,7 +238,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         zIndex: 10,
       },
       formatter: function (this: any) {
-        const categoryName = this.points[0]?.point?.category || hourLabels[this.x];
+        const categoryName = this.points[0]?.point?.category || xLabels[this.x];
         let tooltipText = `<b>${categoryName}</b><br/>`;
         // Mostrar siempre el valor de "Extraído"
         const extraido = this.points.find((p: any) => p.series.name === "Extraído");
@@ -248,7 +258,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       verticalAlign: "bottom",
       layout: "vertical",
       floating: false,
-      labelFormatter: function () {
+      labelFormatter: function (this: any) {
         if (this.index === 0 || this.index === 1) {
           return `<span style='color:#000000'>Real</span>`;
         } else {

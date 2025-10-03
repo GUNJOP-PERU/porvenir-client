@@ -187,9 +187,9 @@ const RealTimeByHourRT = () => {
     const totalTMNight = nightTrips * baseData.mineral;
 
     return {
-      totalUnits: data.length,
-      totalUnitsDay: data.length,
-      totalUnitsNight: data.length,
+      totalUnits: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
       totalTrips,
       totalTM,
       totalDuration,
@@ -289,14 +289,14 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue: 0,
-              total: 2400,
+              total: planDay.totalTonnage,
               currentValueColor: "#14B8A6",
             }}
           />
           <Progress
             title=""
             value={0}
-            total={2400}
+            total={planDay.totalTonnage}
             color="#14B8A6"
             showLegend={false}
             className="mt-2"
@@ -315,7 +315,7 @@ const RealTimeByHourRT = () => {
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={2400}
+            total={planDay.totalTonnage}
             color="#14B8A6"
             showLegend={false}
             className="mt-2"
@@ -380,7 +380,7 @@ const RealTimeByHourRT = () => {
               title="Ejecución del plan general Turno Dia (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               icon={IconScoop}
-                       classIcon="h-7 w-24"
+              classIcon="h-7 w-24"
               className="custom-class"
             >
               <DonutAndSplineChartByHour

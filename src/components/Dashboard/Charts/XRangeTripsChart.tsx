@@ -43,6 +43,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   let bocaminaCounter = 0; // Contador global para alternar posición de labels
   
   data.forEach((unit, unitIndex) => {
+    let validTripCounter = 0; // Contador solo para viajes con destino
+    
     unit.allTrips.forEach((trip, tripIndex) => {
       const tripStartTime = getTimestamp(trip.startDate);
       const tripEndTime = getTimestamp(trip.endDate);
@@ -50,6 +52,9 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       // Determinar color del viaje según si tiene destino
       const hasDestination = trip.endUbication && trip.endUbication.trim() !== "";
       const tripColor = hasDestination ? "#10b981" : "#6b7280"; // Verde si tiene destino, gris si no
+      
+      // Solo incrementar contador para viajes con destino
+      const displayTripIndex = hasDestination ? ++validTripCounter : 0;
       
       allSeriesData.push({
         x: tripStartTime,
@@ -59,11 +64,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         borderColor: "#000000",
         borderWidth: 1,
         trip: trip,
-        tripIndex: tripIndex + 1,
+        tripIndex: displayTripIndex, // Usar el contador de viajes válidos
+        originalTripIndex: tripIndex + 1, // Mantener índice original para otros usos
         isFullTrip: true,
         hasDestination: hasDestination,
         unitName: unit.unit.toUpperCase(),
-        name: `${unit.unit} - Viaje ${tripIndex + 1}${hasDestination ? '' : ' (Sin destino)'}`
+        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}` : 'Sin destino'}`
       });
 
       const detections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
@@ -140,6 +146,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         const color = period.type === 'bocamina' ? "#3b82f6" : "#f59e0b";
         const periodType = period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
         
+        // Obtener el tripIndex correcto del viaje padre
+        const parentTrip = allSeriesData.find(item => 
+          item.trip === trip && item.isFullTrip
+        );
+        const parentTripIndex = parentTrip ? parentTrip.tripIndex : tripIndex + 1;
+        
         allSeriesData.push({
           x: period.startTime,
           x2: period.endTime,
@@ -149,13 +161,13 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           borderColor: "transparent",
           trip: trip,
           specialPeriod: period,
-          tripIndex: tripIndex + 1,
+          tripIndex: parentTripIndex,
           periodIndex: periodIndex + 1,
           isSpecialDetection: true,
           isBocamina: period.type === 'bocamina',
           isMaintenance: period.type === 'maintenance',
           unitName: unit.unit.toUpperCase(),
-          name: `${unit.unit} - ${periodType} ${tripIndex + 1}.${periodIndex + 1}`
+          name: `${unit.unit} - ${periodType} ${parentTripIndex > 0 ? parentTripIndex : 'S/N'}.${periodIndex + 1}`
         });
       });
     });
@@ -260,9 +272,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             ? `${trip.startUbication} → ${trip.endUbication}`
             : `${trip.startUbication} (Sin destino definido)`;
           
+          const tripLabel = point.hasDestination ? `Viaje #${point.tripIndex}` : 'Sin Destino';
+          
           return `
             <div style="padding: 8px;">
-              <b>Viaje #${point.tripIndex}${point.hasDestination ? '' : ' - Sin Destino'}</b><br/>
+              <b>${tripLabel}</b><br/>
               <b>Unidad:</b> ${point.unitName}<br/>
               <b>Inicio:</b> ${startTime}<br/>
               <b>Fin:</b> ${endTime}<br/>
@@ -277,9 +291,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           const locations = [...new Set(specialPeriod.detections.map((d: any) => d.ubication))].join(', ');
           const periodType = point.isBocamina ? "Bocamina" : "Mantenimiento";
           
+          const tripReference = point.tripIndex > 0 ? `Viaje #${point.tripIndex}` : 'Sin destino';
+          
           return `
             <div style="padding: 8px;">
-              <b>Período de ${periodType} - Viaje #${point.tripIndex}</b><br/>
+              <b>Período de ${periodType} - ${tripReference}</b><br/>
               <b>Unidad:</b> ${point.unitName}<br/>
               <b>Inicio:</b> ${startTime}<br/>
               <b>Fin:</b> ${endTime}<br/>
@@ -341,12 +357,14 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             }
             
             // Formato estándar para otros elementos
-            if (this.point.isFullTrip) {
+            if (this.point.isFullTrip && this.point.hasDestination) {
+              // Solo mostrar "V" si el viaje tiene destino
               return `V${this.point.tripIndex}`;
             } else if(this.point.isMaintenance) {
               const prefix = "M";
               return `${prefix}${this.point.tripIndex}.${this.point.periodIndex}`;
             }
+            // No mostrar label para viajes sin destino
           },
           style: {
             color: "#FFFFFF",

@@ -41,7 +41,11 @@ const TripsDescription = () => {
     return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
       return ({
         ...unit,
-        allTrips: [...unit.trips, ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        allTrips: [
+          ...unit.trips,
+          ...unit.beforeInitialTrips.map((trip) => ({...trip,endUbication: ""})),
+          ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))
+        ].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
       })
     })
   }, [data]);
