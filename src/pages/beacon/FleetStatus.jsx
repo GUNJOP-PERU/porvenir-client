@@ -121,13 +121,26 @@ export default function FleetStatus() {
 
   return (
     <>
-      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col">
+      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col gap-1">
+        <div className="bg-black/70  rounded-xl py-2 px-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-zinc-200 text-md lg:text-xl font-bold leading-none">
+              Estado de la flota
+            </h1>
+            <span className="text-[10px] text-zinc-300 bg-zinc-500 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
+              {data?.length || 0}
+            </span>
+          </div>
+          <p className="text-zinc-400 text-[10.5px] lg:text-xs">
+          Resumen de Estatus Operativo (Operativos, Mantenimiento, Fuera de Servicio) {new Date().toLocaleDateString()}
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 flex-1 grid-rows-3 xl:grid-rows-1 ">
           <DragDropContext onDragEnd={onDragEnd}>
             {Object.entries(columns).map(([columnId, column]) => (
               <div
                 key={columnId}
-                className={`w-full flex flex-col items-center select-none p-2 rounded-xl xl:h-[calc(100vh-100px)] h-[calc(28vh)] ${column.color}`}
+                className={`w-full flex flex-col items-center select-none p-2 rounded-xl xl:h-[calc(100vh-150px)] h-[calc(28vh)] ${column.color}`}
               >
                 <div className="w-full pl-2 pt-1 pb-2 flex items-center gap-2 h-9">
                   <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-[7px] bg-black/80 flex items-center justify-center">
@@ -170,7 +183,13 @@ export default function FleetStatus() {
                                 }`}
                               >
                                 <div
-                                  className={`${itemColors[columnId].inner} rounded-lg py-1 px-1 flex items-center gap-2 ${item.connectivity === "online" ? "opacity-100" : "opacity-50"}`}
+                                  className={`${
+                                    itemColors[columnId].inner
+                                  } rounded-lg py-1 px-1 flex items-center gap-2 ${
+                                    item.connectivity === "online"
+                                      ? "opacity-100"
+                                      : "opacity-50"
+                                  }`}
                                 >
                                   <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0">
                                     <IconTruck
@@ -188,7 +207,14 @@ export default function FleetStatus() {
                                     </span>
                                   </div>
                                 </div>
-                                <span className={clsx("text-[9.5px] select-none leading-[10px] pl-1.5 pb-0.5 text-center flex items-center gap-1 truncate", item.connectivity === "online" ? "text-amber-400" : "text-zinc-300")}>
+                                <span
+                                  className={clsx(
+                                    "text-[9.5px] select-none leading-[10px] pl-1.5 pb-0.5 text-center flex items-center gap-1 truncate",
+                                    item.connectivity === "online"
+                                      ? "text-amber-400"
+                                      : "text-zinc-300"
+                                  )}
+                                >
                                   <div
                                     className={`w-[4px] h-[4px] rounded-full ${
                                       item.connectivity === "online"

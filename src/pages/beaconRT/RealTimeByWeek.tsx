@@ -17,14 +17,14 @@ import {
   eachDayOfInterval,
   getISODay,
 } from "date-fns";
-import { ChartNoAxesColumn } from "lucide-react";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 // Icons
-import { GiMineTruck } from "react-icons/gi";
 import { es } from "date-fns/locale";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
+import IconTruck from "@/icons/IconTruck";
+import IconScoop from "@/icons/IconScoop";
 
 const RealTimeByWeek = () => {
   const isoDay = getISODay(new Date());
@@ -301,32 +301,18 @@ const RealTimeByWeek = () => {
 
   const planDay = useMemo(() => {
     if (!dataPlan || dataPlan.length === 0) return null;
-
     const plan = dataPlan[0];
-
-    const filteredDataGenerate = shiftFilter
-      ? plan.dataGenerate?.filter((item) => item.turno === shiftFilter)
-      : plan.dataGenerate;
-
-    const tonnageByDate =
-      filteredDataGenerate?.reduce((acc, item) => {
-        const label = format(new Date(item.date), "EEE dd", { locale: es });
-        if (!acc[label]) acc[label] = 0;
-        acc[label] += item.tonnage;
-        return acc;
-      }, {} as Record<string, number>) || {};
-
-    const planDayData = Object.entries(tonnageByDate).map(
-      ([label, tonnage]) => ({
-        date: label,
-        tonnage,
-      })
-    );
+    const safePlanDay = plan.dataCalculate || [];
 
     return {
-      totalTonnage: plan.totalTonnage,
-      planDay: planDayData,
-      planDayShift: plan.planDayShift || [],
+      totalTonnage: plan.totalTonnage || 0,
+      planDayShift: [],
+      planDay: shiftFilter
+        ? safePlanDay.map((item: any) => ({
+            date: item.date,
+            tonnage: item.tonnageByTurno?.[shiftFilter] || 0,
+          }))
+        : safePlanDay,
     };
   }, [dataPlan, shiftFilter]);
 
@@ -446,9 +432,9 @@ const RealTimeByWeek = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
         <CardTitle
           title={`Ejecución del plan general ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon={active.iconColor}
+          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
+          icon={IconScoop}
+          classIcon="h-7 w-24"
         >
           <DonutAndSplineChartByHour
             progressBarData={{
@@ -471,9 +457,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`Ejecución de extracción de mineral ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={GiMineTruck}
-          classIcon="text-[#000000]"
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+          icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-16"
         >
           <DonutAndSplineChartByHour
             progressBarData={{
@@ -493,9 +479,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`LHD en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon={active.iconColor}
+          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
+          icon={IconScoop}
+          classIcon="h-7 w-24"
         >
           <LineAndBarChartByHour
             mineralWeight={baseData.mineral}
@@ -511,9 +497,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`Camión en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={GiMineTruck}
-          classIcon="text-[#000000]"
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+          icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-14"
         >
           <LineAndBarChartByHour
             mineralWeight={baseData.mineral}
