@@ -4,21 +4,7 @@ export type BeaconCycle= {
   totalMaintanceTimeMin: number,
   bocaminaStats: {name: string, count: number}[],
   trips: BeaconUnitTrip[],
-  uncompletedTrip:{
-    _id: string,
-    mac: string,
-    unit: string,
-    f_inicio: string,
-    f_final: string,
-    duration: number,
-    distance: number,
-    uuid: string,
-    connection: string,
-    shift: string,
-    ubication: string,
-    ubicationType: number,
-    durationMin: number
-  }[],
+  uncompletedTrips: BeaconUnitTrip[],
   totalUnloadTime: number,
   avgUnloadTime: number,
   maintance: {
@@ -41,11 +27,18 @@ export type BeaconCycle= {
 export type BeaconUnitTrip = {
   totalDistance: number,
   totalDuration: string,
+  totalDurationMin: number,
+  maintanceTime: number,
+  maintanceTimeMin: number,
   shift: "dia" | "noche",
   startDate: Date,
   endDate: Date,
   startUbication: string,
   endUbication: string,
+  tripDuration: number,
+  tripDurationMin: number,
+  unloadTime: number,
+  tripType: "Mineral" | "Desmonte" | "Vacio",
   trip: BeaconDetection[]
 }
 

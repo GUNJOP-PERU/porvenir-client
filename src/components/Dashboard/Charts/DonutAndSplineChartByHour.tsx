@@ -156,6 +156,7 @@ const DonutAndSplineChartByHour = ({
         xAxis: 1,
         fillColor: "#ffd0d63d",
         color: "#00000080",
+        areaColor: "#ffd0d63d",
         marker: {
           fillColor: "white",
           lineWidth: 2,

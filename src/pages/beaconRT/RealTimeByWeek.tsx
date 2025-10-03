@@ -53,7 +53,7 @@ const RealTimeByWeek = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
-    `beacon-track/trip?startDate=${format(
+    `beacon-track/trip?material=mineral&startDate=${format(
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${

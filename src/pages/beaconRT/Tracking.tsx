@@ -433,7 +433,7 @@ const TruckTracking = () => {
           center={[centerLat, centerLng]}
           zoom={zoom}
           minZoom={15} // Zoom mínimo permitido
-          maxZoom={17.5} // Nivel máximo soportado por ESRI
+          maxZoom={17} // Nivel máximo soportado por ESRI
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
           className="z-0"

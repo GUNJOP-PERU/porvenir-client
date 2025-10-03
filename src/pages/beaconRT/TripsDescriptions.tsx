@@ -39,27 +39,9 @@ const TripsDescription = () => {
 
   const formatData = useMemo(() => {
     return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
-      let  formatedUncompleteTrips = [];
-      if(unit.uncompletedTrip.length > 0 ){
-        const firstTrip = unit.uncompletedTrip[0];
-        const lastTrip = unit.uncompletedTrip[unit.uncompletedTrip.length - 1];
-        if (!firstTrip) return;
-        if (!lastTrip) return;
-
-        formatedUncompleteTrips.push({
-          totalDistance: 0,
-          totalDuration: 0,
-          shift: firstTrip.shift,
-          startDate: firstTrip.f_inicio,
-          endDate: lastTrip.f_final,
-          startUbication: firstTrip.ubication,
-          endUbication: "-----",
-          trip: unit.uncompletedTrip
-        })
-      }
       return ({
         ...unit,
-        allTrips: [...unit.trips, ...formatedUncompleteTrips].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        allTrips: [...unit.trips, ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
       })
     })
   }, [data]);

@@ -35,14 +35,14 @@ const DetectionReportRT = () => {
   ]);
 
   const {
-    data = [],
+    data,
     refetch,
     isFetching,
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days-rt",
-    `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
@@ -154,7 +154,7 @@ const DetectionReportRT = () => {
     );
 
     return {
-      totalUnits: data.length,
+      totalUnits: data.length.filt,
       totalUnitsDay: data.length,
       totalUnitsNight: data.length,
       totalTrips,
@@ -168,22 +168,6 @@ const DetectionReportRT = () => {
       totalTMDay,
       totalTMNight,
     };
-  }, [data, baseData]);
-
-  const tripsByDay = useMemo(() => {
-    if (!data) return [];
-
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
-    const grouped: Record<string, BeaconUnitTrip[]> = trips.reduce((acc, trip) => {
-      const day = format(new Date(trip.startDate), "yyyy-MM-dd");
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(trip);
-      return acc;
-    }, {} as Record<string, BeaconUnitTrip[]>);
-    return Object.entries(grouped).map(([date, trips]) => ({
-      date,
-      trips,
-    }));
   }, [data]);
 
   useEffect(() => {
