@@ -71,7 +71,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     return dataHotTable.reduce((total, row) => {
       const tonnageValues = Object.keys(row)
         .filter((key) => key.includes("- DIA") || key.includes("- NOCHE"))
-        .map((key) => row[key] || 0);
+        .map((key) => Number(row[key]) || 0);
 
       return total + tonnageValues.reduce((sum, val) => sum + val, 0);
     }, 0);
@@ -111,7 +111,6 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
   const handleSendData = async () => {
     setLoadingGlobal(true);
-    console.log("Datos dataHotTable:", dataHotTable);
 
     const dataGenerate = dataHotTable.flatMap((row) => {
       const year = form.getValues("dob").end.getFullYear();
@@ -136,9 +135,26 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     });
 
     const totalTonnage = dataGenerate.reduce(
-      (sum, item) => sum + item.tonnage,
+      (sum, item) => sum + Number(item.tonnage) || 0,
       0
     );
+
+    const planDayProcessed = (() => {
+      const grouped = {};
+
+      dataGenerate.forEach((item) => {
+        const dateKey = dayjs(item.date).locale("es").format("ddd DD");
+        const turno = item.turno;
+        if (!grouped[dateKey]) grouped[dateKey] = {};
+        if (!grouped[dateKey][turno]) grouped[dateKey][turno] = 0;
+        grouped[dateKey][turno] += Number(item.tonnage) || 0;
+      });
+
+      return Object.entries(grouped).map(([date, turnos]) => ({
+        date,
+        tonnageByTurno: turnos,
+      }));
+    })();
     const result = {
       year: form.getValues("dob").end.getFullYear(),
       month: form.getValues("dob").end.getMonth() + 1,
@@ -146,6 +162,7 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       totalTonnage,
       dataGenerate,
       dataEdit: dataHotTable,
+      dataCalculate: planDayProcessed,
       startDate: form.getValues("dob").start,
       endDate: form.getValues("dob").end,
       items: form.getValues("selectedItems"),
@@ -178,7 +195,12 @@ export const PlanWeekModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       refetchLaborList().then(() => {
         if (isEdit && dataCrud?.dataEdit) {
           setDataHotTable(dataCrud.dataEdit);
-          if (dataCrud?.startDate && dataCrud?.endDate && dataCrud?.week && dataCrud?.items) {
+          if (
+            dataCrud?.startDate &&
+            dataCrud?.endDate &&
+            dataCrud?.week &&
+            dataCrud?.items
+          ) {
             form.setValue("dob", {
               start: new Date(dataCrud.startDate),
               end: new Date(dataCrud.endDate),
