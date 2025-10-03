@@ -13,6 +13,7 @@ import {
   ZoomControl,
 } from "react-leaflet";
 import TimeAgo from "timeago-react";
+import { subHours, isAfter, parseISO } from "date-fns";
 // Api
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 // Types
@@ -122,13 +123,27 @@ const TruckTracking = () => {
       status: string,
       unitName: string,
       isSelected: boolean = false,
-      connectivity: string
+      connectivity: string,
+      lastDate: string
     ) => {
       let color = "#6B7280"; // Gris por defecto
 
       const normalizedStatus = status.toLowerCase();
 
-      if (normalizedStatus === "operativo") {
+      const isOlderThan5Hours = (() => {
+        try {
+          if (!lastDate) return true;
+          const lastDateTime = parseISO(lastDate);
+          const fiveHoursAgo = subHours(new Date(), 5);
+          return !isAfter(lastDateTime, fiveHoursAgo);
+        } catch {
+          return true;
+        }
+      })();
+
+      if (isOlderThan5Hours) {
+        color = "#a0a0a0"; // Gris - Datos antiguos (más de 5 horas)
+      } else if (normalizedStatus === "operativo") {
         color = "#22C55E"; // Verde - En movimiento
       } else if (normalizedStatus === "mantenimiento") {
         color = "#F59E0B"; // Amarillo - Detenido
@@ -244,7 +259,8 @@ const TruckTracking = () => {
               truck.status,
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
-              truck.connectivity
+              truck.connectivity,
+              truck.lastDate
             )}
           >
             <Popup>

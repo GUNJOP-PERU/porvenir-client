@@ -165,7 +165,7 @@ const DonutAndSplineChartByHour = ({
         zones: acummulativeTripsCounts.map((realValue, index) => {
           const hasRealData = realValue !== undefined && !isNaN(realValue) && realValue > 0;
           return {
-            value: index + 1,
+            value: index,
             dashStyle: hasRealData ? 'Solid' : 'Dash',
             color: hasRealData ? "#757575" : "#bdbdbd",
             fillColor: hasRealData ? "#f5f5f580" : "#f5f5f520"

@@ -62,6 +62,10 @@ const DetectionReportRT = () => {
     refetchInterval: 10000,
   });
 
+  const {
+    data : beaconTruck = []
+  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -203,8 +207,18 @@ const DetectionReportRT = () => {
         description=""
         refetch={refetch}
         isFetching={isFetching}
-        count={data.length}
         setDialogOpen={false}
+        status={[
+          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
+            color: "#2fd685",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
+            color: "#e6bf27",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
+            color: "#ff4d4f",
+          },
+        ]}
       />
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
         <CardItem

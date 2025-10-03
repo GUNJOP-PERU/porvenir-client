@@ -37,6 +37,10 @@ const TripsDescription = () => {
     refetchInterval: 10000,
   });
 
+  const {
+    data : beaconTruck = []
+  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+
   const formatData = useMemo(() => {
     return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
       return ({
@@ -81,9 +85,19 @@ const TripsDescription = () => {
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate, 'dd-MM-yyyy')}.`}
         refetch={refetch}
         isFetching={isFetching}
-        count={data.length}
         setDialogOpen={false}
         className="col-span-2"
+        status={[
+          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
+            color: "#2fd685",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
+            color: "#e6bf27",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
+            color: "#ff4d4f",
+          },
+        ]}
       />
 
       <div className="col-span-2 bg-white rounded-lg shadow p-4">

@@ -30,24 +30,24 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
 
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
 
-  const planValue = mode === "day" ? 1200 : 100;
-  const plan = new Array(chartData.length).fill(planValue);
+  // const planValue = mode === "day" ? 1200 : 100;
+  // const plan = new Array(chartData.length).fill(planValue);
   
   
-  const diff = plan.map((exp, i) => {
-    const currentData = tripsCounts;
-    const value =
-      typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
-    const e = Math.abs(exp - value);
-    return +e;
-  });
+  // const diff = plan.map((exp, i) => {
+  //   const currentData = tripsCounts;
+  //   const value =
+  //     typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
+  //   const e = Math.abs(exp - value);
+  //   return +e;
+  // });
 
-  const diffColor = plan.map((exp, i) => {
-    const currentData = tripsCounts;
-    return currentData[i] !== undefined && currentData[i] >= exp
-      ? "#04c286"
-      : "#fe7887";
-  });
+  // const diffColor = plan.map((exp, i) => {
+  //   const currentData = tripsCounts;
+  //   return currentData[i] !== undefined && currentData[i] >= exp
+  //     ? "#04c286"
+  //     : "#fe7887";
+  // });
 
   const currentPlanDay = planDay 
   ? (
@@ -160,7 +160,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     series: [
       {
         name: "Diferencia",
-        data: diff.map((value, index) => {
+        data: diffPlanDay.map((value, index) => {
           const hasTrips = (tripsCounts[index] || 0) > 0;
           return {
             y: value,
@@ -169,15 +169,13 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
             borderWidth: hasTrips ? 0 : 2
           };
         }),
-        colorByPoint: true,
-        colors: diffColor,
         xAxis: 1,
         visible: mode === "day",
         showInLegend: mode === "day",
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(diff[this.point.index])}`;
+            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
           },
         },
       },

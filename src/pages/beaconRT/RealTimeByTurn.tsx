@@ -49,6 +49,11 @@ const RealTimeByHourRT = () => {
     refetchInterval: 10000,
   });
 
+  const {
+    data : beaconTruck = []
+  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+
+
   const { data: planData = [] } = useFetchData<PlanDay[]>(
     "planday-rt",
     `planDay/by-date-range?startDate=${format(
@@ -278,9 +283,19 @@ const RealTimeByHourRT = () => {
         )}.`}
         refetch={refetch}
         isFetching={isFetching}
-        count={data.length}
         setDialogOpen={false}
         className="col-span-2"
+        status={[
+          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
+            color: "#2fd685",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
+            color: "#e6bf27",
+          },
+          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
+            color: "#ff4d4f",
+          },
+        ]}
       />
       <div className="flex flex-col justify-around">
         <div>
@@ -308,7 +323,7 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: 2400,
+              total: planDay.totalTonnage,
               currentValueColor: "#14B8A6",
             }}
           />
