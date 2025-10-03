@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
+import XRangeTripsChart from "@/components/Dashboard/Charts/XRangeTripsChart";
 // Types
 import type { BeaconCycle } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
@@ -36,6 +37,33 @@ const TripsDescription = () => {
     refetchInterval: 10000,
   });
 
+  const formatData = useMemo(() => {
+    return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
+      let  formatedUncompleteTrips = [];
+      if(unit.uncompletedTrip.length > 0 ){
+        const firstTrip = unit.uncompletedTrip[0];
+        const lastTrip = unit.uncompletedTrip[unit.uncompletedTrip.length - 1];
+        if (!firstTrip) return;
+        if (!lastTrip) return;
+
+        formatedUncompleteTrips.push({
+          totalDistance: 0,
+          totalDuration: 0,
+          shift: firstTrip.shift,
+          startDate: firstTrip.f_inicio,
+          endDate: lastTrip.f_final,
+          startUbication: firstTrip.ubication,
+          endUbication: "-----",
+          trip: unit.uncompletedTrip
+        })
+      }
+      return ({
+        ...unit,
+        allTrips: [...unit.trips, ...formatedUncompleteTrips].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+      })
+    })
+  }, [data]);
+
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -61,9 +89,9 @@ const TripsDescription = () => {
   }, [shiftFilter, refetch]);
 
   return (
-    <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
+    <div className="flex flex-col flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno"
+        title="Reporte especifico de viajes"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate, 'dd-MM-yyyy')}.`}
         refetch={refetch}
         isFetching={isFetching}
@@ -72,9 +100,8 @@ const TripsDescription = () => {
         className="col-span-2"
       />
 
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-
+      <div className="col-span-2 bg-white rounded-lg shadow p-4">
+        <XRangeTripsChart data={formatData} />
       </div>
     </div>
   );

@@ -3,7 +3,22 @@ export type BeaconCycle= {
   totalTrips: number,
   totalMaintanceTimeMin: number,
   bocaminaStats: {name: string, count: number}[],
-  trips: BeaconUnitTrip[]
+  trips: BeaconUnitTrip[],
+  uncompletedTrip:{
+    _id: string,
+    mac: string,
+    unit: string,
+    f_inicio: string,
+    f_final: string,
+    duration: number,
+    distance: number,
+    uuid: string,
+    connection: string,
+    shift: string,
+    ubication: string,
+    ubicationType: number,
+    durationMin: number
+  }[],
   totalUnloadTime: number,
   avgUnloadTime: number,
   maintance: {

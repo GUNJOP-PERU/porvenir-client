@@ -58,6 +58,7 @@ import BocaminaDetection from "./pages/beacon/BocaminaDetection";
 import RealTimeTripsCount from "./pages/beacon/RealTimeTripsCount";
 import Tracking from "./pages/beacon/Tracking";
 import FleetStatus from "./pages/beacon/FleetStatus";
+import TripsDescription from "./pages/beaconRT/TripsDescriptions";
 
 const protectedRoutes = [
   //Gestion
@@ -121,6 +122,7 @@ const protectedRoutes = [
   { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
   { path: "dashboard/beacon/detection-report-turn-rt", element: <RealTimeByHourRT /> },
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
+  { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
 
   //Dashboard-Beacon
   { path: "/", element: <TrackingRT /> },

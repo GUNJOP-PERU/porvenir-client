@@ -35,7 +35,7 @@ const DetectionReportRT = () => {
   ]);
 
   const {
-    data,
+    data = [],
     refetch,
     isFetching,
     isLoading: tripsLoading,

@@ -233,6 +233,12 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/detection-report-week-rt",
           },
+          {
+            name: "Viajes detallados",
+            href: "dashboard/beacon/trips-description",
+            icon: <ChartArea />,
+            active: pathname === "dashboard/beacon/trips-description",
+          }
         ],
       },
       {
