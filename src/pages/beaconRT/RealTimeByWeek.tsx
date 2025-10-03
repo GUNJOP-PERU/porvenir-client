@@ -25,6 +25,8 @@ import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 import { GiMineTruck } from "react-icons/gi";
 import { es } from "date-fns/locale";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
+import IconTruck from "@/icons/IconTruck";
+import IconScoop from "@/icons/IconScoop";
 
 const RealTimeByWeek = () => {
   const isoDay = getISODay(new Date());
@@ -446,9 +448,9 @@ const RealTimeByWeek = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
         <CardTitle
           title={`Ejecución del plan general ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon={active.iconColor}
+          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
+            icon={IconScoop}
+          classIcon="h-7 w-24"
         >
           <DonutAndSplineChartByHour
             progressBarData={{
@@ -471,9 +473,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`Ejecución de extracción de mineral ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={GiMineTruck}
-          classIcon="text-[#000000]"
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+           icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-16"
         >
           <DonutAndSplineChartByHour
             progressBarData={{
@@ -493,9 +495,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`LHD en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={ChartNoAxesColumn}
-          classIcon={active.iconColor}
+          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
+          icon={IconScoop}
+          classIcon="h-7 w-24"
         >
           <LineAndBarChartByHour
             mineralWeight={baseData.mineral}
@@ -511,9 +513,9 @@ const RealTimeByWeek = () => {
 
         <CardTitle
           title={`Camión en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados"
-          icon={GiMineTruck}
-          classIcon="text-[#000000]"
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+          icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-14"
         >
           <LineAndBarChartByHour
             mineralWeight={baseData.mineral}
