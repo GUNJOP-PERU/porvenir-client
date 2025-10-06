@@ -5,6 +5,7 @@ import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
 import { SiRedmine } from "react-icons/si";
 import { TbReportAnalytics } from "react-icons/tb";
+import { FaTimeline } from "react-icons/fa6";
 import {
   Building2,
   ChartArea,
@@ -234,10 +235,10 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/detection-report-week-rt",
           },
           {
-            name: "Viajes detallados",
-            href: "/dashboard/beacon/trips-description",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/beacon/trips-description",
+            name: "Linea de Tiempo por Turno",
+            href: "/dashboard/beacon/trips-description-rt",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/trips-description-rt",
           }
         ],
       },
@@ -274,12 +275,12 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/trip-count",
           },
-          {
-            name: "Detección de Bocamina",
-            href: "/dashboard/bocamina-detection",
-            icon: <SiRedmine />,
-            active: pathname === "/dashboard/bocamina-detection",
-          },
+          // {
+          //   name: "Detección de Bocamina",
+          //   href: "/dashboard/bocamina-detection",
+          //   icon: <SiRedmine />,
+          //   active: pathname === "/dashboard/bocamina-detection",
+          // },
           {
             name: "Tabla de Detección",
             href: "dashboard/beacon-detection-table",
@@ -292,6 +293,12 @@ export const useNavigation = () => {
             icon: <LandPlot />,
             active: pathname === "/dashboard/fleet-status",
           },
+          {
+            name: "Linea de Tiempo",
+            href: "/dashboard/beacon/trips-description",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/trips-description",
+          }
         ],
       },
     ],

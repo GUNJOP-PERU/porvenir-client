@@ -11,7 +11,7 @@ import { format } from "date-fns";
 import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
 // Icons
 
-const TripsDescription = () => {
+const TripsDescriptionRT = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
     {
@@ -107,4 +107,4 @@ const TripsDescription = () => {
   );
 };
 
-export default TripsDescription;
+export default TripsDescriptionRT;

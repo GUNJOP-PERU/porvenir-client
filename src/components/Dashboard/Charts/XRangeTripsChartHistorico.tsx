@@ -1,12 +1,10 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { format } from "date-fns";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "@/types/Beacon";
 import Highcharts from "highcharts/highcharts-gantt";
 import HighchartsReact from "highcharts-react-official";
 import highchartsXrange from "highcharts/modules/xrange";
-// Utils
-import { getCurrentDay } from "@/utils/dateUtils";
 
 // Inicializar módulo xrange
 if (typeof highchartsXrange === "function") {
@@ -14,19 +12,10 @@ if (typeof highchartsXrange === "function") {
 }
 interface XRangeTripsChartProps {
   data: (BeaconCycle & { allTrips: BeaconUnitTrip[] })[];
+  isLoading?: boolean;
 }
 
-const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
-  const [ shift, setShift ] = useState<string>(getCurrentDay().shift);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const currentDay = getCurrentDay();
-      setShift(currentDay.shift);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+const XRangeTripsChartHistorico = ({ data, isLoading }: XRangeTripsChartProps) => {
 
   const getTimestamp = (dateValue: any): number => {
     if (typeof dateValue === 'string') {
@@ -216,24 +205,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       labels: {
         format: "{value:%H:%M}",
       },
-      min: (() => {
-        const today = new Date();
-        if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
-        } else {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-        }
-      })(),
-      max: (() => {
-        const today = new Date();
-        if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-        } else {
-          const tomorrow = new Date(today);
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
-        }
-      })(),
+      // El rango se ajusta automáticamente a los datos
     },
     yAxis: {
       title: {
@@ -384,7 +356,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       enabled: false,
     },
     series: series as any,
-  }), [data, allSeriesData,shift]);
+  }), [data, allSeriesData]);
 
   return (
     <div className="w-full">
@@ -393,4 +365,4 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   );
 };
 
-export default XRangeTripsChart;
+export default XRangeTripsChartHistorico;
