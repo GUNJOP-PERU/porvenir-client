@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
+import { startOfWeek } from 'date-fns';
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import {
@@ -25,6 +26,7 @@ export const PlanHeader = ({
   setShowLoader,
   setDataHotTable,
 }) => {
+  const inicioSemanaActual = startOfWeek(new Date(), { weekStartsOn: 1 });
   const onSubmit = (data) => {
     setLoadingGlobal(true);
     setShowLoader(true);
@@ -117,9 +119,9 @@ export const PlanHeader = ({
                   >
                     <Calendar
                       mode="range"
-                      // disabled={{
-                      //   before: new Date(),
-                      // }}
+                      disabled={{
+                        before: inicioSemanaActual,
+                      }}
                       defaultMonth={field.value?.start}
                       selected={{
                         from: field.value?.start,
