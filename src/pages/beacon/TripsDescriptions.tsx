@@ -6,10 +6,9 @@ import PageHeader from "@/components/PageHeaderV2";
 import XRangeTripsChartHistorico from "@/components/Dashboard/Charts//XRangeTripsChartHistorico";
 // Types
 import type { BeaconCycle } from "../../types/Beacon";
-import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format } from "date-fns";
-import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
+import { getCurrentDay } from "@/utils/dateUtils";
 
 const TripsDescriptionRT = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
@@ -23,9 +22,9 @@ const TripsDescriptionRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck-rt",
+    "trip-group-by-current-day-truck-rt-historic",
     `beacon-track/trip?startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
-    { refetchInterval: 10000 }
+    {  }
   );
 
   const {
@@ -45,14 +44,10 @@ const TripsDescriptionRT = () => {
     })
   }, [data]);
 
-  useEffect(() => {
-    refetch();
-  }, [dateFilter]);
-
   return (
     <div className="flex flex-col flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte especifico de viajes"
+        title="Reporte especifico de viajes / Historico"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter, 'dd-MM-yyyy')}.`}
         refetch={refetch}
         isFetching={isFetching}
@@ -106,9 +101,8 @@ const TripsDescriptionRT = () => {
           </div>
         }
       />
-
-      <div className="col-span-2 bg-white rounded-lg shadow p-4">
-        <XRangeTripsChartHistorico data={formatData} isLoading={tripsLoading} />
+      <div className="col-span-2 border border-zinc-100 shadow-sm rounded-xl p-3">
+        <XRangeTripsChartHistorico data={formatData}  isLoading={isFetching || tripsLoading} isError={tripsError} />
       </div>
     </div>
   );

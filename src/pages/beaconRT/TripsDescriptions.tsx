@@ -28,7 +28,7 @@ const TripsDescriptionRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck-rt",
+    "trip-group-by-current-day-truck-rt-realtime",
     `beacon-track/trip?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
@@ -81,7 +81,7 @@ const TripsDescriptionRT = () => {
   return (
     <div className="flex flex-col flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte especifico de viajes"
+        title="Reporte especifico de viajes en tiempo real"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate, 'dd-MM-yyyy')}.`}
         refetch={refetch}
         isFetching={isFetching}

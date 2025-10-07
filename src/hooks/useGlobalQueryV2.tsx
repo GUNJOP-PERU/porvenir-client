@@ -8,7 +8,7 @@ export function useFetchData<T = any>(
   options?: Partial<UseQueryOptions<T, Error, T, readonly unknown[]>>
 ) {
   return useQuery<T>({
-    queryKey: ["crud", queryKey],
+    queryKey: ["crud", queryKey, endpoint],
     queryFn: async () => {
       const response = await getDataRequest(endpoint);
       return response.data as T;
