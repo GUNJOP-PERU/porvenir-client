@@ -117,9 +117,9 @@ export const PlanHeader = ({
                   >
                     <Calendar
                       mode="range"
-                      disabled={{
-                        before: new Date(),
-                      }}
+                      // disabled={{
+                      //   before: new Date(),
+                      // }}
                       defaultMonth={field.value?.start}
                       selected={{
                         from: field.value?.start,
