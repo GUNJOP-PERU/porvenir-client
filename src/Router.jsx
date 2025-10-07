@@ -68,7 +68,7 @@ const protectedRoutes = [
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
-  // { path: "newPlanMonth", element: <NewPlanMonth /> },
+  { path: "newPlanMonth", element: <NewPlanMonth /> },
   // { path: "company", element: <PageCompany /> },
   // { path: "cycleTruck", element: <PageCycleTruck /> },
   // { path: "activityTruck", element: <PageActivity /> },
