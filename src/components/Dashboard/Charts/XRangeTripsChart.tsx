@@ -276,7 +276,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       positioner: function(labelWidth: number, labelHeight: number, point: any) {
         return {
           x: point.plotX + 50,
-          y: Math.max(point.plotY - 160)
+          y: point.plotY - 220
         };
       },
       formatter: function (this: any) {
