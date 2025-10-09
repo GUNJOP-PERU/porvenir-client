@@ -1,15 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
-import { DateRange } from 'react-date-range';
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionTable from "@/components/Dashboard/BeaconTrips/BocaminaDetectionTableV2";
 import UnitTripChart from "@/components/Dashboard/BeaconTrips/UnitTripChart";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChartV2";
 import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDetectionChart";
+import Loader from "@/components/Loader";
 // Types
-import type { BeaconCycle, BeaconUnitTrip, BeaconDetection, BocaminaByUnits } from "../../types/Beacon";
+import type { BeaconCycle, BeaconDetection, BocaminaByUnits } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format } from "date-fns";
@@ -94,8 +94,6 @@ const DetectionReportRT = () => {
         totalUnitsNight: 0,
         totalTrips: 0,
         totalTM: 0,
-        totalTripsDesmonte: 0,
-        totalTMDesmonte: 0,
         totalDuration: 0,
         totalDurationNight: 0,
         totalDurationDay: 0,
@@ -108,7 +106,6 @@ const DetectionReportRT = () => {
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
-    const totalTripsDesmonte = tripsDesmonte.reduce((acc, day) => acc + day.totalTrips, 0);
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -160,7 +157,6 @@ const DetectionReportRT = () => {
     );
 
     const totalTM = totalTrips * baseData.mineral;
-    const totalTMDesmonte = totalTripsDesmonte * baseData.desmonte;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
     setUnitTrips(data.map((unit) => unit.trips.flatMap((trip => trip.trip))).flat());
@@ -179,8 +175,6 @@ const DetectionReportRT = () => {
       totalUnitsNight: data.length,
       totalTrips,
       totalTM,
-      totalTripsDesmonte,
-      totalTMDesmonte,
       totalDuration,
       totalDurationNight,
       totalDurationDay,
@@ -190,7 +184,24 @@ const DetectionReportRT = () => {
       totalTMDay,
       totalTMNight,
     };
-  }, [data, tripsDesmonte, baseData]);
+  }, [data]);
+
+  const baseStatsDesmonte = useMemo(() => {
+    if (!tripsDesmonte || !baseData.desmonte) {
+      return {
+        totalTripsDesmonte: 0,
+        totalTMDesmonte: 0,
+      };
+    }
+    const totalTripsDesmonte = tripsDesmonte.reduce((acc, day) => acc + day.totalTrips, 0);
+    const totalTMDesmonte = totalTripsDesmonte * baseData.desmonte;
+
+    return {
+      totalTripsDesmonte,
+      totalTMDesmonte,
+    };
+  }, [tripsDesmonte]);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -208,13 +219,11 @@ const DetectionReportRT = () => {
     return () => clearInterval(interval);
   }, [shiftFilter, refetch]);
 
-  if (tripsLoading || tripsError || !data || data.length === 0) {
+  if (tripsLoading || tripsError || !data === undefined) {
     return (
-      <StatusDisplay
-        isLoading={tripsLoading}
-        isError={tripsError}
-        noData={!data || data.length === 0}
-      />
+      <div className="h-full w-full flex items-center justify-center">
+        <Loader />
+      </div>
     );
   }
 
@@ -270,13 +279,13 @@ const DetectionReportRT = () => {
           unid="TM"
         />
         <CardItem
-          value={baseStats.totalTripsDesmonte}
+          value={baseStatsDesmonte.totalTripsDesmonte}
           title="Viajes de Desmonte"
           valueColor="text-[#076594]"
           unid="viajes"
         />
         <CardItem
-          value={baseStats.totalTMDesmonte}
+          value={baseStatsDesmonte.totalTMDesmonte}
           title="Desmonte (TM)"
           valueColor="text-[#058065]"
           unid="TM"
