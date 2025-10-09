@@ -66,7 +66,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
         return `${detections} lecturas`;
       },
     }
-  ], [data]);
+  ], []); // ✅ Sin dependencias innecesarias
 
   const table = useReactTable({
     data: sortData,
@@ -134,12 +134,12 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
             {table.getRowModel().rows.map((row) => (
               <>
                 <tr
-                  key={row.id}
+                  key={`main-row-${row.original.unit}`}
                   className="hover:bg-gray-50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
-                      key={cell.id}
+                      key={`cell-${row.original.unit}-${cell.column.id}`}
                       className="px-4 py-3 whitespace-nowrap text-[12px] font-semibold"
                       style={{ width: cell.column.getSize() }}
                     >
@@ -151,7 +151,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
                   ))}
                 </tr>
                 {row.getIsExpanded() && (
-                  <tr>
+                  <tr key={`expanded-row-${row.original.unit}`}>
                     <td colSpan={row.getAllCells().length}>
                       <table className="w-full text-sm text-left text-gray-500">
                         <thead className="text-[10px] text-gray-700 uppercase bg-gray-50">
@@ -164,7 +164,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
                         </thead>
                         <tbody>
                           {row.original.bc.map((detection, index: number) => (
-                            <tr key={index} className="bg-white border-b hover:bg-gray-50">
+                            <tr key={detection.uuid || `${row.original.unit}-detection-${index}-${detection.f_inicio}`} className="bg-white border-b hover:bg-gray-50">
                               <td className="px-4 py-2 text-[11px]">{row.original.unit.toUpperCase()}</td>
                               <td className="px-4 py-2 text-[11px]">{detection.ubication}</td>
                               <td className="px-4 py-2 text-[11px]">{format(new Date(detection.f_inicio), 'dd-MM-yyyy, HH:mm')}</td>

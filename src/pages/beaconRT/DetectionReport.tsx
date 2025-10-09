@@ -47,6 +47,18 @@ const DetectionReportRT = () => {
   );
 
   const {
+    data : tripsDesmonte = [],
+    refetch : tripsDesmonteRefetch,
+    isFetching: tripsDesmonteIsFetching,
+    isLoading: tripsDesmonteLoading,
+    isError: tripsDesmonteError,
+  } = useFetchData<BeaconCycle[]>(
+    "trip-group-by-days-rt-desmonte",
+    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    { refetchInterval: 10000 }
+  );
+
+  const {
     data: bocaminaData = [],
     refetch : bocaminaRefetch,
     isFetching : bocaminaIsFetching,
@@ -82,6 +94,8 @@ const DetectionReportRT = () => {
         totalUnitsNight: 0,
         totalTrips: 0,
         totalTM: 0,
+        totalTripsDesmonte: 0,
+        totalTMDesmonte: 0,
         totalDuration: 0,
         totalDurationNight: 0,
         totalDurationDay: 0,
@@ -94,6 +108,7 @@ const DetectionReportRT = () => {
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const totalTripsDesmonte = tripsDesmonte.reduce((acc, day) => acc + day.totalTrips, 0);
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -145,6 +160,7 @@ const DetectionReportRT = () => {
     );
 
     const totalTM = totalTrips * baseData.mineral;
+    const totalTMDesmonte = totalTripsDesmonte * baseData.desmonte;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
     setUnitTrips(data.map((unit) => unit.trips.flatMap((trip => trip.trip))).flat());
@@ -163,6 +179,8 @@ const DetectionReportRT = () => {
       totalUnitsNight: data.length,
       totalTrips,
       totalTM,
+      totalTripsDesmonte,
+      totalTMDesmonte,
       totalDuration,
       totalDurationNight,
       totalDurationDay,
@@ -172,7 +190,7 @@ const DetectionReportRT = () => {
       totalTMDay,
       totalTMNight,
     };
-  }, [data]);
+  }, [data, tripsDesmonte, baseData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -241,14 +259,26 @@ const DetectionReportRT = () => {
         />
         <CardItem
           value={baseStats.totalTrips}
-          title="Viajes Totales"
+          title="Viajes de Mineral"
           valueColor="text-[#00a6fb]"
           unid="viajes"
         />
         <CardItem
           value={baseStats.totalTM}
-          title="Tonelaje Total (TM)"
+          title="Tonelaje de Mineral (TM)"
           valueColor="text-[#02c39a]"
+          unid="TM"
+        />
+        <CardItem
+          value={baseStats.totalTripsDesmonte}
+          title="Viajes de Desmonte"
+          valueColor="text-[#076594]"
+          unid="viajes"
+        />
+        <CardItem
+          value={baseStats.totalTMDesmonte}
+          title="Desmonte (TM)"
+          valueColor="text-[#058065]"
           unid="TM"
         />
       </div>

@@ -57,17 +57,7 @@ const TripsDescriptionRT = () => {
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
-          },
-        ]}
+        count={data.length}
         actions={
           <div className="relative flex flex-row gap-2">
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">

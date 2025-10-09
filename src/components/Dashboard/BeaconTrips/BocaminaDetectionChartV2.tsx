@@ -97,7 +97,7 @@ const  BocaminaDetectionChart = ({ data } : BocaminaDetectionChart) => {
             inside: true,
             verticalAlign: "middle",
             style: { fontSize: "0.6rem", color: "#000", textOutline: "none" },
-            formatter: function () {
+            formatter: function (this : any) {
               return this.y == 0 ? "" : this.y;
             },
           },
