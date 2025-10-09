@@ -45,6 +45,7 @@ import WeekReport from "./pages/dashboard/WeekReport";
 import DetectionReportRT from "./pages/beaconRT/DetectionReport";
 import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
 import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
+import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
@@ -121,6 +122,7 @@ const protectedRoutes = [
   { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
   { path: "dashboard/beacon/detection-report-turn-rt", element: <RealTimeByHourRT /> },
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
+  { path: "dashboard/beacon/detection-report-month-rt", element: <RealTimeByMonthRT /> },
   { path: "dashboard/beacon/trips-description-rt", element: <TripsDescriptionRT /> },
 
   //Dashboard-Beacon

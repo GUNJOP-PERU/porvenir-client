@@ -5,6 +5,7 @@ import type { BeaconCycle, BeaconUnitTrip } from "@/types/Beacon";
 import Highcharts from "highcharts/highcharts-gantt";
 import HighchartsReact from "highcharts-react-official";
 import highchartsXrange from "highcharts/modules/xrange";
+import { formatDurationMinutes } from "@/lib/utilsGeneral";
 // Utils
 import { getCurrentDay } from "@/utils/dateUtils";
 
@@ -27,6 +28,31 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const tableData = useMemo(() => {
+    return data.map(unit => {
+      const tripsWithDestination = unit.allTrips.filter(trip => 
+        trip.endUbication && trip.endUbication.trim() !== ''
+      );
+      
+      const totalTrips = tripsWithDestination.length;
+      const totalDuration = unit.allTrips.reduce((acc, trip) => {
+        const start = new Date(trip.startDate).getTime();
+        const end = new Date(trip.endDate).getTime();
+        return acc + (end - start);
+      }, 0);
+      
+      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips / 1000 / 60 : 0;
+      const totalHours = totalDuration / 1000 / 60 / 60;
+      
+      return {
+        unit: unit.unit.toUpperCase(),
+        totalTrips,
+        totalHours: totalHours.toFixed(1),
+        avgDuration: avgDuration.toFixed(1)
+      };
+    });
+  }, [data]);
 
   const getTimestamp = (dateValue: any): number => {
     if (typeof dateValue === 'string') {
@@ -182,7 +208,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   const options: Highcharts.Options = useMemo(() => ({
     chart: {
       type: "xrange",
-      height: Math.max(data.length * 120),
+      height: (data.length * 110) + 80,
       animation: false,
       events: {
         render: function() {
@@ -262,48 +288,134 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         const duration = ((point.x2 - point.x) / 1000 / 60).toFixed(1);
 
         if (point.isFullTrip) {
-          const detections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
-          const allLocations = [...new Set(detections
-            .filter((d: any) => d.ubication && d.ubication.trim() !== '')
-            .map((d: any) => d.ubication)
-          )].join(', ');
-          
-          const routeText = point.hasDestination 
+          const detections = Array.isArray(trip.trip)
+            ? trip.trip
+            : [trip.trip];
+          const allLocations = [
+            ...new Set(
+              detections
+                .filter((d: any) => d.ubication && d.ubication.trim() !== "")
+                .map((d: any) => d.ubication)
+            ),
+          ].join(", ");
+
+          const routeText = point.hasDestination
             ? `${trip.startUbication} → ${trip.endUbication}`
             : `${trip.startUbication} (Sin destino definido)`;
-          
-          const tripLabel = point.hasDestination ? `Viaje #${point.tripIndex}` : 'Sin Destino';
-          
+
+          const tripLabel = point.hasDestination
+            ? `Viaje #${point.tripIndex}`
+            : "Sin Destino";
+
           return `
-            <div style="padding: 8px;">
-              <b>${tripLabel}</b><br/>
-              <b>Unidad:</b> ${point.unitName}<br/>
-              <b>Inicio:</b> ${startTime}<br/>
-              <b>Fin:</b> ${endTime}<br/>
-              <b>Duración:</b> ${duration} min<br/>
-              <b>Ruta:</b> ${routeText}<br/>
-              <b>Turno:</b> ${trip.shift}<br/>
+            <div style="
+              background: linear-gradient(145deg, #1c1c1f, #232427);
+              padding: 14px 16px;
+              border-radius: 10px;
+              color: #e5e5e5;
+              font-family: 'Inter', sans-serif;
+              font-size: 12.5px;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.45);
+              border: 1px solid #2d2d32;
+              min-width: 220px;
+            ">
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 8px;
+              ">
+                <div style="font-weight: 700; font-size: 14px; color: #fff;">
+                  🚚 ${point.unitName}
+                </div>
+                <span style="
+                  font-size: 11px;
+                  background: #10b98115;
+                  color: #10b981;
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                  font-weight: 600;
+                ">
+                  ${trip.shift.toUpperCase()}
+                </span>
+              </div>
+          
+              <div style="
+                color: #10b981;
+                font-weight: 600;
+                font-size: 12px;
+                margin-bottom: 8px;
+              ">
+                ${tripLabel}
+              </div>
+          
+              <div style="margin-bottom: 8px; line-height: 1.5;">
+                <div><b style="color:#bbb;">Inicio:</b> <span>${startTime}</span></div>
+                <div><b style="color:#bbb;">Fin:</b> <span>${endTime}</span></div>
+                <div><b style="color:#bbb;">Duración:</b> <span>${formatDurationMinutes(duration)}</span></div>
+              </div>
+          
+              <div style="
+                border-top: 1px solid #2f2f2f;
+                margin: 8px 0;
+              "></div>
+          
+              <div style="line-height: 1.5;">
+                <div><b style="color:#bbb;">Ruta:</b></div>
+                <div style="color:#ddd; font-weight: 500;">${routeText}</div>
+              </div>
             </div>
           `;
         } else {
           const specialPeriod = point.specialPeriod;
           const detectionCount = specialPeriod.detections.length;
-          const locations = [...new Set(specialPeriod.detections.map((d: any) => d.ubication))].join(', ');
+          const locations = [
+            ...new Set(specialPeriod.detections.map((d: any) => d.ubication)),
+          ].join(", ");
           const periodType = point.isBocamina ? "Bocamina" : "Mantenimiento";
-          
-          const tripReference = point.tripIndex > 0 ? `Viaje #${point.tripIndex}` : 'Sin destino';
-          
+
+          const tripReference =
+            point.tripIndex > 0 ? `Viaje #${point.tripIndex}` : "Sin destino";
+
           return `
-            <div style="padding: 8px;">
-              <b>Período de ${periodType} - ${tripReference}</b><br/>
-              <b>Unidad:</b> ${point.unitName}<br/>
-              <b>Inicio:</b> ${startTime}<br/>
-              <b>Fin:</b> ${endTime}<br/>
-              <b>Duración:</b> ${duration} min<br/>
-              <b>Detecciones:</b> ${detectionCount}<br/>
-              <b>Ubicaciones:</b> ${locations}
+          <div style="
+            padding: 10px 14px;
+            background: #1e1f22;
+            border-radius: 8px;
+            color: #f5f5f5;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+          ">
+            <div style="font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 6px;">
+              🚚 ${point.unitName}
             </div>
-          `;
+
+            <div style="margin-bottom: 6px;">
+              <b style="color:${point.isBocamina ? "#3b82f6" : "#f59e0b"}">
+                ${periodType.toUpperCase()}
+              </b>
+              <span style="color:#aaa;"> — ${tripReference}</span>
+            </div>
+
+            <div style="margin-bottom: 4px;">
+              <b style="color:#ccc;">Inicio:</b> <span>${startTime}</span><br/>
+              <b style="color:#ccc;">Fin:</b> <span>${endTime}</span><br/>
+              <b style="color:#ccc;">Duración:</b> <span>${formatDurationMinutes(
+                duration
+              )}</span>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #333; margin: 6px 0;" />
+
+            <div style="margin-top: 4px;">
+              <b style="color:#ccc;">Detecciones:</b> ${detectionCount}<br/>
+              <b style="color:#ccc;">Ubicaciones:</b><br/>
+              <span style="color:#ddd;">${locations}</span>
+            </div>
+          </div>
+        `;
         }
       },
       backgroundColor: "#111214",
@@ -338,22 +450,23 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               const isEven = bocaminaIndex % 2 === 0;
               const topPosition = isEven ? -33 : 32;
               
-              return `<div
-                        style="
-                        background: rgba(0, 0, 0, 0.9);
-                        color: white;
-                        width: 80px;
-                        padding: 3px 6px;
-                        border-radius: 3px;
-                        border: 1px solid #000000;
-                        font-size: 9px;
-                        font-weight: bold;
-                        position: relative;
-                        top: ${topPosition}px; z-index: 1;
-                        white-space: nowrap;"
-                      >
-                        ${bocaminaName}<br/>${timeLabel} / ${duration} min
-                      </div>`;
+              return `
+                <div
+                  style="
+                  background: #D0DDD0;
+                  color: #3F4F44;
+                  width: 80px;
+                  padding: 3px 6px;
+                  border-radius: 5px;                       
+                  font-size: 0.6rem;
+                  font-weight: bold;
+                  position: relative;
+                  top: ${topPosition}px; z-index: 1;
+                  white-space: nowrap;"
+                >
+                  ${bocaminaName}<br/>
+                  <span style="color:#000000">${timeLabel} / ${formatDurationMinutes(duration)}</span>
+                </div>`;
             }
             
             // Formato estándar para otros elementos
@@ -386,9 +499,44 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     series: series as any,
   }), [data, allSeriesData,shift]);
 
+  const chartHeight = (data.length * 104) + 15 ;
+  const rowHeight = 110;
+
   return (
-    <div className="w-full">
-      <HighchartsReact highcharts={Highcharts} options={options} />
+    <div className="w-full flex gap-2">
+      <div className="flex-1">
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      </div>
+      
+      <div className="w-40 flex flex-col mt-[-15px]">
+        <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
+          <div className="grid grid-cols-2 gap-1 text-xs font-semibold text-gray-700">
+            <div className="text-center">Viajes</div>
+            <div className="text-center">Horas</div>
+          </div>
+        </div>
+        
+        {/* Filas alineadas con cada unidad del gráfico */}
+        <div className="relative" style={{ height: `${chartHeight}px` }}>
+          {tableData.map((row, index) => (
+            <div 
+              key={row.unit}
+              className="absolute w-full bg-white border-l border-r border-gray-200 px-3 flex items-center"
+              style={{ 
+                top: `${index * rowHeight}px`,
+                height: `${rowHeight}px`,
+                borderBottom: index === tableData.length - 1 ? '1px solid #e5e7eb' : '1px solid #f3f4f6'
+              }}
+            >
+              <div className="grid grid-cols-2 gap-1 text-xs w-full">
+                <div className="font-bold text-black text-center">{row.totalTrips}</div>
+                <div className="font-bold text-black text-center">{row.totalHours}h</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+      </div>
     </div>
   );
 };

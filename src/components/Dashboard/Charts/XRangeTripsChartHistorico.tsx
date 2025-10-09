@@ -23,6 +23,31 @@ const XRangeTripsChartHistorico = ({
   isLoading,
   isError,
 }: XRangeTripsChartProps) => {
+  const tableData = useMemo(() => {
+    return data.map(unit => {
+      const tripsWithDestination = unit.allTrips.filter(trip => 
+        trip.endUbication && trip.endUbication.trim() !== ''
+      );
+      
+      const totalTrips = tripsWithDestination.length;
+      const totalDuration = unit.allTrips.reduce((acc, trip) => {
+        const start = new Date(trip.startDate).getTime();
+        const end = new Date(trip.endDate).getTime();
+        return acc + (end - start);
+      }, 0);
+      
+      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips / 1000 / 60 : 0;
+      const totalHours = totalDuration / 1000 / 60 / 60;
+      
+      return {
+        unit: unit.unit.toUpperCase(),
+        totalTrips,
+        totalHours: totalHours.toFixed(1),
+        avgDuration: avgDuration.toFixed(1)
+      };
+    });
+  }, [data]);
+
   const getTimestamp = (dateValue: any): number => {
     if (typeof dateValue === "string") {
       return new Date(dateValue).getTime();
@@ -47,7 +72,7 @@ const XRangeTripsChartHistorico = ({
       // Determinar color del viaje según si tiene destino
       const hasDestination =
         trip.endUbication && trip.endUbication.trim() !== "";
-      const tripColor = hasDestination ? "#10b981" : "#3F7D58"; // Verde si tiene destino, gris si no
+      const tripColor = hasDestination ? "#10b981" : "#6b7280"; // Verde si tiene destino, gris si no
 
       // Solo incrementar contador para viajes con destino
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
@@ -190,8 +215,7 @@ const XRangeTripsChartHistorico = ({
     () => ({
       chart: {
         type: "xrange",
-        height: Math.max(data.length * 120),
-        // marginLeft: 90,
+        height: (data.length * 110) + 80,
         animation: false,
         events: {
           render: function () {
@@ -494,17 +518,46 @@ const XRangeTripsChartHistorico = ({
     [data, allSeriesData]
   );
 
-  if (isLoading || isError || !data || data.length === 0)
-    return (
-      <StatusDisplay
-        isLoading={isLoading}
-        isError={isError}
-        noData={!data || data.length === 0}
-        height="80vh"
-      />
-    );
+  const chartHeight = (data.length * 104) + 15 ;
+  const rowHeight = 110;
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <div className="w-full flex gap-2">
+      <div className="flex-1">
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      </div>
+      
+      <div className="w-40 flex flex-col mt-[-15px]">
+        <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
+          <div className="grid grid-cols-2 gap-1 text-xs font-semibold text-gray-700">
+            <div className="text-center">Viajes</div>
+            <div className="text-center">Horas</div>
+          </div>
+        </div>
+        
+        {/* Filas alineadas con cada unidad del gráfico */}
+        <div className="relative" style={{ height: `${chartHeight}px` }}>
+          {tableData.map((row, index) => (
+            <div 
+              key={row.unit}
+              className="absolute w-full bg-white border-l border-r border-gray-200 px-3 flex items-center"
+              style={{ 
+                top: `${index * rowHeight}px`,
+                height: `${rowHeight}px`,
+                borderBottom: index === tableData.length - 1 ? '1px solid #e5e7eb' : '1px solid #f3f4f6'
+              }}
+            >
+              <div className="grid grid-cols-2 gap-1 text-xs w-full">
+                <div className="font-bold text-black text-center">{row.totalTrips}</div>
+                <div className="font-bold text-black text-center">{row.totalHours}h</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+      </div>
+    </div>
+  );
 };
 
 export default XRangeTripsChartHistorico;

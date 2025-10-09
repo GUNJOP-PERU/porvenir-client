@@ -235,6 +235,12 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/detection-report-week-rt",
           },
           {
+            name: "Reporte por Mes",
+            href: "/dashboard/beacon/detection-report-month-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-month-rt",
+          },
+          {
             name: "Linea de Tiempo por Turno",
             href: "/dashboard/beacon/trips-description-rt",
             icon: <FaTimeline />,
