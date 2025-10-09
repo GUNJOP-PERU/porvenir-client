@@ -6,6 +6,7 @@ import DonutChart from "./DonutChart";
 // Types
 import type { BeaconUnitTrip } from "@/types/Beacon";
 import type { PlanDay } from "@/types/Plan";
+import { useMemo } from "react";
 
 interface IDonutAndSplineChartByHourProps {
   title?: string;
@@ -31,13 +32,7 @@ interface IDonutAndSplineChartByHourProps {
   }
 }
 
-const DonutAndSplineChartByHour = ({
-  progressBarData,
-  chartData,
-  mineralWeight,
-  mode = "hour",
-  planDay
-}: IDonutAndSplineChartByHourProps) => {
+const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
   const xLabels =
     mode === "day"
       ? chartData.map((item) => item.label) 
@@ -81,6 +76,7 @@ const DonutAndSplineChartByHour = ({
       marginLeft: 50,
       marginRight: 0,
       spacing: [0, 0, 0, 0],
+      animation: false,
     },
     title: "",
     xAxis: [
@@ -144,6 +140,7 @@ const DonutAndSplineChartByHour = ({
         xAxis: 0,
         fillColor: "#bfefe1",
         color: "#04c286",
+        animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
@@ -157,6 +154,7 @@ const DonutAndSplineChartByHour = ({
         fillColor: "#f5f5f580",
         color: "#757575",
         areaColor: "#f5f5f580",
+        animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
@@ -223,7 +221,16 @@ const DonutAndSplineChartByHour = ({
     credits: {
       enabled: false,
     },
-  };
+  }
+
+  const chartKey = useMemo(() => {
+    return JSON.stringify({
+      dataLength: chartData?.length || 0,
+      firstHour: chartData?.[0]?.hour || '',
+      lastHour: chartData?.[chartData?.length - 1]?.hour || '',
+      totalTrips: chartData?.reduce((acc, val) => acc + val.trips.length, 0) || 0,
+    });
+  }, [chartData]);
 
   return (
     <div className="flex flex-col gap-0">
@@ -247,7 +254,11 @@ const DonutAndSplineChartByHour = ({
           showLegend={false}
         />
       </div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <HighchartsReact 
+        highcharts={Highcharts} 
+        options={options} 
+        key={chartKey}
+      />
     </div>
   );
 };

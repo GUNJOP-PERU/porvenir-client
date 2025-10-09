@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
+import { Calendar } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
 import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
@@ -20,16 +21,9 @@ import IconScoop from "@/icons/IconScoop";
 import IconTruck from "@/icons/IconTruck";
 
 const RealTimeByHourRT = () => {
-  const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
-  const [dateFilter, setDateFilter] = useState<
-    [{ startDate: Date; endDate: Date; key: string }]
-  >([
-    {
-      startDate: new Date(getCurrentDay().startDate),
-      endDate: new Date(getCurrentDay().endDate),
-      key: "selection",
-    },
-  ]);
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [dateFilter, setDateFilter] = useState<Date>(new Date());
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const {
     data = [],
@@ -38,30 +32,17 @@ const RealTimeByHourRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck-rt",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
-    { refetchInterval: 10000 }
-  );
+    `trip-group-by-current-day-truck-${format(dateFilter, 'yyyy-MM-dd')}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
-    refetchInterval: 10000,
-  });
-
-  const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
-
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral");
 
   const { data: planData = [] } = useFetchData<PlanDay[]>(
-    "planday-rt",
+    "planday",
     `planDay/by-date-range?startDate=${format(
-      dateFilter[0].startDate,
+      dateFilter,
       "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
-    {
-      refetchInterval: 10000,
-    }
-  );
+    )}&endDate=${format(dateFilter, "yyyy-MM-dd")}`);
 
   const baseData = useMemo(() => {
     const mineral =
@@ -72,7 +53,7 @@ const RealTimeByHourRT = () => {
   }, [mineralData]);
 
   const planDay = useMemo(() => {
-    const currentDate = format(getCurrentDay().startDate, "yyyy-MM-dd");
+    const currentDate = format(dateFilter, "yyyy-MM-dd");
     const filteredPlanData = planData.filter(
       (day) =>
         day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
@@ -82,7 +63,7 @@ const RealTimeByHourRT = () => {
       planDayShift: filteredPlanData,
       planDay: filteredPlanData,
     };
-  }, [planData, shiftFilter]);
+  }, [planData, shiftFilter, dateFilter]);
 
   const baseStats = useMemo(() => {
     if (!data || !mineralData) {
@@ -254,46 +235,57 @@ const RealTimeByHourRT = () => {
   }, [data]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (getCurrentDay().shift !== shiftFilter) {
-        setShiftFilter(getCurrentDay().shift);
-        setDateFilter([
-          {
-            startDate: new Date(getCurrentDay().startDate),
-            endDate: new Date(getCurrentDay().endDate),
-            key: "selection",
-          },
-        ]);
-        refetch();
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
+    refetch();
   }, [shiftFilter, refetch]);
 
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
         title="Reporte por Turno"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
-          dateFilter[0].startDate,
+        description={`Reporte de los viajes realizados por los camiones el dia ${format(
+          dateFilter,
           "dd-MM-yyyy"
         )}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
-          },
-        ]}
+        count={data.length}
+        actions={
+          <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Fecha:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter && (
+                  `${format(dateFilter, "dd/MM/yyyy")}`
+                )}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <Calendar
+                  editableDateInputs={false}
+                  onChange={(item) => setDateFilter(item)}
+                  date={dateFilter}
+                />
+              </div>
+            )}
+          </div>
+        }
       />
       <div className="flex flex-col justify-around">
         <div>
@@ -387,94 +379,6 @@ const RealTimeByHourRT = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-        {/* {shiftFilter === "dia" ? (
-          <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-            <CardTitle
-              title="Ejecución del plan general Turno Dia (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconScoop}
-              classIcon="h-7 w-24"
-              className="custom-class"
-            >
-              <DonutAndSplineChartByHour
-                progressBarData={{
-                  total: planDay.totalTonnage,
-                  currentValue: 0,
-                  prediction:
-                    (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
-                  currentValueColor: "#fac34c",
-                  showDifference: false,
-                  forecastText: "Predicción",
-                }}
-                planDay={planDay}
-                mineralWeight={baseData.mineral}
-                chartData={tripsByShift.dia.map((item) => ({
-                  hour: item.hour,
-                  trips: [],
-                }))}
-              />
-            </CardTitle>
-            <CardTitle
-              title="LHD en Turno Dia (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconScoop}
-              classIcon="h-7 w-24"
-            >
-              <LineAndBarChartByHour
-                mineralWeight={baseData.mineral}
-                chartColor="#fac34c"
-                planDay={planDay}
-                chartData={tripsByShift.dia.map((item) => ({
-                  hour: item.hour,
-                  trips: [],
-                }))}
-              />
-            </CardTitle>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-            <CardTitle
-              title="Ejecución del plan general Turno Noche (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconScoop}
-              classIcon="h-7 w-24"
-            >
-              <DonutAndSplineChartByHour
-                progressBarData={{
-                  total: planDay.totalTonnage,
-                  currentValue: 0,
-                  prediction:
-                    (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-                  currentValueColor: "#00000050",
-                  showDifference: false,
-                  forecastText: "Predicción",
-                }}
-                mineralWeight={baseData.mineral}
-                chartData={tripsByShift.noche.map((item) => ({
-                  hour: item.hour,
-                  trips: [],
-                }))}
-              />
-            </CardTitle>
-
-            <CardTitle
-              title="LHD en Turno Noche (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconScoop}
-              classIcon="h-7 w-24"
-            >
-              <LineAndBarChartByHour
-                mineralWeight={baseData.mineral}
-                chartColor="#3c3f43"
-                chartData={tripsByShift.noche.map((item) => ({
-                  hour: item.hour,
-                  trips: [],
-                }))}
-                planDay={planDay}
-              />
-            </CardTitle>
-          </div>
-        )} */}
         {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
@@ -552,66 +456,6 @@ const RealTimeByHourRT = () => {
             </CardTitle>
           </div>
         )}
-
-        {/* <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
-          <DonutAndTableChart
-            title="Causas de Desviación del Plan %"
-            donutData={[
-              {
-                title: "Disponibilidad",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-              {
-                title: "Utilización",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-            ]}
-            tableData={[
-              {
-                title: "Plan",
-                currentValue: 0,
-                total: 100,
-                subData: [
-                  {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Descarga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                ],
-              },
-              { title: "Real", currentValue: 0, total: 100, subData: [] },
-            ]}
-          />
-        </div> */}
 
         <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
           <DonutAndTableChart

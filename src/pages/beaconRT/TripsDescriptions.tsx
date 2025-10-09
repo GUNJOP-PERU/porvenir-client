@@ -54,14 +54,6 @@ const TripsDescriptionRT = () => {
     })
   }, [data]);
 
-  const baseData = useMemo(() => {
-    const mineral =
-      mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
-    const desmonte =
-      mineralData?.find((charge) => charge.name === "Desmonte")?.value || 40;
-    return { mineral, desmonte };
-  }, [mineralData]);
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (getCurrentDay().shift !== shiftFilter) {

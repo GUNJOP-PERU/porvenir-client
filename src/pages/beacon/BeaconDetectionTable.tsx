@@ -10,51 +10,44 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
+// Components
+import { Calendar } from "react-date-range";
+import PageHeader from "@/components/PageHeaderV2";
 
 const BeaconDetectionTable = () => {
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [dateFilter, setDateFilter] = useState<Date>(new Date());
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [unitFilter, setUnitFilter] = useState<string>("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
-  });
-
-  // Filtros personalizados
-  const [filters, setFilters] = useState({
-    unit: '',
-    startDate: format(new Date(), "yyyy-MM-dd"),
-    endDate: format(new Date(), "yyyy-MM-dd")
   });
 
   const {
     data = [],
     isLoading,
     isError,
+    isFetching,
     refetch,
-  } = useFetchData("beacon-detection", `beacon-track?startDate=${filters.startDate}&endDate=${filters.endDate}`);
+  } = useFetchData("beacon-detection", `beacon-track?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
 
   const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   const filteredData = useMemo(() => {
     let filtered = [...data];
 
-    if (filters.unit) {
+    if (unitFilter) {
       filtered = filtered.filter(item => 
-        item.unit && item.unit.toLowerCase().includes(filters.unit.toLowerCase())
+        item.unit && item.unit.toLowerCase().includes(unitFilter.toLowerCase())
       );
     }
 
     return filtered;
-  }, [data, filters]);
-
-  // Función para limpiar filtros
-  const clearFilters = () => {
-    setFilters((val) => ({
-      ...val,
-      unit: '',
-    }));
-  };
+  }, [data, unitFilter]);
 
   // Definición de columnas
   const columns = useMemo(() => [
@@ -299,34 +292,83 @@ const BeaconDetectionTable = () => {
 
   useEffect(() => {
     refetch()
-  }, [filters.startDate, filters.endDate]);
+  }, [dateFilter, shiftFilter]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-white">
-      <div className="border-b border-gray-200">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Detección de Beacons
-              </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Monitoreo en tiempo real de dispositivos beacon detectados
-              </p>
-            </div>
-
-            {/* Botón para mostrar el modal de últimas detecciones */}
-            <div className="flex items-center gap-4">
+    <div className="w-full h-full flex flex-col bg-white gap-2">
+      <PageHeader
+        title="Tabla de detección de beacons"
+        description={`Registro de detección de beacons el dia ${format(
+          dateFilter,
+          "dd-MM-yyyy"
+        )}.`}
+        refetch={refetch}
+        isFetching={isFetching}
+        setDialogOpen={false}
+        className="col-span-2"
+        count={data.length}
+        actions={
+          <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+                Unidad
+              <select
+                value={unitFilter}
+                onChange={(e) => setUnitFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="">Todas las unidades</option>
+                {uniqueUnits.map((unit, index) => (
+                  <option key={index} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Fecha:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter && (
+                  `${format(dateFilter, "dd/MM/yyyy")}`
+                )}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div className="absolute right-0 top-10 z-[99] mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <Calendar
+                  editableDateInputs={false}
+                  onChange={(item) => setDateFilter(item)}
+                  date={dateFilter}
+                />
+              </div>
+            )}
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Ultima detección:
               <button
                 onClick={() => setShowModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                Ver última detección por unidad
+                Ultima por unidad
               </button>
-            </div>
+            </label>
           </div>
-
-          {/* Modal de últimas detecciones */}
+        }
+      />
+      <div className="border-b border-gray-200">
+        <div className="flex flex-col gap-4">
           {showModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
               <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl h-[90%] relative overflow-auto">
@@ -364,60 +406,6 @@ const BeaconDetectionTable = () => {
             </div>
           )}
 
-          {/* Filtros */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Filtros</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Filtro de Unidad */}
-              <div className="flex flex-col">
-                <label className="text-xs font-medium text-gray-600 mb-1">Unidad</label>
-                <select
-                  value={filters.unit}
-                  onChange={(e) => setFilters(prev => ({ ...prev, unit: e.target.value }))}
-                  className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Todas las unidades</option>
-                  {uniqueUnits.map((unit, index) => (
-                    <option key={index} value={unit}>
-                      {unit}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Filtro de Fecha Inicial */}
-              <div className="flex flex-col">
-                <label className="text-xs font-medium text-gray-600 mb-1">Fecha Inicial</label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
-                  className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Filtro de Fecha Final */}
-              <div className="flex flex-col">
-                <label className="text-xs font-medium text-gray-600 mb-1">Fecha Final</label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
-                  className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Botón para limpiar filtros */}
-              <div className="flex flex-col justify-end">
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2 text-sm bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors duration-200"
-                >
-                  Limpiar Filtros
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

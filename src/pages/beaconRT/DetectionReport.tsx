@@ -14,7 +14,7 @@ import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format } from "date-fns";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
-import { ChartNoAxesColumn } from "lucide-react";
+import { ChartNoAxesColumn, TableProperties } from "lucide-react";
 import { StatusDisplay } from "@/components/Dashboard/StatusDisplay";
 import { getCurrentDay } from "@/utils/dateUtils";
 
@@ -230,25 +230,25 @@ const DetectionReportRT = () => {
         <CardItem
           value={baseStats.totalMantanceTimeMin / 60}
           title="Horas en Mantenimiento"
-          valueColor="text-[#000000]"
-          unid="horas"
+          valueColor="text-[#f79d65]"
+          unid="hrs"
         />
         <CardItem
           value={baseStats.totalDuration / 3600}
           title="Horas Trabajadas"
-          valueColor="text-[#000000]"
-          unid="horas"
+          valueColor="text-[#d4a373]"
+          unid="hrs"
         />
         <CardItem
           value={baseStats.totalTrips}
           title="Viajes Totales"
-          valueColor="text-[#1E64FA]"
+          valueColor="text-[#00a6fb]"
           unid="viajes"
         />
         <CardItem
           value={baseStats.totalTM}
           title="Tonelaje Total (TM)"
-          valueColor="text-[#000000]"
+          valueColor="text-[#02c39a]"
           unid="TM"
         />
       </div>
@@ -312,7 +312,7 @@ const DetectionReportRT = () => {
         <CardTitle
           title="Tabla de Detección de Bocaminas"
           subtitle="Registro detallado de bocaminas detectadas en los viajes"
-          icon={ChartNoAxesColumn}
+          icon={TableProperties}
           classIcon="text-[#3c3f43]"
         >
           <BocaminaDetectionTable

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 import { format } from "date-fns";
 // Components
+import { Calendar } from "react-date-range";
+import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionChart from "@/components/Dashboard/BeaconTrips/BocaminaDetectionChart";
 import GeneralDetectionChart from "@/components/Dashboard/BeaconTrips/GeneralDetectionChart";
@@ -10,8 +12,11 @@ import UnitTripTable from "@/components/Dashboard/BeaconTrips/UnitTripsTable";
 import type { BeaconCycle, BeaconDetection } from "../../types/Beacon";
 
 const BeaconTripDashboard = () => {
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const [unitTrips, setUnitTrips] = useState<BeaconDetection[]>([]);
   const [bocaminaStats, setBocaminaStats] = useState<Record<string, number>>({});
+  const [dateFilter, setDateFilter] = useState<Date>(new Date());
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [baseStats, setBaseStats] = useState({
     totalUnits: 0,
     totalUnitsDay: 0,
@@ -24,17 +29,14 @@ const BeaconTripDashboard = () => {
     nightTrips: 0,
     unitWithLessTrips: ""
   });
-  const [dateFilter, setDateFilter] = useState({
-    startDate: format(new Date(), 'yyyy-MM-dd'),
-    endDate: format(new Date(), 'yyyy-MM-dd'),
-  });
 
   const {
-      data,
+      data = [],
       refetch,
+      isFetching,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-days",
-    `beacon-track/trip?startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`
+    "trip-group-by-date",
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`
   );
 
   useEffect(() => {
@@ -86,11 +88,56 @@ const BeaconTripDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!data) return null;
-
   return (
-    <div className="w-full h-full flex flex-col bg-white">
-      <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
+    <div className="w-full h-full flex flex-col bg-white gap-2">
+      <PageHeader
+        title="Detalle de los Viajes por Camion"
+        description={`Reporte de los viajes realizados por los camiones el dia ${format(
+          dateFilter,
+          "dd-MM-yyyy"
+        )}.`}
+        refetch={refetch}
+        isFetching={isFetching}
+        setDialogOpen={false}
+        className="col-span-2"
+        count={data.length}
+        actions={
+          <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Fecha:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter && (
+                  `${format(dateFilter, "dd/MM/yyyy")}`
+                )}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <Calendar
+                  editableDateInputs={false}
+                  onChange={(item) => setDateFilter(item)}
+                  date={dateFilter}
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <CardItem
           value={baseStats.totalUnits}
           title="Cantidad de Unidades"
@@ -101,20 +148,6 @@ const BeaconTripDashboard = () => {
           value={baseStats.totalTrips}
           title="Viajes Totales"
           valueColor= "text-[#1E64FA]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.dayTrips}
-          subtitleUnid="TM"
-          title="Turno Dia"
-          valueColor= "text-[#fac34c]"
-          unid="viajes"
-        />
-        <CardItem
-          value={baseStats.nightTrips}
-          subtitleUnid="TM"
-          title="Turno Noche"
-          valueColor= "text-[#3c3f43]"
           unid="viajes"
         />
         <CardItem

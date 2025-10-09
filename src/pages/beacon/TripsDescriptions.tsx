@@ -11,7 +11,7 @@ import { format } from "date-fns";
 import { getCurrentDay } from "@/utils/dateUtils";
 
 const TripsDescriptionRT = () => {
-  const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Date>(new Date());
 
@@ -22,7 +22,7 @@ const TripsDescriptionRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck-rt-historic",
+    "trip-group-by-current-day-truck-historico",
     `beacon-track/trip?startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     {  }
   );
@@ -43,6 +43,10 @@ const TripsDescriptionRT = () => {
       })
     })
   }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [shiftFilter, dateFilter]);
 
   return (
     <div className="flex flex-col flex-1 w-full gap-4">
@@ -73,7 +77,6 @@ const TripsDescriptionRT = () => {
                 onChange={(e) => setShiftFilter(e.target.value)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                <option value="">Ambos</option>
                 <option value="dia">Turno Día</option>
                 <option value="noche">Turno Noche</option>
               </select>

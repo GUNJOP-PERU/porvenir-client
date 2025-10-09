@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
-import { DateRange } from "react-date-range";
+import { Calendar } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import BocaminaDetectionTable from "@/components/Dashboard/BeaconTrips/BocaminaDetectionTableV2";
@@ -33,16 +33,8 @@ const DetectionReport = () => {
     {}
   );
   const [unitTrips, setUnitTrips] = useState<BeaconDetection[]>([]);
-  const [shiftFilter, setShiftFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<
-    [{ startDate: Date; endDate: Date; key: string }]
-  >([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [dateFilter, setDateFilter] = useState<Date>(new Date());
 
   const {
     data,
@@ -52,12 +44,7 @@ const DetectionReport = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days",
-    `beacon-track/trip?startDate=${format(
-      dateFilter[0].startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
-      shiftFilter ? `&shift=${shiftFilter}` : ""
-    }`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter,"yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
     { refetchInterval: 10000 }
   );
 
@@ -69,7 +56,7 @@ const DetectionReport = () => {
     isError: bocaminaError,
   } = useFetchData<BocaminaByUnits[]>(
     "trip-group-by-days-bc",
-    `beacon-track/trip/bc?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip/bc?startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
@@ -191,7 +178,7 @@ const DetectionReport = () => {
     refetch();
   }, [dateFilter, shiftFilter]);
 
-  if (tripsLoading || tripsError || !data || data.length === 0) {
+  if (tripsLoading || tripsError || data === undefined) {
     return (
       <StatusDisplay
         isLoading={tripsLoading}
@@ -205,47 +192,41 @@ const DetectionReport = () => {
     <>
       <PageHeader
         title="Reporte de Detección de Bocaminas y Destinos "
-        description="Visualización en tiempo real de puntos de acceso y seguimiento de rutas logísticas."
+        description="Reporte de puntos de acceso y seguimiento de rutas logísticas."
         refetch={refetch}
         isFetching={isFetching}
         count={data.length}
         setDialogOpen={false}
         actions={
           <div className="relative flex flex-row gap-2">
-            <select
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
                 value={shiftFilter}
                 onChange={(e) => setShiftFilter(e.target.value)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                <option value="">Ambos</option>
                 <option value="dia">Turno Día</option>
                 <option value="noche">Turno Noche</option>
               </select>
-            <button
-              onClick={() => setIsTooltipOpen(!isTooltipOpen)}
-              className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-            >
-              {dateFilter[0] &&
-                `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
-                  dateFilter[0].endDate,
-                  "dd/MM/yyyy"
-                )}`}
-            </button>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Fecha:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter && (
+                  `${format(dateFilter, "dd/MM/yyyy")}`
+                )}
+              </button>
+            </label>
             {isTooltipOpen && (
-              <div className="absolute right-0 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
-                <DateRange
+              <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <Calendar
                   editableDateInputs={false}
-                  onChange={(item) =>
-                    setDateFilter([
-                      {
-                        startDate: item.selection?.startDate || new Date(),
-                        endDate: item.selection?.endDate || new Date(),
-                        key: "selection",
-                      },
-                    ])
-                  }
-                  moveRangeOnFirstSelection={false}
-                  ranges={dateFilter}
+                  onChange={(item) => setDateFilter(item)}
+                  date={dateFilter}
                 />
               </div>
             )}
@@ -276,22 +257,6 @@ const DetectionReport = () => {
             value={baseStats.totalTrips}
             title="Viajes Totales"
             valueColor="text-[#00a6fb]"
-            unid="viajes"
-          />
-          <CardItem
-            value={baseStats.dayTrips}
-            subtitle={baseStats.totalTMDay}
-            subtitleUnid="TM"
-            title="Viajes Diurnos"
-            valueColor="text-[#fac34c]"
-            unid="viajes"
-          />
-          <CardItem
-            value={baseStats.nightTrips}
-            title="Viajes Nocturnos"
-            subtitle={baseStats.totalTMNight}
-            subtitleUnid="TM"
-            valueColor="text-[#3c3f43]"
             unid="viajes"
           />
           <CardItem

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
@@ -15,20 +15,20 @@ import {
   endOfWeek,
   format,
   eachDayOfInterval,
-  getISODay,
 } from "date-fns";
+import { DateRange } from "react-date-range";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 // Icons
 import { es } from "date-fns/locale";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import IconTruck from "@/icons/IconTruck";
-import IconScoop from "@/icons/IconScoop";
 
-const RealTimeByWeek = () => {
-  const isoDay = getISODay(new Date());
+const ReportByWeek = () => {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [dateFilter, setDateFilter] = useState<
     [
       {
@@ -251,21 +251,33 @@ const RealTimeByWeek = () => {
   }, [data, dateFilter]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (getCurrentDay().shift !== shiftFilter) {
-        setShiftFilter(getCurrentDay().shift);
-        setDateFilter([
-          {
-            startDate: new Date(getCurrentWeekStartEndDates().startDate),
-            endDate: new Date(getCurrentWeekStartEndDates().endDate),
-            key: "selection",
-          },
-        ]);
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
+    refetch();
   }, [shiftFilter]);
+
+  // Cerrar calendario al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      // No cerrar si el clic es en el botón o dentro del calendario
+      if (
+        (calendarRef.current && calendarRef.current.contains(target)) ||
+        (buttonRef.current && buttonRef.current.contains(target))
+      ) {
+        return;
+      }
+      
+      setIsTooltipOpen(false);
+    };
+
+    if (isTooltipOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isTooltipOpen]);
 
   const turnConfig = {
     dia: {
@@ -278,8 +290,8 @@ const RealTimeByWeek = () => {
     },
     noche: {
       title: "Turno Noche",
-      color: "#3c3f43",
-      iconColor: "text-[#3c3f43]",
+      color: "#00000050",
+      iconColor: "text-[#00000050]",
       tm: baseStats.totalTMNight,
       trips: tripsByShift.noche,
       units: baseStats.totalUnitsNight,
@@ -328,17 +340,65 @@ const RealTimeByWeek = () => {
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
-          },
-        ]}
+        count={data.length}
+        actions={
+          <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {/* <option value="">Ambos</option> */}
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Rango de Fechas:
+              <button
+                ref={buttonRef}
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter[0] &&
+                  `${format(dateFilter[0].startDate, "dd/MM/yyyy")} - ${format(
+                    dateFilter[0].endDate,
+                    "dd/MM/yyyy"
+                  )}`}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div 
+                ref={calendarRef}
+                className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg"
+              >
+                <DateRange
+                  editableDateInputs={false}
+                  onChange={(item) => {
+                    const selectedDate = item.selection?.startDate || new Date();
+                    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
+                    const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+                    
+                    setDateFilter([
+                      {
+                        startDate: weekStart,
+                        endDate: weekEnd,
+                        key: "selection",
+                      },
+                    ]);
+                  }}
+                  moveRangeOnFirstSelection={false}
+                  ranges={dateFilter}
+                  weekStartsOn={1}
+                  showMonthAndYearPickers={false}
+                  fixedHeight={true}
+                />
+              </div>
+            )}
+          </div>
+        }
       />
       <div className="flex flex-col justify-around">
         <div>
@@ -396,15 +456,8 @@ const RealTimeByWeek = () => {
             title=""
             size="medium"
             donutData={{
-              currentValue:
-                12 *
-                  isoDay *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                baseStats.totalMantanceTimeMin / 60,
-              total:
-                12 *
-                isoDay *
-                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+              currentValue: 12 * 7 * (baseStats.totalUnitsNight + baseStats.totalUnitsDay) - baseStats.totalMantanceTimeMin / 60,
+              total: 12 * 7 * (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
               currentValueColor: "#14B8A6",
             }}
           />
@@ -426,12 +479,12 @@ const RealTimeByWeek = () => {
             donutData={{
               currentValue:
                 12 *
-                  isoDay *
+                  7 *
                   (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
                 baseStats.totalDuration / 3600,
               total:
                 12 *
-                isoDay *
+                7 *
                 (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
               currentValueColor: "#14B8A6",
             }}
@@ -440,31 +493,6 @@ const RealTimeByWeek = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-        {/* <CardTitle
-          title={`Ejecución del plan general ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
-          icon={IconScoop}
-          classIcon="h-7 w-24"
-        >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: 1200,
-              currentValue: 0,
-              prediction: (active.tm / active.units) * 7,
-              currentValueColor: active.color,
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={active.trips.map((item) => ({
-              label: item.label,
-              trips: [],
-            }))}
-            mode="day"
-            planDay={planDay}
-          />
-        </CardTitle> */}
-
         <CardTitle
           title={`Ejecución de extracción de mineral ${active.title} (TM)`}
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
@@ -487,24 +515,6 @@ const RealTimeByWeek = () => {
           />
         </CardTitle>
 
-        {/* <CardTitle
-          title={`LHD en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
-          icon={IconScoop}
-          classIcon="h-7 w-24"
-        >
-          <LineAndBarChartByHour
-            mineralWeight={baseData.mineral}
-            chartColor={active.color}
-            chartData={active.trips.map((item) => ({
-              label: item.label,
-              trips: [],
-            }))}
-            mode="day"
-            planDay={planDay}
-          />
-        </CardTitle> */}
-
         <CardTitle
           title={`Camión en ${active.title} (TM)`}
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
@@ -520,66 +530,6 @@ const RealTimeByWeek = () => {
           />
         </CardTitle>
 
-        {/* <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
-          <DonutAndTableChart
-            title="Causas de Desviación del Plan %"
-            donutData={[
-              {
-                title: "Disponibilidad",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-              {
-                title: "Utilización",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-            ]}
-            tableData={[
-              {
-                title: "Plan",
-                currentValue: 0,
-                total: 100,
-                subData: [
-                  {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Descarga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                ],
-              },
-              { title: "Real", currentValue: 0, total: 100, subData: [] },
-            ]}
-          />
-        </div> */}
-
         <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
           <DonutAndTableChart
             title="Causas de Desviación del Plan %"
@@ -588,13 +538,13 @@ const RealTimeByWeek = () => {
                 title: "Disponibilidad",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 7 * 12
+                    : baseStats.totalUnitsNight * 7 * 12,
                 currentValue:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12 -
+                    ? baseStats.totalUnitsDay * 7 * 12 -
                       baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * isoDay * 12 -
+                    : baseStats.totalUnitsNight * 7 * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
                 currentValueColor: "#14B8A6",
               },
@@ -602,8 +552,8 @@ const RealTimeByWeek = () => {
                 title: "Utilización",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 7 * 12
+                    : baseStats.totalUnitsNight * 7 * 12,
                 currentValue:
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
@@ -668,4 +618,4 @@ const RealTimeByWeek = () => {
   );
 };
 
-export default RealTimeByWeek;
+export default ReportByWeek;

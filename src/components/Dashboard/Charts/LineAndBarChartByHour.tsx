@@ -1,5 +1,6 @@
 import Highcharts, { Series } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useMemo } from "react";
 import { roundAndFormat } from "@/lib/utilsGeneral";
 // Types
 import type { BeaconUnitTrip } from "@/types/Beacon";
@@ -29,25 +30,6 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     : chartData.map(item => item.hour ?? "");
 
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-
-  // const planValue = mode === "day" ? 1200 : 100;
-  // const plan = new Array(chartData.length).fill(planValue);
-  
-  
-  // const diff = plan.map((exp, i) => {
-  //   const currentData = tripsCounts;
-  //   const value =
-  //     typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
-  //   const e = Math.abs(exp - value);
-  //   return +e;
-  // });
-
-  // const diffColor = plan.map((exp, i) => {
-  //   const currentData = tripsCounts;
-  //   return currentData[i] !== undefined && currentData[i] >= exp
-  //     ? "#04c286"
-  //     : "#fe7887";
-  // });
 
   const currentPlanDay = planDay 
   ? (
@@ -284,10 +266,24 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     },
   };
 
+  const chartKey = useMemo(() => {
+    return JSON.stringify({
+      dataLength: chartData?.length || 0,
+      firstHour: chartData?.[0]?.hour || '',
+      lastHour: chartData?.[chartData?.length - 1]?.hour || '',
+      totalTrips: chartData?.reduce((acc, val) => acc + val.trips.length, 0) || 0,
+      mode: mode,
+    });
+  }, [chartData, mode]);
+
   return (
     <>
       <h3 className="font-bold text-center text-sm">{title}</h3>
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <HighchartsReact 
+          highcharts={Highcharts} 
+          options={options} 
+          key={chartKey}
+        />
       
     </>
   );
