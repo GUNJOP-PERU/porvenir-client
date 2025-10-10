@@ -37,7 +37,7 @@ export function DataExport({
       disabled={disabled || loading}
       type="button"
       onClick={handleExport}
-      className={`flex items-center gap-2 bg-custom-500/[0.08] text-custom-500  hover:bg-custom-500 select-none hover:text-white ease-in-out transition-all duration-500 !min-w-9 md:!min-w-[100px] px-0 md:px-3 ${className}`}
+      className={`flex items-center gap-2 bg-secondary-energy text-secondary-cobre  hover:bg-secondary-ouro select-none hover:text-primary-black ease-in-out transition-all duration-500 !min-w-9 md:!min-w-[100px] px-0 md:px-3 ${className}`}
     >
       
       {loading ? (
