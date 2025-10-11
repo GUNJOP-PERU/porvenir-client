@@ -76,14 +76,6 @@ export default function Tracking() {
   );
 }
 
-// const faja4 = trackingByArea["Faja_4"] || [];
-// const cancha = trackingByArea["Cancha_100"] || [];
-// const tallerSaturno = trackingByArea["Mantenimiento_Saturno_Wap"] || [];
-// const pahuaypite = trackingByArea["Pahuaypite"] || [];
-// const parqueo = trackingByArea["Parqueo_volquetes"] || [];
-// const bocamina_1 = trackingByArea["Bocamina 1875"] || [];
-// const bocamina_2 = trackingByArea["Bocamina 1800"] || [];
-
 const TruckIcon = ({className="", name = ""}) => {
   return (
     <svg

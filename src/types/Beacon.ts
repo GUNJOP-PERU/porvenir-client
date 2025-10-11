@@ -123,3 +123,29 @@ export type BocaminaByUnits = {
     ubicationType: string
   }[]
 }
+
+export type UnitTripDetections = {
+  unit: string,
+  firstBocamina: {
+    unit: string,
+    mac: string,
+    f_inicio: string,
+    f_final: string,
+    duration: number,
+    shift: string,
+    dateString: string,
+    ubication: string,
+    ubicationType: string
+  },
+  tracks: {
+    unit: string,
+    mac: string,
+    f_inicio: string,
+    f_final: string,
+    duration: number,
+    shift: string,
+    dateString: string,
+    ubication: string,
+    ubicationType: string
+  }[]
+}

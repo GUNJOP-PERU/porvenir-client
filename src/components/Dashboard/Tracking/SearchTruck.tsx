@@ -1,4 +1,9 @@
-import { ubicationData } from "@/pages/beaconRT/UbicationLocation";
+import {
+  ubicationData,
+  maintenanceLocation,
+  superficieLocation,
+  ubicationBocamina
+} from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
 import { useState, useMemo } from "react";
@@ -20,7 +25,7 @@ export default function SearchTruck({
 }) {
   const [query, setQuery] = useState("");
 
-  const trucksPerArea = ubicationData.map((ubication) => {
+  const trucksPerArea = [...ubicationData, ...ubicationBocamina, ...maintenanceLocation, ...superficieLocation].map((ubication) => {
     const trucksInArea = data.filter(
       (truck) =>
         truck.lastUbicationMac &&
@@ -31,7 +36,7 @@ export default function SearchTruck({
     ).length;
     const offlineCount = trucksInArea.length - onlineCount;
     return {
-      area: ubication.name,
+      area: ubication.description,
       count: trucksInArea.length,
       online: onlineCount,
       offline: offlineCount,

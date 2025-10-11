@@ -77,7 +77,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       
       // Determinar color del viaje según si tiene destino
       const hasDestination = trip.endUbication && trip.endUbication.trim() !== "";
-      const tripColor = hasDestination ? "#10b981" : "#6b7280"; // Verde si tiene destino, gris si no
+      const tripColor = hasDestination ? "#10b981" : "#6b7280";
       
       // Solo incrementar contador para viajes con destino
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
@@ -90,8 +90,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         borderColor: "#000000",
         borderWidth: 1,
         trip: trip,
-        tripIndex: displayTripIndex, // Usar el contador de viajes válidos
-        originalTripIndex: tripIndex + 1, // Mantener índice original para otros usos
+        tripIndex: displayTripIndex,
+        originalTripIndex: tripIndex + 1,
         isFullTrip: true,
         hasDestination: hasDestination,
         unitName: unit.unit.toUpperCase(),
@@ -111,7 +111,32 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         const isBocaminaDetection = detection.ubication?.toLowerCase().includes('bocamina') ||
           detection.ubicationType?.toLowerCase().includes('bocamina');
 
-        if (isBocaminaDetection) {
+        const isPlantaDetection = detection.ubication?.toLowerCase().includes('planta') ||
+          detection.ubicationType?.toLowerCase().includes('planta');
+
+        if (isPlantaDetection) {
+          if (currentMaintenancePeriod) {
+            specialPeriods.push(currentMaintenancePeriod);
+            currentMaintenancePeriod = null;
+          }
+          
+          const startTime = getTimestamp(detection.f_inicio);
+          const endTime = getTimestamp(detection.f_final);
+          const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
+          
+          const plantaPeriod = {
+            startTime: startTime,
+            endTime: endTime,
+            detections: [detection],
+            startIndex: detectionIndex,
+            type: 'planta',
+            hasLabel: duration > 0,
+            bocaminaIndex: bocaminaCounter++
+          };
+          
+          specialPeriods.push(plantaPeriod);
+        }
+        else if (isBocaminaDetection) {
           if (currentMaintenancePeriod) {
             specialPeriods.push(currentMaintenancePeriod);
             currentMaintenancePeriod = null;
@@ -169,8 +194,10 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       }
 
       specialPeriods.forEach((period, periodIndex) => {
-        const color = period.type === 'bocamina' ? "#3b82f6" : "#f59e0b";
-        const periodType = period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
+        const color = period.type === 'planta' ? "#EF4444" : 
+                     period.type === 'bocamina' ? "#8a0ed2" : "#f59e0b";
+        const periodType = period.type === 'planta' ? "Planta" :
+                          period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
         
         // Obtener el tripIndex correcto del viaje padre
         const parentTrip = allSeriesData.find(item => 
@@ -234,7 +261,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     time: {
       timezone: 'America/Lima',
     },
-    xAxis: {
+    xAxis: [{
+      // Eje X inferior
       type: "datetime",
       title: {
         text: "Tiempo",
@@ -260,7 +288,18 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
         }
       })(),
-    },
+    }, {
+      // Eje X superior
+      type: "datetime",
+      opposite: true,
+      linkedTo: 0,
+      title: {
+        text: null,
+      },
+      labels: {
+        format: "{value:%H:%M}",
+      },
+    }],
     yAxis: {
       title: {
         text: "",
@@ -453,8 +492,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               return `
                 <div
                   style="
-                  background: #D0DDD0;
-                  color: #3F4F44;
+                  background: #d182ff;
+                  color: #000000;
                   width: 80px;
                   padding: 3px 6px;
                   border-radius: 5px;                       
@@ -500,7 +539,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   }), [data, allSeriesData,shift]);
 
   const chartHeight = (data.length * 104) + 15 ;
-  const rowHeight = 110;
+  const rowHeight = 108;
 
   return (
     <div className="w-full flex gap-2">
@@ -508,7 +547,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       
-      <div className="w-40 flex flex-col mt-[-15px]">
+      <div className="w-40 flex flex-col mt-[20px]">
         <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
           <div className="grid grid-cols-2 gap-1 text-xs font-semibold text-gray-700">
             <div className="text-center">Viajes</div>
