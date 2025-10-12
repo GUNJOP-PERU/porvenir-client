@@ -26,7 +26,7 @@ interface IWifiLocation {
 
 export const ubicationBocamina: IBeaconUbication[] = [
   {
-    id: 23,
+    id: 1,
     mac: "BC:57:29:06:02:33",
     name: "BC1910_01",
     location: "bocamina",
@@ -39,24 +39,11 @@ export const ubicationBocamina: IBeaconUbication[] = [
     updatedAt: "2024-08-22T04:34:00Z",
   },
   {
-    id: 24,
-    mac: "BC:57:29:03:5C:6A",
-    name: "BC1910_02",
-    location: "bocamina",
-    description: "Ruta BC-1910",
-    position: {
-      latitud: -13.077778,
-      longitud: -75.989167,
-    },
-    createdAt: "2024-07-22T04:34:00Z",
-    updatedAt: "2024-08-22T04:34:00Z",
-  },
-  {
-    id: 25,
+    id: 2,
     mac: "BC:57:29:06:02:3A",
     name: "BC1875_01",
     location: "bocamina",
-    description: "Int-BC-1875",
+    description: "BC-1875",
     position: {
       latitud: -13.074722,
       longitud: -75.987778,
@@ -65,24 +52,11 @@ export const ubicationBocamina: IBeaconUbication[] = [
     updatedAt: "2024-08-22T04:30:00Z",
   },
   {
-    id: 26,
-    mac: "BC:57:29:03:5C:94",
-    name: "BC1875_02",
-    location: "bocamina",
-    description: "Ext-BC-1875",
-    position: {
-      latitud: -13.076111,
-      longitud: -75.989722,
-    },
-    createdAt: "2024-07-22T04:30:00Z",
-    updatedAt: "2024-08-22T04:30:00Z",
-  },
-  {
-    id: 27,
+    id: 3,
     mac: "BC:57:29:06:02:38",
     name: "BC1820_01",
     location: "bocamina",
-    description: "Int-BC-1820",
+    description: "BC-1820",
     position: {
       latitud: -13.0775,
       longitud: -75.991944,
@@ -91,24 +65,11 @@ export const ubicationBocamina: IBeaconUbication[] = [
     updatedAt: "2024-08-22T04:29:00Z",
   },
   {
-    id: 28,
-    mac: "BC:57:29:03:5C:77",
-    name: "BC1820_02",
-    location: "bocamina",
-    description: "Ext-BC-1820",
-    position: {
-      latitud: -13.076389,
-      longitud: -75.991667,
-    },
-    createdAt: "2024-07-22T04:28:00Z",
-    updatedAt: "2024-08-22T04:28:00Z",
-  },
-  {
-    id: 29,
+    id: 4,
     mac: "BC:57:29:06:02:39",
     name: "BC1800_01",
     location: "bocamina",
-    description: "Int-BC-1800",
+    description: "BC-1800",
     position: {
       latitud: -13.078611,
       longitud: -75.992222,
@@ -116,19 +77,6 @@ export const ubicationBocamina: IBeaconUbication[] = [
     createdAt: "2024-07-22T04:26:00Z",
     updatedAt: "2024-08-22T04:26:00Z",
   },
-  {
-    id: 30,
-    mac: "BC:57:29:03:5C:86",
-    name: "BC1800_02",
-    location: "bocamina",
-    description: "Ext-BC-1800",
-    position: {
-      latitud: -13.08,
-      longitud: -75.993889,
-    },
-    createdAt: "2024-07-22T04:25:00Z",
-    updatedAt: "2024-08-22T04:25:00Z",
-  }
 ]
 
 export const superficieLocation: IBeaconUbication[] = [
@@ -196,6 +144,58 @@ export const superficieLocation: IBeaconUbication[] = [
     },
     createdAt: "2024-07-22T19:03:00Z",
     updatedAt: "2024-08-22T19:03:00Z",
+  },
+  {
+    id: 6,
+    mac: "BC:57:29:03:5C:86",
+    name: "BC1800_02",
+    location: "bocamina",
+    description: "Ruta BC-1800",
+    position: {
+      latitud: -13.08,
+      longitud: -75.993889,
+    },
+    createdAt: "2024-07-22T04:25:00Z",
+    updatedAt: "2024-08-22T04:25:00Z",
+  },
+  {
+    id: 7,
+    mac: "BC:57:29:03:5C:77",
+    name: "BC1820_02",
+    location: "bocamina",
+    description: "Ruta BC-1820",
+    position: {
+      latitud: -13.076389,
+      longitud: -75.991667,
+    },
+    createdAt: "2024-07-22T04:28:00Z",
+    updatedAt: "2024-08-22T04:28:00Z",
+  },
+  {
+    id: 8,
+    mac: "BC:57:29:03:5C:94",
+    name: "BC1875_02",
+    location: "bocamina",
+    description: "Ruta BC-1875",
+    position: {
+      latitud: -13.076111,
+      longitud: -75.989722,
+    },
+    createdAt: "2024-07-22T04:30:00Z",
+    updatedAt: "2024-08-22T04:30:00Z",
+  },
+  {
+    id: 9,
+    mac: "BC:57:29:03:5C:6A",
+    name: "BC1910_02",
+    location: "bocamina",
+    description: "Ruta BC-1910",
+    position: {
+      latitud: -13.077778,
+      longitud: -75.989167,
+    },
+    createdAt: "2024-07-22T04:34:00Z",
+    updatedAt: "2024-08-22T04:34:00Z",
   },
 ]
 

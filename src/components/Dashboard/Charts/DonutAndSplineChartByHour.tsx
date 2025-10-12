@@ -70,7 +70,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
   const options = {
     chart: {
       type: "areaspline",
-      height: 280,
+      height: 300,
       marginBottom: 50,
       marginTop: 40,
       marginLeft: 50,
@@ -89,7 +89,8 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.6em",
+            textDecoration: "underline",
+            fontSize: "0.9em",
             fontWeight: "bold",
           },
         },
@@ -106,7 +107,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.6em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },

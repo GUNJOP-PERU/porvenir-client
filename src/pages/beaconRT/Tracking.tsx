@@ -102,7 +102,7 @@ const TruckTracking = () => {
     error,
     refetch,
   } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
-    refetchInterval: 10000,
+    refetchInterval: 2000,
   });
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
@@ -245,7 +245,6 @@ const TruckTracking = () => {
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
       const key = `${coord.latitud},${coord.longitud}`;
       if (!coordMap.has(key)) coordMap.set(key, []);
-      // Extraer solo el número después del segundo guión
       const truckNameParts = truck.name.split("-");
       const displayName =
         truckNameParts.length > 2 ? truckNameParts[2] : truck.name;

@@ -440,36 +440,27 @@ const RealTimeByWeek = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-        {/* <CardTitle
-          title={`Ejecución del plan general ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
-          icon={IconScoop}
-          classIcon="h-7 w-24"
-        >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: 1200,
-              currentValue: 0,
-              prediction: (active.tm / active.units) * 7,
-              currentValueColor: active.color,
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
-            mineralWeight={baseData.mineral}
-            chartData={active.trips.map((item) => ({
-              label: item.label,
-              trips: [],
-            }))}
-            mode="day"
-            planDay={planDay}
-          />
-        </CardTitle> */}
-
         <CardTitle
           title={`Ejecución de extracción de mineral ${active.title} (TM)`}
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-16"
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
         >
           <DonutAndSplineChartByHour
             progressBarData={{
@@ -487,30 +478,40 @@ const RealTimeByWeek = () => {
           />
         </CardTitle>
 
-        {/* <CardTitle
-          title={`LHD en ${active.title} (TM)`}
-          subtitle="Análisis de la cantidad de viajes realizados SCOOP"
-          icon={IconScoop}
-          classIcon="h-7 w-24"
-        >
-          <LineAndBarChartByHour
-            mineralWeight={baseData.mineral}
-            chartColor={active.color}
-            chartData={active.trips.map((item) => ({
-              label: item.label,
-              trips: [],
-            }))}
-            mode="day"
-            planDay={planDay}
-          />
-        </CardTitle> */}
-
         <CardTitle
           title={`Camión en ${active.title} (TM)`}
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-14"
-        >
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia positiva
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#fe7887] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia negativa
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex w-2 h-2 rounded-full" style={{background: active.color}}/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
+    >
           <LineAndBarChartByHour
             mineralWeight={baseData.mineral}
             chartColor={active.color}
@@ -519,66 +520,6 @@ const RealTimeByWeek = () => {
             planDay={planDay}
           />
         </CardTitle>
-
-        {/* <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
-          <DonutAndTableChart
-            title="Causas de Desviación del Plan %"
-            donutData={[
-              {
-                title: "Disponibilidad",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-              {
-                title: "Utilización",
-                total: 100,
-                currentValue: 0,
-                currentValueColor: "#14B8A6",
-              },
-            ]}
-            tableData={[
-              {
-                title: "Plan",
-                currentValue: 0,
-                total: 100,
-                subData: [
-                  {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Tiempo de Descarga de Camión",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 100,
-                  },
-                ],
-              },
-              { title: "Real", currentValue: 0, total: 100, subData: [] },
-            ]}
-          />
-        </div> */}
 
         <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
           <DonutAndTableChart

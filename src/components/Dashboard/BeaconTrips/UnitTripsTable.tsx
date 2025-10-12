@@ -152,6 +152,8 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
     applyFilters();
   }, [filters]);
 
+  console.log("filteredData", filteredData);
+
   const table = useReactTable({
     data: filteredData,
     columns,
@@ -176,48 +178,21 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
 
   return (
     <div className="flex flex-col h-full pb- gap-1">
-      <div className="bg-zinc-50 px-2 py-2 rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="flex flex-col">
-            {/* <label className="text-xs font-medium text-zinc-600 mb-1">
-              Unidad
-            </label> */}
-            <select
-              value={filters.unit}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, unit: e.target.value }))
-              }
-              className="h-8 px-2 py-0 text-xs border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
-            >
-              <option value="">Todas las unidades</option>
-              {unitList.map((unit, index) => (
-                <option key={index} value={unit}>
-                  {unit}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtro Solo Bocaminas */}
-          {/* <div className="flex flex-col">
-            <label className="text-xs font-medium text-gray-600 mb-1 flex items-center">
-              <span className="mr-2">Solo Bocaminas</span>
-              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input
-                  type="checkbox"
-                  id="toggle"
-                  className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out transform checked:translate-x-4"
-                  checked={filters.onlyBocaminas}
-                  onChange={(e) => setFilters(prev => ({ ...prev, onlyBocaminas: e.target.checked }))}
-                />
-                <label
-                  htmlFor="toggle"
-                  className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out checked:bg-green-500"
-                ></label>
-              </div>
-            </label>
-          </div> */}
-        </div>
+      <div className="flex flex-col w-[250px]">
+        <select
+          value={filters.unit}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, unit: e.target.value }))
+          }
+          className="bg-white h-8 px-2 py-0 text-xs border-[2px] border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+        >
+          <option value="">Todas las unidades</option>
+          {unitList.map((unit, index) => (
+            <option key={index} value={unit}>
+              {unit}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex-1 overflow-auto">
@@ -283,13 +258,13 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                   <tr className="">
                     <td colSpan={row.getAllCells().length}>
                       <table className="w-full  text-left text-zinc-400">
-                        <thead className="bg-sky-50 text-[10px] h-8 px-2 text-left align-middle font-medium text-blue-400 uppercase">
+                        <thead className="bg-sky-50 text-[10px] h-8 px-2 text-left align-middle font-medium text-blue-500 uppercase">
                           <tr>
-                            <th scope="col" className=" w-[20px] first:rounded-l-lg last:rounded-r-lg">
-                             
-                            </th>
                             <th scope="col" className="px-4 py-2 ">
                               Unidad
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
+                              Inicio
                             </th>
                             <th scope="col" className="px-4 py-2 ">
                               Origen
@@ -301,35 +276,39 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                               Duración
                             </th>
                             <th scope="col" className="px-4 py-2 ">
+                              Material
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
                               Turno
                             </th>
                             <th scope="col" className="px-4 py-2 ">
                               Detecciones
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
-                              Hora de Inicio
-                            </th>
-                            <th scope="col" className="px-4 py-2 first:rounded-l-lg last:rounded-r-lg">
-                              Hora de Fin
-                            </th>
                           </tr>
                         </thead>
-                        <tbody className="text-xs divide-y divide-blue-50 ">
+                        <tbody className="text-xs divide-y divide-blue-50 text-gray-500">
                           {row.original.trips.map((trip, index) => (
                             <tr
                               key={index}
                               className="bg-blue-50/20  hover:bg-sky-50  cursor-default "
                             >
-                              <td className="first:rounded-l-lg last:rounded-r-lg"></td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {row.original.unit.toUpperCase()}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.startUbication}
+                                {trip.startUbication} / {formatFecha(trip.startDate)}
                               </td>
-                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">{trip.endUbication}</td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {roundAndFormat(trip.totalDuration)}
+                                --- ---
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {trip.endUbication} / {formatFecha(trip.endDate)}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {roundAndFormat(trip.totalDurationMin)}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {trip.tripType}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.shift === "dia" ? (
@@ -338,12 +317,8 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                                   <IconNight className="h-5 w-5 fill-sky-400" />
                                 )}
                               </td>
-                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">{trip.trip.length}</td>
-                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">                              
-                                 {formatFecha(trip.startDate)}
-                              </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {formatFecha(trip.endDate)}
+                                {trip.trip.length}
                               </td>
                             </tr>
                           ))}

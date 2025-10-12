@@ -74,7 +74,8 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.6em",
+            textDecoration: "underline",
+            fontSize: "0.9em",
             fontWeight: "bold",
           },
         },
@@ -90,7 +91,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.6em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },

@@ -101,6 +101,7 @@ export default function Legend({
         {/* Toggle Bocaminas */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <span className="bg-[#8a0ed2] w-2 h-2 rounded-full"/>
             <span className="text-white text-[11px] font-medium">Bocaminas</span>
           </div>
           <button
@@ -121,6 +122,7 @@ export default function Legend({
         {/* Toggle Red WiFi */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <span className="bg-[#66d20e] w-2 h-2 rounded-full"/>
             <span className="text-white text-[11px] font-medium">Red WiFi</span>
           </div>
           <button
@@ -141,6 +143,7 @@ export default function Legend({
         {/* Toggle Superficie */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <span className="bg-[#ccc8af] w-2 h-2 rounded-full"/>
             <span className="text-white text-[11px] font-medium">Superficie</span>
           </div>
           <button
@@ -161,6 +164,7 @@ export default function Legend({
         {/* Toggle Destinos */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <span className="bg-[#0EB1D2] w-2 h-2 rounded-full"/>
             <span className="text-white text-[11px] font-medium">Destinos</span>
           </div>
           <button
@@ -181,6 +185,7 @@ export default function Legend({
         {/* Toggle Talleres */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <span className="bg-[#f3d111] w-2 h-2 rounded-full"/>
             <span className="text-white text-[11px] font-medium">Talleres</span>
           </div>
           <button

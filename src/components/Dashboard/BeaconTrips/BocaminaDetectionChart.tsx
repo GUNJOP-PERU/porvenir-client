@@ -18,7 +18,7 @@ const  BocaminaDetectionChart = ({ data } : BocaminaDetectionChart) => {
     () => ({
       chart: {
         backgroundColor: "transparent",
-        height: 280,
+        height: 300,
         marginTop: 40,
         marginBottom: 40,
       },
