@@ -15,7 +15,7 @@ export function NavMain() {
   return (
     <div
       className={clsx(
-        "hidden md:flex bg-[#000000] transition-all duration-300 ease-in-out relative",
+        "hidden md:flex bg-primary-black transition-all duration-300 ease-in-out relative",
         isCollapsed ? "w-14" : "w-60"
       )}
     >
@@ -81,7 +81,7 @@ const NavItem = ({ name, href, icon, active, isCollapsed }) => {
         "group h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold transition ease-in-out duration-200",
         isCollapsed ? "px-1 w-8 justify-center" : "px-3 w-full",
         active
-          ? "bg-primary/[0.25] text-zinc-200 shadow-sm"
+          ? "bg-primary/[0.20] text-zinc-200 shadow-sm"
           : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"
       )}
     >
@@ -121,8 +121,6 @@ const NavItem = ({ name, href, icon, active, isCollapsed }) => {
   return href ? <Link to={href}>{itemContent}</Link> : itemContent;
 };
 
-
-
 const NavGroup = ({ item, isCollapsed }) => {
   const hasActiveChild = item.items.some((sub) => sub.active);
   const activeChild = item.items.find((sub) => sub.active);
@@ -141,7 +139,7 @@ const NavGroup = ({ item, isCollapsed }) => {
         "h-8 flex items-center gap-2 text-[13px] py-1.5 rounded-lg cursor-pointer font-semibold list-none transition ease-in-out duration-200 relative select-none",
         isCollapsed ? "px-1 w-8 justify-center" : "px-3 w-full",
         "text-zinc-500",
-        hasActiveChild && "text-primary bg-primary/[0.25]",
+        hasActiveChild && "text-primary bg-primary/[0.20]",
         !hasActiveChild && "hover:bg-zinc-900 hover:text-zinc-300"
       )}
     >

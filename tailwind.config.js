@@ -6,8 +6,10 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#EE3E2C",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#FF5000",
+          foreground: "#d83c00",
+          black: "#1e1e1e",
+          cinza: "#dbdbdb",
         },
         custom: {
           100: "#23262E",
@@ -27,6 +29,9 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          energy: "#FFeea9",
+          ouro: "#f9c83e",
+          cobre: "#c19f55",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
