@@ -29,27 +29,7 @@ export const useNavigation = () => {
       {
         title: "Gestión",
         items: [
-          // {
-          //   name: "General",
-          //   icon: <Building2 />,
-          //   items: [
-          //     {
-          //       name: "Compañia",
-          //       href: "/company",
-          //       active: pathname === "/company",
-          //     },
-          //     {
-          //       name: "Usuarios",
-          //       href: "/users",
-          //       active: pathname === "/users",
-          //     },
-          //     {
-          //       name: "Vehiculos",
-          //       href: "/vehicle",
-          //       active: pathname === "/vehicle",
-          //     },
-          //   ],
-          // },
+          
           {
             name: "Ubicaciones",
             icon: <MapPin />,
@@ -110,7 +90,135 @@ export const useNavigation = () => {
           },
         ],
       },
-      // {
+      
+      {
+        title: "Beacon Tiempo Real",
+        items: [
+          {
+            name: "Tracking",
+            href: "/",
+            icon: <IconRadar />,
+            active: pathname === "/",
+          },
+          {
+            name: "Seguimiento Subterraneo",
+            href: "/dashboard/beacon/underground-tracking",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/underground-tracking",
+          },
+          {
+            name: "Reporte de detección",
+            href: "/dashboard/beacon/detection-report-rt",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/beacon/detection-report-rt",
+          },
+          {
+            name: "Reporte por Turno",
+            href: "/dashboard/beacon/detection-report-turn-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-turn-rt",
+          },
+          {
+            name: "Reporte por Semana",
+            href: "/dashboard/beacon/detection-report-week-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-week-rt",
+          },
+          {
+            name: "Linea de Tiempo por Turno",
+            href: "/dashboard/beacon/trips-description-rt",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/trips-description-rt",
+          },
+        ],
+      },
+      {
+        title: "Beacon Histórico",
+        items: [
+          {
+            name: "Reporte de detección",
+            href: "dashboard/detection-report",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/detection-report",
+          },
+          {
+            name: "Reporte por Dia Camion",
+            href: "dashboard/real-time-by-hour-truck",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour-truck",
+          },
+          {
+            name: "Reporte por Dia Scoop",
+            href: "dashboard/real-time-by-hour-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-hour-scoop",
+          },
+          {
+            name: "Reporte por Semana",
+            href: "/dashboard/real-time-by-day",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-day",
+          },
+          {
+            name: "Detección de Viajes",
+            href: "/dashboard/trip-count",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/trip-count",
+          },
+          {
+            name: "Tabla de Detección",
+            href: "dashboard/beacon-detection-table",
+            icon: <IconRadar />,
+            active: pathname === "/dashboard/beacon-detection-table",
+          },
+          {
+            name: "Estado de la flota",
+            href: "dashboard/fleet-status",
+            icon: <LandPlot />,
+            active: pathname === "/dashboard/fleet-status",
+          },
+          {
+            name: "Linea de Tiempo",
+            href: "/dashboard/beacon/trips-description",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/trips-description",
+          }
+        ],
+      },
+    ],
+    [pathname]
+  );
+  return paths;
+};
+
+ // {
+          //   name: "Detección de Bocamina",
+          //   href: "/dashboard/bocamina-detection",
+          //   icon: <SiRedmine />,
+          //   active: pathname === "/dashboard/bocamina-detection",
+          // },
+// {
+          //   name: "General",
+          //   icon: <Building2 />,
+          //   items: [
+          //     {
+          //       name: "Compañia",
+          //       href: "/company",
+          //       active: pathname === "/company",
+          //     },
+          //     {
+          //       name: "Usuarios",
+          //       href: "/users",
+          //       active: pathname === "/users",
+          //     },
+          //     {
+          //       name: "Vehiculos",
+          //       href: "/vehicle",
+          //       active: pathname === "/vehicle",
+          //     },
+          //   ],
+          // },
+// {
       //   title: "Monitoreo",
       //   items: [
       //     {

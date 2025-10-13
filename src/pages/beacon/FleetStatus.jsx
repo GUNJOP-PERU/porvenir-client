@@ -125,7 +125,7 @@ export default function FleetStatus() {
         <div className="bg-black/70  rounded-xl py-2 px-4">
           <div className="flex items-center gap-2">
             <h1 className="text-zinc-200 text-md lg:text-xl font-bold leading-none">
-              Estado de la flota
+              Disponibilidad y utilización de la flota
             </h1>
             <span className="text-[10px] text-zinc-300 bg-zinc-500 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
               {data?.length || 0}
@@ -157,7 +157,7 @@ export default function FleetStatus() {
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className={`p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 xl:grid-cols-3 items-start auto-rows-min gap-2  ${
+                      className={`p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 xl:grid-cols-4 items-start auto-rows-min gap-1.5  ${
                         snapshot.isDraggingOver ? "bg-black/20" : ""
                       }`}
                     >
@@ -188,48 +188,53 @@ export default function FleetStatus() {
                                   } rounded-lg py-1 px-1 flex items-center gap-2 ${
                                     item.connectivity === "online"
                                       ? "opacity-100"
-                                      : "opacity-50"
+                                      : "opacity-35"
                                   }`}
                                 >
-                                  <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0">
-                                    <IconTruck
-                                      className="h-7 w-16 -translate-x-1 translate-y-0.5"
+                                  <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0 flex items-center justify-center font-extrabold text-white relative">
+                                    {/* <IconTruck
+                                      className="h-7 w-16 -translate-x-1 translate-y-0.5 opacity-30"
                                       color={itemColors[columnId].color}
-                                    />
+                                    /> */}
+                                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">{item.content.split("-").pop()}</span>
                                   </div>
 
                                   <div className="flex flex-col gap-0.5 min-w-0">
-                                    <span className="text-xs font-bold text-white leading-none ">
-                                      {item.content}
-                                    </span>
-                                    <span className="text-[10px] font-normal text-black leading-none truncate">
+                                    {/* <span className="text-xs font-bold text-white leading-none ">
+                                    {item.content.split("-").pop()}
+                                    </span> */}
+                                    <IconTruck
+                                      className="h-7 w-11"
+                                      color={itemColors[columnId].color}
+                                    />
+                                    {/* <span className="text-[10px] font-normal text-black leading-none truncate">
                                       {item.lastUbication}
-                                    </span>
+                                    </span> */}
                                   </div>
                                 </div>
-                                <span
+                                <div
                                   className={clsx(
-                                    "text-[9.5px] select-none leading-[10px] pl-1.5 pb-0.5 text-center flex items-center gap-1 truncate",
+                                    "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 px-2 py-1 relative before:content-[''] before:w-[5px] before:h-[5px] before:inline-block before:mr-1 before:rounded-full",
                                     item.connectivity === "online"
-                                      ? "text-amber-400"
-                                      : "text-zinc-300"
+                                      ? "text-amber-400 before:bg-amber-400"
+                                      : "text-zinc-300 before:bg-zinc-300"
                                   )}
                                 >
-                                  <div
+                                  {/* <div
                                     className={`w-[4px] h-[4px] rounded-full ${
                                       item.connectivity === "online"
                                         ? "bg-amber-400"
                                         : "bg-zinc-300"
                                     }`}
-                                  ></div>{" "}
+                                  ></div>{" "} */}
                                   {item.connectivity === "online"
-                                    ? "En línea"
-                                    : "Fuera de línea"}
+                                    ? "En línea desde"
+                                    : "Fuera de línea "} {" "}
                                   <TimeAgo
                                     datetime={item.updatedAt}
                                     locale="es"
                                   />
-                                </span>
+                                </div>
                               </div>
                             </div>
                           )}
