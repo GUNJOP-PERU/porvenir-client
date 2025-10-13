@@ -125,15 +125,6 @@ html[dir] .dark ::-webkit-scrollbar-track {
 }
 
 
-#handsontable-example .handsontable td {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.htCore {
-  z-index: 99;
-}
 
 @keyframes spin-once {
 
@@ -280,6 +271,15 @@ number-flow-react::part(suffix) {
   font-size: 10px;
   color: gray;
   pointer-events: none;
+}
+
+
+.handsontable .columnSorting.sortAction {
+  max-width: 100% !important;  
+}
+
+.htCore {
+  z-index: 99;
 }
 
 /*----------------Zoom----------------*/

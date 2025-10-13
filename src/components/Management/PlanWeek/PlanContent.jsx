@@ -1,5 +1,5 @@
 import { dataFase } from "@/lib/data";
-import { HotTable } from "@handsontable/react";
+import { HotTable } from "@handsontable/react-wrapper";
 import clsx from "clsx";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
@@ -120,7 +120,7 @@ export const PlanContent = ({
 
   return (
     <div
-      className={clsx("h-[55vh] -z-0", {
+      className={clsx("h-[55vh] overflow-auto z-0", {
         "pointer-events-none opacity-50 cursor-not-allowed": loadingGlobal,
       })}
     >
@@ -132,8 +132,8 @@ export const PlanContent = ({
         colHeaders={false}
         nestedHeaders={generateNestedHeaders()}
         columnSorting={true}
-        width="100%"
-        height="100%"
+        // width="100%"
+        height="auto"
         contextMenu={false}
         readOnly={false}
         fixedColumnsStart={1}
