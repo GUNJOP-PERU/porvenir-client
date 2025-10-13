@@ -56,7 +56,7 @@ const DetectionReportRT = () => {
     isError: beaconDetectionError,
   } = useFetchData<UnitTripDetections[]>(
     "trip-group-by-days-rt",
-    `beacon-track/group-by-unit?startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/group-by-unit?date=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 

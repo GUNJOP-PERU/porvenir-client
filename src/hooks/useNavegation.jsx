@@ -1,22 +1,13 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
-import IconVehicle from "@/icons/Dashboard/IconVehicle";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
-import { SiRedmine } from "react-icons/si";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaTimeline } from "react-icons/fa6";
 import {
-  Building2,
   ChartArea,
-  ChartBarStacked,
-  ChartColumnStacked,
-  ChartNoAxesCombined,
-  CopyCheck,
-  FileChartPie,
   LandPlot,
   MapPin,
-  Pickaxe,
   Waypoints
 } from "lucide-react";
 
@@ -245,6 +236,12 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/trips-description-rt",
             icon: <FaTimeline />,
             active: pathname === "/dashboard/beacon/trips-description-rt",
+          },
+          {
+            name: "Utilización de flota",
+            href: "/dashboard/beacon/production-status-rt",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/production-status-rt",
           }
         ],
       },

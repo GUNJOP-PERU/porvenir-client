@@ -5,29 +5,18 @@ import {
 } from "react-router-dom";
 import { ProtectedRoute } from "./hooks/useProtectedRoute";
 import { useAuthStore } from "./store/AuthStore";
-
 import PageError from "./pages/404";
 import Layout from "./pages/Layout";
 import Login from "./pages/login/Login";
-
 import HomeLabor from "./pages/management/Labor";
-import HomeUsers from "./pages/management/Users";
-import HomeVehicles from "./pages/management/Vehicles";
-
 import Configuration from "./pages/Configuration";
 // import ParetoTruck from "./pages/dashboard/ParetoTruck";
-import HistoricalExtract from "./pages/dashboard/ProductionExtract/HistoricalExtract";
-import ProductionLayout from "./pages/dashboard/ProductionExtract/ProductionLayout";
-import RealTimeExtract from "./pages/dashboard/ProductionExtract/RealTimeExtract";
 import ProductionMonth from "./pages/dashboard/ProductionMonth";
 import ProductionTruck from "./pages/dashboard/ProductionTruck";
-import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
-import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
 // import TimelineTruck from "./pages/dashboard/TimelineTruck";
 import UnproductiveReport from "./pages/dashboard/UnproductiveReport";
 import Utilization from "./pages/dashboard/Utilization";
 import PageBeacon from "./pages/management/Beacon";
-import PageCompany from "./pages/management/Company";
 import PageDestiny from "./pages/management/Destiny";
 import { NewPlanMonth } from "./pages/management/NewPlanMonth";
 import PlanDay from "./pages/management/PlanDay";
@@ -35,11 +24,20 @@ import PlanMonth from "./pages/management/PlanMonth";
 import PlanWeek from "./pages/management/PlanWeek";
 import PageUbications from "./pages/management/Ubication";
 import PageWap from "./pages/management/Wap";
-import PageActivity from "./pages/monitoring/ActivityTruck";
-import Checklist from "./pages/monitoring/Checklist";
-import PageCycleTruck from "./pages/monitoring/CycleTruck";
-import Incidence from "./pages/monitoring/Incidences";
-import WorkerOrders from "./pages/monitoring/WorkerOrders";
+// import HomeUsers from "./pages/management/Users";
+// import HomeVehicles from "./pages/management/Vehicles";
+// import HistoricalExtract from "./pages/dashboard/ProductionExtract/HistoricalExtract";
+// import ProductionLayout from "./pages/dashboard/ProductionExtract/ProductionLayout";
+// import RealTimeExtract from "./pages/dashboard/ProductionExtract/RealTimeExtract";
+// import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
+// import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
+// import PageCompany from "./pages/management/Company";
+// import PageActivity from "./pages/monitoring/ActivityTruck";
+// import Checklist from "./pages/monitoring/Checklist";
+// import PageCycleTruck from "./pages/monitoring/CycleTruck";
+// import Incidence from "./pages/monitoring/Incidences";
+// import WorkerOrders from "./pages/monitoring/WorkerOrders";
+// import Tracking from "./pages/beacon/Tracking";
 import WeekReport from "./pages/dashboard/WeekReport";
 // Beacon Real Time
 import DetectionReportRT from "./pages/beaconRT/DetectionReport";
@@ -47,6 +45,7 @@ import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
 import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
+import ProductionStatus from "./pages/beaconRT/ProductionStatus";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
@@ -55,7 +54,6 @@ import RealTimeByHour from "./pages/beacon/ReportByDayTruck";
 import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
-import Tracking from "./pages/beacon/Tracking";
 import FleetStatus from "./pages/beacon/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
 import TripsDescription from "./pages/beacon/TripsDescriptions";
@@ -137,6 +135,7 @@ const protectedRoutes = [
   { path: "dashboard/fleet-status", element: <FleetStatus /> },
   { path: "dashboard/", element: <FleetStatus /> },
   { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
+  { path: "dashboard/beacon/production-status-rt", element: <ProductionStatus /> },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },
