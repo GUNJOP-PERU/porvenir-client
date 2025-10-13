@@ -4,7 +4,6 @@ interface IBeaconUbication {
   name: string,
   location: string,
   description: string,
-  color?: string,
   position: {
     latitud: number,
     longitud: number,
@@ -464,149 +463,149 @@ const ubicationData : IBeaconUbication[] = [
   //   createdAt: "2024-07-22T07:55:00Z",
   //   updatedAt: "2024-08-22T07:55:00Z",
   // },
-  {
-    id: 23,
-    mac: "BC:57:29:06:02:33",
-    name: "BC1910_01",
-    location: "bocamina",
-    description: "Int-BC-1910",
-    position: {
-      latitud: -13.077222,
-      longitud: -75.989167,
-    },
-    createdAt: "2024-07-22T04:34:00Z",
-    updatedAt: "2024-08-22T04:34:00Z",
-  },
-  {
-    id: 24,
-    mac: "BC:57:29:03:5C:6A",
-    name: "BC1910_02",
-    location: "bocamina",
-    description: "Ext-BC-1910",
-    position: {
-      latitud: -13.077778,
-      longitud: -75.989167,
-    },
-    createdAt: "2024-07-22T04:34:00Z",
-    updatedAt: "2024-08-22T04:34:00Z",
-  },
-  {
-    id: 25,
-    mac: "BC:57:29:06:02:3A",
-    name: "BC1875_01",
-    location: "bocamina",
-    description: "Int-BC-1875",
-    position: {
-      latitud: -13.074722,
-      longitud: -75.987778,
-    },
-    createdAt: "2024-07-22T04:30:00Z",
-    updatedAt: "2024-08-22T04:30:00Z",
-  },
-  {
-    id: 26,
-    mac: "BC:57:29:03:5C:94",
-    name: "BC1875_02",
-    location: "bocamina",
-    description: "Ext-BC-1875",
-    position: {
-      latitud: -13.076111,
-      longitud: -75.989722,
-    },
-    createdAt: "2024-07-22T04:30:00Z",
-    updatedAt: "2024-08-22T04:30:00Z",
-  },
-  {
-    id: 27,
-    mac: "BC:57:29:06:02:38",
-    name: "BC1820_01",
-    location: "bocamina",
-    description: "Int-BC-1820",
-    position: {
-      latitud: -13.0775,
-      longitud: -75.991944,
-    },
-    createdAt: "2024-07-22T04:29:00Z",
-    updatedAt: "2024-08-22T04:29:00Z",
-  },
-  {
-    id: 28,
-    mac: "BC:57:29:03:5C:77",
-    name: "BC1820_02",
-    location: "bocamina",
-    description: "Ext-BC-1820",
-    position: {
-      latitud: -13.076389,
-      longitud: -75.991667,
-    },
-    createdAt: "2024-07-22T04:28:00Z",
-    updatedAt: "2024-08-22T04:28:00Z",
-  },
-  {
-    id: 29,
-    mac: "BC:57:29:06:02:39",
-    name: "BC1800_01",
-    location: "bocamina",
-    description: "Int-BC-1800",
-    position: {
-      latitud: -13.078611,
-      longitud: -75.992222,
-    },
-    createdAt: "2024-07-22T04:26:00Z",
-    updatedAt: "2024-08-22T04:26:00Z",
-  },
-  {
-    id: 30,
-    mac: "BC:57:29:03:5C:86",
-    name: "BC1800_02",
-    location: "bocamina",
-    description: "Ext-BC-1800",
-    position: {
-      latitud: -13.08,
-      longitud: -75.993889,
-    },
-    createdAt: "2024-07-22T04:25:00Z",
-    updatedAt: "2024-08-22T04:25:00Z",
-  },
-  {
-    id: 31,
-    mac: "BC:57:29:06:01:E3",
-    name: "PR_01",
-    location: "destinations",
-    description: "Parrilla 1",
-    position: {
-      latitud: -13.078056,
-      longitud: -75.991389,
-    },
-    createdAt: "2024-07-21T19:12:00Z",
-    updatedAt: "2024-08-21T19:12:00Z",
-  },
-  {
-    id: 32,
-    mac: "BC:57:29:06:01:E7",
-    name: "PO_03",
-    location: "destinations",
-    description: "Pocket 3",
-    position: {
-      latitud: -13.078056,
-      longitud: -75.991111,
-    },
-    createdAt: "2024-07-21T19:11:00Z",
-    updatedAt: "2024-08-21T19:11:00Z",
-  },
-  {
-    id: 33,
-    mac: "BC:57:29:06:01:DB",
-    name: "PR_02",
-    location: "destinations",
-    description: "Parrilla 2",
-    position: {
-      latitud: -13.078056,
-      longitud: -75.991111,
-    },
-    createdAt: "2024-07-21T19:09:00Z",
-    updatedAt: "2024-08-21T19:09:00Z",
-  },
+  // {
+  //   id: 23,
+  //   mac: "BC:57:29:06:02:33",
+  //   name: "BC1910_01",
+  //   location: "bocamina",
+  //   description: "Int-BC-1910",
+  //   position: {
+  //     latitud: -13.077222,
+  //     longitud: -75.989167,
+  //   },
+  //   createdAt: "2024-07-22T04:34:00Z",
+  //   updatedAt: "2024-08-22T04:34:00Z",
+  // },
+  // {
+  //   id: 24,
+  //   mac: "BC:57:29:03:5C:6A",
+  //   name: "BC1910_02",
+  //   location: "bocamina",
+  //   description: "Ext-BC-1910",
+  //   position: {
+  //     latitud: -13.077778,
+  //     longitud: -75.989167,
+  //   },
+  //   createdAt: "2024-07-22T04:34:00Z",
+  //   updatedAt: "2024-08-22T04:34:00Z",
+  // },
+  // {
+  //   id: 25,
+  //   mac: "BC:57:29:06:02:3A",
+  //   name: "BC1875_01",
+  //   location: "bocamina",
+  //   description: "Int-BC-1875",
+  //   position: {
+  //     latitud: -13.074722,
+  //     longitud: -75.987778,
+  //   },
+  //   createdAt: "2024-07-22T04:30:00Z",
+  //   updatedAt: "2024-08-22T04:30:00Z",
+  // },
+  // {
+  //   id: 26,
+  //   mac: "BC:57:29:03:5C:94",
+  //   name: "BC1875_02",
+  //   location: "bocamina",
+  //   description: "Ext-BC-1875",
+  //   position: {
+  //     latitud: -13.076111,
+  //     longitud: -75.989722,
+  //   },
+  //   createdAt: "2024-07-22T04:30:00Z",
+  //   updatedAt: "2024-08-22T04:30:00Z",
+  // },
+  // {
+  //   id: 27,
+  //   mac: "BC:57:29:06:02:38",
+  //   name: "BC1820_01",
+  //   location: "bocamina",
+  //   description: "Int-BC-1820",
+  //   position: {
+  //     latitud: -13.0775,
+  //     longitud: -75.991944,
+  //   },
+  //   createdAt: "2024-07-22T04:29:00Z",
+  //   updatedAt: "2024-08-22T04:29:00Z",
+  // },
+  // {
+  //   id: 28,
+  //   mac: "BC:57:29:03:5C:77",
+  //   name: "BC1820_02",
+  //   location: "bocamina",
+  //   description: "Ext-BC-1820",
+  //   position: {
+  //     latitud: -13.076389,
+  //     longitud: -75.991667,
+  //   },
+  //   createdAt: "2024-07-22T04:28:00Z",
+  //   updatedAt: "2024-08-22T04:28:00Z",
+  // },
+  // {
+  //   id: 29,
+  //   mac: "BC:57:29:06:02:39",
+  //   name: "BC1800_01",
+  //   location: "bocamina",
+  //   description: "Int-BC-1800",
+  //   position: {
+  //     latitud: -13.078611,
+  //     longitud: -75.992222,
+  //   },
+  //   createdAt: "2024-07-22T04:26:00Z",
+  //   updatedAt: "2024-08-22T04:26:00Z",
+  // },
+  // {
+  //   id: 30,
+  //   mac: "BC:57:29:03:5C:86",
+  //   name: "BC1800_02",
+  //   location: "bocamina",
+  //   description: "Ext-BC-1800",
+  //   position: {
+  //     latitud: -13.08,
+  //     longitud: -75.993889,
+  //   },
+  //   createdAt: "2024-07-22T04:25:00Z",
+  //   updatedAt: "2024-08-22T04:25:00Z",
+  // },
+  // {
+  //   id: 31,
+  //   mac: "BC:57:29:06:01:E3",
+  //   name: "PR_01",
+  //   location: "destinations",
+  //   description: "Parrilla 1",
+  //   position: {
+  //     latitud: -13.078056,
+  //     longitud: -75.991389,
+  //   },
+  //   createdAt: "2024-07-21T19:12:00Z",
+  //   updatedAt: "2024-08-21T19:12:00Z",
+  // },
+  // {
+  //   id: 32,
+  //   mac: "BC:57:29:06:01:E7",
+  //   name: "PO_03",
+  //   location: "destinations",
+  //   description: "Pocket 3",
+  //   position: {
+  //     latitud: -13.078056,
+  //     longitud: -75.991111,
+  //   },
+  //   createdAt: "2024-07-21T19:11:00Z",
+  //   updatedAt: "2024-08-21T19:11:00Z",
+  // },
+  // {
+  //   id: 33,
+  //   mac: "BC:57:29:06:01:DB",
+  //   name: "PR_02",
+  //   location: "destinations",
+  //   description: "Parrilla 2",
+  //   position: {
+  //     latitud: -13.078056,
+  //     longitud: -75.991111,
+  //   },
+  //   createdAt: "2024-07-21T19:09:00Z",
+  //   updatedAt: "2024-08-21T19:09:00Z",
+  // },
   {
     id: 34,
     mac: "bc:57:29:01:c9:03",
@@ -1122,8 +1121,6 @@ const wifiLocation : IWifiLocation[]  = [
   },
 ]
 
-export {ubicationData, staticMarkers, rutasEstaticas, wifiLocation};
-
 
 const staticMarkersSub = [
   // {
@@ -1148,7 +1145,6 @@ const staticMarkersSub = [
 ];
 
 const ubicationDataSub : IBeaconUbication[] = [
-
   {
     id: 1,
     mac: "BC:57:29:06:02:3A",
@@ -1262,4 +1258,4 @@ const ubicationDataSub : IBeaconUbication[] = [
     updatedAt: "2024-08-21T19:11:00Z",
   },
 ]
-export {ubicationData, staticMarkers, rutasEstaticas, staticMarkersSub, ubicationDataSub };
+export {ubicationData, staticMarkers, rutasEstaticas, staticMarkersSub, ubicationDataSub ,wifiLocation};

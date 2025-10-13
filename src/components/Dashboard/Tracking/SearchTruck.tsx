@@ -1,3 +1,4 @@
+import { ubicationBocamina, maintenanceLocation, superficieLocation } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
 import { X } from "lucide-react";
@@ -37,7 +38,7 @@ export default function SearchTruck({
     const offlineCount = trucksInArea.length - onlineCount;
 
     return {
-      area: ubication.name,
+      area: ubication.description,
       color: ubication.color || "#0EB1D2", 
       count: trucksInArea.length,
       online: onlineCount,
