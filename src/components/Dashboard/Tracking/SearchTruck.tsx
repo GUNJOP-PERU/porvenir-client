@@ -1,7 +1,7 @@
 import { ubicationBocamina, maintenanceLocation, superficieLocation } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useState, useMemo } from "react";
 
 export default function SearchTruck({
@@ -10,6 +10,7 @@ export default function SearchTruck({
   selectedTruck,
   isLoading,
   ubicationData = [],
+  includeExtraLocations = false,
 }: {
   data: BeaconTruckStatus[];
   onTruckSelect: (truck: BeaconTruckStatus) => void;
@@ -20,12 +21,18 @@ export default function SearchTruck({
   } | null;
   isLoading: boolean;
   ubicationData: any[];
+  includeExtraLocations?: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
   const VISIBLE_COUNT = 3;
 
-  const trucksPerArea = [...ubicationData, ...ubicationBocamina, ...maintenanceLocation, ...superficieLocation].map((ubication) => {
+  const activeLocations = [
+    ...ubicationData,
+    ...(includeExtraLocations ? [...ubicationBocamina, ...maintenanceLocation, ...superficieLocation] : []),
+  ];
+
+  const trucksPerArea = activeLocations.map((ubication) => {
     const trucksInArea = data.filter(
       (truck) =>
         truck.lastUbicationMac &&
@@ -60,7 +67,7 @@ export default function SearchTruck({
   const totalTrucksInAreas = trucksPerArea.reduce((acc, a) => acc + a.count, 0);
 
   return (
-    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-52">
+    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60">
       <div className="flex flex-col">
         <div className="flex items-center space-x-1">
           <div
@@ -77,28 +84,26 @@ export default function SearchTruck({
           </span>
         </div>
         <p className="text-[10px] text-green-600 mt-1 leading-none ml-3">
-          Última actualización
+          Tracking {includeExtraLocations ? "Superficie" : "Subterráneo"}
         </p>
       </div>
 
       <div className="flex flex-col gap-1 relative">
-        <label className="text-[10px] text-zinc-300 leading-none">
-          Buscar por unidad
-        </label>
         <div className="relative">
           <input
             type="text"
-            placeholder="Ej. 16"
-            className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300"
+            placeholder="Buscar por camion..."
+            className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300 pl-6"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 group-hover:text-rose-500 transition-all ease-in-out duration-300 size-3" />
           {query && (
             <button
-              className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-rose-900 group rounded-[5px] size-5 flex items-center justify-center transition-all ease-in-out duration-300"
+              className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-rose-900 group rounded-[5px] size-5 flex items-center justify-center transition-all ease-in-out duration-300 cursor-pointer"
               onClick={() => setQuery("")}
             >
-              <X className="w-4 h-4 text-zinc-400 group-hover:text-rose-500 transition-all ease-in-out duration-300" />
+              <X className="size-3 text-zinc-400 group-hover:text-rose-500 transition-all ease-in-out duration-300" />
             </button>
           )}
         </div>

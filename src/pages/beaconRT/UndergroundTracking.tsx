@@ -393,7 +393,7 @@ const UndergroundTracking = () => {
                   ).length
                 }
               </span>
-              ${ubication.name}
+              ${ubication.description}
               </div>
             `,
             className: "geofence-label",
@@ -432,8 +432,8 @@ const UndergroundTracking = () => {
         <MapContainer
           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={17}
-          maxZoom={18}
+          minZoom={16}
+          maxZoom={17}
           zoomControl={false}
           style={{ height: "100%", width: "100%", backgroundColor: "#000000" }}
           className="z-0"

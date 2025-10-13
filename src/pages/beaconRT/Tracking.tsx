@@ -30,6 +30,7 @@ import {
   ubicationBocamina
 } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
+import Toggle from "@/components/Dashboard/Tracking/Toggle";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -284,7 +285,7 @@ const TruckTracking = () => {
             )}
           >
             <Popup>
-              <div className="text-sm max-w-xs space-y-1">
+              <div className="text-sm max-w-xs space-y-1 select-none">
                 <div className="flex items-center gap-2 justify-start">
                   <span className="font-black text-xl text-blue-600 px-2 py-1 bg-zinc-100 rounded-md">
                     {truck.displayName || truck.name}
@@ -714,7 +715,7 @@ const TruckTracking = () => {
         <MapContainer
           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={15} // Zoom mínimo permitido
+          minZoom={16} // Zoom mínimo permitido
           maxZoom={17} // Nivel máximo soportado por ESRI
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
@@ -750,6 +751,8 @@ const TruckTracking = () => {
       {MapaCamiones}
       <Legend
         data={data}
+      />
+      <Toggle
         showBocaminas={toggleStatus.showBocaminas}
         showWifiZones={toggleStatus.showWifiZones}
         showDestinations={toggleStatus.showDestinations}
@@ -767,6 +770,7 @@ const TruckTracking = () => {
         selectedTruck={selectedTruck}
         isLoading={isLoading}
         ubicationData={ubicationData}
+        includeExtraLocations={true}
       />
     </div>
   );

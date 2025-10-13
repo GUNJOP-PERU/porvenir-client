@@ -1150,7 +1150,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     mac: "BC:57:29:06:02:3A",
     name: "BC1875_01",
     location: "bocamina",
-    description: "Int-BC-1875",
+    description: "BC-1875",
     color: "#ffc300ff",
     position: {
       latitud: -13.07500,
@@ -1164,7 +1164,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     mac: "BC:57:29:06:02:38",
     name: "BC1820_01",
     location: "bocamina",
-    description: "Ext-BC-1820",
+    description: "BC-1820",
     color: "#cc5803ff", 
     position: {
       latitud: -13.07990,
@@ -1178,7 +1178,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     mac: "BC:57:29:06:02:3B",
     name: "BC1830_01",
     location: "bocamina",
-    description: "Ext-BC-1820",
+    description: "BC-1830",
     color: "#cc5803ff", 
     position: {
       latitud: -13.08230,
@@ -1192,7 +1192,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     mac: "BC:57:29:06:02:39",
     name: "BC1800_01",
     location: "bocamina",
-    description: "Int-BC-1800",
+    description: "BC-1800",
     color: "#004b23ff", 
     position: {
       latitud: -13.08120,
@@ -1206,7 +1206,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     mac: "BC:57:29:06:02:33",
     name: "BC1910_01",
     location: "bocamina",
-    description: "Int-BC-1910",
+    description: "BC-1910",
     color: "#004b23ff", 
     position: {
       latitud: -13.08150,

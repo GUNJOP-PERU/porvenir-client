@@ -86,13 +86,13 @@ export const useNavigation = () => {
         title: "Beacon Tiempo Real",
         items: [
           {
-            name: "Tracking",
+            name: "Tracking Superficie",
             href: "/",
             icon: <IconRadar />,
             active: pathname === "/",
           },
           {
-            name: "Seguimiento Subterraneo",
+            name: "Tracking Subterraneo",
             href: "/dashboard/beacon/underground-tracking",
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/underground-tracking",
