@@ -75,9 +75,35 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       const tripStartTime = getTimestamp(trip.startDate);
       const tripEndTime = getTimestamp(trip.endDate);
       
-      // Determinar color del viaje según si tiene destino
+      // Calcular duración del viaje en minutos
+      const tripDurationMinutes = (tripEndTime - tripStartTime) / 1000 / 60;
+      
+      // Determinar color del viaje según origen, destino y duración
       const hasDestination = trip.endUbication && trip.endUbication.trim() !== "";
-      const tripColor = hasDestination ? "#10b981" : "#6b7280";
+      const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
+      
+      // Verificar si el viaje tiene detecciones de bocamina
+      const tripDetections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
+      const hasBocaminaDetections = tripDetections.some((detection: any) => 
+        detection.ubication?.toLowerCase().includes('bocamina') ||
+        detection.ubicationType?.toLowerCase().includes('bocamina')
+      );
+      
+      // Verificar viajes bidireccionales Cancha 100 ↔ Faja 4 con duración entre 10 y 50 min SIN bocaminas
+      const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
+        ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
+         (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
+        tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
+        !hasBocaminaDetections;
+      
+      let tripColor = "#6b7280"; // Gris por defecto (sin destino)
+      if (isCancha100ToFaja4) {
+        tripColor = "#00BFFF"; // Celeste para Cancha 100 ↔ Faja 4 (>10 min)
+      } else if (isPahuaypite) {
+        tripColor = "#8B4513"; // Marrón para Pahuaypite
+      } else if (hasDestination) {
+        tripColor = "#10b981"; // Verde para otros destinos
+      }
       
       // Solo incrementar contador para viajes con destino
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
@@ -94,8 +120,10 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         originalTripIndex: tripIndex + 1,
         isFullTrip: true,
         hasDestination: hasDestination,
+        isPahuaypite: isPahuaypite,
+        isCancha100ToFaja4: isCancha100ToFaja4,
         unitName: unit.unit.toUpperCase(),
-        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}` : 'Sin destino'}`
+        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}${isCancha100ToFaja4 ? ' (C100↔F4 Sin bocaminas)' : isPahuaypite ? ' (Pahuaypite)' : ''}` : 'Sin destino'}`
       });
 
       const detections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
@@ -342,9 +370,42 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             ? `${trip.startUbication} → ${trip.endUbication}`
             : `${trip.startUbication} (Sin destino definido)`;
 
+          const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
+          
+          // Calcular duración del viaje para el tooltip
+          const tripDurationMinutes = ((point.x2 - point.x) / 1000 / 60);
+          
+          // Verificar si el viaje tiene detecciones de bocamina
+          const tooltipTripDetections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
+          const tooltipHasBocaminaDetections = tooltipTripDetections.some((detection: any) => 
+            detection.ubication?.toLowerCase().includes('bocamina') ||
+            detection.ubicationType?.toLowerCase().includes('bocamina')
+          );
+          
+          // Verificar viajes bidireccionales Cancha 100 ↔ Faja 4 con duración entre 10 y 50 min SIN bocaminas
+          const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
+            ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
+             (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
+            tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
+            !tooltipHasBocaminaDetections;
           const tripLabel = point.hasDestination
             ? `Viaje #${point.tripIndex}`
             : "Sin Destino";
+
+          // Determinar colores del tooltip según el destino
+          let tooltipColor = "#6b7280";
+          let tooltipColorAlpha = "#6b728015";
+          
+          if (isCancha100ToFaja4) {
+            tooltipColor = "#00BFFF";
+            tooltipColorAlpha = "#00BFFF15";
+          } else if (isPahuaypite) {
+            tooltipColor = "#8B4513";
+            tooltipColorAlpha = "#8B451315";
+          } else if (point.hasDestination) {
+            tooltipColor = "#10b981";
+            tooltipColorAlpha = "#10b98115";
+          }
 
           return `
             <div style="
@@ -369,8 +430,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
                 </div>
                 <span style="
                   font-size: 11px;
-                  background: #10b98115;
-                  color: #10b981;
+                  background: ${tooltipColorAlpha};
+                  color: ${tooltipColor};
                   padding: 2px 8px;
                   border-radius: 6px;
                   font-weight: 600;
@@ -380,12 +441,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               </div>
           
               <div style="
-                color: #10b981;
+                color: ${tooltipColor};
                 font-weight: 600;
                 font-size: 12px;
                 margin-bottom: 8px;
               ">
-                ${tripLabel}
+                ${tripLabel}${isCancha100ToFaja4 ? ' 🔄 C100↔F4 (Sin bocaminas)' : isPahuaypite ? ' 🏔️ Pahuaypite' : ''}
               </div>
           
               <div style="margin-bottom: 8px; line-height: 1.5;">
