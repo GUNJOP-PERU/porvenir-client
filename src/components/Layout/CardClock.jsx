@@ -1,35 +1,27 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 function CardClock() {
-  const [time, setTime] = useState("");
-
-  const updateClock = useCallback(() => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const seconds = now.getSeconds().toString().padStart(2, "0");
-    setTime(`${hours}:${minutes}:${seconds}`);
-  }, []);
+  const [time, setTime] = useState(dayjs());
+  dayjs.locale("es"); 
 
   useEffect(() => {
-    updateClock(); // Ejecutar una vez al montar
-    const timer = setInterval(updateClock, 1000);
+    const timer = setInterval(() => {
+      setTime(dayjs());
+    }, 1000);
 
     return () => clearInterval(timer);
-  }, [updateClock]);
-
-  const formattedTime = useMemo(() => {
-    const [hours, minutes, seconds] = time.split(":");
-    return { hours, minutes, seconds };
-  }, [time]);
+  }, []);
 
   return (
-    <div className="hidden lg:flex items-center justify-center px-2">
+    <div className="hidden lg:flex items-center justify-center gap-2 px-2 text-center">
+      <p className="font-extrabold text-2xl leading-none text-zinc-400 capitalize">
+        {time.format("dddd, D MMMM")}
+      </p>
       <h1 className="font-extrabold text-2xl leading-8">
-        <span className="text-primary">
-          {formattedTime.hours}:{formattedTime.minutes}
-        </span>
-        <span className="text-zinc-500">:{formattedTime.seconds}</span>
+        <span className="text-primary">{time.format("HH:mm")}</span>
+        <span className="text-zinc-500">:{time.format("ss")}</span>
       </h1>
     </div>
   );

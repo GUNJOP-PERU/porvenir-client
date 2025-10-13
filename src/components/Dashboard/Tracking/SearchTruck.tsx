@@ -1,11 +1,7 @@
-import {
-  ubicationData,
-  maintenanceLocation,
-  superficieLocation,
-  ubicationBocamina
-} from "@/pages/beaconRT/UbicationLocation";
+import { ubicationBocamina, maintenanceLocation, superficieLocation } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
+import { X } from "lucide-react";
 import { useState, useMemo } from "react";
 
 export default function SearchTruck({
@@ -13,6 +9,7 @@ export default function SearchTruck({
   onTruckSelect,
   selectedTruck,
   isLoading,
+  ubicationData = [],
 }: {
   data: BeaconTruckStatus[];
   onTruckSelect: (truck: BeaconTruckStatus) => void;
@@ -22,8 +19,11 @@ export default function SearchTruck({
     position: [number, number];
   } | null;
   isLoading: boolean;
+  ubicationData: any[];
 }) {
   const [query, setQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const VISIBLE_COUNT = 3;
 
   const trucksPerArea = [...ubicationData, ...ubicationBocamina, ...maintenanceLocation, ...superficieLocation].map((ubication) => {
     const trucksInArea = data.filter(
@@ -31,12 +31,15 @@ export default function SearchTruck({
         truck.lastUbicationMac &&
         truck.lastUbicationMac.toLowerCase() === ubication.mac.toLowerCase()
     );
+
     const onlineCount = trucksInArea.filter(
       (truck) => truck.connectivity === "online"
     ).length;
     const offlineCount = trucksInArea.length - onlineCount;
+
     return {
       area: ubication.description,
+      color: ubication.color || "#0EB1D2", 
       count: trucksInArea.length,
       online: onlineCount,
       offline: offlineCount,
@@ -49,6 +52,12 @@ export default function SearchTruck({
       truck.name.toLowerCase().includes(query.toLowerCase())
     );
   }, [data, query]);
+
+  const visibleAreas = showAll
+    ? trucksPerArea
+    : trucksPerArea.slice(0, VISIBLE_COUNT);
+
+  const totalTrucksInAreas = trucksPerArea.reduce((acc, a) => acc + a.count, 0);
 
   return (
     <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-52">
@@ -72,35 +81,53 @@ export default function SearchTruck({
         </p>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 relative">
         <label className="text-[10px] text-zinc-300 leading-none">
           Buscar por unidad
         </label>
-        <input
-          type="text"
-          placeholder="Ej. 16"
-          className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {filtered.length > 0 && (
-          <ul className="bg-black/70 rounded-lg max-h-36 overflow-y-auto text-xs custom-scrollbar">
-            {filtered.map((truck) => (
-              <li
-                key={truck.name}
-                className="px-2 py-1 hover:bg-primary/30 cursor-pointer text-zinc-300 hover:text-white rounded-lg"
-                onClick={() => {
-                  onTruckSelect(truck);
-                  setQuery("");
-                }}
-              >
-                {truck.name}
-              </li>
-            ))}
-          </ul>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Ej. 16"
+            className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && (
+            <button
+              className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-rose-900 group rounded-[5px] size-5 flex items-center justify-center transition-all ease-in-out duration-300"
+              onClick={() => setQuery("")}
+            >
+              <X className="w-4 h-4 text-zinc-400 group-hover:text-rose-500 transition-all ease-in-out duration-300" />
+            </button>
+          )}
+        </div>
+
+        {query && (
+          <div className="absolute top-[44px] left-0 w-full bg-black border border-zinc-700 rounded-lg max-h-36 overflow-y-auto text-xs custom-scrollbar shadow-lg z-20 p-1">
+            {filtered.length > 0 ? (
+              filtered.map((truck) => (
+                <div
+                  key={truck.name}
+                  className="px-2 py-1 hover:bg-primary/30 cursor-pointer text-zinc-300 hover:text-white rounded-lg"
+                  onClick={() => {
+                    onTruckSelect(truck);
+                    setQuery("");
+                  }}
+                >
+                  {truck.name}
+                </div>
+              ))
+            ) : (
+              <div className="w-full px-2 py-2 text-center text-zinc-400 select-none text-[10px]">
+                No hay datos
+              </div>
+            )}
+          </div>
         )}
+
         {selectedTruck && (
-          <div className=" bg-black/70 text-white p-3 rounded-lg z-10">
+          <div className="bg-black/70 text-white p-3 rounded-lg z-10 mt-2">
             <p className="text-sm font-bold">
               Unidad: {selectedTruck.truck.name}
             </p>
@@ -118,22 +145,37 @@ export default function SearchTruck({
           </div>
         )}
       </div>
+
       <div>
         <div className="flex justify-between gap-1 mb-1 px-1.5">
-          <p className="text-[10px] text-sky-300 font-bold">
+          <p className="text-[10px] text-zinc-400 font-bold">
             | {trucksPerArea.length} | ÁREAS
           </p>
-          <p className="text-[10px] text-amber-400 font-bold">
-            CAMIONES | {data.length} |
+          <p className="text-[10px] text-zinc-400 font-bold">
+            CAMIONES | {totalTrucksInAreas} |
           </p>
         </div>
+
         <div className="flex flex-col gap-1 bg-black/70 rounded-lg py-2.5 px-2">
-          {trucksPerArea.map((area, i) => (
-            <div className="flex items-center justify-between gap-1 hover:bg-white/20 cursor-pointer select-none" key={i}>
-              <p className="text-[11px] text-[#0EB1D2] leading-none">
-                {" "}
-                {area.area}{" "}
-              </p>
+          {visibleAreas.map((area, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between gap-1 hover:bg-white/20 cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-1">
+                <span
+                  className="w-[5px] h-[5px] rounded-full"
+                  style={{ backgroundColor: area.color }}
+                ></span>
+
+                <p
+                  className="text-[11px] font-bold leading-none"
+                  style={{ color: area.color }}
+                >
+                  {area.area}
+                </p>
+              </div>
+
               <div className="flex gap-1">
                 <p
                   className={clsx(
@@ -154,9 +196,18 @@ export default function SearchTruck({
               </div>
             </div>
           ))}
+
+          {/* 🔹 Ver más / Ver menos */}
+          {trucksPerArea.length > VISIBLE_COUNT && (
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="text-[10px] text-zinc-400 hover:text-white transition-colors mt-1 self-center"
+            >
+              {showAll ? "- Ver menos" : "+ Ver más"}
+            </button>
+          )}
         </div>
       </div>
-      <div></div>
     </div>
   );
 }
