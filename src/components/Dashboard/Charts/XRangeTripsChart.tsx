@@ -630,7 +630,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           <div className="grid grid-cols-3 gap-1 text-xs font-bold text-gray-800">
             <div className="text-center text-black">{totals.totalTrips}</div>
             <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
-            <div className="text-center text-black">{totals.avgDuration.toFixed(1)}h</div>
+            <div className="text-center text-black">{(totals.avgDuration / totals.totalTrips).toFixed(2)}min</div>
           </div>
         </div>
 
@@ -648,7 +648,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               <div className="grid grid-cols-3 gap-1 text-xs w-full">
                 <div className="font-bold text-black text-center">{row.totalTrips}</div>
                 <div className="font-bold text-black text-center">{row.totalHours}h</div>
-                <div className="font-bold text-black text-center">{row.avgDuration}h</div>
+                <div className="font-bold text-black text-center">{row.avgDuration}min</div>
               </div>
             </div>
           ))}
