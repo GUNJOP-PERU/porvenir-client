@@ -49,7 +49,7 @@ import RealTimeByHour from "./pages/beacon/ReportByDayTruck";
 import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
-import Tracking from "./pages/beacon/Tracking";
+// import Tracking from "./pages/beacon/Tracking";
 import FleetStatus from "./pages/beacon/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
 import TripsDescription from "./pages/beacon/TripsDescriptions";

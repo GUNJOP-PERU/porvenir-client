@@ -34,13 +34,13 @@ export default function Legend({
       const connectivity = truck.connectivity?.toLowerCase() ?? "";
 
       const key =
-        status.includes("operativo")
-          ? "operativo"
-          : status.includes("mantenimiento")
-          ? "mantenimiento"
-          : status.includes("inoperativo")
-          ? "inoperativo"
-          : null;
+  status.includes("inoperativo")
+    ? "inoperativo"
+    : status.includes("mantenimiento")
+    ? "mantenimiento"
+    : status.includes("operativo")
+    ? "operativo"
+    : null;
 
       if (key) {
         acc[key].total += 1;
