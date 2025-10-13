@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import React, { useState, useRef, useEffect } from "react";
 import readXlsxFile from "read-excel-file";
-import { HotTable } from "@handsontable/react";
+import { HotTable } from "@handsontable/react-wrapper";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
 import { Button } from "@/components/ui/button";

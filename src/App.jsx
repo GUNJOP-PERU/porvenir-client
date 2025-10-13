@@ -8,8 +8,11 @@ import { register } from "timeago.js";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
 // Styles
-import "handsontable/styles/handsontable.min.css";
-import "handsontable/styles/ht-theme-main.min.css";
+import 'handsontable/styles/handsontable.css';
+import 'handsontable/styles/ht-theme-main.css';
+import 'handsontable/styles/ht-theme-horizon.css';
+
+
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
