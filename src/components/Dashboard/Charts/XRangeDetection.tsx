@@ -70,83 +70,137 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
       zIndex: 0 // Asegurar que esté en el fondo
     });
 
-    // Procesar tracks individuales directamente desde unit.tracks
-    const tracks = unit.tracks || [];
-    let firstBocaminaFound = false; // Bandera para rastrear la primera bocamina
-      
-    tracks.forEach((track: any, trackIndex: number) => {
-      console.log("Procesando track:", track.ubication);
+    // Función para determinar el tipo de track
+    const getTrackType = (track: any) => {
       const isMaintenanceDetection = track.ubicationType && (
         track.ubication?.toLowerCase().includes("taller") || 
         track.ubicationType?.toLowerCase().includes("mantenimiento")
       );
-
       const isBocaminaDetection = track.ubication?.toLowerCase().includes('bocamina') ||
         track.ubicationType?.toLowerCase().includes('bocamina');
-
       const isPlantaDetection = track.ubication?.toLowerCase().includes('planta') ||
         track.ubicationType?.toLowerCase().includes('planta');
+      const isParqueoDetection = track.ubication?.toLowerCase() === 'parqueo';
+      
+      if (isPlantaDetection) return 'planta';
+      if (isBocaminaDetection) return 'bocamina';
+      if (isMaintenanceDetection) return 'mantenimiento';
+      if (isParqueoDetection) return 'parqueo';
+      return 'other';
+    };
 
-      const isParqueoDetection = track.ubication?.toLowerCase() === 'parqueo'
-
-      // Solo mostrar tracks de interés (bocamina, planta, mantenimiento, parqueo)
-      if (isPlantaDetection || isBocaminaDetection || isMaintenanceDetection || isParqueoDetection) {
-        const startTime = getTimestamp(track.f_inicio);
-        const endTime = getTimestamp(track.f_final);
-        const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
-        
-        // Determinar tipo y color
-        let trackType = 'other';
-        let color = "#6b7280";
-        
-        if (isPlantaDetection) {
-          trackType = 'planta';
-          color = "#EF4444"; // Rojo
-        } else if (isBocaminaDetection) {
-          trackType = 'bocamina';
-          color = "#8a0ed2"; // Morado
-        } else if (isMaintenanceDetection) {
-          trackType = 'mantenimiento';
-          color = "#f59e0b"; // Amarillo
-        } else if (isParqueoDetection) {
-          trackType = 'parqueo';
-          color = "#3b82f6";
-        }
-        const trackTypeLabel = trackType === 'planta' ? "Planta" :
-                              trackType === 'bocamina' ? "Bocamina" : 
-                              trackType === 'parqueo' ? "Parqueo" : "Mantenimiento";
-        
-        // Determinar si debe mostrar tooltip (solo primera bocamina, todas las plantas)
-        const showTooltip = trackType === 'planta' || (trackType === 'bocamina' && !firstBocaminaFound);
-        
-        // Si es la primera bocamina, marcar como encontrada
-        if (trackType === 'bocamina' && !firstBocaminaFound) {
-          firstBocaminaFound = true;
+    // Agrupar SOLO tracks consecutivos de parqueo y mantenimiento
+    const tracks = unit.tracks || [];
+    const groupedTracks: any[] = [];
+    
+    for (let i = 0; i < tracks.length; i++) {
+      const currentTrack = tracks[i];
+      const currentType = getTrackType(currentTrack);
+      
+      // Solo agrupar si es parqueo o mantenimiento
+      if (currentType === 'parqueo' || currentType === 'mantenimiento') {
+        // Buscar tracks consecutivos del mismo tipo
+        let endIndex = i;
+        while (endIndex + 1 < tracks.length && getTrackType(tracks[endIndex + 1]) === currentType) {
+          endIndex++;
         }
         
-        allSeriesData.push({
-          x: startTime,
-          x2: endTime,
-          y: unitIndex,
-          color: color,
-          borderWidth: 1,
-          borderColor: "#000000",
-          track: track,
-          trackIndex: trackIndex + 1,
-          isTrackDetection: true,
-          trackType: trackType,
-          isPlanta: trackType === 'planta',
-          isBocamina: trackType === 'bocamina',
-          isMaintenance: trackType === 'mantenimiento',
-          isParqueo: trackType === 'parqueo',
-          unitName: unit.unit.toUpperCase(),
-          duration: duration,
-          shift: track.shift,
-          name: `${unit.unit} - ${trackTypeLabel} #${trackIndex + 1}`,
-          zIndex: 1, // Asegurar que aparezca sobre el fondo gris
-          showTooltip: showTooltip // Nueva propiedad para controlar tooltip
+        if (endIndex > i) {
+          // Crear un track agrupado
+          const groupedTrack = {
+            ...currentTrack,
+            f_inicio: currentTrack.f_inicio,
+            f_final: tracks[endIndex].f_final,
+            ubication: currentTrack.ubication,
+            ubicationType: currentTrack.ubicationType,
+            isGrouped: true,
+            groupSize: endIndex - i + 1,
+            originalTracks: tracks.slice(i, endIndex + 1)
+          };
+          groupedTracks.push(groupedTrack);
+          i = endIndex; // Saltar los tracks ya agrupados
+        } else {
+          // Track individual de parqueo o mantenimiento
+          groupedTracks.push({
+            ...currentTrack,
+            isGrouped: false,
+            groupSize: 1,
+            originalTracks: [currentTrack]
+          });
+        }
+      } else {
+        // Para planta, bocamina y other: nunca agrupar, mantener individuales
+        groupedTracks.push({
+          ...currentTrack,
+          isGrouped: false,
+          groupSize: 1,
+          originalTracks: [currentTrack]
         });
       }
+    }
+
+    let firstBocaminaFound = false; // Bandera para rastrear la primera bocamina
+      
+    groupedTracks.forEach((track: any, trackIndex: number) => {
+      console.log("Procesando track agrupado:", track.ubication, "- Tamaño del grupo:", track.groupSize);
+      const currentTrackType = getTrackType(track);
+
+      // Mostrar todos los tracks
+      const startTime = getTimestamp(track.f_inicio);
+      const endTime = getTimestamp(track.f_final);
+      const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
+      
+      // Determinar color según el tipo
+      let color = "#10b981"; // Verde para "other"
+      
+      if (currentTrackType === 'planta') {
+        color = "#EF4444"; // Rojo
+      } else if (currentTrackType === 'bocamina') {
+        color = "#8a0ed2"; // Morado
+      } else if (currentTrackType === 'mantenimiento') {
+        color = "#f59e0b"; // Amarillo
+      } else if (currentTrackType === 'parqueo') {
+        color = "#3b82f6"; // Azul
+      }
+      
+      const trackTypeLabel = currentTrackType === 'planta' ? "Planta" :
+                            currentTrackType === 'bocamina' ? "Bocamina" : 
+                            currentTrackType === 'parqueo' ? "Parqueo" : 
+                            currentTrackType === 'mantenimiento' ? "Mantenimiento" : "Otra Ubicación";
+      
+      // Determinar si debe mostrar tooltip (solo primera bocamina, todas las plantas)
+      const showTooltip = currentTrackType === 'planta' || (currentTrackType === 'bocamina' && !firstBocaminaFound);
+      
+      // Si es la primera bocamina, marcar como encontrada
+      if (currentTrackType === 'bocamina' && !firstBocaminaFound) {
+        firstBocaminaFound = true;
+      }
+      
+      allSeriesData.push({
+        x: startTime,
+        x2: endTime,
+        y: unitIndex,
+        color: color,
+        borderWidth: 1,
+        borderColor: "#000000",
+        track: track,
+        trackIndex: trackIndex + 1,
+        isTrackDetection: true,
+        trackType: currentTrackType,
+        isPlanta: currentTrackType === 'planta',
+        isBocamina: currentTrackType === 'bocamina',
+        isMaintenance: currentTrackType === 'mantenimiento',
+        isParqueo: currentTrackType === 'parqueo',
+        isOther: currentTrackType === 'other',
+        unitName: unit.unit.toUpperCase(),
+        duration: duration,
+        shift: track.shift,
+        name: `${unit.unit} - ${trackTypeLabel}${track.isGrouped ? ` (${track.groupSize} agrupados)` : ''} #${trackIndex + 1}`,
+        zIndex: 1, // Asegurar que aparezca sobre el fondo gris
+        showTooltip: showTooltip, // Nueva propiedad para controlar tooltip
+        isGrouped: track.isGrouped,
+        groupSize: track.groupSize
+      });
     });
   });
 
@@ -262,13 +316,12 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
         const duration = ((point.x2 - point.x) / 1000 / 60).toFixed(1);
 
         if (point.isTrackDetection) {
-          const trackTypeLabel = point.trackType === 'planta' ? "🏭 Planta" :
-                                 point.trackType === 'bocamina' ? "⛏️ Bocamina" : 
-                                 point.trackType === 'parqueo' ? "🚗 Parqueo" : "🔧 Mantenimiento";
           
           const trackColor = point.trackType === 'planta' ? "#EF4444" :
                             point.trackType === 'bocamina' ? "#8a0ed2" : 
-                            point.trackType === 'parqueo' ? "#3b82f6" : "#f59e0b";
+                            point.trackType === 'parqueo' ? "#3b82f6" :
+                            point.trackType === 'mantenimiento' ? "#f59e0b" :
+                            "#10b981"; // Verde para "other"
           
           return `
             <div style="
@@ -309,13 +362,15 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
                 font-size: 13px;
                 margin-bottom: 8px;
               ">
-                ${trackTypeLabel} - Track #${point.trackIndex}
+                ${point.trackType} - Track #${point.trackIndex}
+                ${point.isGrouped ? `<span style="color: #ffa500; font-size: 11px; font-weight: 500;"> (${point.groupSize} agrupados)</span>` : ''}
               </div>
           
               <div style="margin-bottom: 8px; line-height: 1.5;">
                 <div><b style="color:#bbb;">Inicio:</b> <span>${startTime}</span></div>
                 <div><b style="color:#bbb;">Fin:</b> <span>${endTime}</span></div>
                 <div><b style="color:#bbb;">Duración:</b> <span>${formatDurationMinutes(duration)}</span></div>
+                ${point.isGrouped ? `<div><b style="color:#bbb;">Detecciones:</b> <span style="color: #ffa500;">${point.groupSize} consecutivas</span></div>` : ''}
               </div>
           
               <div style="
@@ -327,6 +382,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
                 <div><b style="color:#bbb;">Ubicación:</b></div>
                 <div style="color:#ddd; font-weight: 500;">${track?.ubication || 'N/A'}</div>
                 ${track?.ubicationType ? `<div style="color:#aaa; font-size: 11px;">Tipo: ${track.ubicationType}</div>` : ''}
+                ${point.isGrouped ? `<div style="color:#aaa; font-size: 11px; margin-top: 4px;">✨ Detecciones consecutivas del mismo tipo fusionadas</div>` : ''}
               </div>
             </div>
           `;
@@ -385,8 +441,8 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
                 minute: '2-digit' 
               });
               
-              let prefix = "T";
-              let bgColor = "#6b7280";
+              let prefix = "O"; // Other por defecto
+              let bgColor = "#10b981"; // Verde para "other"
               
               if (this.point.isPlanta) {
                 prefix = "P";

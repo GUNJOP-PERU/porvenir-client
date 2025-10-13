@@ -235,7 +235,7 @@ const RealTimeByHourRT = () => {
     };
 
     trips.forEach((trip) => {
-      const tripDate = new Date(trip.startDate);
+      const tripDate = new Date(trip.endDate);
       const hour = `${
         tripDate.getHours() < 10
           ? `0${tripDate.getHours()}`
