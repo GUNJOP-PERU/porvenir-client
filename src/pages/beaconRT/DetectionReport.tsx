@@ -15,6 +15,7 @@ import { getCurrentDay } from "@/utils/dateUtils";
 type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours"
 
 const DetectionReportRT = () => {
+  const [activeTab, setActiveTab] = useState<'chart' | 'table'>('chart');
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
     {
@@ -183,6 +184,66 @@ const DetectionReportRT = () => {
     };
   }, [tripsDesmonte]);
 
+  // Procesar datos para la tabla de bocaminas y parqueo
+  const tableData = useMemo(() => {
+    if (!beaconDetectionData) return [];
+    
+    return beaconDetectionData.map(unit => {
+      const tracks = unit.tracks || [];
+      
+      // Encontrar la primera bocamina
+      const firstBocamina = tracks.find(track => 
+        track.ubication?.toLowerCase().includes('bocamina') ||
+        track.ubicationType?.toLowerCase().includes('bocamina')
+      );
+      
+      // Calcular tiempo total en parqueo (agrupar parqueos consecutivos)
+      let totalParkingTime = 0;
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+        if (track.ubication?.toLowerCase() === 'parqueo') {
+          const startTime = new Date(track.f_inicio).getTime();
+          const endTime = new Date(track.f_final).getTime();
+          const duration = (endTime - startTime) / 1000 / 60; // en minutos
+          totalParkingTime += duration;
+        }
+      }
+      
+      // Verificar si la bocamina es tardía según el turno
+      let isLateBocamina = false;
+      if (firstBocamina) {
+        const bocaminaStartTime = new Date(firstBocamina.f_inicio);
+        const hours = bocaminaStartTime.getHours();
+        const minutes = bocaminaStartTime.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
+        
+        // Convertir 8:30 AM y 8:30 PM a minutos
+        const dayShiftLimit = 8 * 60 + 30; // 8:30 AM = 510 minutos
+        const nightShiftLimit = 20 * 60 + 30; // 8:30 PM = 1230 minutos
+        
+        // Determinar el turno basado en la hora actual o del shift filter
+        if (shiftFilter === 'dia') {
+          // Turno día: tardío si es después de 8:30 AM
+          isLateBocamina = totalMinutes > dayShiftLimit;
+        } else if (shiftFilter === 'noche') {
+          // Turno noche: tardío si es después de 8:30 PM
+          isLateBocamina = totalMinutes > nightShiftLimit;
+        }
+      }
+
+      return {
+        unit: unit.unit.toUpperCase(),
+        firstBocamina: firstBocamina ? {
+          ubication: firstBocamina.ubication,
+          startTime: format(new Date(firstBocamina.f_inicio), "HH:mm:ss"),
+          endTime: format(new Date(firstBocamina.f_final), "HH:mm:ss"),
+          duration: ((new Date(firstBocamina.f_final).getTime() - new Date(firstBocamina.f_inicio).getTime()) / 1000 / 60).toFixed(1)
+        } : null,
+        parkingTime: totalParkingTime.toFixed(1),
+        isLateBocamina
+      };
+    });
+  }, [beaconDetectionData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -274,8 +335,103 @@ const DetectionReportRT = () => {
         />
       </div>
 
-      <div className="flex-1">
-        <XRangeDetection data={beaconDetectionData} />
+      {/* Pestañas */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('chart')}
+            className={`px-6 py-3 text-sm font-medium ${
+              activeTab === 'chart'
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            📊 Gráfico de Detecciones
+          </button>
+          <button
+            onClick={() => setActiveTab('table')}
+            className={`px-6 py-3 text-sm font-medium ${
+              activeTab === 'table'
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            📋 Tabla Bocaminas y Parqueo
+          </button>
+        </div>
+
+        <div className="p-4">
+          {activeTab === 'chart' ? (
+            <div className="flex-1">
+              <XRangeDetection data={beaconDetectionData} />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Unidad
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Primera Bocamina
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Hora Inicio
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Hora Fin
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Duración Bocamina
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      Tiempo Total Parqueo
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {tableData.map((row, index) => (
+                    <tr 
+                      key={row.unit} 
+                      className={`
+                        ${row.isLateBocamina 
+                          ? 'bg-red-300 bg-opacity-60' 
+                          : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        }
+                      `}
+                    >
+                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {row.unit}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                        {row.firstBocamina ? row.firstBocamina.ubication : 'Sin bocamina'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                        {row.firstBocamina ? row.firstBocamina.startTime : '-'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                        {row.firstBocamina ? row.firstBocamina.endTime : '-'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                        {row.firstBocamina ? `${row.firstBocamina.duration} min` : '-'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                        {row.parkingTime} min
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {tableData.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No hay datos disponibles
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

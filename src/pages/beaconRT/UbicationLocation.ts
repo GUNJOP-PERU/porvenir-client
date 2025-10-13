@@ -1056,19 +1056,11 @@ const wifiLocation : IWifiLocation[]  = [
     },
   },
   { id: 3,
-    name: "WLAN-Parqueo_Volquetes_1",
+    name: "WLAN-Parqueo_Volquetes",
     description: "Wifi",
     position: {
       latitud: -13.083333,
-      longitud: -75.998333
-    },
-  },
-  { id: 4,
-    name: "WLAN-Parqueo_Volquetes_2",
-    description: "Wifi",
-    position: {
-      latitud: -13.083333,
-      longitud: -75.997777
+      longitud: -75.998056,
     },
   },
   { id: 5,
