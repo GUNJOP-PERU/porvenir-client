@@ -195,7 +195,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       specialPeriods.forEach((period, periodIndex) => {
         const color = period.type === 'planta' ? "#EF4444" : 
-                     period.type === 'bocamina' ? "#8a0ed2" : "#f59e0b";
+                      period.type === 'bocamina' ? "#8a0ed2" : "#f59e0b";
         const periodType = period.type === 'planta' ? "Planta" :
                           period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
         
@@ -538,6 +538,15 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     series: series as any,
   }), [data, allSeriesData,shift]);
 
+  // Calcular totales
+  const totals = useMemo(() => {
+    return tableData.reduce((acc, row) => ({
+      totalTrips: acc.totalTrips + row.totalTrips,
+      totalHours: acc.totalHours + parseFloat(row.totalHours),
+      avgDuration: acc.avgDuration + parseFloat(row.avgDuration)
+    }), { totalTrips: 0, totalHours: 0, avgDuration: 0 });
+  }, [tableData]);
+
   const chartHeight = (data.length * 104) + 15 ;
   const rowHeight = 108;
 
@@ -547,15 +556,23 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       
-      <div className="w-40 flex flex-col mt-[20px]">
+      <div className="w-60 flex flex-col mt-[-20px]">
         <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
-          <div className="grid grid-cols-2 gap-1 text-xs font-semibold text-gray-700">
+          <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-gray-700">
             <div className="text-center">Viajes</div>
             <div className="text-center">Horas</div>
+            <div className="text-center">Promedio</div>
           </div>
         </div>
-        
-        {/* Filas alineadas con cada unidad del gráfico */}
+
+        <div className="bg-gray-50 border border-gray-200 px-3 py-2 border-t-2 border-t-gray-400 h-[40px]">
+          <div className="grid grid-cols-3 gap-1 text-xs font-bold text-gray-800">
+            <div className="text-center text-black">{totals.totalTrips}</div>
+            <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
+            <div className="text-center text-black">{totals.avgDuration.toFixed(1)}h</div>
+          </div>
+        </div>
+
         <div className="relative" style={{ height: `${chartHeight}px` }}>
           {tableData.map((row, index) => (
             <div 
@@ -564,17 +581,17 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               style={{ 
                 top: `${index * rowHeight}px`,
                 height: `${rowHeight}px`,
-                borderBottom: index === tableData.length - 1 ? '1px solid #e5e7eb' : '1px solid #f3f4f6'
+                borderBottom: '1px solid #f3f4f6'
               }}
             >
-              <div className="grid grid-cols-2 gap-1 text-xs w-full">
+              <div className="grid grid-cols-3 gap-1 text-xs w-full">
                 <div className="font-bold text-black text-center">{row.totalTrips}</div>
                 <div className="font-bold text-black text-center">{row.totalHours}h</div>
+                <div className="font-bold text-black text-center">{row.avgDuration}h</div>
               </div>
             </div>
           ))}
         </div>
-        
       </div>
     </div>
   );

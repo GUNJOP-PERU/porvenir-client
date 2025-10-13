@@ -48,7 +48,7 @@ export default function PageHeader({
         </div>
         {description && <p className="text-zinc-400 text-[10.5px] lg:text-xs">{description}</p>}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {setDialogOpen && (
           <Button onClick={() => setDialogOpen(true)} className="flex items-center gap-2 !min-w-9 md:!min-w-[100px] px-2 md:px-3 ">
             <CircleFadingPlus className="size-3.5" />

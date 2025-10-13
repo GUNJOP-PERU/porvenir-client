@@ -90,6 +90,40 @@ const TripsDescriptionRT = () => {
             color: "#ff4d4f",
           },
         ]}
+        actions={
+          <div className="flex flex-row gap-2">
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#6b7280] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viaje Incompleto
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#10b981] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viaje Completo
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#8a0ed2] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Bocamina
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#f59e0b] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Mantenimiento
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#EF4444] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Planta
+              </p>
+            </div>
+          </div>
+        }
       />
 
       <div className="col-span-2 bg-white rounded-lg shadow p-4">
