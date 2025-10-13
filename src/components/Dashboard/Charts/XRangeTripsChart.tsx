@@ -123,7 +123,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         isPahuaypite: isPahuaypite,
         isCancha100ToFaja4: isCancha100ToFaja4,
         unitName: unit.unit.toUpperCase(),
-        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}${isCancha100ToFaja4 ? ' (C100↔F4 Sin bocaminas)' : isPahuaypite ? ' (Pahuaypite)' : ''}` : 'Sin destino'}`
+        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}${isCancha100ToFaja4 ? ' (C100↔F4 10-50min)' : isPahuaypite ? ' (Pahuaypite)' : ''}` : 'Sin destino'}`
       });
 
       const detections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
