@@ -16,7 +16,7 @@ function CardClock() {
 
   return (
     <div className="hidden lg:flex items-center justify-center gap-2 px-2 text-center">
-      <p className="font-extrabold text-2xl leading-none text-zinc-400 capitalize">
+      <p className="font-extrabold text-xl leading-none text-zinc-400 capitalize mt-0.5">
         {time.format("dddd, D MMMM")}
       </p>
       <h1 className="font-extrabold text-2xl leading-8">

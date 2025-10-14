@@ -122,6 +122,12 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/trips-description-rt",
           },
           {
+            name: "Estado de la flota",
+            href: "dashboard/fleet-status",
+            icon: <LandPlot />,
+            active: pathname === "/dashboard/fleet-status",
+          },
+          {
             name: "Utilización de flota",
             href: "/dashboard/beacon/production-status-rt",
             icon: <FaTimeline />,
@@ -168,12 +174,7 @@ export const useNavigation = () => {
             icon: <IconRadar />,
             active: pathname === "/dashboard/beacon-detection-table",
           },
-          {
-            name: "Estado de la flota",
-            href: "dashboard/fleet-status",
-            icon: <LandPlot />,
-            active: pathname === "/dashboard/fleet-status",
-          },
+          
           {
             name: "Linea de Tiempo",
             href: "/dashboard/beacon/trips-description",
