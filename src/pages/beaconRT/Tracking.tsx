@@ -27,10 +27,11 @@ import {
   wifiLocation,
   maintenanceLocation,
   superficieLocation,
-  ubicationBocamina
+  ubicationBocamina,
 } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import Toggle from "@/components/Dashboard/Tracking/Toggle";
+import clsx from "clsx";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -86,7 +87,7 @@ const TruckTracking = () => {
     showTalleres: true,
     showDestinations: true,
     showSuperficie: true,
-  })
+  });
 
   const mapConfig = useMemo(
     () => ({
@@ -107,9 +108,12 @@ const TruckTracking = () => {
   });
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
-    const foundUbication = [...ubicationData, ...superficieLocation, ...maintenanceLocation, ...ubicationBocamina].find(
-      (u) => u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-    );
+    const foundUbication = [
+      ...ubicationData,
+      ...superficieLocation,
+      ...maintenanceLocation,
+      ...ubicationBocamina,
+    ].find((u) => u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase());
 
     setSelectedTruck({
       truck,
@@ -128,8 +132,6 @@ const TruckTracking = () => {
     }
   }, []);
 
-
-
   const createCustomIcon = useCallback(
     (
       status: string,
@@ -146,11 +148,13 @@ const TruckTracking = () => {
         try {
           if (!lastDate) return "old";
           const lastDateTime = parseISO(lastDate);
-          console.log("ultima fecha", lastDateTime, unitName)
+          // console.log("ultima fecha", lastDateTime, unitName);
           const now = new Date();
           const fiveHoursAgo = subHours(now, 5);
-          const fiveMinutesAgo = subHours(now, 0).setMinutes(now.getMinutes() - 5);
-          
+          const fiveMinutesAgo = subHours(now, 0).setMinutes(
+            now.getMinutes() - 5
+          );
+
           if (!isAfter(lastDateTime, fiveHoursAgo)) return "old";
           if (!isAfter(lastDateTime, new Date(fiveMinutesAgo))) return "stale";
           return "fresh";
@@ -239,7 +243,12 @@ const TruckTracking = () => {
 
     const coordMap = new Map<string, any[]>();
     data.forEach((truck) => {
-      const findBeacon = [...ubicationData, ...superficieLocation, ...maintenanceLocation, ...ubicationBocamina].find(
+      const findBeacon = [
+        ...ubicationData,
+        ...superficieLocation,
+        ...maintenanceLocation,
+        ...ubicationBocamina,
+      ].find(
         (beacon) =>
           beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
       );
@@ -298,13 +307,25 @@ const TruckTracking = () => {
                           : truck.status
                               .toLowerCase()
                               .includes("mantenimiento") ||
-                            truck.status.toLowerCase().includes("inoperativo") ||
+                            truck.status
+                              .toLowerCase()
+                              .includes("inoperativo") ||
                             truck.status.toLowerCase().includes("demora")
                           ? "bg-orange-300 text-orange-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
                       {truck.status}
+                    </span>
+                    <span
+                      className={clsx(
+                        "px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold",
+                        truck.connectivity === "online"
+                          ? "bg-yellow-300 text-zinc-800"
+                          : "bg-zinc-300 text-zinc-800"
+                      )}
+                    >
+                      {truck.connectivity}
                     </span>
                   </div>
                 </div>
@@ -324,7 +345,9 @@ const TruckTracking = () => {
                 </div>
                 <div className="border-t border-zinc-200 pt-2 flex flex-col">
                   <span className="text-[10px] leading-3 font-semibold">
-                    Actualizado{" "}
+                    {truck.connectivity === "online"
+                      ? "En línea"
+                      : "Fuera de línea"}{" "}
                     {truck.lastDate &&
                     !isNaN(new Date(truck.lastDate).getTime()) ? (
                       <TimeAgo datetime={truck.lastDate} locale="es" />
@@ -493,7 +516,7 @@ const TruckTracking = () => {
     });
 
     return components;
-  }
+  };
 
   const superficieLocations = () => {
     const components: React.JSX.Element[] = [];
@@ -517,7 +540,10 @@ const TruckTracking = () => {
       components.push(
         <Marker
           key={`superficie-label-${beacon.id}`}
-          position={[beacon.position.latitud - 0.00045, beacon.position.longitud]}
+          position={[
+            beacon.position.latitud - 0.00045,
+            beacon.position.longitud,
+          ]}
           icon={L.divIcon({
             html: `
               <div style="
@@ -549,7 +575,7 @@ const TruckTracking = () => {
     });
 
     return components;
-  }
+  };
 
   const bocaminaLocations = () => {
     const components: React.JSX.Element[] = [];
@@ -573,7 +599,10 @@ const TruckTracking = () => {
       components.push(
         <Marker
           key={`bocamina-label-${bocamina.id}`}
-          position={[bocamina.position.latitud + 0.0004, bocamina.position.longitud]}
+          position={[
+            bocamina.position.latitud + 0.0004,
+            bocamina.position.longitud,
+          ]}
           icon={L.divIcon({
             html: `
               <div style="
@@ -623,7 +652,7 @@ const TruckTracking = () => {
     });
 
     return components;
-  }
+  };
 
   const tallerLocations = () => {
     const components: React.JSX.Element[] = [];
@@ -647,7 +676,10 @@ const TruckTracking = () => {
       components.push(
         <Marker
           key={`taller-label-${taller.id}`}
-          position={[taller.position.latitud - 0.0006, taller.position.longitud]}
+          position={[
+            taller.position.latitud - 0.0006,
+            taller.position.longitud,
+          ]}
           icon={L.divIcon({
             html: `
               <div style="
@@ -679,7 +711,7 @@ const TruckTracking = () => {
     });
 
     return components;
-  }
+  };
 
   const createFlagIcon = (label: string, color: string) =>
     L.divIcon({
@@ -744,25 +776,39 @@ const TruckTracking = () => {
         </MapContainer>
       </div>
     );
-  }, [routeComponents, wifiLocations, tallerLocations, bocaminaLocations, markers]);
+  }, [
+    routeComponents,
+    wifiLocations,
+    tallerLocations,
+    bocaminaLocations,
+    markers,
+  ]);
 
   return (
     <div className="h-full w-full bg-black relative">
       {MapaCamiones}
-      <Legend
-        data={data}
-      />
+      <Legend data={data} />
       <Toggle
         showBocaminas={toggleStatus.showBocaminas}
         showWifiZones={toggleStatus.showWifiZones}
         showDestinations={toggleStatus.showDestinations}
         showSuperficie={toggleStatus.showSuperficie}
         showTalleres={toggleStatus.showTalleres}
-        onToggleBocaminas={(show) => setToggleStatus(prev => ({...prev, showBocaminas: show}))}
-        onToggleWifiZones={(show) => setToggleStatus(prev => ({...prev, showWifiZones: show}))}
-        onToggleDestinations={(show) => setToggleStatus(prev => ({...prev, showDestinations: show}))}
-        onToggleSuperficie={(show) => setToggleStatus(prev => ({...prev, showSuperficie: show}))}
-        onToggleTalleres={(show) => setToggleStatus(prev => ({...prev, showTalleres: show}))}
+        onToggleBocaminas={(show) =>
+          setToggleStatus((prev) => ({ ...prev, showBocaminas: show }))
+        }
+        onToggleWifiZones={(show) =>
+          setToggleStatus((prev) => ({ ...prev, showWifiZones: show }))
+        }
+        onToggleDestinations={(show) =>
+          setToggleStatus((prev) => ({ ...prev, showDestinations: show }))
+        }
+        onToggleSuperficie={(show) =>
+          setToggleStatus((prev) => ({ ...prev, showSuperficie: show }))
+        }
+        onToggleTalleres={(show) =>
+          setToggleStatus((prev) => ({ ...prev, showTalleres: show }))
+        }
       />
       <SearchTruck
         data={data}
