@@ -262,18 +262,33 @@ const XRangeTripsChartHistorico = ({
         gridLineColor: "#A6A6A650",
         labels: {
           align: "right",
-          marginLeft: 50,
-          marginRight: 50,
+          useHTML: true, // 👈 esto permite usar HTML
           formatter: function () {
-            return String(this.value).replace(/-/g, "-<br>");
-          },
-          style: {
-            color: "#6e6d7a",
-            fontSize: "0.8rem",
-            fontWeight: "700",
-            textAlign: "left",
+            const labelText = this.value.toString().split("-").pop();
+            return `<div style="
+              background-color:#f0f0f0;
+              padding:2px 6px;
+              border-radius:6px;
+              color:#6e6d7a;
+              font-weight:700;
+              text-align:left;
+              display:inline-block;
+              width:35px;
+              height:35px;
+              display:flex;
+              flex-direction:column;
+              align-items:center;
+              line-height:1;
+              justify-content:center;
+              gap:1px;
+            ">
+            <span style="font-weight:700;font-size:0.4rem;">CAM</span>
+            <span style="font-weight:800;font-size:0.9rem;">
+            ${labelText}</span>
+            </div>`;
           },
         },
+        
       },
       tooltip: {
         useHTML: true,

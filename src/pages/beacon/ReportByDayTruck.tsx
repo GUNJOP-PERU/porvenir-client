@@ -279,7 +279,10 @@ const RealTimeByHourRT = () => {
               <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
                 <Calendar
                   editableDateInputs={false}
-                  onChange={(item) => setDateFilter(item)}
+                  onChange={(item) => {
+                    setDateFilter(item);
+                    setIsTooltipOpen(false);
+                  }}
                   date={dateFilter}
                 />
               </div>

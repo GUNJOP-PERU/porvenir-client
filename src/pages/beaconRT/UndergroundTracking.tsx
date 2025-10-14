@@ -218,8 +218,17 @@ const UndergroundTracking = () => {
   const markers = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
+    // 30 minutos sin actualización
+    const MAX_MINUTES_OFFLINE = 10;
+    const filteredData = data.filter((truck) => {
+      if (!truck.lastDate) return false;
+      const lastUpdate = new Date(truck.lastDate);
+      const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
+      return diffMinutes <= MAX_MINUTES_OFFLINE;
+    });
+
     const coordMap = new Map<string, any[]>();
-    data.forEach((truck) => {
+    filteredData.forEach((truck) => {
       const findBeacon = ubicationDataSub.find(
         (beacon) =>
           beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()

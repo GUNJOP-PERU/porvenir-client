@@ -223,7 +223,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       specialPeriods.forEach((period, periodIndex) => {
         const color = period.type === 'planta' ? "#EF4444" : 
-                      period.type === 'bocamina' ? "#8a0ed2" : "#f59e0b";
+                      period.type === 'bocamina' ? "#c77dff" : "#f59e0b";
         const periodType = period.type === 'planta' ? "Planta" :
                           period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
         
@@ -281,10 +281,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     },
     title: {
       text: "",
-      style: {
-        fontSize: "16px",
-        fontWeight: "bold",
-      },
+     
     },
     time: {
       timezone: 'America/Lima',
@@ -295,7 +292,13 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       title: {
         text: "Tiempo",
       },
+      lineColor: "#A6A6A650",
       labels: {
+        style: {
+          color: "#A6A6A6",
+          fontSize: "0.8rem",
+          fontWeight: "600",
+        },
         format: "{value:%H:%M}",
       },
       min: (() => {
@@ -325,6 +328,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         text: null,
       },
       labels: {
+        style: {
+          color: "#A6A6A6",
+          fontSize: "0.8rem",
+          fontWeight: "600",
+        },
         format: "{value:%H:%M}",
       },
     }],
@@ -336,6 +344,34 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       reversed: true,
       gridLineWidth: 1,
       gridLineColor: "#000000a9",
+      labels: {
+        align: "right",
+        useHTML: true, // 👈 esto permite usar HTML
+        formatter: function () {
+          const labelText = this.value.toString().split("-").pop();
+          return `<div style="
+            background-color:#f0f0f0;
+            padding:2px 6px;
+            border-radius:6px;
+            color:#6e6d7a;
+            font-weight:700;
+            text-align:left;
+            display:inline-block;
+            width:35px;
+            height:35px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            line-height:1;
+            justify-content:center;
+            gap:1px;
+          ">
+          <span style="font-weight:700;font-size:0.4rem;">CAM</span>
+          <span style="font-weight:800;font-size:0.9rem;">
+          ${labelText}</span>
+          </div>`;
+        },
+      },
     },
     tooltip: {
       useHTML: true,

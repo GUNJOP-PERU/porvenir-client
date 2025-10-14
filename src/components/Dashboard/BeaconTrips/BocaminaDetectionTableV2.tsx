@@ -42,7 +42,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
               {row.getIsExpanded() ? "▼" : "▶"}
             </button>
           )}
-          <span className="text-zinc-400 text-[10px] font-mono">
+          <span className="text-zinc-400 text-[10px] font-normal">
             #{row.index + 1}
           </span>
         </div>
@@ -54,7 +54,9 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
     {
       accessorKey: "unit",
       header: "Unidad",
-      cell: ({ getValue }) => getValue()?.toString().toUpperCase(),
+      cell: ({ row }) => <div>
+        CAM {row.original.unit.split("-").pop()}
+      </div>,
       size: 150,
     },
     {
@@ -165,7 +167,7 @@ const BocaminaDetectionTable = ({ data }: UnitTripsTableProps) => {
                         <tbody>
                           {row.original.bc.map((detection, index: number) => (
                             <tr key={detection.uuid || `${row.original.unit}-detection-${index}-${detection.f_inicio}`} className="bg-white border-b hover:bg-gray-50">
-                              <td className="px-4 py-2 text-[11px]">{row.original.unit.toUpperCase()}</td>
+                              <td className="px-4 py-2 text-[11px]">CAM {row.original.unit.split("-").pop()}</td>
                               <td className="px-4 py-2 text-[11px]">{detection.ubication}</td>
                               <td className="px-4 py-2 text-[11px]">{format(new Date(detection.f_inicio), 'dd-MM-yyyy, HH:mm')}</td>
                               <td className="px-4 py-2 text-[11px]">{format(new Date(detection.f_final), 'dd-MM-yyyy, HH:mm')}</td>

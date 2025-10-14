@@ -50,8 +50,31 @@ const UnitTripChart = ({
           style: {
             fontSize: "0.7em",
             fontWeight: "bold",
-            color: "#A1A1AA",
+            color: "",
             lineHeight: "1",
+          },
+          useHTML: true, // 👈 esto permite usar HTML
+          formatter: function () {
+            const labelText = this.value.toString().split("-").pop();
+            return `<div style="
+              background-color:#f0f0f0;
+              padding:2px 6px;
+              border-radius:5px;
+              color:#6e6d7a;
+              font-weight:800;
+              text-align:left;
+              display:inline-block;
+              width:55px;
+              height:20px;
+              display:flex;
+              flex-direction:column;
+              align-items:center;
+              font-size:0.7rem;
+              justify-content:center;
+              line-height:0;
+            ">            
+            CAM ${labelText}
+            </div>`;
           },
         },
       },

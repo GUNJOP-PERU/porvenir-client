@@ -82,7 +82,7 @@ const ProductionStatus = () => {
     mina: {
       outer: "bg-purple-700/50",
       inner: "bg-purple-600",
-      color: "#8a0ed2",
+      color: "#c77dff",
     },
     mantenimiento: {
       outer: "bg-yellow-700/80",

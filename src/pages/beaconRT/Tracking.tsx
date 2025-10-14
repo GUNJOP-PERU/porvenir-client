@@ -52,7 +52,6 @@ const MapControls = ({
   const lastPositionRef = useRef<[number, number] | null>(null);
 
   useEffect(() => {
-    // Solo hacer zoom si la posición ha cambiado
     if (
       selectedTruckPosition &&
       (!lastPositionRef.current ||
@@ -64,7 +63,6 @@ const MapControls = ({
         duration: 1.5,
       });
 
-      // Actualizar la última posición conocida
       lastPositionRef.current = [...selectedTruckPosition] as [number, number];
     }
   }, [selectedTruckPosition, map]);
@@ -587,7 +585,7 @@ const TruckTracking = () => {
           center={[bocamina.position.latitud, bocamina.position.longitud]}
           radius={40}
           pathOptions={{
-            color: "#8a0ed2",
+            color: "#c77dff",
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
@@ -614,7 +612,7 @@ const TruckTracking = () => {
                 position: absolute;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-color:#8a0ed2;
+                background-color:#c77dff;
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
@@ -818,6 +816,25 @@ const TruckTracking = () => {
         ubicationData={ubicationData}
         includeExtraLocations={true}
       />
+      <div className="absolute bottom-40 right-2 bg-black/75 rounded-xl p-2 z-10 w-60 border border-zinc-800 text-xs">
+      <span className="text-white">En ruta </span>
+       <div className="grid grid-cols-8 gap-0.5">
+       {data
+          .filter((truck) => {
+            if (truck.lastUbication !== "Parqueo") return false;
+            const lastUpdate = new Date(truck.updatedAt);
+            const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
+            return diffMinutes > 10;
+          })
+          .map((truck) => (
+            <div key={truck.name} className="px-1 py-0.5 bg-zinc-800/50 rounded-lg">
+                <span className="text-white">
+                   {truck.name.split("-").pop()}
+                </span>
+            </div>
+          ))}
+       </div>
+      </div>
     </div>
   );
 };

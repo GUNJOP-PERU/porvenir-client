@@ -156,7 +156,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
       if (currentTrackType === 'planta') {
         color = "#EF4444"; // Rojo
       } else if (currentTrackType === 'bocamina') {
-        color = "#8a0ed2"; // Morado
+        color = "#c77dff"; // Morado
       } else if (currentTrackType === 'mantenimiento') {
         color = "#f59e0b"; // Amarillo
       } else if (currentTrackType === 'parqueo') {
@@ -318,7 +318,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
         if (point.isTrackDetection) {
           
           const trackColor = point.trackType === 'planta' ? "#EF4444" :
-                            point.trackType === 'bocamina' ? "#8a0ed2" : 
+                            point.trackType === 'bocamina' ? "#c77dff" : 
                             point.trackType === 'parqueo' ? "#3b82f6" :
                             point.trackType === 'mantenimiento' ? "#f59e0b" :
                             "#10b981"; // Verde para "other"
@@ -449,7 +449,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
                 bgColor = "#EF4444";
               } else if (this.point.isBocamina) {
                 prefix = "B";
-                bgColor = "#8a0ed2";
+                bgColor = "#c77dff";
               } else if (this.point.isParqueo) {
                 prefix = "PQ";
                 bgColor = "#3b82f6";

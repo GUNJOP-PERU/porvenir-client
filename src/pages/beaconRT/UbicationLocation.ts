@@ -269,7 +269,7 @@ const ubicationData : IBeaconUbication[] = [
     name: "PL_01",
     location: "destinations",
     description: "Planta",
-    color: "#fb1808",
+    color: "#ff758f",
     position: {
       latitud: -13.085,
       longitud: -75.995278,
@@ -333,7 +333,7 @@ const ubicationData : IBeaconUbication[] = [
     name: "PH_01",
     location: "destinations",
     description: "Pahuaypite",
-    color: "#844f00",
+    color: "#b08968",
     position: {
       latitud: -13.083056,
       longitud: -76.0,
@@ -1143,7 +1143,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "BC1875_01",
     location: "bocamina",
     description: "BC-1875",
-    color: "#8a0ed2",
+    color: "#c77dff",
     position: {
       latitud: -13.07500,
       longitud: -75.99250,
@@ -1157,7 +1157,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "BC1820_01",
     location: "bocamina",
     description: "BC-1820",
-    color: "#8a0ed2", 
+    color: "#c77dff", 
     position: {
       latitud: -13.07990,
       longitud: -75.99990,
@@ -1171,7 +1171,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "BC1830_01",
     location: "bocamina",
     description: "BC-1830",
-    color: "#8a0ed2", 
+    color: "#c77dff", 
     position: {
       latitud: -13.08230,
       longitud: -75.99960,
@@ -1185,7 +1185,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "BC1800_01",
     location: "bocamina",
     description: "BC-1800",
-    color: "#8a0ed2", 
+    color: "#c77dff", 
     position: {
       latitud: -13.08120,
       longitud: -75.99990,
@@ -1213,7 +1213,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "PR_01",
     location: "destinations",
     description: "PARRILLA 1",
-    color: "#cc5803ff", 
+    color: "#ff9b54", 
     position: {
       latitud: -13.08070,
       longitud: -75.99470,
@@ -1227,7 +1227,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "PR_02",
     location: "destinations",
     description: "PARRILLA 2",
-    color: "#cc5803ff", 
+    color: "#ff9b54", 
     position: {
       latitud: -13.08098,
       longitud: -75.99400,
@@ -1241,7 +1241,7 @@ const ubicationDataSub : IBeaconUbication[] = [
     name: "PO_03",
     location: "destinations",
     description: "POCKET 3",
-    color: "#cc5803ff", 
+    color: "#ff9b54", 
     position: {
       latitud: -13.08038,
       longitud: -75.99400,

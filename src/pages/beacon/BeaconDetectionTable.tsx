@@ -66,9 +66,9 @@ const BeaconDetectionTable = () => {
     {
       accessorKey: "unit",
       header: "Unidad",
-      cell: ({ getValue }) => (
+      cell: ({ row }) => (
         <div className="font-medium text-blue-600">
-          {getValue()}
+          CAM {row.original.unit.split("-").pop()}
         </div>
       ),
       size: 150,
@@ -319,7 +319,7 @@ const BeaconDetectionTable = () => {
                 <option value="">Todas las unidades</option>
                 {uniqueUnits.map((unit, index) => (
                   <option key={index} value={unit}>
-                    {unit}
+                    CAM {unit.split("-").pop()}
                   </option>
                 ))}
               </select>
@@ -350,7 +350,10 @@ const BeaconDetectionTable = () => {
               <div className="absolute right-0 top-10 z-[99] mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
                 <Calendar
                   editableDateInputs={false}
-                  onChange={(item) => setDateFilter(item)}
+                  onChange={(item) => {
+                    setDateFilter(item);
+                    setIsTooltipOpen(false);
+                  }}
                   date={dateFilter}
                 />
               </div>
@@ -394,7 +397,7 @@ const BeaconDetectionTable = () => {
                       return (
                         <tr key={idx} className={`border-b ${isOld ? 'bg-red-100' : ''}`}>
                           <td className="px-2 py-1 font-bold">{idx + 1}</td>
-                          <td className="px-2 py-1 font-bold">{item.unit}</td>
+                          <td className="px-2 py-1 font-bold">CAM {item.unit.split("-").pop()}</td>
                           <td className="px-2 py-1">{item.mac?.location || (typeof item.mac === 'string' ? item.mac : '')}</td>
                           <td className="px-2 py-1">{format(new Date(item.f_final), "dd/MM/yyyy, HH:mm:ss")}</td>
                         </tr>

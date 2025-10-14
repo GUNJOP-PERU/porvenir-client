@@ -34,7 +34,7 @@ export default function Toggle({
         {/* Toggle Bocaminas */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="bg-[#8a0ed2] w-2 h-2 rounded-full" />
+            <span className="bg-[#c77dff] w-2 h-2 rounded-full" />
             <span className="text-white text-[11px] font-medium">
               Bocaminas
             </span>
@@ -43,7 +43,7 @@ export default function Toggle({
             onClick={() => onToggleBocaminas?.(!showBocaminas)}
             className="relative inline-flex h-4 w-7 items-center rounded-full transition-colors focus:outline-none"
             style={{
-              backgroundColor: showBocaminas ? "#8a0ed2" : "#cfcfcf",
+              backgroundColor: showBocaminas ? "#c77dff" : "#cfcfcf",
             }}
           >
             <span

@@ -42,7 +42,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0} skipDelayDuration={0}>
       <ToastProvider>
         <SocketProvider>
           <GlobalDataProvider>
