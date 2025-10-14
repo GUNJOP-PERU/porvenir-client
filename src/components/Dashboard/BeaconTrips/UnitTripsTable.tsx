@@ -296,13 +296,13 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                                 {row.original.unit.toUpperCase()}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.startUbication} / {formatFecha(trip.startDate)}
+                                {trip.startUbication}, <b>{formatFecha(trip.startDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 --- ---
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.endUbication} / {formatFecha(trip.endDate)}
+                                {trip.endUbication}, <b>{formatFecha(trip.endDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {roundAndFormat(trip.totalDurationMin)}

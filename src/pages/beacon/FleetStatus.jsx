@@ -28,19 +28,19 @@ export default function FleetStatus() {
 
   const [columns, setColumns] = useState({
     operativo: {
-      name: "Operativo",
+      name: "Equipos Operativos",
       color: "bg-green-950",
       titleColor: "text-[#46fea5d4]",
       items: [],
     },
     mantenimiento: {
-      name: "Mantenimiento",
+      name: "Mantenimiento Preventivo",
       color: "bg-yellow-950",
       titleColor: "text-[#ffca16]",
       items: [],
     },
     inoperativo: {
-      name: "Inoperativo",
+      name: "Mantenimiento Correctivo",
       color: "bg-red-950",
       titleColor: "text-[#ff9592]",
       items: [],

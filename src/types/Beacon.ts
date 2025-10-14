@@ -138,6 +138,7 @@ export type UnitTripDetections = {
     ubicationType: string
   },
   tracks: {
+    uuid: string,
     unit: string,
     mac: string,
     f_inicio: string,
@@ -148,4 +149,18 @@ export type UnitTripDetections = {
     ubication: string,
     ubicationType: string
   }[]
+}
+
+export type TruckStatus = {
+  _id: string
+  createdAt: string
+  isActive: boolean
+  connectivity: string
+  lastDate: string
+  lastUbication: string
+  lastUbicationMac: string
+  name: string
+  status: string
+  tag: string
+  updatedAt: string
 }

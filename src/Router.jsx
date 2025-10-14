@@ -50,7 +50,7 @@ import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
 import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
-import ProductionStatus from "./pages/beaconRT/ProductionStatus";
+import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
