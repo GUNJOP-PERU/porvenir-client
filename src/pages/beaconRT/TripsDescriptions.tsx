@@ -8,7 +8,7 @@ import type { BeaconCycle } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
 import { format } from "date-fns";
-import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
+import { getCurrentDay } from "@/utils/dateUtils";
 // Icons
 
 const TripsDescriptionRT = () => {
@@ -117,7 +117,7 @@ const TripsDescriptionRT = () => {
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#8a0ed2] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#c77dff] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Bocamina
               </p>

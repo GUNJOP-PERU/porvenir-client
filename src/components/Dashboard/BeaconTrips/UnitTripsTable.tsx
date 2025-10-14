@@ -93,7 +93,13 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
       {
         accessorKey: "unit",
         header: "Unidad",
-        cell: ({ getValue }) => getValue()?.toString().toUpperCase(),
+        cell: ({ row }) => (
+          <div className="flex items-center font-bold text-zinc-500">
+         
+              CAM {row.original.unit.split("-").pop()}
+         
+          </div>
+        ),
        
       },
       {
@@ -189,7 +195,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
           <option value="">Todas las unidades</option>
           {unitList.map((unit, index) => (
             <option key={index} value={unit}>
-              {unit}
+             CAM {unit.split("-").pop()}
             </option>
           ))}
         </select>
@@ -292,8 +298,8 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                               key={index}
                               className="bg-blue-50/20  hover:bg-sky-50  cursor-default "
                             >
-                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {row.original.unit.toUpperCase()}
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5 font-bold text-zinc-500">
+                                CAM {row.original.unit.split("-").pop()}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.startUbication}, <b>{formatFecha(trip.startDate)}</b>

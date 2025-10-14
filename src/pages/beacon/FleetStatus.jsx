@@ -8,6 +8,11 @@ import { ModalComment } from "@/components/Dashboard/FleetStatus/ModalComment";
 import IconTruck from "@/icons/IconTruck";
 import PageHeader from "@/components/PageHeader";
 import clsx from "clsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const extractNumber = (tag) => {
   const match = tag.match(/(\d+)/);
@@ -55,12 +60,22 @@ export default function FleetStatus() {
     const inoperativoItems = [];
 
     data.forEach((truck) => {
+      const lastComment = truck.comments?.length
+        ? truck.comments
+            .slice()
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )[0].comment
+        : null;
       const item = {
         id: truck._id,
         content: truck.tag,
         lastUbication: truck.lastUbication,
         updatedAt: truck.updatedAt,
         connectivity: truck.connectivity,
+        comment: lastComment,
       };
       if (truck.status === "operativo") operativoItems.push(item);
       else if (truck.status === "mantenimiento") mantenimientoItems.push(item);
@@ -132,7 +147,8 @@ export default function FleetStatus() {
             </span>
           </div>
           <p className="text-zinc-400 text-[10.5px] lg:text-xs">
-          Resumen de Estatus Operativo (Operativos, Mantenimiento, Fuera de Servicio) {new Date().toLocaleDateString()}
+            Resumen de Estatus Operativo (Operativos, Mantenimiento, Fuera de
+            Servicio) {new Date().toLocaleDateString()}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 flex-1 grid-rows-3 xl:grid-rows-1 ">
@@ -142,7 +158,7 @@ export default function FleetStatus() {
                 key={columnId}
                 className={`w-full flex flex-col items-center select-none p-2 rounded-xl xl:h-[calc(100vh-150px)] h-[calc(28vh)] ${column.color}`}
               >
-                <div className="w-full pl-2 pt-1 pb-2 flex items-center gap-2 h-9">
+                <div className="w-full pl-1 pb-1 flex items-center gap-2 h-9">
                   <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-[7px] bg-black/80 flex items-center justify-center">
                     {column.items.length}
                   </div>
@@ -168,75 +184,75 @@ export default function FleetStatus() {
                           index={index}
                         >
                           {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <div
-                                className={`p-0.5 rounded-lg shadow ${
-                                  itemColors[columnId].outer
-                                } cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1 ${
-                                  snapshot.isDragging
-                                    ? "opacity-80 rotate-[10deg]"
-                                    : ""
-                                }`}
-                              >
+                            <Tooltip>
+                              <TooltipTrigger asChild>
                                 <div
-                                  className={`${
-                                    itemColors[columnId].inner
-                                  } rounded-lg py-1 px-1 flex items-center gap-2 ${
-                                    item.connectivity === "online"
-                                      ? "opacity-100"
-                                      : "opacity-35"
-                                  }`}
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
                                 >
-                                  <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0 flex items-center justify-center font-extrabold text-white relative">
-                                    {/* <IconTruck
-                                      className="h-7 w-16 -translate-x-1 translate-y-0.5 opacity-30"
-                                      color={itemColors[columnId].color}
-                                    /> */}
-                                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">{item.content.split("-").pop()}</span>
-                                  </div>
-
-                                  <div className="flex flex-col gap-0.5 min-w-0">
-                                    {/* <span className="text-xs font-bold text-white leading-none ">
-                                    {item.content.split("-").pop()}
-                                    </span> */}
-                                    <IconTruck
-                                      className="h-7 w-11"
-                                      color={itemColors[columnId].color}
-                                    />
-                                    {/* <span className="text-[10px] font-normal text-black leading-none truncate">
-                                      {item.lastUbication}
-                                    </span> */}
-                                  </div>
-                                </div>
-                                <div
-                                  className={clsx(
-                                    "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 px-2 py-1 relative before:content-[''] before:w-[5px] before:h-[5px] before:inline-block before:mr-1 before:rounded-full",
-                                    item.connectivity === "online"
-                                      ? "text-amber-400 before:bg-amber-400"
-                                      : "text-zinc-300 before:bg-zinc-300"
-                                  )}
-                                >
-                                  {/* <div
-                                    className={`w-[4px] h-[4px] rounded-full ${
-                                      item.connectivity === "online"
-                                        ? "bg-amber-400"
-                                        : "bg-zinc-300"
+                                  <div
+                                    className={`p-0.5 rounded-lg shadow ${
+                                      itemColors[columnId].outer
+                                    } cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1 ${
+                                      snapshot.isDragging
+                                        ? "opacity-80 rotate-[10deg]"
+                                        : ""
                                     }`}
-                                  ></div>{" "} */}
-                                  {item.connectivity === "online"
-                                    ? "En línea desde"
-                                    : "Fuera de línea "} {" "}
-                                  <TimeAgo
-                                    datetime={item.updatedAt}
-                                    locale="es"
-                                  />
+                                  >
+                                    <div
+                                      className={`${
+                                        itemColors[columnId].inner
+                                      } rounded-lg py-1 px-1 flex items-center gap-2 ${
+                                        item.connectivity === "online"
+                                          ? "opacity-100"
+                                          : "opacity-35"
+                                      }`}
+                                    >
+                                      <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
+                                        <span className="text-[7px] font-medium text-zinc-50/80">
+                                          CAM
+                                        </span>
+                                        <span className="">
+                                          {item.content.split("-").pop()}
+                                        </span>
+                                      </div>
+                                      <div className="flex flex-col gap-0.5 min-w-0">
+                                        <IconTruck
+                                          className="h-7 w-11"
+                                          color={itemColors[columnId].color}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div
+                                      className={clsx(
+                                        "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 px-3.5 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full",
+                                        item.connectivity === "online"
+                                          ? "text-amber-400 before:bg-amber-400"
+                                          : "text-zinc-300 before:bg-zinc-300"
+                                      )}
+                                    >
+                                      {item.connectivity === "online"
+                                        ? "En línea desde"
+                                        : "Fuera de línea "}{" "}
+                                      <TimeAgo
+                                        datetime={item.updatedAt}
+                                        locale="es"
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
+                              </TooltipTrigger>
+                              {item.comment && (
+                              <TooltipContent
+                                side="bottom"
+                                className="bg-black text-white text-[11px] px-3 py-2 rounded-lg max-w-[200px] shadow-none"
+                              >
+                                <span className="font-semibold text-zinc-400 text-[10px]">Comentario:</span>
+                                <p className="line-clamp-2 ml-1">- {item.comment}</p>
+                              </TooltipContent>
+                              )}
+                            </Tooltip>
                           )}
                         </Draggable>
                       ))}

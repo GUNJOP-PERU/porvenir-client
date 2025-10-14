@@ -23,6 +23,8 @@ import type { BeaconTruckStatus } from "@/types/Beacon";
 import SearchTruck from "@/components/Dashboard/Tracking/SearchTruck";
 import { ubicationDataSub } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
+import clsx from "clsx";
+import dayjs from "dayjs";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -97,6 +99,19 @@ const UndergroundTracking = () => {
   } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
     refetchInterval: 10000,
   });
+
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
+  
+    const tenMinutesAgo = dayjs().subtract(10, "minute");
+  
+    return data.filter((truck) => {
+      if (!truck.lastDate) return false;
+      const lastUpdate = dayjs(truck.lastDate);
+      return lastUpdate.isAfter(tenMinutesAgo);
+    });
+  }, [data]);
+  
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = ubicationDataSub.find(
@@ -218,7 +233,7 @@ const UndergroundTracking = () => {
     if (!Array.isArray(data)) return [];
 
     const coordMap = new Map<string, any[]>();
-    data.forEach((truck) => {
+    filteredData.forEach((truck) => {
       const findBeacon = ubicationDataSub.find(
         (beacon) =>
           beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
@@ -252,7 +267,7 @@ const UndergroundTracking = () => {
         const startCol = -((Math.min(perRow, count) - 1) / 2);
         const startRow = -((Math.ceil(count / perRow) - 1) / 2);
         const newLat = (lat || 0) + (startRow + row) * offsetY - adjustY;
-        const newLng = (lng || 0) + (startCol + col) * offsetX;        
+        const newLng = (lng || 0) + (startCol + col) * offsetX;
         result.push(
           <Marker
             key={`${truck.name}-${i}-${lat}-${lng}`}
@@ -289,6 +304,16 @@ const UndergroundTracking = () => {
                     >
                       {truck.status}
                     </span>
+                    <span
+                      className={clsx(
+                        "px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold",
+                        truck.connectivity === "online"
+                          ? "bg-yellow-300 text-zinc-800"
+                          : "bg-zinc-300 text-zinc-800"
+                      )}
+                    >
+                      {truck.connectivity }
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between py-2 divide-x divide-zinc-200">
@@ -307,7 +332,7 @@ const UndergroundTracking = () => {
                 </div>
                 <div className="border-t border-zinc-200 pt-2 flex flex-col">
                   <span className="text-[10px] leading-3 font-semibold">
-                    Actualizado{" "}
+                  {truck.connectivity === "online" ? "En línea" : "Fuera de línea"} {" "}
                     {truck.lastDate &&
                     !isNaN(new Date(truck.lastDate).getTime()) ? (
                       <TimeAgo datetime={truck.lastDate} locale="es" />
@@ -340,14 +365,14 @@ const UndergroundTracking = () => {
         <Circle
           key={`route-circle-${ubication.id}`}
           center={position}
-          radius={50}
+          radius={60}
           pathOptions={{
             color: ubicationColor,
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
             fillOpacity: 0.3,
-            dashArray: "16, 4",
+            dashArray: "1, 1",
           }}
         />
       );
@@ -385,7 +410,7 @@ const UndergroundTracking = () => {
               line-height: 0.7rem;                            
               ">
                 ${
-                  data.filter(
+                  filteredData.filter(
                     (truck) =>
                       truck.lastUbicationMac &&
                       truck.lastUbicationMac.toLowerCase() ===
@@ -470,13 +495,13 @@ const UndergroundTracking = () => {
     >
       {MapaCamiones}
       <SearchTruck
-        data={data}
+        data={filteredData}
         onTruckSelect={handleSelectTruck}
         selectedTruck={selectedTruck}
         isLoading={isLoading}
         ubicationData={ubicationDataSub}
       />
-       <Legend data={data} />    
+      <Legend data={data} />
     </div>
   );
 };

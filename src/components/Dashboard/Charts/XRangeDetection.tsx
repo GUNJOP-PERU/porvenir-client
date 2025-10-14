@@ -156,26 +156,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
       if (currentTrackType === 'planta') {
         color = "#EF4444"; // Rojo
       } else if (currentTrackType === 'bocamina') {
-        // Verificar si la bocamina es tardía
-        const bocaminaStartTime = new Date(track.f_inicio);
-        const hours = bocaminaStartTime.getHours();
-        const minutes = bocaminaStartTime.getMinutes();
-        const totalMinutes = hours * 60 + minutes;
-        
-        let isLateBocamina = false;
-        if (shift === 'dia') {
-          // Turno día: tardío si es después de 8:30 AM (510 minutos)
-          isLateBocamina = totalMinutes > 8 * 60 + 30;
-        } else if (shift === 'noche') {
-          // Turno noche: tardío si es después de 8:30 PM (1230 minutos)
-          isLateBocamina = totalMinutes > 20 * 60 + 30;
-        }
-        
-        if (isLateBocamina) {
-          color = "rgba(239, 68, 68, 0.5)"; // Rojo con opacidad 0.5 para bocaminas tardías
-        } else {
-          color = "#8a0ed2"; // Morado normal
-        }
+        color = "#c77dff"; // Morado
       } else if (currentTrackType === 'mantenimiento') {
         color = "#f3d111"; // Amarillo
       } else if (currentTrackType === 'parqueo') {
@@ -337,9 +318,9 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
         if (point.isTrackDetection) {
           
           const trackColor = point.trackType === 'planta' ? "#EF4444" :
-                            point.trackType === 'bocamina' ? "#8a0ed2" : 
-                            point.trackType === 'parqueo' ? "#fda618" :
-                            point.trackType === 'mantenimiento' ? "#f3d111" :
+                            point.trackType === 'bocamina' ? "#c77dff" : 
+                            point.trackType === 'parqueo' ? "#3b82f6" :
+                            point.trackType === 'mantenimiento' ? "#f59e0b" :
                             "#10b981"; // Verde para "other"
           
           return `
@@ -468,7 +449,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
                 bgColor = "#EF4444";
               } else if (this.point.isBocamina) {
                 prefix = "B";
-                bgColor = "#8a0ed2";
+                bgColor = "#c77dff";
               } else if (this.point.isParqueo) {
                 prefix = "PQ";
                 bgColor = "#FFA500";
