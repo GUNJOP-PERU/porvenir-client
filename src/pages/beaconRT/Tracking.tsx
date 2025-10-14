@@ -32,6 +32,7 @@ import {
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import Toggle from "@/components/Dashboard/Tracking/Toggle";
 import clsx from "clsx";
+import Rute from "@/components/Dashboard/Tracking/Rute";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -816,25 +817,7 @@ const TruckTracking = () => {
         ubicationData={ubicationData}
         includeExtraLocations={true}
       />
-      <div className="absolute bottom-40 right-2 bg-black/75 rounded-xl p-2 z-10 w-60 border border-zinc-800 text-xs">
-      <span className="text-white">En ruta </span>
-       <div className="grid grid-cols-8 gap-0.5">
-       {data
-          .filter((truck) => {
-            if (truck.lastUbication !== "Parqueo") return false;
-            const lastUpdate = new Date(truck.updatedAt);
-            const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
-            return diffMinutes > 10;
-          })
-          .map((truck) => (
-            <div key={truck.name} className="px-1 py-0.5 bg-zinc-800/50 rounded-lg">
-                <span className="text-white">
-                   {truck.name.split("-").pop()}
-                </span>
-            </div>
-          ))}
-       </div>
-      </div>
+     <Rute data={data} />
     </div>
   );
 };

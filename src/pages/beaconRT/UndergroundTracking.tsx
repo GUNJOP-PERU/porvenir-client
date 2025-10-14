@@ -24,6 +24,7 @@ import SearchTruck from "@/components/Dashboard/Tracking/SearchTruck";
 import { ubicationDataSub } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import clsx from "clsx";
+import dayjs from "dayjs";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -98,6 +99,19 @@ const UndergroundTracking = () => {
   } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
     refetchInterval: 10000,
   });
+
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
+  
+    const tenMinutesAgo = dayjs().subtract(10, "minute");
+  
+    return data.filter((truck) => {
+      if (!truck.lastDate) return false;
+      const lastUpdate = dayjs(truck.lastDate);
+      return lastUpdate.isAfter(tenMinutesAgo);
+    });
+  }, [data]);
+  
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = ubicationDataSub.find(
@@ -217,15 +231,6 @@ const UndergroundTracking = () => {
 
   const markers = useMemo(() => {
     if (!Array.isArray(data)) return [];
-
-    // 30 minutos sin actualización
-    const MAX_MINUTES_OFFLINE = 10;
-    const filteredData = data.filter((truck) => {
-      if (!truck.lastDate) return false;
-      const lastUpdate = new Date(truck.lastDate);
-      const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
-      return diffMinutes <= MAX_MINUTES_OFFLINE;
-    });
 
     const coordMap = new Map<string, any[]>();
     filteredData.forEach((truck) => {
@@ -405,7 +410,7 @@ const UndergroundTracking = () => {
               line-height: 0.7rem;                            
               ">
                 ${
-                  data.filter(
+                  filteredData.filter(
                     (truck) =>
                       truck.lastUbicationMac &&
                       truck.lastUbicationMac.toLowerCase() ===
@@ -490,7 +495,7 @@ const UndergroundTracking = () => {
     >
       {MapaCamiones}
       <SearchTruck
-        data={data}
+        data={filteredData}
         onTruckSelect={handleSelectTruck}
         selectedTruck={selectedTruck}
         isLoading={isLoading}
