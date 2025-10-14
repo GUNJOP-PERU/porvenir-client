@@ -67,7 +67,7 @@ export default function SearchTruck({
   const totalTrucksInAreas = trucksPerArea.reduce((acc, a) => acc + a.count, 0);
 
   return (
-    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60">
+    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60 border border-zinc-800">
       <div className="flex flex-col">
         <div className="flex items-center space-x-1">
           <div
@@ -161,7 +161,7 @@ export default function SearchTruck({
           </p>
         </div>
 
-        <div className="flex flex-col gap-1 bg-black/70 rounded-lg py-2.5 px-2">
+        <div className="flex flex-col gap-1 bg-black/70 rounded-lg pt-2.5 px-2">
           {visibleAreas.map((area, i) => (
             <div
               key={i}
@@ -202,11 +202,10 @@ export default function SearchTruck({
             </div>
           ))}
 
-          {/* 🔹 Ver más / Ver menos */}
           {trucksPerArea.length > VISIBLE_COUNT && (
             <button
               onClick={() => setShowAll(!showAll)}
-              className="text-[10px] text-zinc-400 hover:text-white transition-colors mt-1 self-center"
+              className="text-[10px] text-zinc-400 hover:text-white transition-colors py-1.5 self-center"
             >
               {showAll ? "- Ver menos" : "+ Ver más"}
             </button>
