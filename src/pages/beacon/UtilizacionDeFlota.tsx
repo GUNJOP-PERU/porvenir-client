@@ -51,13 +51,11 @@ const ProductionStatus = () => {
 
     return beaconDetectionData.map(unit => {
       const firstBocamina = unit.tracks?.find(track => 
-        track.ubication === 'Int-BC-1820' ||
-        track.ubication === 'Int-BC-1800' ||
-        track.ubication === 'Int-BC-1875' ||
-        track.ubication === 'Int-BC-1930' ||
-        track.ubication === 'Int-BC-1910'
+        track.ubication?.toLowerCase().includes('bocamina') ||
+        track.ubicationType?.toLowerCase().includes('bocamina')
       );
 
+      // Verificar si la bocamina es tardía según el turno
       let isLateBocamina = false;
       if (firstBocamina) {
         const bocaminaStartTime = new Date(firstBocamina.f_inicio);
