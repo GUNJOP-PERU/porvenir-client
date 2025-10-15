@@ -171,7 +171,7 @@ const TruckTracking = () => {
       let color = "#6B7280"; // gris por defecto
       const normalizedStatus = status.toLowerCase();
   
-      if (lastUbication?.trim() === "Int-BC-1800") {
+      if (lastUbication?.trim() === "Int-BC-1800" ||lastUbication?.trim() === "Taller Saturno") {
         switch (normalizedStatus) {
           case "operativo":
             color = "#22C55E";
