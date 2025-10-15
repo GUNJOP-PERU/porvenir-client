@@ -34,11 +34,13 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const currentPlanDay = planDay 
   ? (
       mode === "day"
-        ? planDay.planDay.map(p => p.tonnage)   
-        : new Array(12).fill(planDay.totalTonnage / 12) 
+        ? planDay.planDay.map(p => p.tonnage)
+        : [
+            0, 
+            ...new Array(11).fill(planDay.totalTonnage / 11)
+          ]
     )
   : [];
-
 
   const diffPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;

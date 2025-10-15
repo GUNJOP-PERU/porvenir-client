@@ -57,13 +57,17 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
       planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
     );
 
-  const currentPlanDay = planDay 
-  ? (
-      mode === "day"
-        ? planDay.planDay.map(p => p.tonnage)   
-        : new Array(12).fill(planDay.totalTonnage / 12) 
-    )
-  : [];
+    const currentPlanDay = planDay 
+    ? (
+        mode === "day"
+          ? planDay.planDay.map(p => p.tonnage)
+          : [
+              0, 
+              ...new Array(11).fill(planDay.totalTonnage / 11) 
+            ]
+      )
+    : [];
+  
   const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
     currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );

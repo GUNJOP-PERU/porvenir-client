@@ -524,7 +524,7 @@ const UndergroundTracking = () => {
         ubicationData={ubicationDataSub}
       />
       <Legend data={data} />
-      <div className="absolute bottom-40 right-12 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
+      <div className="absolute bottom-4 right-12 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col select-none">
         <span className="text-zinc-300 font-bold text-[10px]">
           Camiones en ruta |{filteredDataRute.length}|
         </span>
@@ -535,7 +535,7 @@ const UndergroundTracking = () => {
                 <div
                   key={truck.name}
                   className={clsx(
-                    " flex items-center justify-center px-1 py-0.5  rounded-lg select-none",
+                    " flex items-center justify-center px-1 py-0.5  rounded-lg select-none cursor-pointer",
                     {
                       "bg-red-500": truck.status === "inoperativo",
                       "bg-[#16a34a]": truck.status === "operativo",
@@ -553,11 +553,13 @@ const UndergroundTracking = () => {
                 </div>
               </TooltipTrigger>
               <TooltipContent
-                            side="bottom"
-                            className="bg-black text-amber-400 text-[11px] px-2.5 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1 leading-none font-semibold "
-                          >
-                <span className="text-zinc-300">Ubicación: {truck.lastUbication}</span>
-                              <TimeAgo datetime={truck.updatedAt} locale="es" />
+                side="top"
+                className="bg-black text-amber-400 text-[11px] px-2.5 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1 leading-none font-semibold "
+              >
+                <span className="text-zinc-300">
+                  Ubicación: {truck.lastUbication}
+                </span>
+                <TimeAgo datetime={truck.updatedAt} locale="es" />
               </TooltipContent>
             </Tooltip>
           ))}
