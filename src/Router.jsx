@@ -53,6 +53,7 @@ import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";
 import UndergroundTracking from "./pages/beaconRT/UndergroundTracking";
+import SeguimientoDeExtraccion from "./pages/beaconRT/SeguimientoDeExtraccion";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
@@ -91,10 +92,8 @@ const protectedRoutes = [
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
   { path: "dashboard/beacon/detection-report-month-rt", element: <RealTimeByMonthRT /> },
   { path: "dashboard/beacon/trips-description-rt", element: <TripsDescriptionRT /> },
-  {
-    path: "dashboard/beacon/underground-tracking",
-    element: <UndergroundTracking />
-  },
+  { path: "dashboard/beacon/underground-tracking", element: <UndergroundTracking /> },
+  { path: "dashboard/beacon/seguimiento-de-extraccion", element: <SeguimientoDeExtraccion /> },
 
   // Development
   { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },

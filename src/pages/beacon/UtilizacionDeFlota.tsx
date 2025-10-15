@@ -179,7 +179,7 @@ const ProductionStatus = () => {
 
       if(isLunchTime && isParqueo) {
         lunchTrucks.push(truck);
-      } else if(isEndOfTurn && isSuperficie) {
+      } else if(isEndOfTurn && isParqueo) {
         finalParqueoUnits.push(truck);
       } else if(isParqueo) {
         parqueoUnits.push(truck);

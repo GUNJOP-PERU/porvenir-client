@@ -281,9 +281,9 @@ const ProductionStatus = () => {
 
       if (isLunchTime && isParqueo) {
         lunchTrucks.push(truck);
-      } else if (isEndOfTurn && isSuperficie) {
+      } else if (isEndOfTurn && isParqueo && ( 5 <= new Date().getHours() && new Date().getHours() < 6 || (17 <= new Date().getHours() && new Date().getHours() < 18))) {
         finalParqueoUnits.push(truck);
-      } else if (isParqueo) {
+      } else if (isParqueo && (new Date().getTime() - new Date(truck.lastDate).getTime() < 15 * 60 * 1000)) {
         parqueoUnits.push(truck);
       } else if (isSuperficie || isDestination) {
         superficieData.push(truck);

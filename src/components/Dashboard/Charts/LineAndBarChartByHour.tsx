@@ -234,11 +234,11 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         // Mostrar siempre el valor de "Extraído"
         const extraido = this.points.find((p: any) => p.series.name === "Extraído");
         if (extraido) {
-          tooltipText += `<span style='color:${extraido.color}'>●</span> Extraído: <b>${extraido.y} TM</b><br/>`;
+          tooltipText += `<span style='color:${extraido.color}'>●</span> Extraído: <b>${roundAndFormat(extraido.y)} TM</b><br/>`;
         }
         this.points.forEach(function (point: any) {
           if (point.series.name !== "Extraído") {
-            tooltipText += `<span style='color:${point.color}'>●</span> ${point.series.name}: <b>${point.y} TM</b><br/>`;
+            tooltipText += `<span style='color:${point.color}'>●</span> ${point.series.name}: <b>${roundAndFormat(point.y)} TM</b><br/>`;
           }
         });
         return tooltipText;

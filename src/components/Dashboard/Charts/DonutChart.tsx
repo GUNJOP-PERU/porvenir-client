@@ -5,7 +5,8 @@ import { useEffect, useRef, useCallback } from "react";
 
 interface DonutChartProps {
   title: string;
-  size: "mini" | "small" | "medium";
+  size: "mini" | "small" | "medium" | "large";
+  type?: "donut" | "pie";
   donutData: {
     total: number;
     currentValue: number;
@@ -29,21 +30,25 @@ const DonutChart = ({
   progressBar,
   showPrediction = false,
   size = "medium",
+  type = "donut",
 }: DonutChartProps) => {
   const sizeMap = {
     mini: 60,
     small: 70,
     medium: 100,
+    large: 120,
   };
   const fontSizeMap = {
     mini: "11px",
     small: "15px",
     medium: "18px",
+    large: "20px",
   };
   const fontSizeTitleMap = {
     mini: "11px",
     small: "12px",
     medium: "13px",
+    large: "14px",
   };
 
   const chartRef = useRef(null); // Referencia al gráfico
@@ -70,12 +75,12 @@ const DonutChart = ({
       pie: {
         innerSize: "75%",
         size: "100%",
-        center: ["50%", "50%"],
+        center: type === "donut" ? ["50%", "50%"] : ["50%", "55%"],
         borderWidth: 1,
         borderRadius: 10,
         dataLabels: { enabled: false },
-        startAngle: -0,
-        endAngle: 0,
+        startAngle: type === "donut" ? -0 : -100,
+        endAngle: type === "donut" ? 0 : 100,
         states: {
           hover: {
             enabled: false,

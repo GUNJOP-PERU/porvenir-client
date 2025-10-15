@@ -28,7 +28,6 @@ export default function PageHeader({
   className,
   status
 } : PageHeaderProps ) {
-  console.log("status"  , status);
   return (
     <div className={`flex flex-wrap gap-2 justify-between ${className}`}>
       <div>

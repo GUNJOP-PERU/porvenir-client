@@ -2,7 +2,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import PropTypes from "prop-types";
 
-const ColumnChart = ({ data, title }) => {
+const BarChart = ({ data, title }) => {
   const chartData = Object.entries(data).map(([name, value]) => ({
     name,
     y: value,
@@ -100,7 +100,7 @@ const ColumnChart = ({ data, title }) => {
   );
 };
 
-ColumnChart.propTypes = {
+BarChart.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.shape({
     totalTrips: PropTypes.number.isRequired,
@@ -122,4 +122,4 @@ ColumnChart.propTypes = {
   }),
 };
 
-export default ColumnChart;
+export default BarChart;

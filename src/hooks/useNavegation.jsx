@@ -125,6 +125,12 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/production-status-rt",
             icon: <LandPlot />,
             active: pathname === "/dashboard/beacon/production-status-rt",
+          },
+          {
+            name: "Seguimiento de Extracción",
+            href: "/dashboard/beacon/seguimiento-de-extraccion",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/beacon/seguimiento-de-extraccion",
           }
         ],
       },

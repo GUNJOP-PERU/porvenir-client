@@ -305,7 +305,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                                 {trip.startUbication}, <b>{formatFecha(trip.startDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                --- ---
+                                {trip.frontLaborList.length > 0 ? trip.frontLaborList.join(", ") : "N/A"}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.endUbication}, <b>{formatFecha(trip.endDate)}</b>

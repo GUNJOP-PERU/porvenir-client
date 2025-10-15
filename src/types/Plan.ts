@@ -16,3 +16,18 @@ export type PlanDay = {
   createdAt: string,
   updatedAt: string
 }
+
+export type PlanWeek = {
+  _id: string,
+  year: number,
+  month: number,
+  week: number,
+  status: string,
+  totalTonnage: number,
+
+  startDate: string,
+  endDate: string,
+  createdAt: string,
+  updatedAt: string,
+  idPlanWeek: number,
+}
