@@ -256,7 +256,38 @@ number-flow-react::part(suffix) {
   inset 0px 1px 0px rgba(255, 255, 255, 0.08),
   inset 0px 0px 1px rgba(255, 255, 255, 0.3);
 }
-/*----------------Dropdown----------------*/
+/*----------------handsontable----------------*/
+
+.handsontable th {
+  background-color: #959493  !important;
+  color: #ffffff !important;
+  text-transform: uppercase !important;
+  font-weight: bold !important;          
+}
+
+/* Solo encabezados de columnas (no los de fila) */
+.handsontable .ht_clone_top th {
+  background-color:#FF5000  !important;
+  color: #fff !important;
+}
+
+.handsontable td,
+.handsontable th {
+  border-color: #FF500030 !important;
+}
+
+.handsontable {
+  --ht-header-active-border-color: #FF5000;
+  --ht-header-active-background-color: #FF5000;
+  --ht-header-row-active-background-color: #FF5000;
+  --ht-cell-selection-border-color: #FF5000;
+  --ht-scrollbar-thumb-color: #dbdbdb;
+  --ht-cell-autofill-background-color: #FF5000;
+  --ht-cell-autofill-border-color: #FF5000;
+  --ht-cell-selection-background-color: #FF5000;
+  --ht-cell-editor-border-color: #FF5000;
+}
+
 .ht-fase-dropdown {
   position: relative;
   padding-right: 16px !important; /* Espacio para la flecha */
@@ -269,7 +300,7 @@ number-flow-react::part(suffix) {
   top: 50%;
   transform: translateY(-50%);
   font-size: 10px;
-  color: gray;
+  color: #FF5000;
   pointer-events: none;
 }
 
@@ -281,6 +312,28 @@ number-flow-react::part(suffix) {
 .htCore {
   z-index: 99;
 }
+
+.handsontable .ht-fase-dropdown {
+  background-color: #FF500020 !important;
+}
+
+
+.handsontable .ht-total-row.htDimmed {
+  background-color: #3c3c3c !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+.handsontable .ht-total-row-2.htDimmed {
+  background-color: #595859 !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+
+.ht-row-even {
+  background-color: #FF500015 !important;
+}
+
+
 
 /*----------------Zoom----------------*/
 /* Estilos para el control de zoom en modo oscuro */

@@ -124,7 +124,7 @@ export function FilterItems({ title, options = [], field, loadingGlobal }) {
                         className={cn(
                           "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                           isSelected
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary text-white"
                             : "opacity-50 [&_svg]:invisible text-xs"
                         )}
                       >

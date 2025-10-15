@@ -131,7 +131,6 @@ export const PlanContent = ({
         rowHeaders={true}
         colHeaders={false}
         nestedHeaders={generateNestedHeaders()}
-        columnSorting={true}
         // width="100%"
         height="auto"
         contextMenu={false}
@@ -139,6 +138,7 @@ export const PlanContent = ({
         fixedColumnsStart={1}
         autoWrapRow={true}
         autoWrapCol={true}
+        columnSorting={true}
         beforePaste={(data, coords) => {
           for (let r = 0; r < data.length; r++) {
             for (let c = 0; c < data[r].length; c++) {
@@ -179,13 +179,13 @@ export const PlanContent = ({
           // Fila de totales
           if (row === dataHotTable.length) {
             meta.readOnly = true;
-            meta.className = "!bg-orange-200 !font-bold";
+            meta.className = "ht-total-row";
             return meta;
           }
           
           if (row === dataHotTable.length + 1) {
             meta.readOnly = true;
-            meta.className = "!bg-orange-400 !font-bold";
+            meta.className = "ht-total-row-2";
             return meta;
           }
 
@@ -193,6 +193,7 @@ export const PlanContent = ({
           if (keys[col] === "labor" || keys[col] === "fase") {
             return meta;
           }
+          
 
           // Extraer el día (la parte antes del " - ")
           const fecha = keys[col].split(" - ")[0];
@@ -209,7 +210,7 @@ export const PlanContent = ({
 
           // Alternar color por grupo de fecha
           if (groupIndex % 2 === 0) {
-            meta.className = "!bg-zinc-100"; // gris claro para grupos pares
+            meta.className = "ht-row-even"; // gris claro para grupos pares
           }
 
           return meta;
