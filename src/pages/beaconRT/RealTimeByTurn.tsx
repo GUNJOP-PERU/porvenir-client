@@ -418,7 +418,7 @@ const RealTimeByHourRT = () => {
                   currentValue: baseStats.totalTMDay,
                   prediction:
                     (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
-                  currentValueColor: "#fac34c",
+                  currentValueColor: "#ff5000",
                   showDifference: false,
                   forecastText: "Predicción",
                 }}
@@ -435,25 +435,25 @@ const RealTimeByHourRT = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Diferencia positiva
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#fe7887] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Diferencia negativa
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#fac34c] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Mineral Extraído
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Planificado
                     </p>
@@ -463,7 +463,7 @@ const RealTimeByHourRT = () => {
             >
               <LineAndBarChartByHour
                 mineralWeight={baseData.mineral}
-                chartColor="#fac34c"
+                chartColor="#ff5000"
                 chartData={tripsByShift.dia}
                 planDay={planDay}
               />
@@ -516,25 +516,25 @@ const RealTimeByHourRT = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Diferencia positiva
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#fe7887] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Diferencia negativa
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#3c3f43] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Mineral Extraído
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Planificado
                     </p>

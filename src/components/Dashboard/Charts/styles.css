@@ -17,9 +17,6 @@
       z-index: 2;
       font-size: 13px;
       color: #48484b;
-      b {
-        color: #000000
-      }
     }
   }
   .currentValue-bar {
@@ -28,15 +25,12 @@
     left: 0px;
     z-index: 1;
     height: 100%;
-    background-color: #d5d5de;
+    background-color: #3c3c3c;
   }
   .progress-bar-label {
     z-index: 3;
     font-size: 11.5px;
     color: #48484b;
-    b {
-      color: #000000
-    }
   }
   .progress-bar-label-difference {
     position: absolute;

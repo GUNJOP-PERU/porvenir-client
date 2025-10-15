@@ -136,19 +136,6 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
     },
     series: [
       {
-        name: "Real",
-        data: acummulativeTripsCounts,
-        xAxis: 0,
-        fillColor: "#bfefe1",
-        color: "#ff5000",
-        animation: false,
-        marker: {
-          fillColor: "white",
-          lineWidth: 2,
-          lineColor: "#ff5000",
-        },
-      },
-      {
         name: "Plan",
         data: mode === "day" ? accumulativePlanData : accumulativeCurrentPlanDay,
         xAxis: 1,
@@ -171,6 +158,19 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
           };
         }),
         zoneAxis: 'x',
+      },
+      {
+        name: "Real",
+        data: acummulativeTripsCounts,
+        xAxis: 0,
+        fillColor: "#ffa47a",
+        color: "#ff5000",
+        animation: false,
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: "#ff5000",
+        },
       },
     ],
     tooltip: {

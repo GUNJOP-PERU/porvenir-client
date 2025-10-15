@@ -81,7 +81,6 @@ export const useNavigation = () => {
           },
         ],
       },
-      
       {
         title: "Beacon Tiempo Real",
         items: [
@@ -96,12 +95,6 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/underground-tracking",
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/underground-tracking",
-          },
-          {
-            name: "Reporte de detección",
-            href: "/dashboard/beacon/detection-report-rt",
-            icon: <TbReportAnalytics />,
-            active: pathname === "/dashboard/beacon/detection-report-rt",
           },
           {
             name: "Reporte por Turno",
@@ -122,7 +115,7 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/trips-description-rt",
           },
           {
-            name: "Estado de la flota",
+            name: "Disponibilidad de la flota",
             href: "dashboard/fleet-status",
             icon: <LandPlot />,
             active: pathname === "/dashboard/fleet-status",
@@ -130,7 +123,7 @@ export const useNavigation = () => {
           {
             name: "Utilización de flota",
             href: "/dashboard/beacon/production-status-rt",
-            icon: <FaTimeline />,
+            icon: <LandPlot />,
             active: pathname === "/dashboard/beacon/production-status-rt",
           }
         ],
@@ -181,6 +174,29 @@ export const useNavigation = () => {
             icon: <FaTimeline />,
             active: pathname === "/dashboard/beacon/trips-description",
           }
+        ],
+      },
+      {
+        title: "Development",
+        items: [
+          {
+            name: "Reporte de detección",
+            href: "/dashboard/beacon/detection-report-rt",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/beacon/detection-report-rt",
+          },
+          {
+            name: "Tracking Superficie",
+            href: "/dashboard/development/tracking",
+            icon: <IconRadar />,
+            active: pathname === "/dashboard/development/tracking",
+          },
+          {
+            name: "Tracking Subterraneo",
+            href: "/dashboard/development/underground-tracking",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/development/underground-tracking",
+          },
         ],
       },
     ],

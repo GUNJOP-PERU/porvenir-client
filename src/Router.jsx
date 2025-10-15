@@ -44,6 +44,7 @@ import PageWap from "./pages/management/Wap";
 // import WorkerOrders from "./pages/monitoring/WorkerOrders";
 // import Tracking from "./pages/beacon/Tracking";
 // import WeekReport from "./pages/dashboard/WeekReport";
+
 // Beacon Real Time
 import DetectionReportRT from "./pages/beaconRT/DetectionReport";
 import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
@@ -51,6 +52,7 @@ import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";
+import UndergroundTracking from "./pages/beaconRT/UndergroundTracking";
 // Beacon
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
@@ -63,7 +65,9 @@ import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
 import FleetStatus from "./pages/beacon/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
 import TripsDescription from "./pages/beacon/TripsDescriptions";
-import UndergroundTracking from "./pages/beaconRT/UndergroundTracking";
+// Development
+import TrackingDevelopment from "./pages/development/Tracking";
+import UndergroundTrackingDevelopment from "./pages/development/UndergroundTracking";
 
 const protectedRoutes = [
 
@@ -90,6 +94,13 @@ const protectedRoutes = [
   {
     path: "dashboard/beacon/underground-tracking",
     element: <UndergroundTracking />
+  },
+
+  // Development
+  { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },
+  {
+    path: "dashboard/development/underground-tracking",
+    element: <UndergroundTrackingDevelopment />
   },
 
   //Dashboard-Beacon

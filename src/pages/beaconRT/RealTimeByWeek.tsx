@@ -270,7 +270,7 @@ const RealTimeByWeek = () => {
   const turnConfig = {
     dia: {
       title: "Turno Día",
-      color: "#fac34c",
+      color: "#ff5000",
       iconColor: "text-[#fac34c]",
       tm: baseStats.totalTMDay,
       trips: tripsByShift.dia,
@@ -278,7 +278,7 @@ const RealTimeByWeek = () => {
     },
     noche: {
       title: "Turno Noche",
-      color: "#3c3f43",
+      color: "#ff5000",
       iconColor: "text-[#3c3f43]",
       tm: baseStats.totalTMNight,
       trips: tripsByShift.noche,
@@ -348,14 +348,14 @@ const RealTimeByWeek = () => {
             donutData={{
               currentValue: 0,
               total: 2400,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={0}
             total={2400}
-            color="#14B8A6"
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
@@ -367,14 +367,14 @@ const RealTimeByWeek = () => {
             donutData={{
               currentValue: baseStats.totalTM,
               total: planDay?.totalTonnage,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
             total={planDay?.totalTonnage}
-            color="#14B8A6"
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
@@ -389,7 +389,7 @@ const RealTimeByWeek = () => {
             donutData={{
               currentValue: 0,
               total: 24,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <DonutChart
@@ -405,7 +405,7 @@ const RealTimeByWeek = () => {
                 12 *
                 isoDay *
                 (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
@@ -417,7 +417,7 @@ const RealTimeByWeek = () => {
             donutData={{
               currentValue: 0,
               total: 24,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <DonutChart
@@ -433,7 +433,7 @@ const RealTimeByWeek = () => {
                 12 *
                 isoDay *
                 (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
         </div>
@@ -448,7 +448,7 @@ const RealTimeByWeek = () => {
           actions={
             <div className="flex flex-row gap-2">
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Mineral Extraído
                 </p>
@@ -486,13 +486,13 @@ const RealTimeByWeek = () => {
           actions={
             <div className="flex flex-row gap-2">
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Diferencia positiva
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#fe7887] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Diferencia negativa
                 </p>
@@ -504,7 +504,7 @@ const RealTimeByWeek = () => {
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Planificado
                 </p>
@@ -537,7 +537,7 @@ const RealTimeByWeek = () => {
                       baseStats.totalMaintenanceTimeMinDay / 60
                     : baseStats.totalUnitsNight * isoDay * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
-                currentValueColor: "#14B8A6",
+                currentValueColor: "#ff5000",
               },
               {
                 title: "Utilización",
@@ -549,7 +549,7 @@ const RealTimeByWeek = () => {
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
                     : baseStats.totalDurationNight / 3600,
-                currentValueColor: "#14B8A6",
+                currentValueColor: "#ff5000",
               },
             ]}
             tableData={[

@@ -1,4 +1,4 @@
-import Highcharts, { Series } from "highcharts";
+import Highcharts, { animate, Series } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useMemo } from "react";
 import { roundAndFormat } from "@/lib/utilsGeneral";
@@ -50,8 +50,8 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const diffColorPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
-      ? "#04c286"
-      : "#fe7887";
+      ? "#f9c83e"
+      : "#3c3c3c";
   });
 
   const options = {
@@ -63,6 +63,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       marginLeft: 50,
       marginRight: 0,
       spacing: [0, 0, 0, 0],
+      animation: false
     },
     title: "",
     xAxis: [
@@ -115,7 +116,6 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       title: "",
       visible: false,
     },
-
     plotOptions: {
       column: {
         stacking: "normal",
@@ -155,6 +155,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         xAxis: 1,
         visible: mode === "day",
         showInLegend: mode === "day",
+        animation: false,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
@@ -176,6 +177,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         visible: mode === "hour",
         showInLegend: mode === "hour",
         xAxis: 1,
+        animation: false,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
@@ -195,6 +197,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         color: chartColor,
         visible: mode === "day",
         showInLegend: mode === "day",
+        animation: false,
       },
       
       {
@@ -203,6 +206,13 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         visible: mode === "hour",
         showInLegend: mode === "hour",
         color: chartColor,
+        animation: false,
+        dataLabels: {
+          enabled: true,
+          formatter: function (this: any) {
+            return `${roundAndFormat(this.y)}`;
+          },
+        },
       },
     ],
     tooltip: {

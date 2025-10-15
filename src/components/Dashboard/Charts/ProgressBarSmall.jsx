@@ -7,8 +7,8 @@ const ProgressBarSmall = ({progressBarData}) => {
   return (
     <div className="progress-bar--container small">
       <span className="progress-bar-label">
-        <b>{progressBarData.showTitle ? progressBarData.title : ""}</b> 
-        <b>{progressBarData.currentValue} min</b> 
+        <b className="text-white">{progressBarData.showTitle ? progressBarData.title : ""}</b> 
+        <b className="text-black">{progressBarData.currentValue} min</b> 
       </span>
       <div
         className="currentValue-bar"
