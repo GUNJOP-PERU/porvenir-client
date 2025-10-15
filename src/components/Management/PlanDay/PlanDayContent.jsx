@@ -12,7 +12,6 @@ export const PlanContent = ({
   dataLaborList,
   loadingGlobal,
 }) => {
-
   // ✅ Actualizar la tabla después de un cambio
   const handleAfterChange = (changes) => {
     if (!changes) return;
@@ -28,6 +27,32 @@ export const PlanContent = ({
     });
   };
 
+  const calculateTotals = (data) => {
+    if (!data || data.length === 0) return {};
+
+    const totals = {};
+    const keys = Object.keys(data[0]);
+
+    keys.forEach((key) => {
+      if (key === "labor") {
+        totals[key] = "TOTAL";
+      } else if (key === "fase") {
+        totals[key] = "";
+      } else {
+        totals[key] = data.reduce(
+          (sum, row) => sum + (Number(row[key]) || 0),
+          0
+        );
+      }
+    });
+
+    return totals;
+  };
+
+  const tableWithTotals = () => {
+    const totals = calculateTotals(dataHotTable);
+    return [...dataHotTable, totals];
+  };
 
   return (
     <div
@@ -36,14 +61,13 @@ export const PlanContent = ({
       })}
     >
       <HotTable
-        data={dataHotTable}
+        data={tableWithTotals()}
         licenseKey="non-commercial-and-evaluation"
         language={esMX.languageCode}
         rowHeaders={true}
         colHeaders={true}
-        columnSorting={true}
+        columnSorting={false}
         colWidths={[180, 180, 100]}
-        // width="100%"
         height="auto"
         mergeCells={true}
         contextMenu={false}
@@ -54,11 +78,11 @@ export const PlanContent = ({
         autoColumnSize={true}
         columns={
           dataHotTable.length > 0
-            ? Object.keys(dataHotTable[0]).map((key, rowIndex) => {
+            ? Object.keys(dataHotTable[0]).map((key) => {
                 if (key === "labor") {
                   return {
                     title: key,
-                    type: "text", 
+                    type: "text",
                     data: key,
                     readOnly: true,
                   };
@@ -69,7 +93,8 @@ export const PlanContent = ({
                     source: dataFase.map((item) => item.name),
                     data: key,
                     allowInvalid: false,
-                    className: "ht-fase-dropdown" 
+                    className: "ht-fase-dropdown",
+                    width: 130,
                   };
                 }
                 return {
@@ -77,11 +102,25 @@ export const PlanContent = ({
                   type: "numeric",
                   data: key,
                   numericFormat: { pattern: "0,0", culture: "en-US" },
+                  width: 150,
+                  minWidth: 120,
+                  maxWidth: 200,
                 };
               })
             : []
         }
         afterChange={handleAfterChange}
+        cells={(row, col) => {
+          const meta = {};
+
+          // Fila de totales (última)
+          if (row === dataHotTable.length) {
+            meta.readOnly = true;
+            meta.className = "ht-total-row";
+          }
+
+          return meta;
+        }}
       />
     </div>
   );

@@ -44,6 +44,28 @@ export const PlanContent = ({
     setInvalidLabors(invalids);
   }, [dataHotTable, dataLaborList]);
 
+  // Calcular fila de totales
+  const getDataWithTotals = () => {
+    if (dataHotTable.length === 0) return [];
+
+    const totals = {};
+    const keys = Object.keys(dataHotTable[0]);
+
+    keys.forEach((key) => {
+      if (key === "labor") totals[key] = "TOTAL";
+      else if (key === "fase") totals[key] = "";
+      else {
+        // Sumar solo columnas numéricas
+        totals[key] = dataHotTable.reduce(
+          (sum, row) => sum + (Number(row[key]) || 0),
+          0
+        );
+      }
+    });
+
+    return [...dataHotTable, totals]; // agrega la fila total al final
+  };
+
   return (
     <div
       className={clsx("h-[60vh] overflow-auto z-0", {
@@ -54,13 +76,11 @@ export const PlanContent = ({
       }}
     >
       <HotTable
-        // themeName="ht-theme-horizon"
-        data={dataHotTable}
+        data={getDataWithTotals()}
         licenseKey="non-commercial-and-evaluation"
         language={esMX.languageCode}
         rowHeaders={true}
         colHeaders={true}
-        columnSorting={true}
         // width="100%"
         height="auto"
         mergeCells={true}
@@ -70,6 +90,7 @@ export const PlanContent = ({
         autoWrapRow={true}
         autoWrapCol={true}
         autoColumnSize={true}
+        columnSorting={false}
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {
@@ -86,7 +107,7 @@ export const PlanContent = ({
                     source: dataFase.map((item) => item.name),
                     data: key,
                     allowInvalid: false,
-                    className: "ht-fase-dropdown",                   
+                    className: "ht-fase-dropdown",
                   };
                 }
                 return {
@@ -101,27 +122,29 @@ export const PlanContent = ({
         afterChange={handleAfterChange}
         // ✅ Aplicar color dinámicamente en la columna "labor"
         cells={(row, col) => {
-          const colKey = Object.keys(dataHotTable[0])[col]; // Obtener el nombre de la columna
+          const meta = {};
+          const lastRowIndex = dataHotTable.length; // índice del total
+          const colKey = Object.keys(dataHotTable[0])[col];
+
+          if (row === lastRowIndex) {
+            meta.readOnly = true;
+            meta.className = "ht-total-row"; // Aplica el estilo de la fila total
+            return meta;
+          }
+
           if (colKey === "labor") {
             const laborName = dataHotTable[row]?.labor;
-
-            // Comprobar si el valor de 'labor' se repite
             const isRepeated =
               dataHotTable.filter((item) => item.labor === laborName).length >
               1;
-
-            // Asignar las clases: fondo amarillo si es repetido
             const backgroundColor = isRepeated ? "!bg-yellow-300" : "";
-
-            // El texto será verde si está en la lista, rojo si no lo está
             const textColor = isLaborInList(laborName)
               ? "!text-green-600"
               : "!text-red-600";
-
-            return {
-              className: ` font-semibold ${backgroundColor} ${textColor}`,
-            };
+            meta.className = `font-semibold ${backgroundColor} ${textColor}`;
           }
+
+          return meta;
         }}
       />
     </div>

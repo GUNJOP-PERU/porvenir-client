@@ -13,6 +13,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import dayjs from "dayjs";
+import { formatFecha } from "@/lib/utilsGeneral";
 
 const extractNumber = (tag) => {
   const match = tag.match(/(\d+)/);
@@ -76,6 +78,7 @@ export default function FleetStatus() {
         updatedAt: truck.updatedAt,
         connectivity: truck.connectivity,
         comment: lastComment,
+        changeStatusDate: truck.changeStatusDate,
       };
       if (truck.status === "operativo") operativoItems.push(item);
       else if (truck.status === "mantenimiento") mantenimientoItems.push(item);
@@ -226,32 +229,50 @@ export default function FleetStatus() {
                                     </div>
                                     <div
                                       className={clsx(
-                                        "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 px-3.5 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full",
+                                        "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3 pr-0 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full",
                                         item.connectivity === "online"
                                           ? "text-amber-400 before:bg-amber-400"
                                           : "text-zinc-300 before:bg-zinc-300"
                                       )}
                                     >
-                                      {item.connectivity === "online"
-                                        ? "En línea desde"
-                                        : "Fuera de línea "}{" "}
-                                      <TimeAgo
-                                        datetime={item.updatedAt}
-                                        locale="es"
-                                      />
+                                   {`Inicio: ${formatFecha(item.changeStatusDate)} (${dayjs(item.changeStatusDate).fromNow()})`}
                                     </div>
                                   </div>
                                 </div>
                               </TooltipTrigger>
-                              {item.comment && (
+
                               <TooltipContent
                                 side="bottom"
-                                className="bg-black text-white text-[11px] px-3 py-2 rounded-lg max-w-[200px] shadow-none"
+                                className="bg-black text-white text-[11px] px-2.5 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1"
                               >
-                                <span className="font-semibold text-zinc-400 text-[10px]">Comentario:</span>
-                                <p className="line-clamp-2 ml-1">- {item.comment}</p>
+                                <span
+                                  className={clsx(
+                                    "relative text-[9.5px] select-none leading-[10px] text-left",
+                                    "before:content-[''] before:inline-block before:w-[4px] before:h-[4px] before:rounded-full before:mr-1",
+                                    item.connectivity === "online"
+                                      ? "text-amber-400 before:bg-amber-400"
+                                      : "text-zinc-300 before:bg-zinc-300"
+                                  )}
+                                >
+                                  {item.connectivity === "online"
+                                    ? "En línea "
+                                    : "Fuera de línea "}{" "}
+                                  <TimeAgo
+                                    datetime={item.updatedAt}
+                                    locale="es"
+                                  />
+                                </span>
+                                {item.comment && (
+                                  <div className="flex flex-col gap-0.5 leading-none text-[10px]">
+                                    <span className="font-semibold text-zinc-400 text-[10px]">
+                                      Comentario:
+                                    </span>
+                                    <p className="">
+                                      - {item.comment}
+                                    </p>
+                                  </div>
+                                )}
                               </TooltipContent>
-                              )}
                             </Tooltip>
                           )}
                         </Draggable>
