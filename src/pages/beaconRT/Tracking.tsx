@@ -34,6 +34,7 @@ import Legend from "@/components/Dashboard/Tracking/Legend";
 import Toggle from "@/components/Dashboard/Tracking/Toggle";
 import clsx from "clsx";
 import Rute from "@/components/Dashboard/Tracking/Rute";
+import dayjs from "dayjs";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -107,6 +108,31 @@ const TruckTracking = () => {
     refetchInterval: 2000,
   });
 
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
+  
+    const twentyMinutesAgo = dayjs().subtract(20, "minute");
+    const excludeUbications = ["Int-BC-1820", "Int-BC-1800", "Int-BC-1875", "Int-BC-1930", "Int-BC-1910"];
+  
+    return data.filter((truck) => {
+      if (!truck.lastDate) return false;
+  
+      const lastUpdate = dayjs(truck.lastDate);
+  
+      // Si está en la lista de ubicaciones y pasó más de 20 minutos, lo excluimos
+      if (
+        excludeUbications.includes(truck.lastUbication) &&
+        lastUpdate.isBefore(twentyMinutesAgo)
+      ) {
+        return false;
+      }
+  
+      // De lo contrario, lo incluimos
+      return true;
+    });
+  }, [data]);
+  
+
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = [
       ...parkingData,
@@ -139,97 +165,99 @@ const TruckTracking = () => {
       unitName: string,
       isSelected: boolean = false,
       connectivity: string,
-      lastDate: string
+      lastDate: string,
+      lastUbication: string
     ) => {
-      let color = "#6B7280"; // Gris por defecto
-
+      let color = "#6B7280"; // gris por defecto
       const normalizedStatus = status.toLowerCase();
-
-      const getTimeStatus = (() => {
-        try {
-          if (!lastDate) return "old";
-          const lastDateTime = parseISO(lastDate);
-          // console.log("ultima fecha", lastDateTime, unitName);
-          const now = new Date();
-          const fiveHoursAgo = subHours(now, 5);
-          const fiveMinutesAgo = subHours(now, 0).setMinutes(
-            now.getMinutes() - 5
-          );
-
-          if (!isAfter(lastDateTime, fiveHoursAgo)) return "old";
-          if (!isAfter(lastDateTime, new Date(fiveMinutesAgo))) return "stale";
-          return "fresh";
-        } catch {
-          return "old";
+  
+      if (lastUbication?.trim() === "Int-BC-1800") {
+        switch (normalizedStatus) {
+          case "operativo":
+            color = "#22C55E";
+            break;
+          case "mantenimiento":
+            color = "#F59E0B";
+            break;
+          case "inoperativo":
+            color = "#EF4444";
+            break;
+          default:
+            color = "#6B7280";
         }
-      })();
-
-      if (getTimeStatus === "old") {
-        color = "#a0a0a0";
-      } else if (normalizedStatus === "operativo") {
-        if (getTimeStatus === "stale") {
-          color = "#16a34a";
+      } else {
+        const getTimeStatus = (() => {
+          try {
+            if (!lastDate) return "old";
+            const lastDateTime = parseISO(lastDate);
+            const now = new Date();
+            const fiveHoursAgo = subHours(now, 5);
+            const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
+  
+            if (!isAfter(lastDateTime, fiveHoursAgo)) return "old";
+            if (!isAfter(lastDateTime, fiveMinutesAgo)) return "stale";
+            return "fresh";
+          } catch {
+            return "old";
+          }
+        })();
+  
+        if (getTimeStatus === "old") {
+          color = "#a0a0a0"; 
         } else {
-          color = "#22C55E";
+          switch (normalizedStatus) {
+            case "operativo":
+              color = getTimeStatus === "stale" ? "#16a34a" : "#22C55E";
+              break;
+            case "mantenimiento":
+              color = "#F59E0B";
+              break;
+            case "inoperativo":
+              color = "#EF4444";
+              break;
+            default:
+              color = "#6B7280";
+          }
         }
-      } else if (normalizedStatus === "mantenimiento") {
-        color = "#F59E0B";
-      } else if (normalizedStatus === "inoperativo") {
-        color = "#EF4444";
       }
-
+  
       return L.divIcon({
         html: `
-        <div style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        ">
-          <!-- Icono del camión -->
-          <div class="${
-            isSelected ? "truck-inner marker-highlight" : "truck-inner"
-          }" style="
-            background-color: ${color};
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            border: 2px solid #00000050;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            position: relative;
-          ">
-            <svg style="position: absolute;
-            z-index: 1;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 20px;
-            width: 20px;" stroke="#000000" fill="#00000030" stroke-width="0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M102.5 70.4c-.8 0-1.7.1-2.5.22-30.99 5.31-62.08 74.08-72.4 98.98h226.8l11.9-23.9c-12.4-20-35.3-50.36-58.3-49.08-15.1.8-44 33.98-44 33.98s-35.4-60.51-61.5-60.2zm195.1 53.2l-32 64h-79.7l-40.7 95c22 3.3 41.4 14.7 55 31h87.6c4.8-5.8 10.3-10.9 16.4-15.3l28.6-128.7h48.9l16.3-46zM21 187.6v80l13.57 3.5 35.8-83.5zm68.91 0l-37.77 88.1 25.56 6.7 40.6-94.8zm47.99 0L95.28 287l3.7 1c8.42-3.4 17.52-5.6 27.02-6.2l40.3-94.2zm209.3 0l-22.1 99.5c9.6-3.5 20.1-5.5 30.9-5.5 40.3 0 74.6 27.1 85.4 64H491v-80.5l-46.5-15.5-15.5-62h-34.7zm17.8 14h46l12.5 50h-71l10.8-43.2zm-233 98c-39.32 0-71 31.7-71 71s31.68 71 71 71c39.3 0 71-31.7 71-71s-31.7-71-71-71zm224 0c-39.3 0-71 31.7-71 71s31.7 71 71 71 71-31.7 71-71-31.7-71-71-71zm-320.62 32l-12.4 62h23.05c-1.97-7.3-3.03-15.1-3.03-23 0-14 3.25-27.2 9.04-39zm176.62 0c5.7 11.8 9 25 9 39 0 7.9-1.1 15.7-3 23h52c-1.9-7.3-3-15.1-3-23 0-14 3.3-27.2 9-39zm-80 7a32 32 0 0 1 32 32 32 32 0 0 1-32 32 32 32 0 0 1-32-32 32 32 0 0 1 32-32zm224 0a32 32 0 0 1 32 32 32 32 0 0 1-32 32 32 32 0 0 1-32-32 32 32 0 0 1 32-32zm88.7 25c.2 2.3.3 4.6.3 7 0 10.7-1.9 20.9-5.4 30.5l51.4-20.6v-16.9z">
-              </path>
-            </svg>
-            <span style="
-             z-index: 2;
-              color: white;
-              padding: 2px 6px;
-              border-radius: 6px;
-              font-size: 0.7rem;
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="${
+              isSelected ? "truck-inner marker-highlight" : "truck-inner"
+            }" style="
+              background-color: ${color};
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              border: 2px solid #00000050;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 12px;
               font-weight: bold;
-              white-space: nowrap;
-              text-align: center;
-              width: 25px;           
-              line-height: .7rem;
+              color: white;
+              position: relative;
             ">
-              ${unitName}
-            </span>
-            
+              <span style="
+                z-index: 2;
+                color: white;
+                padding: 2px 6px;
+                border-radius: 6px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                white-space: nowrap;
+                text-align: center;
+                width: 25px;           
+                line-height: .7rem;
+              ">
+                ${unitName}
+              </span>
+            </div>
           </div>
-        </div>
-      `,
+        `,
         className: "custom-truck-icon-with-label",
         iconSize: [25, 25],
         iconAnchor: [12.5, 20],
@@ -238,12 +266,13 @@ const TruckTracking = () => {
     },
     []
   );
+  
 
   const markers = useMemo(() => {
-    if (!Array.isArray(data)) return [];
+    if (!Array.isArray(filteredData)) return [];
 
     const coordMap = new Map<string, any[]>();
-    data.forEach((truck) => {
+    filteredData.forEach((truck) => {
       const findBeacon = [
         ...parkingData,
         ...ubicationData,
@@ -301,7 +330,8 @@ const TruckTracking = () => {
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
               truck.connectivity,
-              truck.lastDate
+              truck.lastDate,
+              truck.lastUbication
             )}
           >
             <Popup>
@@ -374,7 +404,7 @@ const TruckTracking = () => {
       });
     });
     return result;
-  }, [data, createCustomIcon, ubicationData, selectedTruck]);
+  }, [filteredData, createCustomIcon, ubicationData, selectedTruck]);
 
   const parkingComponents = () => {
     const components: React.JSX.Element[] = [];
