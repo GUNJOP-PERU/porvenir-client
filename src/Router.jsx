@@ -29,7 +29,7 @@ import PlanMonth from "./pages/management/PlanMonth";
 import PlanWeek from "./pages/management/PlanWeek";
 import PageUbications from "./pages/management/Ubication";
 import PageWap from "./pages/management/Wap";
-// import HomeUsers from "./pages/management/Users";
+import HomeUsers from "./pages/management/Users";
 // import HomeVehicles from "./pages/management/Vehicles";
 // import HistoricalExtract from "./pages/dashboard/ProductionExtract/HistoricalExtract";
 // import ProductionLayout from "./pages/dashboard/ProductionExtract/ProductionLayout";
@@ -71,7 +71,7 @@ import TrackingDevelopment from "./pages/development/Tracking";
 import UndergroundTrackingDevelopment from "./pages/development/UndergroundTracking";
 
 const protectedRoutes = [
-
+  { path: "users", element: <HomeUsers /> },
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
