@@ -66,16 +66,8 @@ const ProductionStatus = () => {
             track.ubication === 'Int-BC-1930' ||
             track.ubication === 'Int-BC-1910'
         );
-        const lastItem = unit.tracks[unit.tracks.length - 1]?.uuid;
-
         let isLateBocamina = false;
-
-        if (lastItem !== firstBocamina?.uuid) {
-          return {
-            unit: unit.unit,
-            firstBocamina: null,
-          };
-        }
+        
 
         if (firstBocamina) {
           const bocaminaStartTime = new Date(firstBocamina.f_inicio);
@@ -117,6 +109,7 @@ const ProductionStatus = () => {
       })
       .filter((item) => item.firstBocamina !== null);
   }, [beaconDetectionData]);
+  
 
   const lunchTimeMineDetection = useMemo(() => {
     if (!beaconDetectionData || beaconDetectionData.length === 0) {
@@ -396,7 +389,7 @@ const ProductionStatus = () => {
           </div>
         </div>
 
-        <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl">
+        <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-150px)]">
           <div
             className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
           >
@@ -426,11 +419,11 @@ const ProductionStatus = () => {
                       : "#9333EA",
                   }}
                 >
-                  <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex-shrink-0 flex items-center justify-center font-extrabold text-white relative">
+                 <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
                     <span className="text-[7px] font-medium text-zinc-50/80">
                       CAM
                     </span>
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                    <span className="">
                       {truck.unit.split("-").pop()}
                     </span>
                   </div>
@@ -444,12 +437,12 @@ const ProductionStatus = () => {
                 </div>
 
                 <div
-                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
+                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-1 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
                 >
                   <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
                     {truck.firstBocamina?.ubication}
-                  </span>
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pl-1.5 pb-0.5 text-center flex items-center gap-1 text-white">
+                    </span><br/>
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
                     Ingreso a Mina:{" "}
                     {format(
                       new Date(truck.firstBocamina?.startTime || 0),

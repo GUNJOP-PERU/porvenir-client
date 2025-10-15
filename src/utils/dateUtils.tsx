@@ -79,21 +79,3 @@ export const getCurrentDay = () => {
 export const planDayDateParser = ( e : string) => {
   return format(addHours(new Date(e), 5), 'yyyy-MM-dd');
 }
-
-/**
- * Filtra camiones que han estado offline por más de X minutos
- * @param data Array de camiones con propiedad lastDate
- * @param maxMinutesOffline Número máximo de minutos offline (por defecto 30)
- * @returns Array filtrado de camiones activos
- */
-export const filterActiveTrucks = <T extends { lastDate?: string | null }>(
-  data: T[],
-  maxMinutesOffline: number = 30
-): T[] => {
-  return data.filter((truck) => {
-    if (!truck.lastDate) return false;
-    const lastUpdate = new Date(truck.lastDate);
-    const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
-    return diffMinutes <= maxMinutesOffline;
-  });
-};
