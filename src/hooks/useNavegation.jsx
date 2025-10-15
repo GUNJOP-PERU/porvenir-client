@@ -26,6 +26,11 @@ export const useNavigation = () => {
             icon: <MapPin />,
             items: [
               {
+                name: "Usuarios",
+                href: "/users",
+                active: pathname === "/users",
+              },
+              {
                 name: "Origen / Labor",
                 href: "/labor",
                 active: pathname === "/labor",
