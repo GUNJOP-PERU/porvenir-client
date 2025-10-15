@@ -60,8 +60,11 @@ const ProductionStatus = () => {
       .map((unit) => {
         const firstBocamina = unit.tracks?.find(
           (track) =>
-            track.ubication?.toLowerCase().includes("bocamina") ||
-            track.ubicationType?.toLowerCase().includes("bocamina")
+            track.ubication === 'Int-BC-1820' ||
+            track.ubication === 'Int-BC-1800' ||
+            track.ubication === 'Int-BC-1875' ||
+            track.ubication === 'Int-BC-1930' ||
+            track.ubication === 'Int-BC-1910'
         );
         const lastItem = unit.tracks[unit.tracks.length - 1]?.uuid;
 
