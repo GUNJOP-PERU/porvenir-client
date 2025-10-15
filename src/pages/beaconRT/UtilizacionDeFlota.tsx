@@ -13,6 +13,7 @@ import {
 import { format, set } from "date-fns";
 import { getCurrentDay } from "@/utils/dateUtils";
 import type { TruckStatus, UnitTripDetections } from "../../types/Beacon";
+import dayjs from "dayjs";
 
 const ProductionStatus = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
@@ -26,23 +27,15 @@ const ProductionStatus = () => {
     },
   ]);
 
-  const {
-    data = [],
-    refetch,
-    isFetching,
-    isLoading: tripsLoading,
-    isError: tripsError,
-  } = useFetchData<TruckStatus[]>("beacon-truck", "beacon-truck", {
-    refetchInterval: 10000,
-  });
+  const { data = [] } = useFetchData<TruckStatus[]>(
+    "beacon-truck",
+    "beacon-truck",
+    {
+      refetchInterval: 10000,
+    }
+  );
 
-  const {
-    data: beaconDetectionData,
-    refetch: beaconDetectionRefetch,
-    isFetching: beaconDetectionIsFetching,
-    isLoading: beaconDetectionLoading,
-    isError: beaconDetectionError,
-  } = useFetchData<UnitTripDetections[]>(
+  const { data: beaconDetectionData } = useFetchData<UnitTripDetections[]>(
     "trip-group-by-days-rt",
     `beacon-track/group-by-unit?date=${format(
       dateFilter[0].startDate,
@@ -52,38 +45,47 @@ const ProductionStatus = () => {
   );
 
   const mineDetection = useMemo(() => {
-    if (!beaconDetectionData || beaconDetectionData.length === 0) {
+    if (
+      !Array.isArray(beaconDetectionData) ||
+      beaconDetectionData.length === 0
+    ) {
       return [];
     }
 
     return beaconDetectionData
       .map((unit) => {
-        const firstBocamina = unit.tracks?.find(
-          (track) =>
-            track.ubication === 'Int-BC-1820' ||
-            track.ubication === 'Int-BC-1800' ||
-            track.ubication === 'Int-BC-1875' ||
-            track.ubication === 'Int-BC-1930' ||
-            track.ubication === 'Int-BC-1910'
+        const firstBocamina = unit.tracks?.find((track) =>
+          [
+            "Int-BC-1820",
+            "Int-BC-1800",
+            "Int-BC-1875",
+            "Int-BC-1930",
+            "Int-BC-1910",
+          ].includes(track.ubication)
         );
+
+        // const lastItem = unit.tracks?.[unit.tracks.length - 1]?.uuid;
         let isLateBocamina = false;
-        
 
-        if (firstBocamina) {
-          const bocaminaStartTime = new Date(firstBocamina.f_inicio);
-          const hours = bocaminaStartTime.getHours();
-          const minutes = bocaminaStartTime.getMinutes();
-          const totalMinutes = hours * 60 + minutes;
-
-          const dayShiftLimit = 8 * 60 + 30;
-          const nightShiftLimit = 20 * 60 + 30;
+        if ( firstBocamina) {
+          const startTime = dayjs(firstBocamina.f_inicio);
+          const dayShiftLimit = startTime.hour(8).minute(30);
+          const nightShiftLimit = startTime.hour(20).minute(30);
 
           if (shiftFilter === "dia") {
-            isLateBocamina = totalMinutes > dayShiftLimit;
+            isLateBocamina = startTime.isAfter(dayShiftLimit);
           } else if (shiftFilter === "noche") {
-            isLateBocamina = totalMinutes > nightShiftLimit;
+            isLateBocamina = startTime.isAfter(nightShiftLimit);
           }
         }
+
+        const duration =
+          firstBocamina?.f_final && firstBocamina?.f_inicio
+            ? dayjs(firstBocamina.f_final).diff(
+                dayjs(firstBocamina.f_inicio),
+                "minute"
+              )
+            : 0;
 
         return {
           unit: unit.unit,
@@ -94,22 +96,13 @@ const ProductionStatus = () => {
                 ubicationType: firstBocamina.ubicationType,
                 startTime: firstBocamina.f_inicio,
                 endTime: firstBocamina.f_final,
-                duration:
-                  firstBocamina.f_final && firstBocamina.f_inicio
-                    ? (
-                        (new Date(firstBocamina.f_final).getTime() -
-                          new Date(firstBocamina.f_inicio).getTime()) /
-                        1000 /
-                        60
-                      ).toFixed(1)
-                    : "0",
+                duration: duration.toFixed(1),
               }
             : null,
         };
       })
       .filter((item) => item.firstBocamina !== null);
-  }, [beaconDetectionData]);
-  
+  }, [beaconDetectionData, shiftFilter]);
 
   const lunchTimeMineDetection = useMemo(() => {
     if (!beaconDetectionData || beaconDetectionData.length === 0) {
@@ -182,7 +175,12 @@ const ProductionStatus = () => {
             : null,
         };
       })
-      .filter((item) => item.firstBocamina !== null);
+      .filter((item) => item.firstBocamina !== null)
+      .sort((a, b) => {
+        const numA = parseInt(a.unit.match(/\d+$/)?.[0] || "0", 10);
+        const numB = parseInt(b.unit.match(/\d+$/)?.[0] || "0", 10);
+        return numA - numB;
+      });
   }, [beaconDetectionData, shiftFilter]);
 
   const truckFiltered = useMemo(() => {
@@ -277,9 +275,18 @@ const ProductionStatus = () => {
 
       if (isLunchTime && isParqueo) {
         lunchTrucks.push(truck);
-      } else if (isEndOfTurn && isParqueo && ( 5 <= new Date().getHours() && new Date().getHours() < 6 || (17 <= new Date().getHours() && new Date().getHours() < 18))) {
+      } else if (
+        isEndOfTurn &&
+        isParqueo &&
+        ((5 <= new Date().getHours() && new Date().getHours() < 6) ||
+          (17 <= new Date().getHours() && new Date().getHours() < 18))
+      ) {
         finalParqueoUnits.push(truck);
-      } else if (isParqueo && (new Date().getTime() - new Date(truck.lastDate).getTime() < 15 * 60 * 1000)) {
+      } else if (
+        isParqueo &&
+        new Date().getTime() - new Date(truck.lastDate).getTime() <
+          15 * 60 * 1000
+      ) {
         parqueoUnits.push(truck);
       } else if (isSuperficie || isDestination) {
         superficieData.push(truck);
@@ -291,18 +298,27 @@ const ProductionStatus = () => {
         undergroundData.push(truck);
       }
     });
+    const sortByUnitNumber = (arr: TruckStatus[]) =>
+      [...arr]
+        .filter((truck) => truck.tag)
+        .sort((a, b) => {
+          const numA = parseInt(a.tag!.match(/\d+$/)?.[0] || "0", 10);
+          const numB = parseInt(b.tag!.match(/\d+$/)?.[0] || "0", 10);
+          return numA - numB;
+        });
 
     return {
-      parqueoUnits,
+      parqueoUnits: sortByUnitNumber(parqueoUnits),
       totalTruck: data.length,
-      superficieData,
-      undergroundData,
-      unMoveTrucks,
-      lunchTrucks,
-      finalParqueoUnits,
+      superficieData: sortByUnitNumber(superficieData),
+      undergroundData: sortByUnitNumber(undergroundData),
+      unMoveTrucks: sortByUnitNumber(unMoveTrucks),
+      lunchTrucks: sortByUnitNumber(lunchTrucks),
+      finalParqueoUnits: sortByUnitNumber(finalParqueoUnits),
     };
   }, [data]);
 
+  console.log(truckFiltered);
   const itemColors = {
     parqueo: {
       outer: "bg-[#8b5e34]",
@@ -337,143 +353,29 @@ const ProductionStatus = () => {
   };
 
   return (
-    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col gap-1">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 flex-1 grid-rows-3 xl:grid-rows-1 ">
-        <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl">
-          <div
-            className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
+    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 grid-rows-3 xl:grid-rows-1">
+      <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div
+          className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
+        >
+          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            {truckFiltered.parqueoUnits.length} / {truckFiltered.totalTruck}
+          </div>
+          <h4
+            className="text-sm font-bold select-none"
+            style={{ color: itemColors.parqueo.color }}
           >
-            <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
-              {truckFiltered.parqueoUnits.length} / {truckFiltered.totalTruck}
-            </div>
-            <h4 className="text-sm font-bold select-none" style={{ color: itemColors.parqueo.color }}>
-              Parqueo
-            </h4>
-          </div>
-          <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {truckFiltered.parqueoUnits.map((truck, index) => (
-              <div key={index}>
-                <div
-                  className={`p-0.5 rounded-lg shadow ${itemColors.parqueo.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
-                >
-                  <div
-                    className={`${itemColors.parqueo.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
-                  >
-                    <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
-                      <span className="text-[7px] font-medium text-zinc-50/80">
-                        CAM
-                      </span>
-                      <span className="">{truck.name.split("-").pop()}</span>
-                    </div>
-                    <div className="flex flex-col gap-0.5 min-w-0">
-                      <IconTruck
-                        className="h-7 w-11"
-                        color={itemColors.parqueo.color}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className=  "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-100"
-                  >
-                    <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
-                      {truck.lastDate &&
-                        `Hora de Inicio: ${format(
-                          new Date(truck.lastDate),
-                          "HH:mm"
-                        )}`}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            Parqueo
+          </h4>
         </div>
-
-        <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-150px)]">
-          <div
-            className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
-          >
-            <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
-              {mineDetection.length} / {truckFiltered.totalTruck}
-            </div>
-            <h4 className="text-sm font-bold select-none" style={{ color: "#e0aaff" }}>
-              Primer Ingreso a Mina
-            </h4>
-          </div>
-          <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {mineDetection.map((truck, index) => (
+        <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
+          {truckFiltered.parqueoUnits.map((truck, index) => (
+            <div key={index}>
               <div
-                key={index}
-                className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
-                style={{
-                  background: truck.firstBocamina?.isLate
-                    ? "#a81313"
-                    : "#7B1FA280",
-                }}
+                className={`p-0.5 rounded-lg shadow ${itemColors.parqueo.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
               >
                 <div
-                  className="rounded-lg py-1 px-1 flex items-center gap-2"
-                  style={{
-                    background: truck.firstBocamina?.isLate
-                      ? "#ee3232"
-                      : "#9333EA",
-                  }}
-                >
-                 <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
-                    <span className="text-[7px] font-medium text-zinc-50/80">
-                      CAM
-                    </span>
-                    <span className="">
-                      {truck.unit.split("-").pop()}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <IconTruck
-                      className="h-7 w-11"
-                      color={itemColors.mina.color}
-                    />
-                  </div>
-                </div>
-
-                <div
-                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-1 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
-                >
-                  <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
-                    {truck.firstBocamina?.ubication}
-                    </span><br/>
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
-                    Ingreso a Mina:{" "}
-                    {format(
-                      new Date(truck.firstBocamina?.startTime || 0),
-                      "HH:mm"
-                    )}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col bg-[#132027] p-2 rounded-xl">
-          <div
-            className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
-          >
-            <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
-              {truckFiltered.lunchTrucks.length} / {truckFiltered.totalTruck}
-            </div>
-            <h4 className="text-sm font-bold select-none" style={{ color: itemColors.unMove.color }}>
-              En Refrigerio
-            </h4>
-          </div>
-          <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {truckFiltered.lunchTrucks.map((truck, index) => (
-              <div
-                key={index}
-                className={`p-0.5 rounded-lg shadow ${itemColors.unMove.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
-              >
-                <div
-                  className={`${itemColors.unMove.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
+                  className={`${itemColors.parqueo.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
                 >
                   <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
                     <span className="text-[7px] font-medium text-zinc-50/80">
@@ -481,22 +383,15 @@ const ProductionStatus = () => {
                     </span>
                     <span className="">{truck.name.split("-").pop()}</span>
                   </div>
-
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <IconTruck
                       className="h-7 w-11"
-                      color={itemColors.unMove.color}
+                      color={itemColors.parqueo.color}
                     />
                   </div>
                 </div>
-
-                <div
-                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
-                >
-                  <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
-                    {truck.lastUbication}
-                  </span>
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-white">
+                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-100">
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                     {truck.lastDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.lastDate),
@@ -505,126 +400,248 @@ const ProductionStatus = () => {
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl">
-          <div
-            className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
-          >
-            <div className="text-[10px] font-semibold text-zinc-200 select-none h-5 w-9 rounded-[5px] bg-black/80 flex items-center justify-center">
-              {lunchTimeMineDetection.length} / {truckFiltered.totalTruck}
             </div>
-            <h4 className="text-[12px] font-bold select-none leading-4" style={{ color: "#e0aaff" }}>
-              Ingreso a mina después del refrigerio
-            </h4>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div
+          className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
+        >
+          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            {mineDetection.length} / {truckFiltered.totalTruck}
           </div>
-          <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {lunchTimeMineDetection.map((truck, index) => (
+          <h4
+            className="text-sm font-bold select-none"
+            style={{ color: "#e0aaff" }}
+          >
+            Primer Ingreso a Mina
+          </h4>
+        </div>
+        <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
+          {mineDetection.map((truck, index) => (
+            <div
+              key={index}
+              className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
+              style={{
+                background: truck.firstBocamina?.isLate
+                  ? "#a81313"
+                  : "#7B1FA280",
+              }}
+            >
               <div
-                key={index}
-                className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
+                className="rounded-lg py-1 px-1 flex items-center gap-2"
                 style={{
                   background: truck.firstBocamina?.isLate
-                    ? "#a81313"
-                    : "#7B1FA280",
+                    ? "#ee3232"
+                    : "#9333EA",
                 }}
               >
+                <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
+                  <span className="text-[7px] font-medium text-zinc-50/80">
+                    CAM
+                  </span>
+                  <span className="">{truck.unit.split("-").pop()}</span>
+                </div>
+
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <IconTruck
+                    className="h-7 w-11"
+                    color={itemColors.mina.color}
+                  />
+                </div>
+              </div>
+
+              <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-1 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
+                <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                  {truck.firstBocamina?.ubication}
+                </span>
+                <br />
+                <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
+                  Ingreso a Mina:{" "}
+                  {format(
+                    new Date(truck.firstBocamina?.startTime || 0),
+                    "HH:mm"
+                  )}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div
+          className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
+        >
+          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            {truckFiltered.lunchTrucks.length} / {truckFiltered.totalTruck}
+          </div>
+          <h4
+            className="text-sm font-bold select-none"
+            style={{ color: itemColors.unMove.color }}
+          >
+            En Refrigerio
+          </h4>
+        </div>
+        <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
+          {truckFiltered.lunchTrucks.map((truck, index) => (
+            <div
+              key={index}
+              className={`p-0.5 rounded-lg shadow ${itemColors.unMove.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
+            >
+              <div
+                className={`${itemColors.unMove.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
+              >
+                <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
+                  <span className="text-[7px] font-medium text-zinc-50/80">
+                    CAM
+                  </span>
+                  <span className="">{truck.name.split("-").pop()}</span>
+                </div>
+
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <IconTruck
+                    className="h-7 w-11"
+                    color={itemColors.unMove.color}
+                  />
+                </div>
+              </div>
+
+              <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
+                <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                  {truck.lastUbication}
+                </span>
+                <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-white">
+                  {truck.lastDate &&
+                    `Hora de Inicio: ${format(
+                      new Date(truck.lastDate),
+                      "HH:mm"
+                    )}`}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div
+          className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
+        >
+          <div className="text-[10px] font-semibold text-zinc-200 select-none h-5 w-9 rounded-[5px] bg-black/80 flex items-center justify-center">
+            {lunchTimeMineDetection.length} / {truckFiltered.totalTruck}
+          </div>
+          <h4
+            className="text-[12px] font-bold select-none leading-4"
+            style={{ color: "#e0aaff" }}
+          >
+            Ingreso a mina después del refrigerio
+          </h4>
+        </div>
+        <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
+          {lunchTimeMineDetection.map((truck, index) => (
+            <div
+              key={index}
+              className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
+              style={{
+                background: truck.firstBocamina?.isLate
+                  ? "#a81313"
+                  : "#7B1FA280",
+              }}
+            >
+              <div
+                className="rounded-lg py-1 px-1 flex items-center gap-2"
+                style={{
+                  background: truck.firstBocamina?.isLate
+                    ? "#ee3232"
+                    : "#9333EA",
+                }}
+              >
+                <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
+                  <span className="text-[7px] font-medium text-zinc-50/80">
+                    CAM
+                  </span>
+                  <span className="">{truck.unit.split("-").pop()}</span>
+                </div>
+
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <IconTruck
+                    className="h-7 w-11"
+                    color={itemColors.mina.color}
+                  />
+                </div>
+              </div>
+
+              <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
+                <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                  {truck.firstBocamina?.ubication}
+                </span>
+                <br />
+                <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
+                  Ingreso a Mina:{" "}
+                  {format(
+                    new Date(truck.firstBocamina?.startTime || 0),
+                    "HH:mm"
+                  )}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col bg-[#2B302B] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div
+          className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.guardia.color}`}
+        >
+          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            {truckFiltered.finalParqueoUnits.length} /{" "}
+            {truckFiltered.totalTruck}
+          </div>
+          <h4
+            className="text-sm font-bold select-none"
+            style={{ color: itemColors.guardia.color }}
+          >
+            Fin de guardia
+          </h4>
+        </div>
+        <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
+          {truckFiltered.finalParqueoUnits.map((truck, index) => (
+            <div key={index}>
+              <div
+                className={`p-0.5 rounded-lg shadow ${itemColors.guardia.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
+              >
                 <div
-                  className="rounded-lg py-1 px-1 flex items-center gap-2"
-                  style={{
-                    background: truck.firstBocamina?.isLate
-                      ? "#ee3232"
-                      : "#9333EA",
-                  }}
+                  className={`${itemColors.guardia.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
                 >
                   <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
                     <span className="text-[7px] font-medium text-zinc-50/80">
                       CAM
                     </span>
-                    <span className="">{truck.unit.split("-").pop()}</span>
+                    <span className="">{truck.name.split("-").pop()}</span>
                   </div>
-
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <IconTruck
                       className="h-7 w-11"
-                      color={itemColors.mina.color}
+                      color={itemColors.guardia.color}
                     />
                   </div>
                 </div>
-
-                <div
-                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
-                >
+                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
                   <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
-                    {truck.firstBocamina?.ubication}
-                  </span><br/>
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
-                    Ingreso a Mina:{" "}
-                    {format(
-                      new Date(truck.firstBocamina?.startTime || 0),
-                      "HH:mm"
-                    )}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col bg-[#2B302B] p-2 rounded-xl">
-          <div
-            className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.guardia.color}`}
-          >
-            <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
-              {truckFiltered.finalParqueoUnits.length} /{" "}
-              {truckFiltered.totalTruck}
-            </div>
-            <h4 className="text-sm font-bold select-none" style={{ color: itemColors.guardia.color }}>
-              Fin de guardia
-            </h4>
-          </div>
-          <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {truckFiltered.finalParqueoUnits.map((truck, index) => (
-              <div key={index}>
-                <div
-                  className={`p-0.5 rounded-lg shadow ${itemColors.guardia.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
-                >
-                  <div
-                    className={`${itemColors.guardia.inner} rounded-lg py-1 px-1 flex items-center gap-2`}
-                  >
-                    <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
-                      <span className="text-[7px] font-medium text-zinc-50/80">
-                        CAM
-                      </span>
-                      <span className="">{truck.name.split("-").pop()}</span>
-                    </div>
-                    <div className="flex flex-col gap-0.5 min-w-0">
-                      <IconTruck
-                        className="h-7 w-11"
-                        color={itemColors.guardia.color}
-                      />
-                    </div>
-                  </div>
-                  <div
-                  className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300"
-                >
-                     <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
                     {truck.lastUbication}
-                  </span><br/>
+                  </span>
+                  <br />
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
                     Fin de guardia:{" "}
-                    {format(
-                      new Date(truck.lastDate || 0),
-                      "HH:mm"
-                    )}
+                    {format(new Date(truck.lastDate || 0), "HH:mm")}
                   </span>
-                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
