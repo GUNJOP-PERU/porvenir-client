@@ -8,6 +8,7 @@ import highchartsXrange from "highcharts/modules/xrange";
 import { formatDurationMinutes } from "@/lib/utilsGeneral";
 // Utils
 import { getCurrentDay } from "@/utils/dateUtils";
+import { set } from "date-fns"
 
 // Inicializar módulo xrange
 if (typeof highchartsXrange === "function") {
@@ -281,13 +282,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     },
     title: {
       text: "",
-     
     },
     time: {
       timezone: 'America/Lima',
     },
     xAxis: [{
-      // Eje X inferior
       type: "datetime",
       title: {
         text: "Tiempo",
@@ -303,24 +302,30 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       },
       min: (() => {
         const today = new Date();
+        console.log(today.getHours());
         if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
-        } else {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
+          return set(getCurrentDay().startDate, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+        } else if(shift === "noche" && today.getHours() >= 0 && today.getHours() < 6) {
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          return set(yesterday, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+        } else if(shift === "noche") {
+          return set(getCurrentDay().startDate, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
         }
       })(),
       max: (() => {
         const today = new Date();
         if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-        } else {
+          return set(getCurrentDay().startDate, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+        } else if(shift === "noche" && today.getHours() >= 0 && today.getHours() < 6) {
+          return set(today, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+        } else if(shift === "noche") {
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
-          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
+          return set(tomorrow, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
         }
       })(),
     }, {
-      // Eje X superior
       type: "datetime",
       opposite: true,
       linkedTo: 0,

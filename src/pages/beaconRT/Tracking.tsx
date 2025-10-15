@@ -28,6 +28,7 @@ import {
   maintenanceLocation,
   superficieLocation,
   ubicationBocamina,
+  parkingData
 } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import Toggle from "@/components/Dashboard/Tracking/Toggle";
@@ -108,6 +109,7 @@ const TruckTracking = () => {
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = [
+      ...parkingData,
       ...ubicationData,
       ...superficieLocation,
       ...maintenanceLocation,
@@ -243,6 +245,7 @@ const TruckTracking = () => {
     const coordMap = new Map<string, any[]>();
     data.forEach((truck) => {
       const findBeacon = [
+        ...parkingData,
         ...ubicationData,
         ...superficieLocation,
         ...maintenanceLocation,
@@ -257,7 +260,16 @@ const TruckTracking = () => {
       const truckNameParts = truck.name.split("-");
       const displayName =
         truckNameParts.length > 2 ? truckNameParts[2] : truck.name;
-      coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
+
+      if(findBeacon && findBeacon.name === "PARK. VOLQUETES") {
+        const differenceInMinutes = (new Date().getTime() - new Date(truck.lastDate).getTime())/60000;
+
+        if(differenceInMinutes <= 15) {
+          coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
+        }
+      } else {
+        coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
+      }
     });
 
     const result: JSX.Element[] = [];
@@ -363,6 +375,87 @@ const TruckTracking = () => {
     });
     return result;
   }, [data, createCustomIcon, ubicationData, selectedTruck]);
+
+  const parkingComponents = () => {
+    const components: React.JSX.Element[] = [];
+
+    parkingData.forEach((ubication) => {
+      const color = "#fda618";
+      const position = [
+        ubication.position.latitud,
+        ubication.position.longitud,
+      ] as [number, number];
+
+      // Primero el círculo
+      components.push(
+        <Circle
+          key={`route-circle-${ubication.id}`}
+          center={position}
+          radius={50}
+          pathOptions={{
+            color: color,
+            fillColor: "black",
+            weight: 2,
+            opacity: 0.9,
+            fillOpacity: 0.3,
+            dashArray: "16, 4",
+          }}
+        />
+      );
+
+      components.push(
+        <Marker
+          key={`label-${ubication.id}`}
+          position={[position[0] + 0.0005, position[1]]}
+          icon={L.divIcon({
+            html: `
+              <div style="
+                white-space: nowrap;
+                display: flex;
+                gap: 5px;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: ${color};
+                color: #ffffff0;
+                padding: 2px 6px 2px 2px;
+                border-radius: 5px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                line-height: 0.7rem;
+              ">
+              <span style="
+                background: #FFFFFF85;
+                color: #ffffff0;
+                padding: 2px 4px;
+                border-radius: 4px; 
+                font-size: 0.7rem;
+                font-weight: bold;
+                line-height: 0.7rem;                            
+              ">
+                ${
+                  data.filter(
+                    (truck) =>
+                      truck.lastUbicationMac &&
+                      truck.lastUbicationMac.toLowerCase() ===
+                        ubication.mac.toLowerCase()
+                  ).length
+                }
+              </span>
+              ${ubication.description}
+              </div>
+            `,
+            className: "geofence-label",
+            iconSize: [0, 0],
+            iconAnchor: [0, 0],
+          })}
+        ></Marker>
+      );
+    });
+    return components;
+  };
 
   const routeComponents = () => {
     const components: React.JSX.Element[] = [];
@@ -759,6 +852,7 @@ const TruckTracking = () => {
           />
           <ZoomControl position="bottomright" />
           {toggleStatus.showDestinations && routeComponents()}
+          {toggleStatus.showDestinations && parkingComponents()}
           {toggleStatus.showWifiZones && wifiLocations()}
           {toggleStatus.showTalleres && tallerLocations()}
           {toggleStatus.showSuperficie && superficieLocations()}
