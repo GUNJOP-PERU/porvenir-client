@@ -303,14 +303,14 @@ const RealTimeByHourRT = () => {
             donutData={{
               currentValue: 0,
               total: planDay.totalTonnage,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={0}
             total={planDay.totalTonnage}
-            color="#14B8A6"
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
@@ -322,14 +322,14 @@ const RealTimeByHourRT = () => {
             donutData={{
               currentValue: baseStats.totalTM,
               total: planDay.totalTonnage,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
             total={planDay.totalTonnage}
-            color="#14B8A6"
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
@@ -344,7 +344,7 @@ const RealTimeByHourRT = () => {
             donutData={{
               currentValue: 0,
               total: 24,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <DonutChart
@@ -355,7 +355,7 @@ const RealTimeByHourRT = () => {
                 24 * baseStats.totalUnits -
                 baseStats.totalMaintenanceTimeMin / 60,
               total: 24 * baseStats.totalUnits,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
@@ -367,7 +367,7 @@ const RealTimeByHourRT = () => {
             donutData={{
               currentValue: 0,
               total: 24,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
           <DonutChart
@@ -380,7 +380,7 @@ const RealTimeByHourRT = () => {
                 baseStats.totalDuration / 3600,
               total:
                 24 * baseStats.totalUnitsNight + 24 * baseStats.totalUnitsDay,
-              currentValueColor: "#14B8A6",
+              currentValueColor: "#ff5000",
             }}
           />
         </div>
@@ -398,7 +398,7 @@ const RealTimeByHourRT = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Mineral Extraído
                     </p>
@@ -479,7 +479,7 @@ const RealTimeByHourRT = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#04c286] w-2 h-2 rounded-full"/>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
                       Mineral Extraído
                     </p>
@@ -499,7 +499,7 @@ const RealTimeByHourRT = () => {
                   currentValue: baseStats.totalTMNight,
                   prediction:
                     (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-                  currentValueColor: "#00000050",
+                  currentValueColor: "#ff5000",
                   showDifference: false,
                   forecastText: "Predicción",
                 }}
@@ -544,7 +544,7 @@ const RealTimeByHourRT = () => {
             >
               <LineAndBarChartByHour
                 mineralWeight={baseData.mineral}
-                chartColor="#3c3f43"
+                chartColor="#ff5000"
                 planDay={planDay}
                 chartData={tripsByShift.noche}
               />
@@ -567,7 +567,7 @@ const RealTimeByHourRT = () => {
                       baseStats.totalMaintenanceTimeMinDay / 60
                     : baseStats.totalUnitsNight * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
-                currentValueColor: "#14B8A6",
+                currentValueColor: "#ff5000",
               },
               {
                 title: "Utilización",
@@ -579,7 +579,7 @@ const RealTimeByHourRT = () => {
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
                     : baseStats.totalDurationNight / 3600,
-                currentValueColor: "#14B8A6",
+                currentValueColor: "#ff5000",
               },
             ]}
             tableData={[

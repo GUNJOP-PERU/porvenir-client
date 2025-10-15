@@ -95,7 +95,7 @@ const DonutChart = ({
           {
             name: "Restante",
             y: (donutData?.total || 0) - (donutData?.currentValue || 0),
-            color: "#d6d6df",
+            color: "#b8b8b8",
           },
         ],
       },
