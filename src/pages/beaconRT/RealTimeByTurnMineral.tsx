@@ -463,7 +463,7 @@ const RealTimeByHourRT = () => {
             <CardTitle
               title="Ejecución de extracción de mineral Turno Noche (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
+              // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
@@ -498,7 +498,7 @@ const RealTimeByHourRT = () => {
             <CardTitle
               title="Camion en Turno Noche (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
+              // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
