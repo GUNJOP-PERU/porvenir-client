@@ -109,7 +109,7 @@ const BeaconDetectionTable = () => {
 
         return(
           <div className="text-center font-mono">
-            {timeInHours > 0 ? `${timeInHours}hr ${timeInMin}m ${timeInSec}s` : timeInMin > 0 ? `${timeInMin}min, ${timeInSec}s` : `${timeInSec}s`}
+            {timeInHours > 0 ? `${timeInHours}hr ${timeInMin < 60 ? timeInMin : 0 }m ${timeInSec}s` : timeInMin > 0 ? `${timeInMin}min, ${timeInSec}s` : `${timeInSec}s`}
           </div>
         )
       },

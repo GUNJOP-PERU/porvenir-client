@@ -49,7 +49,7 @@ import HomeUsers from "./pages/management/Users";
 import DetectionReportRT from "./pages/beaconRT/DetectionReport";
 import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeekMineral";
 import RealTimeByHourMineralRT from "./pages/beaconRT/RealTimeByTurnMineral";
-import RealTimeByHourDesmonteRT from "./pages/beaconRT/RealTimeByTurnMineralDesmonte";
+import RealTimeByHourDesmonteRT from "./pages/beaconRT/RealTimeByTurnDesmonte";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";

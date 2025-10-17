@@ -25,7 +25,7 @@ interface DonutAndTableChartProps {
 const DonutAndTableChart = ({ title, donutData, tableData = [] }: DonutAndTableChartProps) => {
   return (
     <div className="flex flex-row gap-4">
-      <div className="flex flex-col gap-4 justify-around">
+      {/* <div className="flex flex-col gap-4 justify-around">
         {donutData.map((data,i) => (
           <DonutChart
             key={i}
@@ -34,7 +34,7 @@ const DonutAndTableChart = ({ title, donutData, tableData = [] }: DonutAndTableC
             size="small"
           />
         ))}
-      </div>
+      </div> */}
       <div className="flex-1 flex flex-col gap-2">
         <h3 className="text-xs font-bold leading-3 text-center">
           {title}

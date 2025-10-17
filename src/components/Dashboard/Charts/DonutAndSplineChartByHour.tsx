@@ -15,7 +15,8 @@ interface IDonutAndSplineChartByHourProps {
   progressBarData: {
     total: number;
     currentValue: number;
-    prediction: number;
+    prediction?: number;
+    predictionText?: string;
     currentValueColor: string;
     showDifference: boolean;
     forecastText: string;
@@ -240,7 +241,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
 
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex flex-row items-center w-full">
+      {/* <div className="flex flex-row items-center w-full">
         <DonutChart
           title=""
           size="mini"
@@ -255,11 +256,13 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
           value={progressBarData.currentValue}
           total={progressBarData.total}
           color={progressBarData.currentValueColor}
+          prediction={progressBarData.prediction}
+          predictionText={progressBarData.predictionText}
           unit="TM"
           className="py-0 px-2 w-full"
           showLegend={false}
         />
-      </div>
+      </div> */}
       <HighchartsReact 
         highcharts={Highcharts} 
         options={options} 
