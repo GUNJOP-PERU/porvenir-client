@@ -9,24 +9,38 @@ import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
-import type { PlanDay } from "@/types/Plan";
 // Utils
-import { format } from "date-fns";
+import {
+  startOfWeek,
+  endOfWeek,
+  format,
+  eachDayOfInterval,
+  getISODay,
+} from "date-fns";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
+import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 // Icons
-import IconScoop from "@/icons/IconScoop";
+import { es } from "date-fns/locale";
+import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import IconTruck from "@/icons/IconTruck";
+import IconScoop from "@/icons/IconScoop";
 
-const RealTimeByHourRT = () => {
-  const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
+const RealTimeByWeek = () => {
+  const isoDay = getISODay(new Date());
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const [dateFilter, setDateFilter] = useState<
-    [{ startDate: Date; endDate: Date; key: string }]
+    [
+      {
+        startDate: Date;
+        endDate: Date;
+        key: string;
+      }
+    ]
   >([
     {
-      startDate: new Date(getCurrentDay().startDate),
-      endDate: new Date(getCurrentDay().endDate),
+      startDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+      endDate: endOfWeek(new Date(), { weekStartsOn: 1 }),
       key: "selection",
     },
   ]);
@@ -38,8 +52,8 @@ const RealTimeByHourRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-current-day-truck-rt",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    "trip-report-week",
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
     { refetchInterval: 10000 }
   );
 
@@ -52,17 +66,6 @@ const RealTimeByHourRT = () => {
   } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
 
 
-  const { data: planData = [] } = useFetchData<PlanDay[]>(
-    "planday-rt",
-    `planDay/by-date-range?startDate=${format(
-      dateFilter[0].startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
-    {
-      refetchInterval: 10000,
-    }
-  );
-
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -71,30 +74,18 @@ const RealTimeByHourRT = () => {
     return { mineral, desmonte };
   }, [mineralData]);
 
-  const planDay = useMemo(() => {
-    const currentDate = format(getCurrentDay().startDate, "yyyy-MM-dd");
-    const filteredPlanData = planData.filter(
-      (day) =>
-        day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
-    );
-    return {
-      totalTonnage: filteredPlanData.reduce((acc, day) => acc + day.tonnage, 0),
-      planDayShift: filteredPlanData,
-      planDay: filteredPlanData,
-    };
-  }, [planData, shiftFilter]);
-
   const baseStats = useMemo(() => {
     if (!data || !mineralData) {
       return {
-        totalUnits: 0,
-        totalUnitsDay: 0,
-        totalUnitsNight: 0,
+        totalUnits: data.filter((unit) => unit.trips.length > 0).length,
+        totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
+        totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
         totalTrips: 0,
         totalTM: 0,
         totalDuration: 0,
         totalDurationNight: 0,
         totalDurationDay: 0,
+        totalMantanceTimeMin: 0,
         totalMaintenanceTimeMinDay: 0,
         totalMaintenanceTimeMinNight: 0,
         totalMaintenanceTimeMin: 0,
@@ -155,6 +146,11 @@ const RealTimeByHourRT = () => {
       0
     );
 
+    const totalMantanceTimeMin = data.reduce(
+      (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
+      0
+    );
+
     const totalMaintenanceTimeMin = data.reduce(
       (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
       0
@@ -190,14 +186,15 @@ const RealTimeByHourRT = () => {
     const totalTMNight = nightTrips * baseData.mineral;
 
     return {
-      totalUnits: data.filter((unit) => unit.trips.length > 0).length,
-      totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
-      totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnits: data.length,
+      totalUnitsDay: data.length,
+      totalUnitsNight: data.length,
       totalTrips,
       totalTM,
       totalDuration,
       totalDurationNight,
       totalDurationDay,
+      totalMantanceTimeMin,
       totalMaintenanceTimeMinDay,
       totalMaintenanceTimeMinNight,
       totalMaintenanceTimeMin,
@@ -218,40 +215,40 @@ const RealTimeByHourRT = () => {
     if (!data) return { dia: [], noche: [] };
 
     const trips = data.map((unitGroup) => unitGroup.trips).flat();
-    const hours = Array.from(
-      { length: 24 },
-      (_, i) => `${i < 10 ? `0${i}` : i}:00`
-    );
+
+    const allDays = eachDayOfInterval({
+      start: dateFilter[0].startDate,
+      end: dateFilter[0].endDate,
+    });
 
     const grouped: {
-      dia: { hour: string; trips: BeaconUnitTrip[] }[];
-      noche: { hour: string; trips: BeaconUnitTrip[] }[];
-    } = {
-      dia: hours.slice(6, 18).map((hour) => ({ hour, trips: [] })),
-      noche: [
-        ...hours.slice(18, 24).map((hour) => ({ hour, trips: [] })),
-        ...hours.slice(0, 6).map((hour) => ({ hour, trips: [] })),
-      ],
-    };
+      dia: { day: string; label: string; trips: BeaconUnitTrip[] }[];
+      noche: { day: string; label: string; trips: BeaconUnitTrip[] }[];
+    } = { dia: [], noche: [] };
+
+    allDays.forEach((day) => {
+      const dayKey = format(day, "yyyy-MM-dd");
+      const labelRaw = format(day, "EEE dd", { locale: es });
+      const finalLabel = labelRaw.charAt(0).toUpperCase() + labelRaw.slice(1);
+
+      grouped.dia.push({ day: dayKey, label: finalLabel, trips: [] });
+      grouped.noche.push({ day: dayKey, label: finalLabel, trips: [] });
+    });
 
     trips.forEach((trip) => {
-      const tripDate = new Date(trip.endDate);
-      const hour = `${
-        tripDate.getHours() < 10
-          ? `0${tripDate.getHours()}`
-          : tripDate.getHours()
-      }:00`;
+      const tripDate = new Date(trip.startDate);
+      const dayKey = format(tripDate, "yyyy-MM-dd");
       const shift =
         tripDate.getHours() >= 6 && tripDate.getHours() < 18 ? "dia" : "noche";
 
-      const hourGroup = grouped[shift].find((group) => group.hour === hour);
-      if (hourGroup) {
-        hourGroup.trips.push(trip);
+      const dayGroup = grouped[shift].find((g) => g.day === dayKey);
+      if (dayGroup) {
+        dayGroup.trips.push(trip);
       }
     });
 
     return grouped;
-  }, [data]);
+  }, [data, dateFilter]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -259,22 +256,70 @@ const RealTimeByHourRT = () => {
         setShiftFilter(getCurrentDay().shift);
         setDateFilter([
           {
-            startDate: new Date(getCurrentDay().startDate),
-            endDate: new Date(getCurrentDay().endDate),
+            startDate: new Date(getCurrentWeekStartEndDates().startDate),
+            endDate: new Date(getCurrentWeekStartEndDates().endDate),
             key: "selection",
           },
         ]);
-        refetch();
       }
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [shiftFilter, refetch]);
+  }, [shiftFilter]);
+
+  const turnConfig = {
+    dia: {
+      title: "Turno Día",
+      color: "#ff5000",
+      iconColor: "text-[#fac34c]",
+      tm: baseStats.totalTMDay,
+      trips: tripsByShift.dia,
+      units: baseStats.totalUnitsDay,
+    },
+    noche: {
+      title: "Turno Noche",
+      color: "#ff5000",
+      iconColor: "text-[#3c3f43]",
+      tm: baseStats.totalTMNight,
+      trips: tripsByShift.noche,
+      units: baseStats.totalUnitsNight,
+    },
+  };
+
+  const active = turnConfig[shiftFilter];
+
+  const { data: dataPlan = [] } = useFetchGraphicData({
+    queryKey: "plan-week-history",
+    endpoint: "planWeek",
+    filters: `startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
+      shiftFilter ? `&shift=${shiftFilter}` : ""
+    }`,
+  });
+
+  const planDay = useMemo(() => {
+    if (!dataPlan || dataPlan.length === 0) return null;
+    const plan = dataPlan[0];
+    const safePlanDay = plan.dataCalculate || [];
+
+    return {
+      totalTonnage: plan.totalTonnage || 0,
+      planDayShift: [],
+      planDay: shiftFilter
+        ? safePlanDay.map((item: any) => ({
+            date: item.date,
+            tonnage: item.tonnageByTurno?.[shiftFilter] || 0,
+          }))
+        : safePlanDay,
+    };
+  }, [dataPlan, shiftFilter]);
 
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno"
+        title="Reporte Semanal"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
           dateFilter[0].startDate,
           "dd-MM-yyyy"
@@ -302,14 +347,14 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue: 0,
-              total: planDay.totalTonnage,
+              total: 2400,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={0}
-            total={planDay.totalTonnage}
+            total={2400}
             color="#ff5000"
             showLegend={false}
             className="mt-2"
@@ -321,14 +366,14 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planDay.totalTonnage,
+              total: planDay?.totalTonnage,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planDay.totalTonnage}
+            total={planDay?.totalTonnage}
             color="#ff5000"
             showLegend={false}
             className="mt-2"
@@ -352,9 +397,14 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue:
-                24 * baseStats.totalUnits -
-                baseStats.totalMaintenanceTimeMin / 60,
-              total: 24 * baseStats.totalUnits,
+                12 *
+                  isoDay *
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                baseStats.totalMantanceTimeMin / 60,
+              total:
+                12 *
+                isoDay *
+                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
               currentValueColor: "#ff5000",
             }}
           />
@@ -375,182 +425,102 @@ const RealTimeByHourRT = () => {
             size="medium"
             donutData={{
               currentValue:
-                24 * baseStats.totalUnitsNight +
-                24 * baseStats.totalUnitsDay -
+                12 *
+                  isoDay *
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
                 baseStats.totalDuration / 3600,
               total:
-                24 * baseStats.totalUnitsNight + 24 * baseStats.totalUnitsDay,
+                12 *
+                isoDay *
+                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
               currentValueColor: "#ff5000",
             }}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">  
-        {shiftFilter === "dia" ? (
-          <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-            <CardTitle
-              title="Ejecución de extracción de mineral Turno Dia (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
-              classIcon="fill-yellow-500 h-7 w-14"
-              className="custom-class"
-              actions={
-                <div className="flex flex-row gap-2">
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <DonutAndSplineChartByHour
-                progressBarData={{
-                  total: planDay.totalTonnage,
-                  currentValue: baseStats.totalTMDay,
-                  prediction:
-                    (baseStats.totalTMDay / baseStats.totalUnitsDay) * 7,
-                  currentValueColor: "#ff5000",
-                  showDifference: false,
-                  forecastText: "Predicción",
-                }}
-                mineralWeight={baseData.mineral}
-                chartData={tripsByShift.dia}
-                planDay={planDay}
-              />
-            </CardTitle>
-            <CardTitle
-              title="Camion en Turno Dia (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
-              classIcon="fill-yellow-500 h-7 w-14"
-              actions={
-                <div className="flex flex-row gap-2">
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia positiva
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia negativa
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <LineAndBarChartByHour
-                mineralWeight={baseData.mineral}
-                chartColor="#ff5000"
-                chartData={tripsByShift.dia}
-                planDay={planDay}
-              />
-            </CardTitle>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
-            <CardTitle
-              title="Ejecución de extracción de mineral Turno Noche (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
-              classIcon="fill-yellow-500 h-7 w-14"
-              actions={
-                <div className="flex flex-row gap-2">
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <DonutAndSplineChartByHour
-                progressBarData={{
-                  total: planDay.totalTonnage,
-                  currentValue: baseStats.totalTMNight,
-                  prediction:
-                    (baseStats.totalTMNight / baseStats.totalUnitsNight) * 7,
-                  currentValueColor: "#ff5000",
-                  showDifference: false,
-                  forecastText: "Predicción",
-                }}
-                planDay={planDay}
-                mineralWeight={baseData.mineral}
-                chartData={tripsByShift.noche}
-              />
-            </CardTitle>
-            <CardTitle
-              title="Camion en Turno Noche (TM)"
-              subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
-              classIcon="fill-yellow-500 h-7 w-14"
-              actions={
-                <div className="flex flex-row gap-2">
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia positiva
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia negativa
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <LineAndBarChartByHour
-                mineralWeight={baseData.mineral}
-                chartColor="#ff5000"
-                planDay={planDay}
-                chartData={tripsByShift.noche}
-              />
-            </CardTitle>
-          </div>
-        )}
+      <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
+        <CardTitle
+          title={`Ejecución de extracción de mineral ${active.title} (TM)`}
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+          icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-16"
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <DonutAndSplineChartByHour
+            progressBarData={{
+              total: planDay?.totalTonnage,
+              currentValue: active.tm,
+              prediction: (active.tm / active.units) * 7,
+              currentValueColor: active.color,
+              showDifference: false,
+              forecastText: "Predicción",
+            }}
+            mineralWeight={baseData.mineral}
+            chartData={active.trips}
+            mode="day"
+            planDay={planDay}
+          />
+        </CardTitle>
+
+        <CardTitle
+          title={`Camión en ${active.title} (TM)`}
+          subtitle="Análisis de la cantidad de viajes realizados TRUCK"
+          icon={IconTruck}
+          classIcon="fill-yellow-500 h-7 w-14"
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia positiva
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia negativa
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex w-2 h-2 rounded-full" style={{background: active.color}}/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
+    >
+          <LineAndBarChartByHour
+            mineralWeight={baseData.mineral}
+            chartColor={active.color}
+            chartData={active.trips}
+            mode="day"
+            planDay={planDay}
+          />
+        </CardTitle>
+
         <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
           <DonutAndTableChart
             title="Causas de Desviación del Plan %"
@@ -559,13 +529,13 @@ const RealTimeByHourRT = () => {
                 title: "Disponibilidad",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
+                    ? baseStats.totalUnitsDay * isoDay * 12
+                    : baseStats.totalUnitsNight * isoDay * 12,
                 currentValue:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12 -
+                    ? baseStats.totalUnitsDay * isoDay * 12 -
                       baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * 12 -
+                    : baseStats.totalUnitsNight * isoDay * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
                 currentValueColor: "#ff5000",
               },
@@ -573,8 +543,8 @@ const RealTimeByHourRT = () => {
                 title: "Utilización",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
+                    ? baseStats.totalUnitsDay * isoDay * 12
+                    : baseStats.totalUnitsNight * isoDay * 12,
                 currentValue:
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
@@ -639,4 +609,4 @@ const RealTimeByHourRT = () => {
   );
 };
 
-export default RealTimeByHourRT;
+export default RealTimeByWeek;

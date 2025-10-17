@@ -1,5 +1,6 @@
 import { roundAndFormat } from "@/lib/utilsGeneral";
 import { AnimatedNumber } from "../CardItem";
+import "./styles.css"
 
 interface ProgressProps {
   title?: string;
@@ -9,6 +10,8 @@ interface ProgressProps {
   unit?: string;
   className?: string;
   showLegend?: boolean;
+  prediction?: number;
+  predictionText?: string;
   size?: "small" | "medium" | "large";
 }
 
@@ -18,12 +21,14 @@ export default function Progress({
   total = 0,
   color = "#fac34c",
   unit = "TM",
+  prediction,
+  predictionText,
   className = "border border-zinc-100 shadow-sm rounded-xl p-4",
   showLegend = true,
   size = "medium"
 } : ProgressProps) {
   const progress = total > 0 ? Math.min((value / total) * 100, 100) : 0;
-
+  const predictionPosition = prediction !== undefined ? Math.min((prediction / total) * 100, 100) : 0;
   return (
     <div className={`flex flex-col gap-0.5 ${className}`}>
       {title && (
@@ -44,7 +49,7 @@ export default function Progress({
           </div>
         )}
 
-        <div className="flex-1 h-8 bg-[#b8b8b8] rounded-full overflow-hidden relative">
+        <div className="relative flex-1 h-8 bg-[#b8b8b8] rounded-full">
           <div
             className="h-full rounded-full flex items-center"
             style={{ width: `${progress}%`, backgroundColor: color }}
@@ -52,10 +57,32 @@ export default function Progress({
             <h1 className="absolute left-0 top-0 h-full flex flex-row items-center gap-1 font-bold text-xs text-white lg:text-xs pl-4">
               Completado <AnimatedNumber value={value} loading={false} /> de {roundAndFormat(total)} {unit}
             </h1>
-            {/* <span className="text-zinc-900 text-[10px] leading-none mt-0.5 font-bold ml-2">
-              {progress.toFixed(1)}%
-            </span> */}
           </div>
+          {prediction !== undefined && prediction > 0 && (
+            <div
+              style={{
+                height: "calc(100% + 15px)",
+                left:`${predictionPosition}%`,
+                borderLeft: `2px dotted ${color || "#032e20"}`
+              }}
+              className="absolute bottom-0"
+            >
+              <p
+                className="absolute top-0 right-0 flex flex-row gap-2 items-center font-semibold text-[12px]"
+                style={{
+                  bottom: "calc(100% + 0px)"
+                }}
+              >
+                {predictionText ? predictionText : "Forecast"}
+                <span
+                  className="text-white py-0.5 px-2 rounded-xl text-[11px] text-nowrap"
+                  style={{backgroundColor: `${color || "#04c285"}`}}
+                >
+                  {prediction} {unit}
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

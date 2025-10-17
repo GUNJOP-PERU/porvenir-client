@@ -11,10 +11,12 @@ import { useMemo } from "react";
 interface IDonutAndSplineChartByHourProps {
   title?: string;
   mineralWeight: number;
+  chartColor?: string;
   progressBarData: {
     total: number;
     currentValue: number;
-    prediction: number;
+    prediction?: number;
+    predictionText?: string;
     currentValueColor: string;
     showDifference: boolean;
     forecastText: string;
@@ -32,7 +34,7 @@ interface IDonutAndSplineChartByHourProps {
   }
 }
 
-const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
+const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
   const xLabels =
     mode === "day"
       ? chartData.map((item) => item.label) 
@@ -167,13 +169,13 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
         name: "Real",
         data: acummulativeTripsCounts,
         xAxis: 0,
-        fillColor: "#ffa47a",
-        color: "#ff5000",
+        fillColor: chartColor + "80",
+        color: chartColor,
         animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#ff5000",
+          lineColor: chartColor,
         },
       },
     ],
@@ -239,7 +241,7 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
 
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex flex-row items-center w-full">
+      {/* <div className="flex flex-row items-center w-full">
         <DonutChart
           title=""
           size="mini"
@@ -254,11 +256,13 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
           value={progressBarData.currentValue}
           total={progressBarData.total}
           color={progressBarData.currentValueColor}
+          prediction={progressBarData.prediction}
+          predictionText={progressBarData.predictionText}
           unit="TM"
           className="py-0 px-2 w-full"
           showLegend={false}
         />
-      </div>
+      </div> */}
       <HighchartsReact 
         highcharts={Highcharts} 
         options={options} 

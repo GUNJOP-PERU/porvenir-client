@@ -23,6 +23,7 @@ const SplineFrontLaborChart = ({ trips, mineralWeight, planDay }: SplineFrontLab
   const tripsByFrontLabor = useMemo(() => {
     const grouped = trips.reduce((acc, trip) => {
       const frontLabor = trip.frontLabor || 'Sin asignar';
+      console.log("frontLabor:", frontLabor);
       if (!acc[frontLabor]) {
         acc[frontLabor] = 0;
       }

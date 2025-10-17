@@ -47,8 +47,9 @@ import HomeUsers from "./pages/management/Users";
 
 // Beacon Real Time
 import DetectionReportRT from "./pages/beaconRT/DetectionReport";
-import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeek";
-import RealTimeByHourRT from "./pages/beaconRT/RealTimeByTurn";
+import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeekMineral";
+import RealTimeByHourMineralRT from "./pages/beaconRT/RealTimeByTurnMineral";
+import RealTimeByHourDesmonteRT from "./pages/beaconRT/RealTimeByTurnDesmonte";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";
@@ -88,7 +89,8 @@ const protectedRoutes = [
 
   // Beacon RT
   { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
-  { path: "dashboard/beacon/detection-report-turn-rt", element: <RealTimeByHourRT /> },
+  { path: "dashboard/beacon/detection-report-turn-mineral-rt", element: <RealTimeByHourMineralRT /> },
+  { path: "dashboard/beacon/detection-report-turn-desmonte-rt", element: <RealTimeByHourDesmonteRT /> },
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
   { path: "dashboard/beacon/detection-report-month-rt", element: <RealTimeByMonthRT /> },
   { path: "dashboard/beacon/trips-description-rt", element: <TripsDescriptionRT /> },
