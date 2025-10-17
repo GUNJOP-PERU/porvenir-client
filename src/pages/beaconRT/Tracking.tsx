@@ -518,7 +518,7 @@ const TruckTracking = () => {
         <Circle
           key={`route-circle-${ubication.id}`}
           center={position}
-          radius={100}
+          radius={80}
           pathOptions={{
             color: color,
             fillColor: "black",
@@ -648,7 +648,7 @@ const TruckTracking = () => {
         <Circle
           key={`superficie-circle-${beacon.id}`}
           center={[beacon.position.latitud, beacon.position.longitud]}
-          radius={100}
+          radius={50}
           pathOptions={{
             color: "#ccc8af",
             fillColor: "black",
