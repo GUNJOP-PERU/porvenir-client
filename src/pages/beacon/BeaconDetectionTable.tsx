@@ -35,6 +35,8 @@ const BeaconDetectionTable = () => {
     refetch,
   } = useFetchData("beacon-detection", `beacon-track?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
 
+  console.log("beacon data", data)
+
   const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   const filteredData = useMemo(() => {
@@ -74,77 +76,44 @@ const BeaconDetectionTable = () => {
       size: 150,
     },
     {
-      accessorKey: "mac",
+      accessorKey: "ubicationType",
       header: "Ubicación Beacon",
       cell: ({ getValue }) => {
-        const mac = beaconsData.find(b => b.mac.toLowerCase() === getValue().toLowerCase());
         return (
           <div className="font-mono text-sm text-gray-700">
-            {mac ? mac.location : getValue()}
+            {getValue()}
           </div>
         )
       },
       size: 180,
     },
     {
-      accessorKey: "mac",
+      accessorKey: "ubication",
       header: "Nombre del Beacon",
       cell: ({ getValue }) => {
-        const mac = beaconsData.find(b => b.mac.toLowerCase() === getValue().toLowerCase());
         return (
           <div className="font-mono text-sm text-gray-700">
-            {mac ? mac.description : getValue()}
+            {getValue()}
           </div>
         )
       },
       size: 180,
-    },
-    {
-      accessorKey: "connection",
-      header: "Estado",
-      cell: ({ getValue }) => {
-        const status = getValue();
-        return (
-          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-            status === 'online' 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-red-100 text-red-800'
-          }`}>
-            {status === 'online' ? 'En línea' : 'Desconectado'}
-          </div>
-        );
-      },
-      size: 120,
     },
     {
       accessorKey: "duration",
       header: "Duración (s)",
-      cell: ({ getValue }) => (
-        <div className="text-center font-mono">
-          {getValue()}s
-        </div>
-      ),
+      cell: ({ getValue }) => {
+        const timeInHours = Math.floor(getValue() / 3600);
+        const timeInMin = Math.floor(getValue() / 60);
+        const timeInSec = getValue() % 60;
+
+        return(
+          <div className="text-center font-mono">
+            {timeInHours > 0 ? `${timeInHours}hr ${timeInMin}m ${timeInSec}s` : timeInMin > 0 ? `${timeInMin}min, ${timeInSec}s` : `${timeInSec}s`}
+          </div>
+        )
+      },
       size: 120,
-    },
-    {
-      accessorKey: "distance",
-      header: "Distancia (m)",
-      cell: ({ getValue }) => (
-        <div className="text-center font-mono text-purple-600">
-          {getValue()?.toFixed(2)}m
-        </div>
-      ),
-      size: 130,
-    },
-    {
-      accessorKey: "rssi_mean",
-      header: "RSSI Promedio",
-      cell: ({ getValue }) => (
-        <div className="text-center font-mono">
-          {getValue().toFixed(2)} dBm
-        </div>
-      ),
-      size: 130,
     },
     {
       accessorKey: "wap",
@@ -156,53 +125,6 @@ const BeaconDetectionTable = () => {
       ),
       size: 130,
     },
-    // {
-    //   accessorKey: "wap_mac",
-    //   header: "WAP MAC",
-    //   cell: ({ getValue }) => (
-    //     <div className="text-center font-mono">
-    //       {getValue()}
-    //     </div>
-    //   ),
-    //   size: 130,
-    // },
-    // {
-    //   accessorKey: "rssi_min",
-    //   header: "RSSI Min",
-    //   cell: ({ getValue }) => (
-    //     <div className="text-center font-mono text-red-600">
-    //       {getValue()} dBm
-    //     </div>
-    //   ),
-    //   size: 100,
-    // },
-    // {
-    //   accessorKey: "rssi_max",
-    //   header: "RSSI Max",
-    //   cell: ({ getValue }) => (
-    //     <div className="text-center font-mono text-green-600">
-    //       {getValue()} dBm
-    //     </div>
-    //   ),
-    //   size: 100,
-    // },
-    // {
-    //   accessorKey: "rssi",
-    //   header: "Lecturas RSSI",
-    //   cell: ({ getValue }) => {
-    //     const rssiData = getValue() || [];
-    //     return (
-    //       <div className="text-xs space-y-1 max-w-48">
-    //         {rssiData.slice(0, 30).map((reading, index) => (
-    //           <div key={index} className="flex justify-between bg-gray-50 px-2 py-1 rounded">
-    //             <span className="font-mono">{format(new Date(reading.datetime), "HH:mm:ss")}</span>
-    //           </div>
-    //         ))}
-    //       </div>
-    //     );
-    //   },
-    //   size: 200,
-    // },
     {
       accessorKey: "f_inicio",
       header: "Fecha Inicio",
@@ -229,32 +151,32 @@ const BeaconDetectionTable = () => {
       },
       size: 160,
     },
-    // {
-    //   accessorKey: "createdAt",
-    //   header: "Hora de creación",
-    //   cell: ({ getValue }) => {
-    //     const timestamp = getValue();
-    //     return (
-    //       <div className="text-sm">
-    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-    //       </div>
-    //     );
-    //   },
-    //   size: 160,
-    // },
-    // {
-    //   accessorKey: "updatedAt",
-    //   header: "Hora de Update",
-    //   cell: ({ getValue }) => {
-    //     const timestamp = getValue();
-    //     return (
-    //       <div className="text-sm">
-    //         {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-    //       </div>
-    //     );
-    //   },
-    //   size: 160,
-    // },
+    {
+      accessorKey: "createdAt",
+      header: "Hora de creación",
+      cell: ({ getValue }) => {
+        const timestamp = getValue();
+        return (
+          <div className="text-sm">
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+          </div>
+        );
+      },
+      size: 160,
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Hora de Update",
+      cell: ({ getValue }) => {
+        const timestamp = getValue();
+        return (
+          <div className="text-sm">
+            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+          </div>
+        );
+      },
+      size: 160,
+    },
   ], []);
 
   // Configuración de la tabla

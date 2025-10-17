@@ -142,6 +142,17 @@ html[dir] .dark ::-webkit-scrollbar-track {
   }
 }
 
+/* @media (min-width: 1920px) {
+  html {
+    transform: scale(1.5);
+    transform-origin: top left;
+  }
+  body {
+    width: 66.666vw;
+    overflow-x: hidden;
+  }
+} */
+
 .animate-spin-once {
   animation: spin-once 1s ease-in-out
 }
