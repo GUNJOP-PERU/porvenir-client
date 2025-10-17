@@ -102,10 +102,16 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/underground-tracking",
           },
           {
-            name: "Reporte por Turno",
-            href: "/dashboard/beacon/detection-report-turn-rt",
+            name: "Reporte por Turno Mineral",
+            href: "/dashboard/beacon/detection-report-turn-mineral-rt",
             icon: <ChartArea />,
-            active: pathname === "/dashboard/beacon/detection-report-turn-rt",
+            active: pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
+          },
+          {
+            name: "Reporte por Turno Desmonte",
+            href: "/dashboard/beacon/detection-report-turn-desmonte-rt",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/beacon/detection-report-turn-desmonte-rt",
           },
           {
             name: "Reporte por Semana",

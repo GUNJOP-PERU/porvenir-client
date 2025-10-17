@@ -11,6 +11,7 @@ import { useMemo } from "react";
 interface IDonutAndSplineChartByHourProps {
   title?: string;
   mineralWeight: number;
+  chartColor?: string;
   progressBarData: {
     total: number;
     currentValue: number;
@@ -32,7 +33,7 @@ interface IDonutAndSplineChartByHourProps {
   }
 }
 
-const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
+const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
   const xLabels =
     mode === "day"
       ? chartData.map((item) => item.label) 
@@ -167,13 +168,13 @@ const DonutAndSplineChartByHour = ({ progressBarData, chartData, mineralWeight, 
         name: "Real",
         data: acummulativeTripsCounts,
         xAxis: 0,
-        fillColor: "#ffa47a",
-        color: "#ff5000",
+        fillColor: chartColor + "80",
+        color: chartColor,
         animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#ff5000",
+          lineColor: chartColor,
         },
       },
     ],

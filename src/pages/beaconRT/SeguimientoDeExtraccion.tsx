@@ -114,9 +114,12 @@ const SeguimientoDeExtraccion = () => {
 
     const allTrips = mineralTripsData.map((unit) => unit.trips).flat();
 
+    console.log(allTrips.map(e => {
+    }));
+
     return allTrips.map((trip) => ({
       ...trip,
-      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0].name : "Otros",
+      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0] : "Otros",
     }));
   }, [mineralTripsData]);
 
@@ -127,7 +130,7 @@ const SeguimientoDeExtraccion = () => {
 
     return allTrips.map((trip) => ({
       ...trip,
-      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0].name : "Otros",
+      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0] : "Otros",
     }));
   }, [mineralTripsData]);
 
