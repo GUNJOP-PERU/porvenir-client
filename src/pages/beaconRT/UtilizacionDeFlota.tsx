@@ -197,9 +197,11 @@ const ProductionStatus = () => {
       const isSuperficie = superficieLocation.find(
         (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
       );
-      const isMaintenance = maintenanceLocation.find(
-        (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-      );
+     const isMaintenance = maintenanceLocation.find((e) =>
+  e.mac.some(
+    (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+  )
+);
       const isUnderground = ubicationBocamina.find(
         (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
       );
