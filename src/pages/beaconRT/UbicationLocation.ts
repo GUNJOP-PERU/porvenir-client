@@ -855,8 +855,8 @@ const ubicationDataSub : IBeaconUbication[] = [
     description: "PARRILLA 1",
     color: "#0EB1D2", 
     position: {
-      latitud: -13.07910,
-      longitud: -75.99340,
+      latitud: -13.079300,
+      longitud: -75.99380,
     },
     createdAt: "2024-07-21T19:12:00Z",
     updatedAt: "2024-08-21T19:12:00Z",
@@ -869,8 +869,8 @@ const ubicationDataSub : IBeaconUbication[] = [
     description: "PARRILLA 2",
     color: "#0EB1D2", 
     position: {
-      latitud: -13.07930,
-      longitud: -75.99130,
+      latitud: -13.079600,
+      longitud: -75.99190,
     },
     createdAt: "2024-07-21T19:09:00Z",
     updatedAt: "2024-08-21T19:09:00Z",
@@ -883,8 +883,8 @@ const ubicationDataSub : IBeaconUbication[] = [
     description: "POCKET 3",
     color: "#0EB1D2", 
     position: {
-      latitud: -13.07900,
-      longitud: -75.99000,
+      latitud: -13.07930,
+      longitud: -75.99070,
     },
     createdAt: "2024-07-21T19:11:00Z",
     updatedAt: "2024-08-21T19:11:00Z",
