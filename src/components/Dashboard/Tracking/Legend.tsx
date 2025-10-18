@@ -1,6 +1,7 @@
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 import { ubicationDataSub } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
+import { useMemo } from "react";
 
 type Plan = {
   phase: string; // "mineral" o "desmonte"
@@ -14,7 +15,8 @@ type Plan = {
 export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
   const { data: planData = [] } = useFetchData<Plan[]>(
     "plan-extract-realtime",
-    "planDay/byDay"
+    "planDay/byDay",
+    { refetchInterval: 2000 }
   );
 
   const subterraneoMacs = ubicationDataSub.map((u) => u.mac.toLowerCase());
@@ -64,29 +66,29 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
     },
   ] as const;
 
+  const planSummary = useMemo(() => {
+    let total = 0;
+    let mineral = 0;
+    let desmonte = 0;
 
-  let totalVolquetes = 0;
-  let mineralVolquetes = 0;
-  let desmonteVolquetes = 0;
-
-  planData.forEach((plan) => {
-    const cantidad = plan.volquetes?.length || 0;
-    totalVolquetes += cantidad;
-
-    if (plan.phase?.toLowerCase() === "mineral") {
-      mineralVolquetes += cantidad;
-    } else if (plan.phase?.toLowerCase() === "desmonte") {
-      desmonteVolquetes += cantidad;
+    for (const plan of planData) {
+      const cantidad = plan.volquetes?.length || 0;
+      total += cantidad;
+      if (plan.phase?.toLowerCase() === "mineral") mineral += cantidad;
+      else if (plan.phase?.toLowerCase() === "desmonte") desmonte += cantidad;
     }
-  });
 
-  const mineralPercent = totalVolquetes
-    ? ((mineralVolquetes / totalVolquetes) * 100).toFixed(1)
-    : "0";
-  const desmontePercent = totalVolquetes
-    ? ((desmonteVolquetes / totalVolquetes) * 100).toFixed(1)
-    : "0";
+    const mineralPercent = total ? ((mineral / total) * 100).toFixed(1) : "0";
+    const desmontePercent = total ? ((desmonte / total) * 100).toFixed(1) : "0";
 
+    return {
+      total,
+      mineral,
+      desmonte,
+      mineralPercent,
+      desmontePercent,
+    };
+  }, [planData]);
 
   return (
     <div className="absolute top-8 right-2 z-10 select-none flex flex-col justify-end gap-1">
@@ -117,33 +119,37 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
         );
       })}
 
-      {planData.length > 0 && (
-        <div className="bg-black/80 border border-zinc-700 rounded-xl px-2 py-2 text-zinc-200 flex flex-col items-center mt-2">
-          {/* <span className="font-bold text-[11px] text-green-400">PLAN</span> */}
-          <div className="flex items-center gap-2 text-[10px] leading-tight">
-            <div className="flex flex-col items-center justify-center gap-[1px] leading-none w-12 h-12 bg-red-900 rounded-xl">
-              <span className="text-[8px] font-semibold leading-none text-zinc-300">TOTAL</span>
-              <span className=" text-white font-extrabold text-2xl leading-none text-center">
-                {totalVolquetes} 
+      <div className="bg-black/80 border border-zinc-700 rounded-xl px-2 py-2 text-zinc-200 flex flex-col items-center mt-2">
+        {/* <span className="font-bold text-[11px] text-green-400">PLAN</span> */}
+        <div className="flex items-center gap-2 text-[10px] leading-tight">
+          <div className="flex flex-col items-center justify-center gap-[1px] leading-none w-12 h-12 bg-red-900 rounded-xl">
+            <span className="text-[8px] font-semibold leading-none text-zinc-300">
+              TOTAL
+            </span>
+            <span className=" text-white font-extrabold text-2xl leading-none text-center">
+              {planSummary.total}
+            </span>
+          </div>
+          <div className="flex flex-col gap-2 leading-none">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-semibold text-zinc-300">
+                MINERAL
+              </span>
+              <span className="font-bold text-[#1dd3b0] text-base leading-none">
+                {planSummary.mineral} | {planSummary.mineralPercent}%
               </span>
             </div>
-            <div className="flex flex-col gap-2 leading-none">
-              <div className="flex flex-col items-center">
-                <span className="text-[10px] font-semibold text-zinc-300">MINERAL</span>
-                <span className="font-bold text-[#1dd3b0] text-base leading-none">
-                  {mineralVolquetes} | {mineralPercent}%
-                </span>
-              </div>
-              <div className="flex flex-col items-center">
-                 <span className="text-[10px] font-semibold text-zinc-300">DESMONTE</span>
-                <span className="font-bold text-[#daa588] text-base leading-none">
-                  {desmonteVolquetes} | {desmontePercent}%
-                </span>
-              </div>
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-semibold text-zinc-300">
+                DESMONTE
+              </span>
+              <span className="font-bold text-[#daa588] text-base leading-none">
+                {planSummary.desmonte} | {planSummary.desmontePercent}%
+              </span>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
