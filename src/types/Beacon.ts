@@ -111,7 +111,8 @@ export type BeaconTruckStatus = {
   status: "inoperativo" | "operativo" | "mantenimiento",
   connectivity: "online" | "offline",
   updatedAt: string,
-  comments: string[]
+  comments: string[],
+  direction: "entrada" | "salida" | "-"
 }
 
 export type BocaminaByUnits = {
