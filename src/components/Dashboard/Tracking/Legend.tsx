@@ -1,9 +1,23 @@
+import { useFetchData } from "@/hooks/useGlobalQueryV2";
 import { ubicationDataSub } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 
-export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
-  const subterraneoMacs = ubicationDataSub.map((u) => u.mac.toLowerCase());
+type Plan = {
+  phase: string; // "mineral" o "desmonte"
+  volquetes: string[];
+  tonnage: number;
+  shift: string;
+  state: string;
+  _id: string;
+};
 
+export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
+  const { data: planData = [] } = useFetchData<Plan[]>(
+    "plan-extract-realtime",
+    "planDay/byDay"
+  );
+
+  const subterraneoMacs = ubicationDataSub.map((u) => u.mac.toLowerCase());
   const counts = {
     superficie: { total: 0, online: 0, offline: 0 },
     subterraneo: { total: 0, online: 0, offline: 0 },
@@ -17,18 +31,15 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
     const status = truck.status?.toLowerCase() ?? "";
     const connectivity = truck.connectivity?.toLowerCase() ?? "";
 
-    let key: keyof typeof counts | null = null;
-
+    let key: keyof typeof counts;
     if (status.includes("inoperativo")) key = "correctivo";
     else if (status.includes("mantenimiento")) key = "mantenimiento";
     else if (isSub) key = "subterraneo";
     else key = "superficie";
 
-    if (key) {
-      counts[key].total += 1;
-      if (connectivity === "online") counts[key].online += 1;
-      else if (connectivity === "offline") counts[key].offline += 1;
-    }
+    counts[key].total += 1;
+    if (connectivity === "online") counts[key].online += 1;
+    else if (connectivity === "offline") counts[key].offline += 1;
   });
 
   const tipos = [
@@ -38,12 +49,7 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
       color: "#22C55E",
       showPercent: true,
     },
-    {
-      key: "subterraneo",
-      title: "MINA",
-      color: "#dbdbdb",
-      showPercent: false,
-    },
+    { key: "subterraneo", title: "MINA", color: "#dbdbdb", showPercent: false },
     {
       key: "mantenimiento",
       title: "MANTTO PREVENTIVO",
@@ -58,8 +64,32 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
     },
   ] as const;
 
+
+  let totalVolquetes = 0;
+  let mineralVolquetes = 0;
+  let desmonteVolquetes = 0;
+
+  planData.forEach((plan) => {
+    const cantidad = plan.volquetes?.length || 0;
+    totalVolquetes += cantidad;
+
+    if (plan.phase?.toLowerCase() === "mineral") {
+      mineralVolquetes += cantidad;
+    } else if (plan.phase?.toLowerCase() === "desmonte") {
+      desmonteVolquetes += cantidad;
+    }
+  });
+
+  const mineralPercent = totalVolquetes
+    ? ((mineralVolquetes / totalVolquetes) * 100).toFixed(1)
+    : "0";
+  const desmontePercent = totalVolquetes
+    ? ((desmonteVolquetes / totalVolquetes) * 100).toFixed(1)
+    : "0";
+
+
   return (
-    <div className="absolute top-8 right-2 z-10 select-none flex flex-col justify-end gap-0.5">
+    <div className="absolute top-8 right-2 z-10 select-none flex flex-col justify-end gap-1">
       {tipos.map((t) => {
         const item = counts[t.key];
         const total = item.total;
@@ -71,10 +101,10 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
               className="flex flex-col items-center justify-center gap-0.5 rounded-2xl px-3 py-2 relative shadow-lg"
               style={{ backgroundColor: t.color }}
             >
-              <span className="font-extrabold text-[10px] leading-none text-center line-clamp-2">
-                {t.title}{" "}
+              <span className="font-extrabold text-[10px] leading-none text-center">
+                {t.title}
               </span>
-              <span className="font-extrabold text-base leading-none text-center">
+              <span className="font-extrabold text-md leading-none text-center">
                 {total} CAM
               </span>
               {t.showPercent && (
@@ -83,18 +113,37 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
                 </div>
               )}
             </div>
-            {/* <div className="flex gap-1 text-[12px]">
-                <div className="flex items-center gap-0.5 text-[#a98467] leading-none">
-                  <IconMineral className="size-3" /> {item.online}
-                </div>
-                <div className="flex items-center gap-0.5 text-[#a98467] leading-none">
-                  <IconClearance className="size-3 fill-[#a98467]" />{" "}
-                  {item.offline}
-                </div>
-              </div> */}
           </div>
         );
       })}
+
+      {planData.length > 0 && (
+        <div className="bg-black/80 border border-zinc-700 rounded-xl px-2 py-2 text-zinc-200 flex flex-col items-center mt-2">
+          {/* <span className="font-bold text-[11px] text-green-400">PLAN</span> */}
+          <div className="flex items-center gap-2 text-[10px] leading-tight">
+            <div className="flex flex-col items-center justify-center gap-[1px] leading-none w-12 h-12 bg-red-900 rounded-xl">
+              <span className="text-[8px] font-semibold leading-none text-zinc-300">TOTAL</span>
+              <span className=" text-white font-extrabold text-2xl leading-none text-center">
+                {totalVolquetes} 
+              </span>
+            </div>
+            <div className="flex flex-col gap-2 leading-none">
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] font-semibold text-zinc-300">MINERAL</span>
+                <span className="font-bold text-[#1dd3b0] text-base leading-none">
+                  {mineralVolquetes} | {mineralPercent}%
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                 <span className="text-[10px] font-semibold text-zinc-300">DESMONTE</span>
+                <span className="font-bold text-[#daa588] text-base leading-none">
+                  {desmonteVolquetes} | {desmontePercent}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
