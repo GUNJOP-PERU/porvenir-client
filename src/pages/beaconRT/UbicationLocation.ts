@@ -80,19 +80,19 @@ export const ubicationBocamina: IBeaconUbication[] = [
 ]
 
 export const superficieLocation: IBeaconUbication[] = [
-  {
-    id: 1,
-    mac: "BC:57:29:08:08:26",
-    name: "RD_01",
-    location: "ruta superficie",
-    description: "Ruta Parqueo de Volquetes",
-    position: {
-      latitud: -13.082778,
-      longitud: -75.995833,
-    },
-    createdAt: "2024-07-23T12:27:00Z",
-    updatedAt: "2024-08-23T12:27:00Z",
-  },
+  // {
+  //   id: 1,
+  //   mac: "BC:57:29:08:08:26",
+  //   name: "RD_01",
+  //   location: "ruta superficie",
+  //   description: "Ruta Parqueo de Volquetes",
+  //   position: {
+  //     latitud: -13.082778,
+  //     longitud: -75.995833,
+  //   },
+  //   createdAt: "2024-07-23T12:27:00Z",
+  //   updatedAt: "2024-08-23T12:27:00Z",
+  // },
   // {
   //   id: 2,
   //   mac: "BC:57:29:03:5C:89",
@@ -368,7 +368,7 @@ const rutasEstaticas = [
   {
     id: "recorrido-bc1800-l",
     name: "RECORRIDO-BC1800-L",
-    color: "#dbdbdb", 
+    color: "#8d9391ff", 
     positions: [
       [-13.07857370919089, -75.99240717763654],
       [-13.07857483557542, -75.99248757829257],
@@ -476,7 +476,7 @@ const rutasEstaticas = [
   {
     id: "recorrido-bc1875-k",
     name: "RECORRIDO BC1875-K",
-     color: "#dbdbdb", 
+     color: "#8d9391ff", 
     positions: [
         [-13.07405790143019, -75.98610021606434],
         [-13.07393456477424, -75.98626814149539],
@@ -501,7 +501,7 @@ const rutasEstaticas = [
   {
     id: "ruta-b",
     name: "RUTA B",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
         [-13.07780393824231, -75.9919374066906],
         [-13.07728523882515, -75.99215461495686],
@@ -604,7 +604,7 @@ const rutasEstaticas = [
   {
     id: "recorrido-bc1910-h",
     name: "RECORRIDO BC1910-H",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
       [-13.07599772729109, -75.98811131978674],
       [-13.07621061862619, -75.98828678949575],
@@ -638,7 +638,7 @@ const rutasEstaticas = [
   {
     id: "recorrido-bc1910-i",
     name: "RECORRIDO BC1910-I",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
       [-13.07829033022085, -75.9896199271893], 
       [-13.0785230947842, -75.98972175799609],
@@ -655,7 +655,7 @@ const rutasEstaticas = [
   },{
     id: "traslado-taller",
     name: "TRASLADO TALLER",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
         [-13.07924808845854, -75.99108285585424],
         [-13.07937299685874, -75.99119027529805],
@@ -674,7 +674,7 @@ const rutasEstaticas = [
   {
     id: "transcurso-pahuaypite-1",
     name: "TRANSCURSO PAHUAYPITE-1",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
         [-13.08133185581147, -75.99285419548262],
         [-13.08136675910239, -75.9929344521566],
@@ -701,7 +701,7 @@ const rutasEstaticas = [
   },{
     id: "transcurso-pahuaypite-2",
     name: "TRANSCURSO PAHUAYPITE-2",
-     color: "#dbdbdb",  
+     color: "#8d9391ff",  
     positions: [
         [-13.08327866342607, -75.99992177841399],
         [-13.08342754806576, -75.99991591907832],
