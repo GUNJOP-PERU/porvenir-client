@@ -355,7 +355,7 @@ const ProductionStatus = () => {
   };
 
   return (
-    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 grid-rows-3 xl:grid-rows-1">
+    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 grid-rows-3 xl:grid-rows-1">
       <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
@@ -473,7 +473,7 @@ const ProductionStatus = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
+      {/* <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
         >
@@ -526,9 +526,9 @@ const ProductionStatus = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
-      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+      {/* <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
@@ -592,7 +592,7 @@ const ProductionStatus = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col bg-[#2B302B] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
