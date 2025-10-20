@@ -1,143 +1,95 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-// Utils
-import {
-  getCurrentWeekDates,
-  getCurrentWeekDatesFormatted,
-} from "@/utils/dateUtils";
+import { useMemo } from "react";
 import { roundAndFormat } from "@/lib/utilsGeneral";
+// Types
+import type { BeaconUnitTrip } from "@/types/Beacon";
 
 interface LineAndBarChartByDayProps {
   title?: string;
   mineralWeight: number;
   chartColor?: string;
   chartData: {
-    totalTrips: number;
-    statsByDay: {
+    date: string;
+    label: string;
+    trips: BeaconUnitTrip[];
+  }[];
+  planDay: {
+    totalTonnage: number;
+    planDay: {
       date: string;
-      totalTrips: number;
+      tonnage: number;
     }[];
-  };
+  }
 }
 
-const LineAndBarChartByDay = ({
-  title,
-  chartData,
-  mineralWeight,
-  chartColor = "#000000",
-}: LineAndBarChartByDayProps) => {
-  const sortDataByDay = (data: LineAndBarChartByDayProps["chartData"]) => {
-    if (!data?.statsByDay)
-      return {
-        data: [],
-        acumulativeData: [],
-      };
+const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#000000", planDay }: LineAndBarChartByDayProps) => {
 
-    const weekDates = getCurrentWeekDates();
-    const dataMap: any = {};
-    data.statsByDay.forEach((item) => {
-      dataMap[item.date] = {
-        totalTrips: item.totalTrips,
-      };
-    });
+  const xLabels = chartData.map(item => item.label ?? "")
+  const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
+  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
 
-    const completedStatsByDays = weekDates.map(
-      (date) =>
-        dataMap[date] || {
-          totalTrips: "",
-        }
-    );
-
-    const acumulativeData = completedStatsByDays.map((day, index) => {
-      const sum = completedStatsByDays
-        .slice(0, index + 1)
-        .reduce((acc, val) => acc.totalTrips + (val || 0), 0);
-      return day ? sum : "";
-    });
-
-    return {
-      data: completedStatsByDays.map((e) =>
-        e.totalTrips ? e.totalTrips * mineralWeight : ""
-      ),
-      acumulativeData: acumulativeData.map((e) => (e ? e * mineralWeight : "")),
-      dataText: completedStatsByDays.map((e) =>
-        e.totalTrips ? `${e.totalTrips * mineralWeight} ` : ""
-      ),
-      acumulativeDataText: acumulativeData.map((e) =>
-        e ? `${e * mineralWeight}` : ""
-      ),
-    };
-  };
-
-  const plan = new Array(7).fill(1200);
-
-  const diff = plan.map((exp, i) => {
-    const currentData = sortDataByDay(chartData).data;
+  const diffPlanDay = currentPlanDay.map((exp, i) => {
+    const currentData = tripsCounts;
     const value =
       typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
     const e = Math.abs(exp - value);
     return +e;
   });
 
-  const diffColor = plan.map((exp, i) => {
-    const currentData = sortDataByDay(chartData).data;
+  const diffColorPlanDay = currentPlanDay.map((exp, i) => {
+    const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
-      ? "#04c286"
-      : "#fe7887";
+      ? "#f9c83e"
+      : "#3c3c3c";
   });
-
-  const averageData = (array: number[]) => {
-    console.log(array);
-    if (array.length === 0) {
-      return 0;
-    }
-    const suma = array.reduce(
-      (acumulador, valor) => acumulador + Number(valor),
-      0
-    );
-    return suma / array.length;
-  };
 
   const options = {
     chart: {
       type: "column",
-      height: 280,
-      // margin: [50, 20, 70, 20]
+      height: 300,
+      marginBottom: 50,
+      marginTop: 40,
+      marginLeft: 50,
+      marginRight: 0,
+      spacing: [0, 0, 0, 0],
+      animation: false
     },
     title: "",
     xAxis: [
       {
         title: "",
-        categories: sortDataByDay(chartData).dataText,
+        categories: tripsCounts.map(value => `${value ? roundAndFormat(value) : "-"} TM`),
         opposite: false,
         lineColor: "transparent",
         labels: {
           style: {
             color: "#000000",
-            fontSize: "0.8em",
+            textDecoration: "underline",
+            fontSize: "0.9em",
             fontWeight: "bold",
           },
         },
       },
       {
         title: "",
-        categories: plan.map((e) => `${roundAndFormat(e)}`),
+        categories: planDay?.planDay.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [],
         opposite: false,
         lineColor: "transparent",
         labels: {
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
       },
       {
         title: "",
-        categories: getCurrentWeekDatesFormatted(),
+        categories: xLabels,
         opposite: true,
-        linkedTo: 1,
+        linkedTo: 0,
         lineColor: "#D9D9D9",
         labels: {
           style: {
@@ -152,7 +104,6 @@ const LineAndBarChartByDay = ({
       title: "",
       visible: false,
     },
-
     plotOptions: {
       column: {
         stacking: "normal",
@@ -179,22 +130,38 @@ const LineAndBarChartByDay = ({
     },
     series: [
       {
-        name: "Faltante",
-        data: diff,
-        colorByPoint: true,
-        colors: diffColor,
+        name: "Diferencia",
+        data: diffPlanDay.map((value, index) => {
+          const hasTrips = (tripsCounts[index] || 0) > 0;
+          return {
+            y: value,
+            color: hasTrips ? diffColorPlanDay[index] : 'transparent',
+            borderColor: hasTrips ? diffColorPlanDay[index] : '#6b7280',
+            borderWidth: hasTrips ? 0 : 2
+          };
+        }),
         xAxis: 1,
+        visible: true,
+        showInLegend: true,
+        animation: false,
         dataLabels: {
           enabled: true,
-          formatter: function () {
-            return `${roundAndFormat(diff[this.point.index])}`;
+          formatter: function (this: any) {
+            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
           },
         },
       },
       {
-        name: "Extraído",
-        data: sortDataByDay(chartData).data,
+        name: "Plan",
+        data: tripsCounts.map((e, i) => {
+          const planValue = currentPlanDay && currentPlanDay[i] !== undefined ? currentPlanDay[i] : 0;
+          if (e === 0) return NaN;
+          return e > planValue ? planValue : e;
+        }),
         color: chartColor,
+        visible: true,
+        showInLegend: true,
+        animation: false,
       },
     ],
     tooltip: {
@@ -210,21 +177,35 @@ const LineAndBarChartByDay = ({
         fontSize: "0.65em",
         zIndex: 10,
       },
-      formatter: function () {
-        const categoryName =
-          this.points[0].point.category || getCurrentWeekDates()[this.x];
+      formatter: function (this: any) {
+        const categoryName = this.points[0]?.point?.category || xLabels[this.x];
         let tooltipText = `<b>${categoryName}</b><br/>`;
+        // Mostrar siempre el valor de "Extraído"
+        const extraido = this.points.find((p: any) => p.series.name === "Extraído");
+        if (extraido) {
+          tooltipText += `<span style='color:${extraido.color}'>●</span> Extraído: <b>${roundAndFormat(extraido.y)} TM</b><br/>`;
+        }
         this.points.forEach(function (point: any) {
-          tooltipText += `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y} TM</b><br/>`;
+          if (point.series.name !== "Extraído") {
+            tooltipText += `<span style='color:${point.color}'>●</span> ${point.series.name}: <b>${roundAndFormat(point.y)} TM</b><br/>`;
+          }
         });
         return tooltipText;
       },
     },
     legend: {
-      align: "right",
-      verticalAlign: "top",
-      layout: "horizontal",
+      align: "left",
+      verticalAlign: "bottom",
+      layout: "vertical",
       floating: false,
+      labelFormatter: function (this: any) {
+        if (this.index === 0 || this.index === 1) {
+          return `<span style='color:#000000'>Real</span>`;
+        } else {
+          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+        }
+      },
+      useHTML: true,
       itemStyle: {
         color: "#A6A6A6",
         fontSize: "0.55em",
@@ -232,39 +213,34 @@ const LineAndBarChartByDay = ({
         textTransform: "uppercase",
       },
       itemHoverStyle: { color: "black" },
-      symbolWidth: 10,
-      symbolHeight: 9,
+      symbolWidth: 0,
+      symbolHeight: 0,
       symbolRadius: 2,
-      itemMarginTop: 0,
+      itemMarginTop: 4,
       itemMarginBottom: 0,
+      x: 0,
+      y: 0,
     },
     credits: {
       enabled: false,
     },
   };
 
+  const chartKey = useMemo(() => {
+    return JSON.stringify({
+      dataLength: chartData?.length || 0,
+      totalTrips: chartData?.reduce((acc, val) => acc + val.trips.length, 0) || 0,
+    });
+  }, [chartData]);
+
   return (
     <>
       <h3 className="font-bold text-center text-sm">{title}</h3>
-    
-        {/* <div className="flex flex-col">
-          <div className="flex items-center grow">Icono</div>
-          <div className="flex flex-col gap-0">
-            <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#000000]">
-              Fact
-              <b className="font-bold text-[14px]/[15px] text-[#000000]">
-                {averageData(sortDataByDay(chartData).data).toFixed(0)} t
-              </b>
-            </span>
-            <span className="flex items-baseline gap-2 font-bold text-[12px] text-[#9696ab]">
-              Plan
-              <b className="font-bold text-[14px]/[15px] text-[#9696ab]">
-                {averageData(plan)} t
-              </b>
-            </span>
-          </div>
-        </div> */}
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <HighchartsReact 
+          highcharts={Highcharts} 
+          options={options} 
+          key={chartKey}
+        />
       
     </>
   );

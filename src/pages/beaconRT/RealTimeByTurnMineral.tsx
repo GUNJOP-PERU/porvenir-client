@@ -89,8 +89,6 @@ const RealTimeByHourRT = () => {
     return calculateTripPrediction(data, beaconTruck, baseData.mineral);
   }, [data, beaconTruck, baseData.mineral, shiftFilter]);
 
-  console.log("prediccion",prediction);
-
   const baseStats = useMemo(() => {
     if (!data || !mineralData) {
       return {
@@ -305,6 +303,7 @@ const RealTimeByHourRT = () => {
       <div className="flex flex-col items-center justify-around gap-0">
         <IconTruck
           className="fill-yellow-500 h-30 w-40"
+          color=""
         />
   
         <div className="flex flex-col gap-8">

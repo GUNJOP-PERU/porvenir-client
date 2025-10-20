@@ -35,8 +35,6 @@ const BeaconDetectionTable = () => {
     refetch,
   } = useFetchData("beacon-detection", `beacon-track?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
 
-  console.log("beacon data", data)
-
   const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   const filteredData = useMemo(() => {

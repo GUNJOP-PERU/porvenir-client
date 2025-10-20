@@ -54,7 +54,7 @@ export default function Progress({
             className="h-full rounded-full flex items-center"
             style={{ width: `${progress}%`, backgroundColor: color }}
           >
-            <h1 className="absolute left-0 top-0 h-full flex flex-row items-center gap-1 font-bold text-xs text-white lg:text-xs pl-4">
+            <h1 className="absolute left-0 top-0 h-full flex flex-row items-center gap-1 font-bold text-[10px] text-white lg:text-[10px] pl-4 whitespace-nowrap">
               Completado <AnimatedNumber value={value} loading={false} /> de {roundAndFormat(total)} {unit}
             </h1>
           </div>

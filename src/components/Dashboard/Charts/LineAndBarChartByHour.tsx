@@ -49,6 +49,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     const e = Math.abs(exp - value);
     return +e;
   });
+
   const diffColorPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp

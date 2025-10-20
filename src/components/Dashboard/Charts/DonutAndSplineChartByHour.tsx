@@ -29,7 +29,6 @@ interface IDonutAndSplineChartByHourProps {
   mode?: "hour" | "day";
   planDay?: {
     totalTonnage: number;
-    planDayShift: PlanDay[];
     planDay: PlanDay[];
   }
 }

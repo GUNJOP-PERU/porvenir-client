@@ -24,7 +24,13 @@ export type PlanWeek = {
   week: number,
   status: string,
   totalTonnage: number,
-
+  dataCalculate: {
+    date: string,
+    tonnageByTurno: {
+      dia: number,
+      noche: number
+    }
+  }[],
   startDate: string,
   endDate: string,
   createdAt: string,

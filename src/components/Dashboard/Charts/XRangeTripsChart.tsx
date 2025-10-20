@@ -97,13 +97,13 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
         !hasBocaminaDetections;
       
-      let tripColor = "#6b7280"; // Gris por defecto (sin destino)
+      let tripColor = "#dbdbdb"; // Gris por defecto (sin destino)
       if (isCancha100ToFaja4) {
-        tripColor = "#00BFFF"; // Celeste para Cancha 100 ↔ Faja 4 (>10 min)
+        tripColor = "#f9c83e"; // Celeste para Cancha 100 ↔ Faja 4 (>10 min)
       } else if (isPahuaypite) {
-        tripColor = "#8B4513"; // Marrón para Pahuaypite
+        tripColor = "#3c3c3c"; // Marrón para Pahuaypite
       } else if (hasDestination) {
-        tripColor = "#10b981"; // Verde para otros destinos
+        tripColor = "#ff5000"; // Verde para otros destinos
       }
       
       // Solo incrementar contador para viajes con destino
@@ -224,11 +224,10 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       specialPeriods.forEach((period, periodIndex) => {
         const color = period.type === 'planta' ? "#EF4444" : 
-                      period.type === 'bocamina' ? "#c77dff" : "#f59e0b";
+                      period.type === 'bocamina' ? "#66d20e" : "#fe6d73";
         const periodType = period.type === 'planta' ? "Planta" :
                           period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
-        
-        // Obtener el tripIndex correcto del viaje padre
+
         const parentTrip = allSeriesData.find(item => 
           item.trip === trip && item.isFullTrip
         );
@@ -302,27 +301,20 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       },
       min: (() => {
         const today = new Date();
-        console.log(today.getHours());
         if (shift === "dia") {
-          return set(getCurrentDay().startDate, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
-        } else if(shift === "noche" && today.getHours() >= 0 && today.getHours() < 6) {
-          const yesterday = new Date(today);
-          yesterday.setDate(yesterday.getDate() - 1);
-          return set(yesterday, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
-        } else if(shift === "noche") {
-          return set(getCurrentDay().startDate, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
+        } else {
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
         }
       })(),
       max: (() => {
         const today = new Date();
         if (shift === "dia") {
-          return set(getCurrentDay().startDate, { hours: 18, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
-        } else if(shift === "noche" && today.getHours() >= 0 && today.getHours() < 6) {
-          return set(today, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
-        } else if(shift === "noche") {
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
+        } else {
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
-          return set(tomorrow, { hours: 6, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
         }
       })(),
     }, {
@@ -426,7 +418,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           // Verificar viajes bidireccionales Cancha 100 ↔ Faja 4 con duración entre 10 y 50 min SIN bocaminas
           const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
             ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
-             (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
+              (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
             tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
             !tooltipHasBocaminaDetections;
           const tripLabel = point.hasDestination
@@ -594,7 +586,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               return `
                 <div
                   style="
-                  background: #d182ff;
+                  background: #66d20e;
                   color: #000000;
                   width: 80px;
                   padding: 3px 6px;
