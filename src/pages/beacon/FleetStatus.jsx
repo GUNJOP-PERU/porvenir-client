@@ -139,8 +139,8 @@ export default function FleetStatus() {
 
   return (
     <>
-      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 flex flex-col gap-1">
-        <div className="bg-black/70  rounded-xl py-2 px-4">
+      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center  p-4 flex flex-col gap-1">
+        <div className="  rounded-xl py-2 px-4">
           <div className="flex items-center gap-2">
             <h1 className="text-zinc-200 text-md lg:text-xl font-bold leading-none">
               Disponibilidad y utilización de la flota

@@ -23,7 +23,6 @@ import type { BeaconTruckStatus } from "@/types/Beacon";
 import SearchTruck from "@/components/Dashboard/Tracking/SearchTruck";
 import {
   ubicationData,
-  staticMarkers,
   rutasEstaticas,
   maintenanceLocation,
   superficieLocation,
@@ -454,7 +453,7 @@ const TruckTracking = () => {
         <Circle
           key={`route-circle-${ubication.id}`}
           center={position}
-          radius={50}
+          radius={80}
           pathOptions={{
             color: color,
             fillColor: "black",
@@ -785,40 +784,31 @@ const TruckTracking = () => {
     return (
       <div className="h-full w-full">
         <MapContainer
-          center={[centerLat, centerLng]}
+           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={16}
-          maxZoom={17.4}
+          minZoom={17}
+          maxZoom={19}
           zoomControl={false}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: "100%", width: "100%", backgroundColor: "#000000" }}
           className="z-0"
           attributionControl={false}
           zoomSnap={0.1}
           zoomDelta={0.1}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          />
-          <ImageOverlay
+        
+          {/* <ImageOverlay
             url={imageUrl}
             bounds={imageBounds}
             opacity={1}
             zIndex={1}
-          />
+          /> */}
           <ZoomControl position="bottomleft" />
           {toggleStatus.showDestinations && routeComponents()}
           {toggleStatus.showTalleres && tallerLocations()}
           {toggleStatus.showSuperficie && superficieLocations()}
           {toggleStatus.showBocaminas && bocaminaLocations()}
           {markers}
-          {staticMarkers.map((marker) => (
-            <Marker
-              key={marker.id}
-              position={marker.position}
-              icon={createFlagIcon(marker.name, marker.color)}
-            />
-          ))}
+         
           <MapControls selectedTruckPosition={selectedTruckPosition} />
         </MapContainer>
       </div>
