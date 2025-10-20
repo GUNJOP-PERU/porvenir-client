@@ -263,7 +263,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   const options: Highcharts.Options = useMemo(() => ({
     chart: {
       type: "xrange",
-      height: (data.length * 110) + 80,
+      height: (data.length * 60) + 80,
       animation: false,
       events: {
         render: function() {
@@ -571,36 +571,36 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           defer: false,
           formatter: function(this: any) {
             // Para bocaminas con duración > 0, mostrar etiqueta especial
-            if (this.point.isBocamina && this.point.specialPeriod?.hasLabel) {
-              const timeLabel = new Date(this.point.x).toLocaleTimeString('es-ES', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              });
-              const duration = ((this.point.x2 - this.point.x) / 1000 / 60).toFixed(1);
-              const bocaminaName = this.point.specialPeriod.detections[0].ubication;
-              const bocaminaIndex = this.point.specialPeriod.bocaminaIndex;
+            // if (this.point.isBocamina && this.point.specialPeriod?.hasLabel) {
+            //   const timeLabel = new Date(this.point.x).toLocaleTimeString('es-ES', { 
+            //     hour: '2-digit', 
+            //     minute: '2-digit' 
+            //   });
+            //   const duration = ((this.point.x2 - this.point.x) / 1000 / 60).toFixed(1);
+            //   const bocaminaName = this.point.specialPeriod.detections[0].ubication;
+            //   const bocaminaIndex = this.point.specialPeriod.bocaminaIndex;
               
-              const isEven = bocaminaIndex % 2 === 0;
-              const topPosition = isEven ? -33 : 32;
+            //   const isEven = bocaminaIndex % 2 === 0;
+            //   const topPosition = isEven ? -33 : 32;
               
-              return `
-                <div
-                  style="
-                  background: #66d20e;
-                  color: #000000;
-                  width: 80px;
-                  padding: 3px 6px;
-                  border-radius: 5px;                       
-                  font-size: 0.6rem;
-                  font-weight: bold;
-                  position: relative;
-                  top: ${topPosition}px; z-index: 1;
-                  white-space: nowrap;"
-                >
-                  ${bocaminaName}<br/>
-                  <span style="color:#000000">${timeLabel} / ${formatDurationMinutes(duration)}</span>
-                </div>`;
-            }
+            //   return `
+            //     <div
+            //       style="
+            //       background: #66d20e;
+            //       color: #000000;
+            //       width: 80px;
+            //       padding: 3px 6px;
+            //       border-radius: 5px;                       
+            //       font-size: 0.6rem;
+            //       font-weight: bold;
+            //       position: relative;
+            //       top: ${topPosition}px; z-index: 1;
+            //       white-space: nowrap;"
+            //     >
+            //       ${bocaminaName}<br/>
+            //       <span style="color:#000000">${timeLabel} / ${formatDurationMinutes(duration)}</span>
+            //     </div>`;
+            // }
             
             // Formato estándar para otros elementos
             if (this.point.isFullTrip && this.point.hasDestination) {
@@ -641,8 +641,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     }), { totalTrips: 0, totalHours: 0, avgDuration: 0 });
   }, [tableData]);
 
-  const chartHeight = (data.length * 104) + 15 ;
-  const rowHeight = 108;
+  const chartHeight = (data.length * 64) + 15 ;
+  const rowHeight = 59;
 
   return (
     <div className="w-full flex gap-2">

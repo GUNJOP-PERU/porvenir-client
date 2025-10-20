@@ -117,7 +117,7 @@ const TripsDescriptionRT = () => {
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#c77dff] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Bocamina
               </p>
