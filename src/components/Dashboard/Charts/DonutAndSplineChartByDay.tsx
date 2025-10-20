@@ -1,114 +1,96 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-//Utils
-import {
-  getCurrentWeekDates,
-  getCurrentWeekDatesFormatted,
-} from "@/utils/dateUtils";
 import { roundAndFormat } from "@/lib/utilsGeneral";
-import Progress from "./Progress";
+// Types
+import type { BeaconUnitTrip } from "@/types/Beacon";
+import { useMemo } from "react";
 
-interface IDonutAndSplineChartByDayProps {
+interface IDonutAndSplineChartByHourProps {
   title?: string;
   mineralWeight: number;
-  progressBarData: {
-    total: number;
-    currentValue: number;
-    prediction: number;
-    currentValueColor: string;
-    showDifference: boolean;
-    forecastText: string;
-  };
+  chartColor?: string;
   chartData: {
-    totalTrips: number;
-    statsByDay: {
+    date: string;
+    label?: string;
+    trips: BeaconUnitTrip[];
+  }[];
+  planDay: {
+    totalTonnage: number;
+    planDay: {
       date: string;
-      totalTrips: number;
+      tonnage: number;
     }[];
-  };
+  }
 }
 
-const DonutAndSplineChartByDay = ({
-  progressBarData,
-  chartData,
-  mineralWeight,
-}: IDonutAndSplineChartByDayProps) => {
-  const sortDataByDay = (data: IDonutAndSplineChartByDayProps["chartData"]) => {
-    const weekDates = getCurrentWeekDates();
-    const dataMap: any = {};
-    data.statsByDay.forEach((item) => {
-      dataMap[item.date] = item.totalTrips;
-    });
+const DonutAndSplineChartByDay = ({ chartColor= "#ff5000", chartData, mineralWeight, planDay }: IDonutAndSplineChartByHourProps) => {
+  const xLabels = chartData.map((item) => item.label) 
 
-    const completedStatsByDays = weekDates.map((date) => dataMap[date] || "");
+  const tripsCounts = chartData.map(
+    (item) => item.trips.length * mineralWeight
+  );
+  const acummulativeTripsCounts = tripsCounts.map((trip, index) =>
+    trip === 0
+      ? NaN
+      : tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  );
 
-    const acumulativeData = completedStatsByDays.map((day, index) => {
-      const sum = completedStatsByDays
-        .slice(0, index + 1)
-        .reduce((acc, val) => acc + (val || 0), 0);
-      return day ? sum : "";
-    });
+  const accumulativePlanData = planDay.planDay.map((p, i) => 
+    planDay.planDay.slice(0, i + 1).reduce((acc, val) => acc + val.tonnage, 0)
+  );
 
-    return {
-      data: completedStatsByDays.map((e) => (e ? e * mineralWeight : "")),
-      acumulativeData: acumulativeData.map((e) => (e ? e * mineralWeight : "")),
-      dataText: completedStatsByDays.map((e) =>
-        e ? `${e * mineralWeight} ` : ""
-      ),
-      acumulativeDataText: acumulativeData.map((e) =>
-        e ? `${e * mineralWeight} ` : ""
-      ),
-    };
-  };
+  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
 
-  const planDaily = 1200;
-  const planData = Array.from({ length: 7 }, (_, i) => planDaily * (i + 1));
-
+  const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
+    currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  );
   const options = {
     chart: {
       type: "areaspline",
-      height: 250,
-      marginBottom: 70,
-      marginTop: 70,
-      marginLeft: 0,
+      height: 300,
+      marginBottom: 55,
+      marginTop: 40,
+      marginLeft: 50,
       marginRight: 0,
       spacing: [0, 0, 0, 0],
+      animation: false,
     },
     title: "",
     xAxis: [
       {
-        categories: sortDataByDay(chartData).acumulativeDataText,
+        categories: acummulativeTripsCounts.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ),
         opposite: false,
         lineColor: "transparent",
         labels: {
           style: {
-            color: "#000000",
-            fontSize: "0.8em",
+            color: "#1e1e1e",
+            textDecoration: "underline",
+            fontSize: "0.9em",
             fontWeight: "bold",
           },
         },
       },
       {
-        categories: planData.map((e) => `${roundAndFormat(e)}`),
-        tickPositioner: function () {
-          return [0, 1, 2, 3, 4, 5, 6];
-        },
+        categories: accumulativePlanData.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ),
         opposite: false,
         lineColor: "transparent",
         labels: {
           y: 0,
           style: {
             color: "#00000080",
-            fontSize: "0.8em",
+            fontSize: "0.7em",
             fontWeight: "bold",
           },
         },
       },
       {
-        categories: getCurrentWeekDatesFormatted(),
+        categories: xLabels,
         opposite: true,
-
-        linkedTo: 1,
+        linkedTo: 0,
         lineColor: "transparent",
         labels: {
           style: {
@@ -129,27 +111,40 @@ const DonutAndSplineChartByDay = ({
     },
     series: [
       {
-        name: "Fact",
-        data: sortDataByDay(chartData).acumulativeData,
-        xAxis: 0,
-        fillColor: "#bfefe1",
-        color: "#04c286",
+        name: "Plan",
+        data: accumulativePlanData,
+        xAxis: 1,
+        fillColor: "#b8b8b880",
+        color: "#b8b8b8",
+        areaColor: "#b8b8b880",
+        animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#04c286",
+          lineColor: "#b8b8b8",
         },
+        zones: acummulativeTripsCounts.map((realValue, index) => {
+          const hasRealData = realValue !== undefined && !isNaN(realValue) && realValue > 0;
+          return {
+            value: index,
+            dashStyle: hasRealData ? 'Solid' : 'Dash',
+            color: hasRealData ? "#757575" : "#bdbdbd",
+            fillColor: hasRealData ? "#f5f5f580" : "#f5f5f520"
+          };
+        }),
+        zoneAxis: 'x',
       },
       {
-        name: "Plan",
-        data: planData,
-        xAxis: 1,
-        fillColor: "#ffd0d63d",
-        color: "#fe7887",
+        name: "Real",
+        data: acummulativeTripsCounts,
+        xAxis: 0,
+        fillColor: chartColor + "80",
+        color: chartColor,
+        animation: false,
         marker: {
           fillColor: "white",
           lineWidth: 2,
-          lineColor: "#fe7887",
+          lineColor: chartColor,
         },
       },
     ],
@@ -164,7 +159,7 @@ const DonutAndSplineChartByDay = ({
         color: "#FFFFFF",
         fontSize: "0.65em",
       },
-      pointFormatter: function () {
+      pointFormatter: function (this: any) {
         return `<span style="color:${this.color}">●</span> ${
           this.series.name
         }: <b>${roundAndFormat(this.y)} TM</b><br/>`;
@@ -172,10 +167,18 @@ const DonutAndSplineChartByDay = ({
     },
 
     legend: {
-      align: "right",
-      verticalAlign: "top",
-      layout: "horizontal",
+      align: "left",
+      verticalAlign: "bottom",
+      layout: "vertical",
       floating: false,
+      labelFormatter: function (this: any) {
+        if (this.index === 0) {
+          return `<span style='color:#000000'>${this.name}</span>`;
+        } else {
+          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+        }
+      },
+      useHTML: true,
       itemStyle: {
         color: "#A6A6A6",
         fontSize: "0.55em",
@@ -186,25 +189,30 @@ const DonutAndSplineChartByDay = ({
       symbolWidth: 10,
       symbolHeight: 9,
       symbolRadius: 2,
-      itemMarginTop: 0,
+      itemMarginTop: 4,
       itemMarginBottom: 0,
+      x: 0,
+      y: 0,
     },
     credits: {
       enabled: false,
     },
-  };
+  }
+
+  const chartKey = useMemo(() => {
+    return JSON.stringify({
+      dataLength: chartData?.length || 0,
+      totalTrips: chartData?.reduce((acc, val) => acc + val.trips.length, 0) || 0,
+    });
+  }, [chartData]);
 
   return (
     <div className="flex flex-col gap-0">
-      <Progress
-        title=""
-        value={progressBarData.currentValue}
-        total={progressBarData.total}
-        color={progressBarData.currentValueColor}
-        unit="TM"
-        className="py-0 px-2"
+      <HighchartsReact 
+        highcharts={Highcharts} 
+        options={options} 
+        key={chartKey}
       />
-      <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
 };
