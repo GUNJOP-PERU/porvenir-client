@@ -93,25 +93,25 @@ const TripsDescriptionRT = () => {
         actions={
           <div className="flex flex-row gap-2">
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#6b7280] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Viaje Incompleto
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#10b981] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Viaje Completo
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#8B4513] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Viaje Desmonte
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#00BFFF] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Remanejo
               </p>
@@ -123,15 +123,9 @@ const TripsDescriptionRT = () => {
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#f59e0b] w-2 h-2 rounded-full"/>
-              <p className="text-[11px] font-bold">
-                Mantenimiento
-              </p>
-            </div>
-            <div className="flex flex-row items-center gap-1">
               <span className="flex bg-[#EF4444] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
-                Planta
+                Mantenimiento
               </p>
             </div>
           </div>
