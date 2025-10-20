@@ -1,4 +1,8 @@
-import { ubicationBocamina, maintenanceLocation, superficieLocation } from "@/pages/beaconRT/UbicationLocation";
+import {
+  ubicationBocamina,
+  maintenanceLocation,
+  superficieLocation,
+} from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
 import { Search, X } from "lucide-react";
@@ -29,15 +33,27 @@ export default function SearchTruck({
 
   const activeLocations = [
     ...ubicationData,
-    ...(includeExtraLocations ? [...ubicationBocamina, ...maintenanceLocation, ...superficieLocation] : []),
+    ...(includeExtraLocations
+      ? [...ubicationBocamina, ...maintenanceLocation, ...superficieLocation]
+      : []),
   ];
 
   const trucksPerArea = activeLocations.map((ubication) => {
-    const trucksInArea = data.filter(
-      (truck) =>
-        truck.lastUbicationMac &&
-        truck.lastUbicationMac.toLowerCase() === ubication.mac.toLowerCase()
-    );
+    const trucksInArea = data.filter((truck) => {
+      if (!truck.lastUbicationMac || !ubication.mac) return false;
+
+      // Si la ubicación tiene múltiples MACs
+      if (Array.isArray(ubication.mac)) {
+        return ubication.mac.some(
+          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        );
+      }
+
+      // Si solo tiene una MAC (string)
+      return (
+        ubication.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+      );
+    });
 
     const onlineCount = trucksInArea.filter(
       (truck) => truck.connectivity === "online"
@@ -46,7 +62,7 @@ export default function SearchTruck({
 
     return {
       area: ubication.description,
-      color: ubication.color || "#0EB1D2", 
+      color: ubication.color || "#0EB1D2",
       count: trucksInArea.length,
       online: onlineCount,
       offline: offlineCount,
@@ -109,7 +125,7 @@ export default function SearchTruck({
         </div>
 
         {query && (
-          <div className="absolute top-[44px] left-0 w-full bg-black border border-zinc-700 rounded-lg max-h-36 overflow-y-auto text-xs custom-scrollbar shadow-lg z-20 p-1">
+          <div className="absolute top-[32px] left-0 w-full bg-black border border-zinc-700 rounded-lg max-h-36 overflow-y-auto text-xs custom-scrollbar shadow-lg z-20 p-1">
             {filtered.length > 0 ? (
               filtered.map((truck) => (
                 <div

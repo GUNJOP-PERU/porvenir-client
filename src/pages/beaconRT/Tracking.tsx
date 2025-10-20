@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,
+  ImageOverlay,
   MapContainer,
   Marker,
   Polyline,
@@ -24,11 +25,9 @@ import {
   ubicationData,
   staticMarkers,
   rutasEstaticas,
-  wifiLocation,
   maintenanceLocation,
   superficieLocation,
   ubicationBocamina,
-  parkingData
 } from "./UbicationLocation";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import Toggle from "@/components/Dashboard/Tracking/Toggle";
@@ -92,9 +91,16 @@ const TruckTracking = () => {
 
   const mapConfig = useMemo(
     () => ({
-      centerLat: -13.079444,
-      centerLng: -75.991944,
-      zoom: 17,
+      centerLat: -13.0799,
+      centerLng: -75.9929,
+      imageCenterLat: -13.080500, // Centro de la imagen
+      imageCenterLng: -75.995490, // Centro de la imagen
+      imageUrl: "/superficie.png",
+      imageScale: 0.007000,
+      imageWidth: 0.012250,
+      imageHeight: 0.008000, 
+      opacity: 0.6,
+      zoom: 16.8,
     }),
     []
   );
@@ -110,37 +116,48 @@ const TruckTracking = () => {
 
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
-  
+
     const twentyMinutesAgo = dayjs().subtract(20, "minute");
-    const excludeUbications = ["Int-BC-1820", "Int-BC-1800", "Int-BC-1875", "Int-BC-1930", "Int-BC-1910"];
-  
+    const excludeUbications = [
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Int-BC-1930",
+      "Int-BC-1910",
+    ];
+
     return data.filter((truck) => {
       if (!truck.lastDate) return false;
-  
+
+      if (truck.direction?.toLowerCase() === "entrada") return false;
       const lastUpdate = dayjs(truck.lastDate);
-  
-      // Si está en la lista de ubicaciones y pasó más de 20 minutos, lo excluimos
       if (
         excludeUbications.includes(truck.lastUbication) &&
         lastUpdate.isBefore(twentyMinutesAgo)
       ) {
         return false;
       }
-  
-      // De lo contrario, lo incluimos
       return true;
     });
   }, [data]);
-  
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = [
-      ...parkingData,
       ...ubicationData,
       ...superficieLocation,
       ...maintenanceLocation,
       ...ubicationBocamina,
-    ].find((u) => u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase());
+    ].find((u) => {
+      if (!u.mac || !truck.lastUbicationMac) return false;
+
+      if (Array.isArray(u.mac)) {
+        return u.mac.some(
+          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        );
+      }
+
+      return u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase();
+    });
 
     setSelectedTruck({
       truck,
@@ -150,7 +167,6 @@ const TruckTracking = () => {
         : [0, 0],
     });
 
-    // El zoom sigue funcionando porque mantienes este estado aparte
     if (foundUbication) {
       setSelectedTruckPosition([
         foundUbication.position.latitud,
@@ -170,14 +186,17 @@ const TruckTracking = () => {
     ) => {
       let color = "#6B7280"; // gris por defecto
       const normalizedStatus = status.toLowerCase();
-  
-      if (lastUbication?.trim() === "Int-BC-1800" ||lastUbication?.trim() === "Taller Saturno") {
+
+      if (
+        lastUbication?.trim() === "Int-BC-1800" ||
+        lastUbication?.trim() === "Taller Saturno"
+      ) {
         switch (normalizedStatus) {
           case "operativo":
             color = "#22C55E";
             break;
           case "mantenimiento":
-            color = "#F59E0B";
+            color = "#ff758f";
             break;
           case "inoperativo":
             color = "#EF4444";
@@ -193,7 +212,7 @@ const TruckTracking = () => {
             const now = new Date();
             const fiveHoursAgo = subHours(now, 5);
             const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
-  
+
             if (!isAfter(lastDateTime, fiveHoursAgo)) return "old";
             if (!isAfter(lastDateTime, fiveMinutesAgo)) return "stale";
             return "fresh";
@@ -201,9 +220,9 @@ const TruckTracking = () => {
             return "old";
           }
         })();
-  
+
         if (getTimeStatus === "old") {
-          color = "#a0a0a0"; 
+          color = "#a0a0a0";
         } else {
           switch (normalizedStatus) {
             case "operativo":
@@ -220,7 +239,7 @@ const TruckTracking = () => {
           }
         }
       }
-  
+
       return L.divIcon({
         html: `
           <div style="display:flex; flex-direction:column; align-items:center;">
@@ -266,7 +285,6 @@ const TruckTracking = () => {
     },
     []
   );
-  
 
   const markers = useMemo(() => {
     if (!Array.isArray(filteredData)) return [];
@@ -274,15 +292,26 @@ const TruckTracking = () => {
     const coordMap = new Map<string, any[]>();
     filteredData.forEach((truck) => {
       const findBeacon = [
-        ...parkingData,
         ...ubicationData,
         ...superficieLocation,
         ...maintenanceLocation,
         ...ubicationBocamina,
-      ].find(
-        (beacon) =>
+      ].find((beacon) => {
+        if (!beacon.mac || !truck.lastUbicationMac) return false;
+
+        // Si es array (varias MACs)
+        if (Array.isArray(beacon.mac)) {
+          return beacon.mac.some(
+            (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+          );
+        }
+
+        // Si es string
+        return (
           beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-      );
+        );
+      });
+
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
       const key = `${coord.latitud},${coord.longitud}`;
       if (!coordMap.has(key)) coordMap.set(key, []);
@@ -290,11 +319,14 @@ const TruckTracking = () => {
       const displayName =
         truckNameParts.length > 2 ? truckNameParts[2] : truck.name;
 
-      if(findBeacon && findBeacon.name === "PARK. VOLQUETES") {
-        const differenceInMinutes = (new Date().getTime() - new Date(truck.lastDate).getTime())/60000;
+      if (findBeacon && findBeacon.name === "PARK. VOLQUETES") {
+        const differenceInMinutes =
+          (new Date().getTime() - new Date(truck.lastDate).getTime()) / 60000;
 
-        if(differenceInMinutes <= 15) {
-          coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
+        if (differenceInMinutes <= 15) {
+          coordMap
+            .get(key)!
+            .push({ ...truck, coordinates: coord, displayName });
         }
       } else {
         coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
@@ -370,20 +402,6 @@ const TruckTracking = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between py-2 divide-x divide-zinc-200">
-                  <span className="text-center w-full">
-                    <small>Longitud</small> <br />
-                    <strong className="font-mono text-xs">
-                      {truck.coordinates.longitud.toFixed(6)}
-                    </strong>
-                  </span>
-                  <span className="text-center w-full">
-                    <small>Latitud</small> <br />
-                    <strong className="font-mono text-xs">
-                      {truck.coordinates.latitud.toFixed(6)}
-                    </strong>
-                  </span>
-                </div>
                 <div className="border-t border-zinc-200 pt-2 flex flex-col">
                   <span className="text-[10px] leading-3 font-semibold">
                     {truck.connectivity === "online"
@@ -406,87 +424,6 @@ const TruckTracking = () => {
     return result;
   }, [filteredData, createCustomIcon, ubicationData, selectedTruck]);
 
-  const parkingComponents = () => {
-    const components: React.JSX.Element[] = [];
-
-    parkingData.forEach((ubication) => {
-      const color = "#fda618";
-      const position = [
-        ubication.position.latitud,
-        ubication.position.longitud,
-      ] as [number, number];
-
-      // Primero el círculo
-      components.push(
-        <Circle
-          key={`route-circle-${ubication.id}`}
-          center={position}
-          radius={50}
-          pathOptions={{
-            color: color,
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.3,
-            dashArray: "16, 4",
-          }}
-        />
-      );
-
-      components.push(
-        <Marker
-          key={`label-${ubication.id}`}
-          position={[position[0] + 0.0005, position[1]]}
-          icon={L.divIcon({
-            html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: ${color};
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.7rem;
-                font-weight: bold;
-                line-height: 0.7rem;
-              ">
-              <span style="
-                background: #FFFFFF85;
-                color: #ffffff0;
-                padding: 2px 4px;
-                border-radius: 4px; 
-                font-size: 0.7rem;
-                font-weight: bold;
-                line-height: 0.7rem;                            
-              ">
-                ${
-                  data.filter(
-                    (truck) =>
-                      truck.lastUbicationMac &&
-                      truck.lastUbicationMac.toLowerCase() ===
-                        ubication.mac.toLowerCase()
-                  ).length
-                }
-              </span>
-              ${ubication.description}
-              </div>
-            `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        ></Marker>
-      );
-    });
-    return components;
-  };
-
   const routeComponents = () => {
     const components: React.JSX.Element[] = [];
 
@@ -500,7 +437,7 @@ const TruckTracking = () => {
           pathOptions={{
             color: ruta.color,
             weight: 5,
-            opacity: 0.6,
+            opacity: 0.7,
           }}
         />
       );
@@ -513,18 +450,17 @@ const TruckTracking = () => {
         ubication.position.longitud,
       ] as [number, number];
 
-      // Primero el círculo
       components.push(
         <Circle
           key={`route-circle-${ubication.id}`}
           center={position}
-          radius={80}
+          radius={50}
           pathOptions={{
             color: color,
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
             dashArray: "16, 4",
           }}
         />
@@ -533,7 +469,7 @@ const TruckTracking = () => {
       components.push(
         <Marker
           key={`label-${ubication.id}`}
-          position={[position[0] + 0.0005, position[1]]}
+          position={[position[0] + 0.0008, position[1]]}
           icon={L.divIcon({
             html: `
               <div style="
@@ -584,62 +520,6 @@ const TruckTracking = () => {
     return components;
   };
 
-  const wifiLocations = () => {
-    const components: React.JSX.Element[] = [];
-
-    wifiLocation.forEach((wifi) => {
-      components.push(
-        <Circle
-          key={`wifi-circle-${wifi.id}`}
-          center={[wifi.position.latitud, wifi.position.longitud]}
-          radius={60}
-          pathOptions={{
-            color: "#66d20e",
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.3,
-            dashArray: "16, 4",
-          }}
-        />
-      );
-      components.push(
-        <Marker
-          key={`wifi-label-${wifi.id}`}
-          position={[wifi.position.latitud - 0.0006, wifi.position.longitud]}
-          icon={L.divIcon({
-            html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color:#66d20e;
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.7rem;
-                font-weight: bold;
-                line-height: 0.7rem;
-              ">
-              ${wifi.description}
-              </div>
-            `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        ></Marker>
-      );
-    });
-
-    return components;
-  };
-
   const superficieLocations = () => {
     const components: React.JSX.Element[] = [];
 
@@ -648,13 +528,13 @@ const TruckTracking = () => {
         <Circle
           key={`superficie-circle-${beacon.id}`}
           center={[beacon.position.latitud, beacon.position.longitud]}
-          radius={50}
+          radius={40}
           pathOptions={{
             color: "#ccc8af",
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
             dashArray: "16, 4",
           }}
         />
@@ -707,13 +587,13 @@ const TruckTracking = () => {
         <Circle
           key={`bocamina-circle-${bocamina.id}`}
           center={[bocamina.position.latitud, bocamina.position.longitud]}
-          radius={40}
+          radius={60}
           pathOptions={{
-            color: "#c77dff",
+            color: "#66d20e",
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
             dashArray: "16, 4",
           }}
         />
@@ -722,7 +602,7 @@ const TruckTracking = () => {
         <Marker
           key={`bocamina-label-${bocamina.id}`}
           position={[
-            bocamina.position.latitud + 0.0004,
+            bocamina.position.latitud + 0.0005,
             bocamina.position.longitud,
           ]}
           icon={L.divIcon({
@@ -736,7 +616,7 @@ const TruckTracking = () => {
                 position: absolute;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-color:#c77dff;
+                background-color:#66d20e;
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
@@ -780,55 +660,78 @@ const TruckTracking = () => {
     const components: React.JSX.Element[] = [];
 
     maintenanceLocation.forEach((taller) => {
+      const color = taller.color || "#f3d111";
+
+      const count = data.filter(
+        (truck) =>
+          truck.lastUbicationMac &&
+          Array.isArray(taller.mac) &&
+          taller.mac.some(
+            (m) => m.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+          )
+      ).length;
+
       components.push(
         <Circle
           key={`taller-circle-${taller.id}`}
           center={[taller.position.latitud, taller.position.longitud]}
-          radius={70}
+          radius={120}
           pathOptions={{
-            color: "#f3d111",
+            color,
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
             dashArray: "16, 4",
           }}
         />
       );
+
       components.push(
         <Marker
           key={`taller-label-${taller.id}`}
           position={[
-            taller.position.latitud - 0.0006,
+            taller.position.latitud - 0.0011,
             taller.position.longitud,
           ]}
           icon={L.divIcon({
             html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
+          <div style="
+            white-space: nowrap;
+            display: flex;
+            gap: 5px;
+            align-items: center;
                 justify-content: center;
                 position: absolute;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-color:#f3d111;
+                background-color: ${color};
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
                 font-size: 0.7rem;
                 font-weight: bold;
                 line-height: 0.7rem;
-              ">
-              ${taller.description}
-              </div>
-            `,
+          ">
+            <span style="
+              background: #ffffff85;
+              color: #fffff;
+              padding: 2px 5px;
+              border-radius: 4px; 
+              font-size: 0.7rem;
+              font-weight: bold;
+              line-height: 0.7rem;                            
+            ">
+              ${count}
+            </span>
+            ${taller.description}
+          </div>
+        `,
             className: "geofence-label",
             iconSize: [0, 0],
             iconAnchor: [0, 0],
           })}
-        ></Marker>
+        />
       );
     });
 
@@ -863,27 +766,48 @@ const TruckTracking = () => {
 
   // Memoizar el componente del mapa
   const MapaCamiones = useMemo(() => {
-    const { centerLat, centerLng, zoom } = mapConfig;
+    const {
+      centerLat,
+      centerLng,
+      zoom,
+      imageUrl,
+      imageWidth,
+      imageHeight,
+      opacity,
+      imageCenterLat,
+      imageCenterLng,
+    } = mapConfig;
+
+    const imageBounds: [[number, number], [number, number]] = [
+      [imageCenterLat - imageHeight, imageCenterLng - imageWidth],
+      [imageCenterLat + imageHeight, imageCenterLng + imageWidth],
+    ];
     return (
       <div className="h-full w-full">
         <MapContainer
           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={16} // Zoom mínimo permitido
-          maxZoom={17} // Nivel máximo soportado por ESRI
+          minZoom={16}
+          maxZoom={17.4}
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
           className="z-0"
           attributionControl={false}
+          zoomSnap={0.1}
+          zoomDelta={0.1}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           />
-          <ZoomControl position="bottomright" />
+          <ImageOverlay
+            url={imageUrl}
+            bounds={imageBounds}
+            opacity={1}
+            zIndex={1}
+          />
+          <ZoomControl position="bottomleft" />
           {toggleStatus.showDestinations && routeComponents()}
-          {toggleStatus.showDestinations && parkingComponents()}
-          {toggleStatus.showWifiZones && wifiLocations()}
           {toggleStatus.showTalleres && tallerLocations()}
           {toggleStatus.showSuperficie && superficieLocations()}
           {toggleStatus.showBocaminas && bocaminaLocations()}
@@ -899,13 +823,7 @@ const TruckTracking = () => {
         </MapContainer>
       </div>
     );
-  }, [
-    routeComponents,
-    wifiLocations,
-    tallerLocations,
-    bocaminaLocations,
-    markers,
-  ]);
+  }, [routeComponents, tallerLocations, bocaminaLocations, markers]);
 
   return (
     <div className="h-full w-full bg-black relative">
@@ -913,15 +831,11 @@ const TruckTracking = () => {
       <Legend data={data} />
       <Toggle
         showBocaminas={toggleStatus.showBocaminas}
-        showWifiZones={toggleStatus.showWifiZones}
         showDestinations={toggleStatus.showDestinations}
         showSuperficie={toggleStatus.showSuperficie}
         showTalleres={toggleStatus.showTalleres}
         onToggleBocaminas={(show) =>
           setToggleStatus((prev) => ({ ...prev, showBocaminas: show }))
-        }
-        onToggleWifiZones={(show) =>
-          setToggleStatus((prev) => ({ ...prev, showWifiZones: show }))
         }
         onToggleDestinations={(show) =>
           setToggleStatus((prev) => ({ ...prev, showDestinations: show }))
@@ -934,14 +848,14 @@ const TruckTracking = () => {
         }
       />
       <SearchTruck
-        data={data}
+        data={filteredData}
         onTruckSelect={handleSelectTruck}
         selectedTruck={selectedTruck}
         isLoading={isLoading}
         ubicationData={ubicationData}
         includeExtraLocations={true}
       />
-     <Rute data={data} />
+      <Rute data={data} />
     </div>
   );
 };

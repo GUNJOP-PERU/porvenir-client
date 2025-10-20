@@ -50,7 +50,6 @@ const MapControls = ({
   const lastPositionRef = useRef<[number, number] | null>(null);
 
   useEffect(() => {
-    // Solo hacer zoom si la posición ha cambiado
     if (
       selectedTruckPosition &&
       (!lastPositionRef.current ||
@@ -62,7 +61,6 @@ const MapControls = ({
         duration: 1.5,
       });
 
-      // Actualizar la última posición conocida
       lastPositionRef.current = [...selectedTruckPosition] as [number, number];
     }
   }, [selectedTruckPosition, map]);
@@ -82,16 +80,16 @@ const UndergroundTracking = () => {
 
   const mapConfig = useMemo(
     () => ({
-      centerLat: -13.0786, // Centro del mapa al cargar
-      centerLng: -75.992999, // Centro del mapa al cargar
+      centerLat: -13.07915, // Centro del mapa al cargar
+      centerLng: -75.9925, // Centro del mapa al cargar
       imageCenterLat: -13.079444, // Centro de la imagen
       imageCenterLng: -75.991944, // Centro de la imagen
       imageUrl: "/sub.svg",
-      imageScale: 0.005184,
-      imageWidth: 0.009072, // Ancho de la imagen
-      imageHeight: 0.005184, // Alto de la imagen
+      imageScale: 0.002592, // Antes: 0.005184 * 0.5
+      imageWidth: 0.004536, // Antes: 0.009072 * 0.5
+      imageHeight: 0.002592, // Antes: 0.005184 * 0.5
       opacity: 0.6,
-      zoom: 17,
+      zoom: 17.8,
     }),
     []
   );
@@ -320,20 +318,7 @@ const UndergroundTracking = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between py-2 divide-x divide-zinc-200">
-                  <span className="text-center w-full">
-                    <small>Longitud</small> <br />
-                    <strong className="font-mono text-xs">
-                      {truck.coordinates.longitud.toFixed(6)}
-                    </strong>
-                  </span>
-                  <span className="text-center w-full">
-                    <small>Latitud</small> <br />
-                    <strong className="font-mono text-xs">
-                      {truck.coordinates.latitud.toFixed(6)}
-                    </strong>
-                  </span>
-                </div>
+
                 <div className="border-t border-zinc-200 pt-2 flex flex-col">
                   <span className="text-[10px] leading-3 font-semibold">
                     {truck.connectivity === "online"
@@ -377,7 +362,7 @@ const UndergroundTracking = () => {
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
             dashArray: "1, 1",
           }}
         />
@@ -451,11 +436,9 @@ const UndergroundTracking = () => {
       imageCenterLng,
     } = mapConfig;
 
-    // Calcular los bounds de la imagen usando su propio centro
-    // [esquina inferior izquierda, esquina superior derecha]
     const imageBounds: [[number, number], [number, number]] = [
-      [imageCenterLat - imageHeight, imageCenterLng - imageWidth], // Esquina inferior izquierda
-      [imageCenterLat + imageHeight, imageCenterLng + imageWidth], // Esquina superior derecha
+      [imageCenterLat - imageHeight, imageCenterLng - imageWidth],
+      [imageCenterLat + imageHeight, imageCenterLng + imageWidth],
     ];
 
     return (
@@ -463,12 +446,14 @@ const UndergroundTracking = () => {
         <MapContainer
           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={16}
-          maxZoom={17}
+          minZoom={17}
+          maxZoom={19}
           zoomControl={false}
           style={{ height: "100%", width: "100%", backgroundColor: "#000000" }}
           className="z-0"
           attributionControl={false}
+          zoomSnap={0.1}
+          zoomDelta={0.1}
         >
           <ImageOverlay
             url={imageUrl}
@@ -477,17 +462,10 @@ const UndergroundTracking = () => {
             zIndex={1000}
           />
 
-          <ZoomControl position="bottomright" />
+          <ZoomControl position="bottomleft" />
           {routeComponents()}
 
           {markers}
-          {/* {staticMarkersSub.map((marker) => (
-            <Marker
-              key={marker.id}
-              position={marker.position}
-              icon={createFlagIcon(marker.name, marker.color)}
-            />
-          ))} */}
           <MapControls selectedTruckPosition={selectedTruckPosition} />
         </MapContainer>
       </div>
@@ -524,7 +502,7 @@ const UndergroundTracking = () => {
         ubicationData={ubicationDataSub}
       />
       <Legend data={data} />
-      <div className="absolute bottom-4 right-12 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col select-none">
+      <div className="absolute bottom-2 right-2 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col select-none">
         <span className="text-zinc-300 font-bold text-[10px]">
           Camiones en ruta |{filteredDataRute.length}|
         </span>
