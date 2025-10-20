@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -9,12 +8,10 @@ import {
   Marker,
   Polyline,
   Popup,
-  TileLayer,
   useMap,
   ZoomControl,
 } from "react-leaflet";
 import TimeAgo from "timeago-react";
-import { subHours, isAfter, parseISO } from "date-fns";
 // Api
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 // Types
@@ -100,7 +97,7 @@ const UndergroundTracking = () => {
     error,
     refetch,
   } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
-    refetchInterval: 10000,
+    refetchInterval: 2000,
   });
 
   const filteredData = useMemo(() => {
@@ -110,6 +107,7 @@ const UndergroundTracking = () => {
 
     return data.filter((truck) => {
       if (!truck.lastDate) return false;
+      if (truck.direction?.toLowerCase() === "salida") return false;
       const lastUpdate = dayjs(truck.lastDate);
       return lastUpdate.isAfter(tenMinutesAgo);
     });
@@ -142,33 +140,15 @@ const UndergroundTracking = () => {
       status: string,
       unitName: string,
       isSelected: boolean = false,
-      connectivity: string,
       lastDate: string
     ) => {
-      let color = "#6B7280"; // Gris por defecto
+      const statusColors: Record<string, string> = {
+        operativo: "#22C55E",
+        mantenimiento: "#F59E0B",
+        inoperativo: "#EF4444",
+      };
 
-      const normalizedStatus = status.toLowerCase();
-
-      const isOlderThan5Hours = (() => {
-        try {
-          if (!lastDate) return true;
-          const lastDateTime = parseISO(lastDate);
-          const fiveHoursAgo = subHours(new Date(), 5);
-          return !isAfter(lastDateTime, fiveHoursAgo);
-        } catch {
-          return true;
-        }
-      })();
-
-      if (isOlderThan5Hours) {
-        color = "#a0a0a0"; // Gris - Datos antiguos (más de 5 horas)
-      } else if (normalizedStatus === "operativo") {
-        color = "#22C55E"; // Verde - En movimiento
-      } else if (normalizedStatus === "mantenimiento") {
-        color = "#F59E0B"; // Amarillo - Detenido
-      } else if (normalizedStatus === "inoperativo") {
-        color = "#EF4444"; // Rojo - Fuera de línea
-      }
+      const color = statusColors[status.toLowerCase()];
 
       return L.divIcon({
         html: `
@@ -345,20 +325,20 @@ const UndergroundTracking = () => {
     const components: React.JSX.Element[] = [];
 
     ubicationDataSub.forEach((ubication) => {
+      const color = ubication.color ? ubication.color : "#0EB1D2";
       const position = [
         ubication.position.latitud,
         ubication.position.longitud,
       ] as [number, number];
+      
 
-      const ubicationColor = ubication.color || "#0EB1D2";
-      // Primero el círculo
       components.push(
         <Circle
           key={`route-circle-${ubication.id}`}
           center={position}
           radius={60}
           pathOptions={{
-            color: ubicationColor,
+            color: color,
             fillColor: "black",
             weight: 2,
             opacity: 0.9,
@@ -383,7 +363,7 @@ const UndergroundTracking = () => {
                 position: absolute;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-color:${ubicationColor};
+                background-color:${color};
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
@@ -475,17 +455,35 @@ const UndergroundTracking = () => {
   const filteredDataRute = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const sixtyMinutesAgo = dayjs().subtract(60, "minute");
+    const ubications = [
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Int-BC-1830",
+      "Parrilla 1",
+      "Parrilla 2",
+      "Pocket 3",
+    ];
 
-    return data.filter((truck) => {
-      if (!truck.lastDate) return false;
-      const lastUpdate = dayjs(truck.lastDate);
+    return data
+      .filter((truck) => {
+        if (!truck.lastDate) return false;
+        const lastUpdate = dayjs.utc(truck.lastDate);
+        const tooOld = lastUpdate.isBefore(dayjs.utc().subtract(60, "minute"));
 
-      return (
-        truck.status?.toLowerCase() === "operativo" &&
-        lastUpdate.isBefore(sixtyMinutesAgo)
-      );
-    });
+        return (
+          truck.status?.toLowerCase() === "operativo" &&
+          (truck.direction?.toLowerCase() === "entrada" ||
+            truck.direction?.toLowerCase() === "-") &&
+          ubications.includes(truck.lastUbication) &&
+          tooOld
+        );
+      })
+      .sort((a, b) => {
+        const numA = parseInt(a.name.split("-")[2]);
+        const numB = parseInt(b.name.split("-")[2]);
+        return numA - numB;
+      });
   }, [data]);
 
   return (

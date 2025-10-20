@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -9,12 +8,10 @@ import {
   Marker,
   Polyline,
   Popup,
-  TileLayer,
   useMap,
   ZoomControl,
 } from "react-leaflet";
 import TimeAgo from "timeago-react";
-import { subHours, isAfter, parseISO } from "date-fns";
 // Api
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 // Types
@@ -118,11 +115,15 @@ const TruckTracking = () => {
 
     const twentyMinutesAgo = dayjs().subtract(20, "minute");
     const excludeUbications = [
+      "Parqueo",
       "Int-BC-1820",
       "Int-BC-1800",
       "Int-BC-1875",
       "Int-BC-1930",
       "Int-BC-1910",
+      "Pahuaypite",
+      "Cancha 100",
+      "Faja 4",
     ];
 
     return data.filter((truck) => {
@@ -179,65 +180,15 @@ const TruckTracking = () => {
       status: string,
       unitName: string,
       isSelected: boolean = false,
-      connectivity: string,
       lastDate: string,
-      lastUbication: string
     ) => {
-      let color = "#6B7280"; // gris por defecto
-      const normalizedStatus = status.toLowerCase();
+      const statusColors: Record<string, string> = {
+        operativo: "#16a34a",
+        mantenimiento: "#ff758f",
+        inoperativo: "#EF4444",
+      };
 
-      if (
-        lastUbication?.trim() === "Int-BC-1800" ||
-        lastUbication?.trim() === "Taller Saturno"
-      ) {
-        switch (normalizedStatus) {
-          case "operativo":
-            color = "#22C55E";
-            break;
-          case "mantenimiento":
-            color = "#ff758f";
-            break;
-          case "inoperativo":
-            color = "#EF4444";
-            break;
-          default:
-            color = "#6B7280";
-        }
-      } else {
-        const getTimeStatus = (() => {
-          try {
-            if (!lastDate) return "old";
-            const lastDateTime = parseISO(lastDate);
-            const now = new Date();
-            const fiveHoursAgo = subHours(now, 5);
-            const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
-
-            if (!isAfter(lastDateTime, fiveHoursAgo)) return "old";
-            if (!isAfter(lastDateTime, fiveMinutesAgo)) return "stale";
-            return "fresh";
-          } catch {
-            return "old";
-          }
-        })();
-
-        if (getTimeStatus === "old") {
-          color = "#a0a0a0";
-        } else {
-          switch (normalizedStatus) {
-            case "operativo":
-              color = getTimeStatus === "stale" ? "#16a34a" : "#22C55E";
-              break;
-            case "mantenimiento":
-              color = "#F59E0B";
-              break;
-            case "inoperativo":
-              color = "#EF4444";
-              break;
-            default:
-              color = "#6B7280";
-          }
-        }
-      }
+      const color = statusColors[status.toLowerCase()];
 
       return L.divIcon({
         html: `
@@ -498,7 +449,7 @@ const TruckTracking = () => {
                 line-height: 0.7rem;                            
               ">
                 ${
-                  data.filter(
+                  filteredData.filter(
                     (truck) =>
                       truck.lastUbicationMac &&
                       truck.lastUbicationMac.toLowerCase() ===
@@ -633,7 +584,7 @@ const TruckTracking = () => {
                   line-height: 0.7rem;                            
                 ">
                   ${
-                    data.filter(
+                    filteredData.filter(
                       (truck) =>
                         truck.lastUbicationMac &&
                         truck.lastUbicationMac.toLowerCase() ===
@@ -661,7 +612,7 @@ const TruckTracking = () => {
     maintenanceLocation.forEach((taller) => {
       const color = taller.color || "#f3d111";
 
-      const count = data.filter(
+      const count = filteredData.filter(
         (truck) =>
           truck.lastUbicationMac &&
           Array.isArray(taller.mac) &&
@@ -737,33 +688,6 @@ const TruckTracking = () => {
     return components;
   };
 
-  const createFlagIcon = (label: string, color: string) =>
-    L.divIcon({
-      html: `
-        <div style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: ${color};
-          color: black;
-          font-weight: bold;
-          padding: 4px 4px;
-          border-radius: 5px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-          font-size: 0.7rem;
-          line-height: 0.7rem;
-          white-space: nowrap;
-          width: fit-content;          
-        ">
-          🚩 ${label}
-        </div>
-      `,
-      className: "flag-icon",
-      iconSize: [0, 0],
-      iconAnchor: [0, 0],
-    });
-
-  // Memoizar el componente del mapa
   const MapaCamiones = useMemo(() => {
     const {
       centerLat,
@@ -795,13 +719,6 @@ const TruckTracking = () => {
           zoomSnap={0.1}
           zoomDelta={0.1}
         >
-        
-          {/* <ImageOverlay
-            url={imageUrl}
-            bounds={imageBounds}
-            opacity={1}
-            zIndex={1}
-          /> */}
           <ZoomControl position="bottomleft" />
           {toggleStatus.showDestinations && routeComponents()}
           {toggleStatus.showTalleres && tallerLocations()}
