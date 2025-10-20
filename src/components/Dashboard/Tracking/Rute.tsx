@@ -5,18 +5,47 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TimeAgo from "timeago-react";
+import { useMemo } from "react";
+import dayjs from "dayjs";
 
 export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
-  const filteredData = data.filter((truck) => {
-    const excludeUbications = ["Parqueo","Int-BC-1820", "Int-BC-1800", "Int-BC-1875", "Int-BC-1930", "Int-BC-1910","Pahuaypite","Cancha 100","Faja 4"];
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
 
-    if(truck.status?.toLowerCase() !== "operativo") return false;
-    if (truck.direction?.toLowerCase() !== "salida" && truck.direction?.toLowerCase() !== "-") return false;
-    if (excludeUbications.includes(truck.lastUbication)) return false;
-    const lastUpdate = new Date(truck.updatedAt);
-    const diffMinutes = (Date.now() - lastUpdate.getTime()) / 1000 / 60;
-    return diffMinutes > 20;
-  });
+    const ubications = [
+      "Parqueo",
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Int-BC-1930",
+      "Int-BC-1910",
+      "Pahuaypite",
+      "Cancha 100",
+      "Faja 4",
+    ];
+
+    const twentyMinutesAgo = dayjs().subtract(20, "minute");
+
+    return data
+      .filter((truck) => {
+        if (!truck.lastDate) return false;
+
+        const lastUpdate = dayjs(truck.lastDate);
+        const tooOld = lastUpdate.isBefore(twentyMinutesAgo);
+
+        return (
+          truck.status?.toLowerCase() === "operativo" &&
+          (truck.direction?.toLowerCase() === "salida" ||
+            truck.direction?.toLowerCase() === "-")  &&
+          tooOld
+        );
+      })
+      .sort((a, b) => {
+        const numA = parseInt(a.name.split("-")[2]);
+        const numB = parseInt(b.name.split("-")[2]);
+        return numA - numB;
+      });
+  }, [data]);
 
   return (
     <div className="absolute bottom-32 right-2 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
@@ -43,8 +72,12 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
               side="bottom"
               className="bg-black text-amber-400 text-[11px] px-2.5 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1 leading-none font-semibold "
             >
-              <span className="text-zinc-300">Ubicación: {truck.lastUbication}</span>
-              <span className="text-zinc-300">Dirección: {truck.direction}</span>
+              <span className="text-zinc-300">
+                Ubicación: {truck.lastUbication}
+              </span>
+              <span className="text-zinc-300">
+                Dirección: {truck.direction}
+              </span>
               <TimeAgo datetime={truck.updatedAt} locale="es" />
             </TooltipContent>
           </Tooltip>
