@@ -36,7 +36,8 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
         return (
           truck.status?.toLowerCase() === "operativo" &&
           (truck.direction?.toLowerCase() === "salida" ||
-            truck.direction?.toLowerCase() === "-")  &&
+            truck.direction?.toLowerCase() === "-") &&
+          ubications.includes(truck.lastUbication) &&
           tooOld
         );
       })

@@ -103,13 +103,26 @@ const UndergroundTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const tenMinutesAgo = dayjs().subtract(20, "minute");
+    const timeAgo = dayjs().subtract(20, "minute");
+    const ubications = [
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Int-BC-1830",
+      "Parrilla 1",
+      "Parrilla 2",
+      "Pocket 3",
+    ];
 
     return data.filter((truck) => {
       if (!truck.lastDate) return false;
+
       if (truck.direction?.toLowerCase() === "salida") return false;
       const lastUpdate = dayjs(truck.lastDate);
-      return lastUpdate.isAfter(tenMinutesAgo);
+      if (!ubications.includes(truck.lastUbication)) return false;
+
+      if (lastUpdate.isBefore(timeAgo)) return false;
+      return true;
     });
   }, [data]);
 
@@ -330,7 +343,6 @@ const UndergroundTracking = () => {
         ubication.position.latitud,
         ubication.position.longitud,
       ] as [number, number];
-      
 
       components.push(
         <Circle
