@@ -77,8 +77,8 @@ const UndergroundTracking = () => {
 
   const mapConfig = useMemo(
     () => ({
-      centerLat: -13.07915, // Centro del mapa al cargar
-      centerLng: -75.9925, // Centro del mapa al cargar
+      centerLat: -13.07925, // Centro del mapa al cargar
+      centerLng: -75.9921, // Centro del mapa al cargar
       imageCenterLat: -13.079444, // Centro de la imagen
       imageCenterLng: -75.991944, // Centro de la imagen
       imageUrl: "/sub.svg",
