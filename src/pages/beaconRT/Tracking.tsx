@@ -8,6 +8,7 @@ import {
   Marker,
   Polyline,
   Popup,
+  TileLayer,
   useMap,
   ZoomControl,
 } from "react-leaflet";
@@ -113,14 +114,14 @@ const TruckTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const twentyMinutesAgo = dayjs().subtract(20, "minute");
-    const excludeUbications = [
-      "Parqueo",
+    const timeAgo = dayjs().subtract(20, "minute");
+    const ubications = [
       "Int-BC-1820",
       "Int-BC-1800",
       "Int-BC-1875",
       "Int-BC-1930",
       "Int-BC-1910",
+      "Parqueo",
       "Pahuaypite",
       "Cancha 100",
       "Faja 4",
@@ -132,8 +133,8 @@ const TruckTracking = () => {
       if (truck.direction?.toLowerCase() === "entrada") return false;
       const lastUpdate = dayjs(truck.lastDate);
       if (
-        excludeUbications.includes(truck.lastUbication) &&
-        lastUpdate.isBefore(twentyMinutesAgo)
+        ubications.includes(truck.lastUbication) &&
+        lastUpdate.isBefore(timeAgo)
       ) {
         return false;
       }
@@ -696,12 +697,16 @@ const TruckTracking = () => {
           minZoom={17}
           maxZoom={19}
           zoomControl={false}
-          style={{ height: "100%", width: "100%", backgroundColor: "#000000" }}
+          style={{ height: "100%", width: "100%" }}
           className="z-0"
           attributionControl={false}
           zoomSnap={0.1}
           zoomDelta={0.1}
         >
+          <TileLayer
+                      attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    />
           <ZoomControl position="bottomleft" />
           {toggleStatus.showDestinations && routeComponents()}
           {toggleStatus.showTalleres && tallerLocations()}
