@@ -39,6 +39,7 @@
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
     "esbuild": "^0.25.0",
+    "formik": "^2.4.6",
     "handsontable": "^16.1.1",
     "highcharts": "^12.4.0",
     "highcharts-react-official": "^3.2.2",

@@ -150,13 +150,9 @@ const TruckTracking = () => {
     ].find((u) => {
       if (!u.mac || !truck.lastUbicationMac) return false;
 
-      if (Array.isArray(u.mac)) {
-        return u.mac.some(
-          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-        );
-      }
-
-      return u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase();
+      return u.mac.some(
+        (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+      );
     });
 
     setSelectedTruck({
@@ -249,17 +245,9 @@ const TruckTracking = () => {
       ].find((beacon) => {
         if (!beacon.mac || !truck.lastUbicationMac) return false;
 
-        // Si es array (varias MACs)
-        if (Array.isArray(beacon.mac)) {
-          return beacon.mac.some(
-            (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-          );
-        }
-
-        // Si es string
-        return (
-          beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-        );
+        return beacon.mac.some(
+          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        )
       });
 
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
@@ -312,8 +300,6 @@ const TruckTracking = () => {
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
               truck.connectivity,
-              truck.lastDate,
-              truck.lastUbication
             )}
           >
             <Popup>
@@ -451,9 +437,8 @@ const TruckTracking = () => {
                 ${
                   filteredData.filter(
                     (truck) =>
-                      truck.lastUbicationMac &&
-                      truck.lastUbicationMac.toLowerCase() ===
-                        ubication.mac.toLowerCase()
+                      truck.lastUbicationMac && Array.isArray(ubication.mac) &&
+                      ubication.mac.map(m => m.toLowerCase()).includes(truck.lastUbicationMac.toLowerCase())
                   ).length
                 }
               </span>
@@ -586,9 +571,7 @@ const TruckTracking = () => {
                   ${
                     filteredData.filter(
                       (truck) =>
-                        truck.lastUbicationMac &&
-                        truck.lastUbicationMac.toLowerCase() ===
-                          bocamina.mac.toLowerCase()
+                        truck.lastUbicationMac && bocamina.mac && bocamina.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
                     ).length
                   }
                 </span>

@@ -6,12 +6,13 @@ export const useAuthStore = create(
     (set, get) => ({
       token: "",
       profile: [],
+      type: "user",
       mining: null,
       isAuth: false,
       isCollapsed: false,
 
       setToken: (token) => set({ token,isAuth: !!token, }),
-      setProfile: (profile) => set({ profile }),
+      setProfile: (profile) => set({ profile: profile, type: profile.type }),
       setMining: (mining) => set({ mining }),
       setIsCollapsed: (isCollapsed) => set({ isCollapsed }),
       logout: () => {
@@ -21,6 +22,7 @@ export const useAuthStore = create(
           mining: null,
           isAuth:false,
           isCollapsed: false,
+          type: "user",
         });
       },
     }),

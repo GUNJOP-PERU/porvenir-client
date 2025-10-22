@@ -16,6 +16,7 @@ export const dataCargo = [
   { value: "Operador Scoop", name: "Operador Scoop" },
   { value: "Operador Truck", name: "Operador Truck" },
   { value: "Admin", name: "Admin" },
+  { value: "Web", name: "Web" },
 ];
 export const dataTurn = [
   { value: "dia", name: "Dia" },
@@ -53,6 +54,10 @@ export const cargo = [
   {
     value: "Supervisor Truck",
     label: "Supervisor Truck",
+  },
+  {
+    value: "Web",
+    label: "Web",
   },
 ]
 

@@ -67,7 +67,7 @@ const ProductionStatus = () => {
         // const lastItem = unit.tracks?.[unit.tracks.length - 1]?.uuid;
         let isLateBocamina = false;
 
-        if ( firstBocamina) {
+        if (firstBocamina) {
           const startTime = dayjs(firstBocamina.f_inicio);
           const dayShiftLimit = startTime.hour(8).minute(30);
           const nightShiftLimit = startTime.hour(20).minute(30);
@@ -126,15 +126,15 @@ const ProductionStatus = () => {
           return totalMinutes >= 780;
         });
 
-        const lastItem = unit.tracks[unit.tracks.length - 1]?.uuid;
+        // const lastItem = unit.tracks[unit.tracks.length - 1]?.uuid;
         let isLateBocamina = false;
 
-        if (lastItem !== firstAfternoonBocamina?.uuid) {
-          return {
-            unit: unit.unit,
-            firstBocamina: null,
-          };
-        }
+        // if (lastItem !== firstAfternoonBocamina?.uuid) {
+        //   return {
+        //     unit: unit.unit,
+        //     firstBocamina: null,
+        //   };
+        // }
 
         if (firstAfternoonBocamina) {
           const bocaminaStartTime = new Date(firstAfternoonBocamina.f_inicio);
@@ -195,18 +195,16 @@ const ProductionStatus = () => {
       const isParqueo =
         truck.lastUbicationMac.toLowerCase() === "bc:57:29:01:c9:03";
       const isSuperficie = superficieLocation.find(
-        (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        (e) => e.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
       );
-     const isMaintenance = maintenanceLocation.find((e) =>
-  e.mac.some(
-    (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-  )
-);
+      const isMaintenance = maintenanceLocation.find(
+        (e) => e.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
+      );
       const isUnderground = ubicationBocamina.find(
-        (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        (e) => e.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
       );
       const isDestination = ubicationData.find(
-        (e) => e.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        (e) => e.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
       );
 
       const isLunchTime = (() => {
@@ -355,7 +353,7 @@ const ProductionStatus = () => {
   };
 
   return (
-    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 grid-rows-3 xl:grid-rows-1">
+    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 grid-rows-3 xl:grid-rows-1">
       <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
@@ -473,7 +471,7 @@ const ProductionStatus = () => {
         </div>
       </div>
 
-      {/* <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
         >
@@ -526,9 +524,9 @@ const ProductionStatus = () => {
             </div>
           ))}
         </div>
-      </div> */}
+      </div>
 
-      {/* <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
@@ -592,7 +590,7 @@ const ProductionStatus = () => {
             </div>
           ))}
         </div>
-      </div> */}
+      </div>
 
       <div className="flex flex-col bg-[#2B302B] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div

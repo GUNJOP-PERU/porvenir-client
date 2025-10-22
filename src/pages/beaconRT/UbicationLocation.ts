@@ -1,6 +1,6 @@
 interface IBeaconUbication {
   id: number,
-  mac: string | string[],
+  mac: string[],
   name: string,
   location: string,
   description: string,
@@ -27,7 +27,7 @@ interface IWifiLocation {
 export const ubicationBocamina: IBeaconUbication[] = [
   {
     id: 1,
-    mac: "BC:57:29:06:02:33",
+    mac: ["BC:57:29:06:02:33"],
     name: "BC1910_01",
     location: "bocamina",
     description: "BC-1910",
@@ -40,7 +40,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 2,
-    mac: "BC:57:29:06:02:3A",
+    mac: ["BC:57:29:06:02:3A"],
     name: "BC1875_01",
     location: "bocamina",
     description: "BC-1875",
@@ -53,7 +53,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 3,
-    mac: "BC:57:29:06:02:38",
+    mac: ["BC:57:29:06:02:38"],
     name: "BC1820_01",
     location: "bocamina",
     description: "BC-1820",
@@ -66,7 +66,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 4,
-    mac: "BC:57:29:06:02:39",
+    mac: ["BC:57:29:06:02:39"],
     name: "BC1800_01",
     location: "bocamina",
     description: "BC-1800",
@@ -250,7 +250,7 @@ const ubicationData : IBeaconUbication[] = [
   // },
   {
     id: 9,
-    mac: "BC:57:29:06:02:2F",
+    mac: ["BC:57:29:06:02:2F"],
     name: "C100_01",
     location: "destinations",
     description: "Cancha 100",
@@ -276,7 +276,7 @@ const ubicationData : IBeaconUbication[] = [
   },
   {
     id: 10,
-    mac: "BC:57:29:06:02:2C",
+    mac: ["BC:57:29:06:02:2C"],
     name: "F4_01",
     location: "destinations",
     description: "Faja 4",
@@ -300,7 +300,7 @@ const ubicationData : IBeaconUbication[] = [
   },
   {
     id: 11,
-    mac: "BC:57:29:06:02:37",
+    mac: ["BC:57:29:06:02:37"],
     name: "PH_01",
     location: "destinations",
     description: "Pahuaypite",
@@ -329,7 +329,7 @@ const ubicationData : IBeaconUbication[] = [
   },
   {
     id: 34,
-    mac: "bc:57:29:01:c9:03",
+    mac: ["bc:57:29:01:c9:03", "bc:57:29:01:c9:18"],
     name: "PARK. VOLQUETES",
     location: "destinations",
     description: "Parqueo Volquetes",
@@ -793,7 +793,7 @@ const wifiLocation : IWifiLocation[]  = [
 const ubicationDataSub : IBeaconUbication[] = [
   {
     id: 1,
-    mac: "BC:57:29:06:02:3A",
+    mac: ["BC:57:29:06:02:3A"],
     name: "BC1875_01",
     location: "bocamina",
     description: "BC-1875",
@@ -807,7 +807,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 2,
-    mac: "BC:57:29:06:02:38",
+    mac: ["BC:57:29:06:02:38"],
     name: "BC1820_01",
     location: "bocamina",
     description: "BC-1820",
@@ -821,7 +821,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 4,
-    mac: "BC:57:29:06:02:39",
+    mac: ["BC:57:29:06:02:39"],
     name: "BC1800_01",
     location: "bocamina",
     description: "BC-1800",
@@ -835,7 +835,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 3,
-    mac: "BC:57:29:06:02:3B",
+    mac: ["BC:57:29:06:02:3B"],
     name: "BC1830_01",
     location: "bocamina",
     description: "BC-1830",
@@ -849,7 +849,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 6,
-    mac: "BC:57:29:06:01:E3",
+    mac: ["BC:57:29:06:01:E3"],
     name: "PR_01",
     location: "destinations",
     description: "PARRILLA 1",
@@ -863,7 +863,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 7,
-    mac: "BC:57:29:06:01:DB",
+    mac: ["BC:57:29:06:01:DB"],
     name: "PR_02",
     location: "destinations",
     description: "PARRILLA 2",
@@ -877,7 +877,7 @@ const ubicationDataSub : IBeaconUbication[] = [
   },
   {
     id: 8,
-    mac: "BC:57:29:06:01:E7",
+    mac: ["BC:57:29:06:01:E7"],
     name: "PO_03",
     location: "destinations",
     description: "POCKET 3",

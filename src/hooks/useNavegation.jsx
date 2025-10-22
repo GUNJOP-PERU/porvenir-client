@@ -4,6 +4,7 @@ import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaTimeline } from "react-icons/fa6";
+import { useAuthStore } from "@/store/AuthStore";
 import {
   ChartArea,
   LandPlot,
@@ -14,78 +15,10 @@ import {
 export const useNavigation = () => {
   const location = useLocation();
   const pathname = location.pathname;
+  const userType = useAuthStore((state) => state.type);
 
-  const paths = useMemo(
-    () => [
-      {
-        title: "Gestión",
-        items: [
-          
-          {
-            name: "Ubicaciones",
-            icon: <MapPin />,
-            items: [
-              {
-                name: "Usuarios",
-                href: "/users",
-                active: pathname === "/users",
-              },
-              {
-                name: "Origen / Labor",
-                href: "/labor",
-                active: pathname === "/labor",
-              },
-              {
-                name: "Destinos",
-                href: "/destiny",
-                active: pathname === "/destiny",
-              },
-              {
-                name: "Bocaminas",
-                href: "/ubications",
-                active: pathname === "/ubications",
-              },
-            ],
-          },
-          {
-            name: "Planes",
-            icon: <IconPlan />,
-            items: [
-              {
-                name: "Plan Diario",
-                href: "/planDay",
-                active: pathname === "/planDay",
-              },
-              {
-                name: "Plan Semanal",
-                href: "/planWeek",
-                active: pathname === "/planWeek",
-              },
-              {
-                name: "Plan Mensual",
-                href: "/planMonth",
-                active: pathname === "/planMonth",
-              },
-            ],
-          },
-          {
-            name: "Conectividad",
-            icon: <Waypoints />,
-            items: [
-              {
-                name: "Beacon",
-                href: "/beacon",
-                active: pathname === "/beacon",
-              },
-              {
-                name: "WAP",
-                href: "/wap",
-                active: pathname === "/wap",
-              },
-            ],
-          },
-        ],
-      },
+  const paths = useMemo(() => {
+    const basePaths = [
       {
         title: "Beacon Tiempo Real",
         items: [
@@ -216,8 +149,83 @@ export const useNavigation = () => {
           },
         ],
       },
-    ],
-    [pathname]
-  );
+    ];
+
+    if (userType === "admin") {
+      return [
+        {
+          title: "Gestión",
+          items: [
+            {
+              name: "Ubicaciones",
+              icon: <MapPin />,
+              items: [
+                {
+                  name: "Usuarios",
+                  href: "/users",
+                  active: pathname === "/users",
+                },
+                {
+                  name: "Origen / Labor",
+                  href: "/labor",
+                  active: pathname === "/labor",
+                },
+                {
+                  name: "Destinos",
+                  href: "/destiny",
+                  active: pathname === "/destiny",
+                },
+                {
+                  name: "Bocaminas",
+                  href: "/ubications",
+                  active: pathname === "/ubications",
+                },
+              ],
+            },
+            {
+              name: "Planes",
+              icon: <IconPlan />,
+              items: [
+                {
+                  name: "Plan Diario",
+                  href: "/planDay",
+                  active: pathname === "/planDay",
+                },
+                {
+                  name: "Plan Semanal",
+                  href: "/planWeek",
+                  active: pathname === "/planWeek",
+                },
+                {
+                  name: "Plan Mensual",
+                  href: "/planMonth",
+                  active: pathname === "/planMonth",
+                },
+              ],
+            },
+            {
+              name: "Conectividad",
+              icon: <Waypoints />,
+              items: [
+                {
+                  name: "Beacon",
+                  href: "/beacon",
+                  active: pathname === "/beacon",
+                },
+                {
+                  name: "WAP",
+                  href: "/wap",
+                  active: pathname === "/wap",
+                },
+              ],
+            },
+          ],
+        },
+        ...basePaths
+      ];
+    }
+
+    return basePaths;
+  }, [pathname, userType]);
   return paths;
 };

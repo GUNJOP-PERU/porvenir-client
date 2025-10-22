@@ -56,13 +56,28 @@ export const columns = [
   {
     accessorKey: "code",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title="Usuario" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
             {row.original.code || ""}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo de usuario" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.original.type || ""}
           </span>
         </div>
       );

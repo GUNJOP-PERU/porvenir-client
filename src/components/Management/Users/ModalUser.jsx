@@ -42,9 +42,9 @@ const FormSchema = z.object({
   name: z.string().min(1, { message: "*Nombre requerido" }),
   cargo: z.string().min(1, { message: "*Cargo requerido" }),
   role: z.string().min(1, { message: "*Rol requerido" }),
-  code: z.string().refine((value) => /^\d{8}$/.test(value), {
-    message: "*Debe tener 8 dígitos.",
-  }),
+  code: z.string().min(8, { message: "*El usuario debe tener mínimo 8 dígitos" }),
+  type: z.enum(["user", "supervisor", "admin"], { message: "*Tipo de usuario requerido" }),
+  password: z.string().min(8, { message: "*La contraseña debe tener mínimo 8 dígitos" }),
   isActive: z.boolean().default(true),
 });
 
@@ -60,6 +60,8 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
       cargo: dataCrud?.cargo || "",
       role: dataCrud?.role || "",
       code: dataCrud?.code || "",
+      password: dataCrud?.password || "",
+      type: dataCrud?.type || "",
       isActive: dataCrud?.isActive ?? true,
     },
   });
@@ -73,6 +75,8 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: dataCrud.cargo || "",
         role: dataCrud.role || "",
         code: dataCrud.code || "",
+        password: dataCrud.password || "",
+        type: dataCrud.type || "user",
         isActive: dataCrud.isActive ?? true,
       });
     } else {
@@ -81,12 +85,15 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         cargo: "",
         role: "",
         code: "",
+        password: "",
+        type: "user",
         isActive: true,
       });
     }
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
+    console.log("data", data);
     await handleFormSubmit({
       isEdit,
       endpoint: "user",
@@ -130,7 +137,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Nombre de usuario</FormLabel>
+                    <FormLabel>Nombre</FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
@@ -146,6 +153,22 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="code"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
+                    <FormLabel>Nombre de usuario</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. pablo1234"
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
                     <FormLabel>Contraseña</FormLabel>
                     <Input
                       type="text"
@@ -158,6 +181,39 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         field.onChange(numericValue);
                       }}
                     />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel>Tipo de usuario</FormLabel>
+
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="user">
+                          Usuario (solo lectura)
+                        </SelectItem>
+                        <SelectItem value="contratista">
+                          Contratista
+                        </SelectItem>
+                        <SelectItem value="admin">
+                          Administrador
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
