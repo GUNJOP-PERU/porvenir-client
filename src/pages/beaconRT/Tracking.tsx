@@ -90,12 +90,12 @@ const TruckTracking = () => {
     () => ({
       centerLat: -13.0799,
       centerLng: -75.9929,
-      imageCenterLat: -13.080500, // Centro de la imagen
-      imageCenterLng: -75.995490, // Centro de la imagen
+      imageCenterLat: -13.0805, // Centro de la imagen
+      imageCenterLng: -75.99549, // Centro de la imagen
       imageUrl: "/superficie.png",
-      imageScale: 0.007000,
-      imageWidth: 0.012250,
-      imageHeight: 0.008000, 
+      imageScale: 0.007,
+      imageWidth: 0.01225,
+      imageHeight: 0.008,
       opacity: 0.6,
       zoom: 16.8,
     }),
@@ -177,7 +177,7 @@ const TruckTracking = () => {
       status: string,
       unitName: string,
       isSelected: boolean = false,
-      lastDate: string,
+      lastDate: string
     ) => {
       const statusColors: Record<string, string> = {
         operativo: "#16a34a",
@@ -248,7 +248,7 @@ const TruckTracking = () => {
 
         return beacon.mac.some(
           (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-        )
+        );
       });
 
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
@@ -275,9 +275,15 @@ const TruckTracking = () => {
     const result: JSX.Element[] = [];
 
     coordMap.forEach((trucks, key) => {
-      const [latRaw, lngRaw] = key.split(",").map((v) => Number(v ?? "0"));
-      const lat = !isNaN(latRaw) ? latRaw : 0;
-      const lng = !isNaN(lngRaw) ? lngRaw : 0;
+      const [latRawStr, lngRawStr] = key.split(",");
+
+      // Aseguramos que siempre sean strings válidos
+      const latRaw = Number(latRawStr ?? "0");
+      const lngRaw = Number(lngRawStr ?? "0");
+
+      // Validamos NaN
+      const lat = isNaN(latRaw) ? 0 : latRaw;
+      const lng = isNaN(lngRaw) ? 0 : lngRaw;
       const count = trucks.length;
       const perRow = 4;
       const offsetX = 0.00022; // separación horizontal
@@ -300,7 +306,7 @@ const TruckTracking = () => {
               truck.status,
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
-              truck.connectivity,
+              truck.connectivity
             )}
           >
             <Popup>
@@ -438,8 +444,11 @@ const TruckTracking = () => {
                 ${
                   filteredData.filter(
                     (truck) =>
-                      truck.lastUbicationMac && Array.isArray(ubication.mac) &&
-                      ubication.mac.map(m => m.toLowerCase()).includes(truck.lastUbicationMac.toLowerCase())
+                      truck.lastUbicationMac &&
+                      Array.isArray(ubication.mac) &&
+                      ubication.mac
+                        .map((m) => m.toLowerCase())
+                        .includes(truck.lastUbicationMac.toLowerCase())
                   ).length
                 }
               </span>
@@ -572,7 +581,13 @@ const TruckTracking = () => {
                   ${
                     filteredData.filter(
                       (truck) =>
-                        truck.lastUbicationMac && bocamina.mac && bocamina.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
+                        truck.lastUbicationMac &&
+                        bocamina.mac &&
+                        bocamina.mac.some(
+                          (mac) =>
+                            mac.toLowerCase() ===
+                            truck.lastUbicationMac.toLowerCase()
+                        )
                     ).length
                   }
                 </span>
@@ -692,7 +707,7 @@ const TruckTracking = () => {
     return (
       <div className="h-full w-full">
         <MapContainer
-           center={[centerLat, centerLng]}
+          center={[centerLat, centerLng]}
           zoom={zoom}
           minZoom={17}
           maxZoom={19}
@@ -704,16 +719,16 @@ const TruckTracking = () => {
           zoomDelta={0.1}
         >
           <TileLayer
-                      attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                    />
+            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          />
           <ZoomControl position="bottomleft" />
           {toggleStatus.showDestinations && routeComponents()}
           {toggleStatus.showTalleres && tallerLocations()}
           {toggleStatus.showSuperficie && superficieLocations()}
           {toggleStatus.showBocaminas && bocaminaLocations()}
           {markers}
-         
+
           <MapControls selectedTruckPosition={selectedTruckPosition} />
         </MapContainer>
       </div>
@@ -734,9 +749,6 @@ const TruckTracking = () => {
         }
         onToggleDestinations={(show) =>
           setToggleStatus((prev) => ({ ...prev, showDestinations: show }))
-        }
-        onToggleSuperficie={(show) =>
-          setToggleStatus((prev) => ({ ...prev, showSuperficie: show }))
         }
         onToggleTalleres={(show) =>
           setToggleStatus((prev) => ({ ...prev, showTalleres: show }))

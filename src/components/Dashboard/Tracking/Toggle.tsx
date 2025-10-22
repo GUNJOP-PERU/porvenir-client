@@ -49,28 +49,6 @@ export default function Toggle({
           </button>
         </div>       
 
-        {/* Toggle Superficie */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="bg-[#ccc8af] w-2 h-2 rounded-full" />
-            <span className="text-white text-[11px] font-medium">
-              Superficie
-            </span>
-          </div>
-          <button
-            onClick={() => onToggleSuperficie?.(!showSuperficie)}
-            className="relative inline-flex h-4 w-7 items-center rounded-full transition-colors focus:outline-none"
-            style={{
-              backgroundColor: showSuperficie ? "#ccc8af" : "#cfcfcf",
-            }}
-          >
-            <span
-              className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                showSuperficie ? "translate-x-3.5" : "translate-x-0.5"
-              }`}
-            />
-          </button>
-        </div>
 
         {/* Toggle Destinos */}
         <div className="flex items-center justify-between gap-3">
