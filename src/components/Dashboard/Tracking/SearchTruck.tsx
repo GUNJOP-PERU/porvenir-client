@@ -45,7 +45,7 @@ export default function SearchTruck({
       // Si la ubicación tiene múltiples MACs
       if (Array.isArray(ubication.mac)) {
         return ubication.mac.some(
-          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+          (mac: string) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
         );
       }
 
@@ -55,17 +55,11 @@ export default function SearchTruck({
       );
     });
 
-    const onlineCount = trucksInArea.filter(
-      (truck) => truck.connectivity === "online"
-    ).length;
-    const offlineCount = trucksInArea.length - onlineCount;
-
     return {
       area: ubication.description,
       color: ubication.color || "#0EB1D2",
       count: trucksInArea.length,
-      online: onlineCount,
-      offline: offlineCount,
+     
     };
   });
 
@@ -82,8 +76,9 @@ export default function SearchTruck({
 
   const totalTrucksInAreas = trucksPerArea.reduce((acc, a) => acc + a.count, 0);
 
+  
   return (
-    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60 border border-zinc-800">
+    <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60 border border-zinc-800 transition-all duration-300 ease-in-out">
       <div className="flex flex-col">
         <div className="flex items-center space-x-1">
           <div
@@ -177,7 +172,9 @@ export default function SearchTruck({
           </p>
         </div>
 
-        <div className="flex flex-col gap-1 bg-black/70 rounded-lg pt-2.5 px-2">
+        <div        
+          className="flex flex-col gap-1 bg-black/70 rounded-lg pt-2.5 px-2"
+        >
           {visibleAreas.map((area, i) => (
             <div
               key={i}
@@ -200,20 +197,14 @@ export default function SearchTruck({
               <div className="flex gap-1">
                 <p
                   className={clsx(
-                    "text-[11px] text-amber-400 leading-none",
-                    area.online === 0 && "opacity-50"
+                    "text-[11px] leading-none",
+                    area.count === 0 && "opacity-50"
                   )}
+                  style={{ color: area.color }}
                 >
-                  {area.online}
+                  {area.count}
                 </p>
-                <p
-                  className={clsx(
-                    "text-[11px] text-zinc-500 leading-none",
-                    area.offline === 0 && "opacity-50"
-                  )}
-                >
-                  {area.offline}
-                </p>
+                
               </div>
             </div>
           ))}
