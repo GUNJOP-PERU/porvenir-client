@@ -9,6 +9,7 @@ export type BeaconCycle= {
   beforeInitialTrips: BeaconUnitTrip[],
   totalUnloadTime: number,
   avgUnloadTime: number,
+  avgFrontLaborDuration: number,
   maintance: {
     unit: string,
     shift: string,
@@ -42,6 +43,7 @@ export type BeaconUnitTrip = {
   unloadTime: number,
   tripType: "Mineral" | "Desmonte" | "Vacio",
   trip: BeaconDetection[],
+  location: "Superficie" | "Subterraneo"
   bocaminaList: {
     name: string,
     count: number

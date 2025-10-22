@@ -17,7 +17,6 @@ import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
 import { calculateTripPrediction } from "@/utils/predictionUtils";
 // Icons
-import IconScoop from "@/icons/IconScoop";
 import IconTruck from "@/icons/IconTruck";
 
 const RealTimeByHourRT = () => {
@@ -111,10 +110,20 @@ const RealTimeByHourRT = () => {
         durationPerTripDay: 0,
         durationPerTripNight: 0,
         avgUnloadTime: 0,
+        avgLoadTime: 0,
+        avgDurationSuperficieTripsDay: 0,
+        avgDurationSubterraneoTripsDay: 0,
+        avgDurationSuperficieTripsNight: 0,
+        avgDurationSubterraneoTripsNight: 0,
       };
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
+    const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
+    const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
+    const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -190,6 +199,11 @@ const RealTimeByHourRT = () => {
         return acc + truck.avgUnloadTime / 60;
       }, 0) / data.length;
 
+    const avgLoadTime =
+      data.reduce((acc, truck) => {
+        return acc + truck.avgFrontLaborDuration / 60;
+      }, 0) / data.length;
+
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
@@ -216,6 +230,11 @@ const RealTimeByHourRT = () => {
       totalTMDay,
       totalTMNight,
       avgUnloadTime,
+      avgLoadTime,
+      avgDurationSuperficieTripsDay,
+      avgDurationSubterraneoTripsDay,
+      avgDurationSuperficieTripsNight,
+      avgDurationSubterraneoTripsNight,
     };
   }, [data, baseData]);
 
@@ -576,8 +595,8 @@ const RealTimeByHourRT = () => {
                 subData: [
                   {
                     title: "Tiempo de Carga por Camión",
-                    currentValue: baseStats.avgUnloadTime
-                      ? Number(baseStats.avgUnloadTime.toFixed(2))
+                    currentValue: baseStats.avgLoadTime
+                      ? Number(baseStats.avgLoadTime.toFixed(2))
                       : 0,
                     total: 10,
                   },
@@ -591,11 +610,20 @@ const RealTimeByHourRT = () => {
                 ],
               },
               {
-                title: "Real",
+                title: "Duración del Ciclo Subterraneo",
                 currentValue:
                   shiftFilter === "dia"
-                    ? Number(baseStats.durationPerTripDay.toFixed(2))
-                    : Number(baseStats.durationPerTripNight.toFixed(2)),
+                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
+                total: 100,
+                subData: [],
+              },
+              {
+                title: "Duración del Ciclo Superficie",
+                currentValue:
+                  shiftFilter === "dia"
+                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
                 total: 100,
                 subData: [],
               },

@@ -8,7 +8,11 @@ const ProgressBarSmall = ({progressBarData}) => {
     <div className="progress-bar--container small">
       <span className="progress-bar-label">
         <b className="text-white">{progressBarData.showTitle ? progressBarData.title : ""}</b> 
-        <b className="text-black">{progressBarData.currentValue} min</b> 
+        <b
+          style={{
+            color:`${currentPercentage > 85 ? "#FFFFFF" : "#000000"}`
+          }}
+        >{progressBarData.currentValue} min</b> 
       </span>
       <div
         className="currentValue-bar"

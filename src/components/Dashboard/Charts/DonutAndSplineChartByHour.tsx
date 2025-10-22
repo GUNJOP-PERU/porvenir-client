@@ -76,7 +76,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
     chart: {
       type: "areaspline",
       height: 300,
-      marginBottom: 50,
+      marginBottom: 55,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -141,6 +141,19 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
     },
     series: [
       {
+        name: "Real",
+        data: acummulativeTripsCounts,
+        xAxis: 0,
+        fillColor: chartColor + "80",
+        color: chartColor,
+        animation: false,
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: chartColor,
+        },
+      },
+      {
         name: "Plan",
         data: mode === "day" ? accumulativePlanData : accumulativeCurrentPlanDay,
         xAxis: 1,
@@ -163,20 +176,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
           };
         }),
         zoneAxis: 'x',
-      },
-      {
-        name: "Real",
-        data: acummulativeTripsCounts,
-        xAxis: 0,
-        fillColor: chartColor + "80",
-        color: chartColor,
-        animation: false,
-        marker: {
-          fillColor: "white",
-          lineWidth: 2,
-          lineColor: chartColor,
-        },
-      },
+      }
     ],
     tooltip: {
       shared: true,
