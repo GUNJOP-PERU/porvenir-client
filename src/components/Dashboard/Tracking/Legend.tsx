@@ -59,29 +59,7 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
   }, [planData]);
 
   return (
-    <div className="absolute top-2 right-2 z-10 select-none flex flex-col justify-end gap-1">
-        {/* <div
-            className={clsx(
-              "flex flex-col items-center justify-center gap-[2px] leading-none w-14 h-14 rounded-xl  transition-colors duration-300",
-              counts === 0
-                ? "bg-zinc-500 text-black" // plomo
-                : counts >= 38
-                ? "bg-green-600 text-black" // verde
-                : counts >= 36 && counts <= 37
-                ? "bg-yellow-500 text-black" // amarillo
-                : "bg-rose-500 text-white animate-pulse duration-1000 border-2 border-rose-400" // rojo
-            )}
-          >
-            <span className="text-[7.5px] font-bold leading-none mt-1">
-              TOTAL
-            </span>
-            <span className="font-black text-3xl leading-none text-center">
-              {counts}
-            </span>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <IconTruck className="h-7 w-11" color="#1dd3b0" />
-            </div>
-          </div> */}
+    <div className="absolute top-2 right-2 z-10 select-none flex flex-col justify-end gap-1">       
         <div
           className={clsx(
             "rounded-xl py-1 px-1 flex items-center gap-2",
@@ -118,10 +96,10 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
           </div>
         </div>
 
-        <div className="flex flex-col items-center w-full bg-black/70 px-2 py-2 rounded-lg">
-          <div className="flex justify-between w-full text-[9px] font-bold text-zinc-300 mb-1">
-            <span>MINERAL</span>
-            <span>DESMONTE</span>
+        <div className="flex flex-col gap-1 items-center w-full bg-black/70 px-2 py-2 rounded-lg">
+          <div className="flex justify-between w-full ">
+            <span className="text-[#1dd3b0] text-[9px] font-extrabold leading-none">MINERAL</span>
+            <span className="text-[#daa588] text-[9px] font-extrabold leading-none">DESMONTE</span>
           </div>
 
           <div className="relative w-full h-2 bg-zinc-600 rounded-[4px] overflow-hidden">
@@ -143,15 +121,15 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
               }}
             ></div>
           </div>
-
-          <div className="flex justify-between w-full text-xs font-bold mt-1">
-            <span className="text-[#1dd3b0]">
-              {counts} | {planSummary.mineralPercent || 100}%
+          <div className="flex justify-between w-full ">
+            <span className="text-[#1dd3b0] leading-none text-xs font-bold">
+              {counts} / {planSummary.mineralPercent || 100}%
             </span>
-            <span className="text-[#daa588]">
-              {planSummary.desmonte} | {planSummary.desmontePercent || 0}%
+            <span className="text-[#daa588] leading-none text-xs font-bold">
+              {planSummary.desmonte} / {planSummary.desmontePercent || 0}%
             </span>
           </div>
+
         </div>
     </div>
   );

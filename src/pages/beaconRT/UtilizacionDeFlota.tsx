@@ -318,7 +318,6 @@ const ProductionStatus = () => {
     };
   }, [data]);
 
-  console.log(truckFiltered);
   const itemColors = {
     parqueo: {
       outer: "bg-[#8b5e34]",
@@ -336,9 +335,9 @@ const ProductionStatus = () => {
       color: "#8ecae6",
     },
     mina: {
-      outer: "bg-[#7209b7]",
-      inner: "bg-[#7209b7]",
-      color: "#ffffff50",
+      outer: "bg-[#5F8E65]",
+      inner: "bg-[#85A789]",
+      color: "#aec3b0",
     },
     mantenimiento: {
       outer: "bg-[#ecba03]",
@@ -353,7 +352,7 @@ const ProductionStatus = () => {
   };
 
   return (
-    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center bg-[url('/map.png')] p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 grid-rows-3 xl:grid-rows-1">
+    <div className="flex-1 w-full bg-cover bg-no-repeat bg-center p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 grid-rows-3 xl:grid-rows-1">
       <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
@@ -405,7 +404,7 @@ const ProductionStatus = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="flex flex-col bg-[#1e3a1d] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
@@ -427,7 +426,7 @@ const ProductionStatus = () => {
               style={{
                 background: truck.firstBocamina?.isLate
                   ? "#a81313"
-                  : "#7B1FA280",
+                  : "#1fa24680",
               }}
             >
               <div
@@ -435,7 +434,7 @@ const ProductionStatus = () => {
                 style={{
                   background: truck.firstBocamina?.isLate
                     ? "#ee3232"
-                    : "#9333EA",
+                    : "#29ca59",
                 }}
               >
                 <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
@@ -526,7 +525,7 @@ const ProductionStatus = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-[#301D3A] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="flex flex-col bg-[#1e3a1d] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
@@ -548,7 +547,7 @@ const ProductionStatus = () => {
               style={{
                 background: truck.firstBocamina?.isLate
                   ? "#a81313"
-                  : "#7B1FA280",
+                  : "#1fa24680",
               }}
             >
               <div
@@ -556,7 +555,7 @@ const ProductionStatus = () => {
                 style={{
                   background: truck.firstBocamina?.isLate
                     ? "#ee3232"
-                    : "#9333EA",
+                    : "#29ca59",
                 }}
               >
                 <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">

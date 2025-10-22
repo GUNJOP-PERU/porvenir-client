@@ -49,7 +49,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
   }, [data]);
 
   return (
-    <div className="absolute bottom-32 right-2 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
+    <div className="absolute bottom-28 right-2 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
       <span className="text-zinc-300 font-bold text-[10px]">
         Camiones en ruta |{filteredData.length}|
       </span>
