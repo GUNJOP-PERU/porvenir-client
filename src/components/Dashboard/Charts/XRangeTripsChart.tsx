@@ -45,12 +45,16 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       
       const avgDuration = totalTrips > 0 ? totalDuration / totalTrips / 1000 / 60 : 0;
       const totalHours = totalDuration / 1000 / 60 / 60;
+      const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
+      const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
       
       return {
         unit: unit.unit.toUpperCase(),
         totalTrips,
         totalHours: totalHours.toFixed(1),
-        avgDuration: avgDuration.toFixed(1)
+        avgDuration: avgDuration.toFixed(1),
+        avgSubterraneo: avgSubterraneo.toFixed(1),
+        avgSuperficie: avgSuperficie.toFixed(1),
       };
     });
   }, [data]);
@@ -67,19 +71,17 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
   const allSeriesData: any[] = [];
   const bocaminaAnnotations: any[] = [];
-  let bocaminaCounter = 0; // Contador global para alternar posición de labels
+  let bocaminaCounter = 0;
   
   data.forEach((unit, unitIndex) => {
-    let validTripCounter = 0; // Contador solo para viajes con destino
+    let validTripCounter = 0;
     
     unit.allTrips.forEach((trip, tripIndex) => {
       const tripStartTime = getTimestamp(trip.startDate);
       const tripEndTime = getTimestamp(trip.endDate);
       
-      // Calcular duración del viaje en minutos
       const tripDurationMinutes = (tripEndTime - tripStartTime) / 1000 / 60;
       
-      // Determinar color del viaje según origen, destino y duración
       const hasDestination = trip.endUbication && trip.endUbication.trim() !== "";
       const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
       
@@ -90,7 +92,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         detection.ubicationType?.toLowerCase().includes('bocamina')
       );
       
-      // Verificar viajes bidireccionales Cancha 100 ↔ Faja 4 con duración entre 10 y 50 min SIN bocaminas
       const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
         ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
          (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
@@ -106,7 +107,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         tripColor = "#ff5000"; // Verde para otros destinos
       }
       
-      // Solo incrementar contador para viajes con destino
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
       
       allSeriesData.push({
@@ -151,7 +151,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           
           const startTime = getTimestamp(detection.f_inicio);
           const endTime = getTimestamp(detection.f_final);
-          const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
+          const duration = (endTime - startTime) / 1000 / 60;
           
           const plantaPeriod = {
             startTime: startTime,
@@ -173,7 +173,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           
           const startTime = getTimestamp(detection.f_inicio);
           const endTime = getTimestamp(detection.f_final);
-          const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
+          const duration = (endTime - startTime) / 1000 / 60;
           
           const bocaminaPeriod = {
             startTime: startTime,
@@ -405,17 +405,14 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
           const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
           
-          // Calcular duración del viaje para el tooltip
           const tripDurationMinutes = ((point.x2 - point.x) / 1000 / 60);
           
-          // Verificar si el viaje tiene detecciones de bocamina
           const tooltipTripDetections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
           const tooltipHasBocaminaDetections = tooltipTripDetections.some((detection: any) => 
             detection.ubication?.toLowerCase().includes('bocamina') ||
             detection.ubicationType?.toLowerCase().includes('bocamina')
           );
           
-          // Verificar viajes bidireccionales Cancha 100 ↔ Faja 4 con duración entre 10 y 50 min SIN bocaminas
           const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
             ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
               (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
@@ -425,7 +422,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             ? `Viaje #${point.tripIndex}`
             : "Sin Destino";
 
-          // Determinar colores del tooltip según el destino
           let tooltipColor = "#6b7280";
           let tooltipColorAlpha = "#6b728015";
           
@@ -632,13 +628,20 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     series: series as any,
   }), [data, allSeriesData,shift]);
 
-  // Calcular totales
   const totals = useMemo(() => {
-    return tableData.reduce((acc, row) => ({
-      totalTrips: acc.totalTrips + row.totalTrips,
-      totalHours: acc.totalHours + parseFloat(row.totalHours),
-      avgDuration: acc.avgDuration + parseFloat(row.avgDuration)
-    }), { totalTrips: 0, totalHours: 0, avgDuration: 0 });
+    const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
+    const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
+    const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
+    const avgSubterraneo = tableData.reduce((acc, row) => acc + parseFloat(row.avgSubterraneo), 0) / tableData.length;
+    const avgSuperficie = tableData.reduce((acc, row) => acc + parseFloat(row.avgSuperficie), 0) / tableData.length;
+
+    return {
+      totalTrips,
+      totalHours,
+      avgDuration,
+      avgSubterraneo,
+      avgSuperficie,
+    }
   }, [tableData]);
 
   const chartHeight = (data.length * 64) + 15 ;
@@ -650,20 +653,22 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       
-      <div className="w-60 flex flex-col mt-[-20px]">
+      <div className="w-[350px] min-w-[350px] flex flex-col mt-[-40px]">
         <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
-          <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-gray-700">
+          <div className="grid grid-cols-4 gap-1 text-xs font-semibold text-gray-700">
             <div className="text-center">Viajes</div>
             <div className="text-center">Horas</div>
-            <div className="text-center">Promedio</div>
+            <div className="text-center">Avg. Subterráneo</div>
+            <div className="text-center">Avg. Superficie</div>
           </div>
         </div>
 
         <div className="bg-gray-50 border border-gray-200 px-3 py-2 border-t-2 border-t-gray-400 h-[40px]">
-          <div className="grid grid-cols-3 gap-1 text-xs font-bold text-gray-800">
+          <div className="grid grid-cols-4 gap-1 text-xs font-bold text-gray-800">
             <div className="text-center text-black">{totals.totalTrips}</div>
             <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
-            <div className="text-center text-black">{(totals.avgDuration / totals.totalTrips).toFixed(2)}min</div>
+            <div className="text-center text-black">{(totals.avgSubterraneo).toFixed(2)}min</div>
+            <div className="text-center text-black">{(totals.avgSuperficie).toFixed(2)}min</div>
           </div>
         </div>
 
@@ -678,10 +683,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
                 borderBottom: '1px solid #f3f4f6'
               }}
             >
-              <div className="grid grid-cols-3 gap-1 text-xs w-full">
+              <div className="grid grid-cols-4 gap-1 text-xs w-full">
                 <div className="font-bold text-black text-center">{row.totalTrips}</div>
                 <div className="font-bold text-black text-center">{row.totalHours}h</div>
-                <div className="font-bold text-black text-center">{row.avgDuration}min</div>
+                <div className="font-bold text-black text-center">{row.avgSubterraneo}min</div>
+                <div className="font-bold text-black text-center">{row.avgSuperficie}min</div>
               </div>
             </div>
           ))}
