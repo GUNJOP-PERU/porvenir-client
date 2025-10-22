@@ -88,10 +88,10 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
             counts === 0
               ? "bg-zinc-500 text-black" // plomo
               : counts >= 38
-              ? "bg-green-600 text-black" // verde
+              ? "bg-[#16a34a] text-black" // verde
               : counts >= 36 && counts <= 37
-              ? "bg-yellow-500 text-black" // amarillo
-              : "bg-rose-500 text-white animate-pulse duration-1000 " // rojo
+              ? "bg-[#ca8a04] text-black" // amarillo
+              : "bg-[#ee3232] text-white animate-pulse duration-1000 " // rojo
           )}
         >
           <div className="w-14 h-14 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white gap-[1px]">
@@ -109,9 +109,9 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
                 counts === 0
                   ? "#1dd3b0" // plomo
                   : counts >= 38
-                  ? "#1dd3b0" // verde
+                  ? "#46fea5d4" // verde
                   : counts >= 36 && counts <= 37
-                  ? "#1dd3b0" // amarillo
+                  ? "#ecba03" // amarillo
                   : "#ff9592" // rojo
               }
             />
