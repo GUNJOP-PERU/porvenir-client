@@ -115,7 +115,7 @@ const UndergroundTracking = () => {
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
     const foundUbication = ubicationDataSub.find(
-      (u) => u.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+      (u) => u.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
     );
 
     setSelectedTruck({
@@ -217,8 +217,7 @@ const UndergroundTracking = () => {
     const coordMap = new Map<string, any[]>();
     filteredData.forEach((truck) => {
       const findBeacon = ubicationDataSub.find(
-        (beacon) =>
-          beacon.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        (beacon) => beacon.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
       );
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
       const key = `${coord.latitud},${coord.longitud}`;
@@ -259,7 +258,6 @@ const UndergroundTracking = () => {
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
               truck.connectivity,
-              truck.lastDate
             )}
           >
             <Popup>
@@ -383,9 +381,7 @@ const UndergroundTracking = () => {
                 ${
                   filteredData.filter(
                     (truck) =>
-                      truck.lastUbicationMac &&
-                      truck.lastUbicationMac.toLowerCase() ===
-                        ubication.mac.toLowerCase()
+                      truck.lastUbicationMac && ubication.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
                   ).length
                 }
               </span>
