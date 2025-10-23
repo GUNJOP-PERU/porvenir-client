@@ -26,8 +26,17 @@ interface LineAndBarChartByDayProps {
 const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#000000", planDay }: LineAndBarChartByDayProps) => {
   const xLabels = chartData.map(item => item.label ?? "")
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
 
+  const tripsTurnDay = chartData.map((item) => ({
+    ...item,
+    tonnage: item.trips.filter(trip => trip.shift === 'dia').length * mineralWeight
+  }))
+  const tripsTurnNight = chartData.map((item) => ({
+    ...item,
+    tonnage: item.trips.filter(trip => trip.shift === 'noche').length * mineralWeight
+  }))
+
+  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
   const diffPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
@@ -39,8 +48,8 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
   const diffColorPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
-      ? "#f9c83e"
-      : "#c19f55";
+      ? "#68c970"
+      : "#ff8b8b";
   });
 
   const options = {
@@ -149,13 +158,21 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
         },
       },
       {
-        name: "Plan",
-        data: tripsCounts.map((e, i) => {
-          const planValue = currentPlanDay && currentPlanDay[i] !== undefined ? currentPlanDay[i] : 0;
-          if (e === 0) return NaN;
-          return e > planValue ? planValue : e;
-        }),
+        name: "Turno Día",
+        data: tripsTurnDay.map((e, i) => e.tonnage),
         color: chartColor,
+        animation: false,
+        dataLabels: {
+          enabled: true,
+          formatter: function (this: any) {
+            return `${roundAndFormat(this.y)} ( ${Math.round(this.y/mineralWeight)}V )`;
+          },
+        },
+      },
+      {
+        name: "Turno Noche",
+        data: tripsTurnNight.map((e, i) => e.tonnage),
+        color: "#3c3c3c",
         animation: false,
         dataLabels: {
           enabled: true,
@@ -181,7 +198,6 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
       formatter: function (this: any) {
         const categoryName = this.points[0]?.point?.category || xLabels[this.x];
         let tooltipText = `<b>${categoryName}</b><br/>`;
-        // Mostrar siempre el valor de "Extraído"
         const extraido = this.points.find((p: any) => p.series.name === "Extraído");
         if (extraido) {
           tooltipText += `<span style='color:${extraido.color}'>●</span> Extraído: <b>${roundAndFormat(extraido.y)} TM</b><br/>`;
@@ -206,11 +222,11 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
             <span style='width: 8px; height: 8px; background-color: #ff5000; border-radius: 5px; display: inline-block; margin-right: 4px;'></span>
             Real
           </span>`;
-        } else {
+        } else if (this.index === 1) {
           return `
           <span style='color:#A6A6A6'>
             <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
-            ${this.name}
+            Plan
           </span>`;
         }
       },
@@ -228,7 +244,7 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
       itemMarginTop: 4,
       itemMarginBottom: 0,
       x: 0,
-      y: 0,
+      y: 20,
     },
     credits: {
       enabled: false,
