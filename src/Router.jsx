@@ -123,8 +123,7 @@ const protectedRoutes = [
 ];
 
 export default function Router() {
-  // const isAuth = useAuthStore((state) => state.isAuth);
-  const isAuth =true;
+  const isAuth = useAuthStore((state) => state.isAuth);
 
   const router = createBrowserRouter([
     {
