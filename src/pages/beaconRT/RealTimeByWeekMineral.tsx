@@ -16,7 +16,6 @@ import {
   endOfWeek,
   format,
   getISODay,
-  set,
   addHours
 } from "date-fns";
 import { es } from "date-fns/locale";
@@ -138,6 +137,7 @@ const RealTimeByWeek = () => {
     const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
     const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
     const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -326,23 +326,20 @@ const RealTimeByWeek = () => {
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
         title="Reporte Semanal"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
-          dateFilter[0].startDate,
-          "dd-MM-yyyy"
-        )}.`}
+        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate,"dd-MM-yyyy")} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
         status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
+          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+            color: "#10aa18",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
+          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+            color: "#d1be16",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
+          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+            color: "#ca1616",
           },
         ]}
       />
@@ -394,26 +391,26 @@ const RealTimeByWeek = () => {
               }}
             />
           </div>
-            <div>
-              <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-              Utilización
-            </h3>
-            <DonutChart
-              title=""
-              size="medium"
-              donutData={{
-                currentValue:
-                  12 *
-                    isoDay *
-                    (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                  baseStats.totalDuration / 3600,
-                total:
-                  12 *
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+            Utilización
+          </h3>
+          <DonutChart
+            title=""
+            size="medium"
+            donutData={{
+              currentValue:
+                12 *
                   isoDay *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-                currentValueColor: "#ff5000",
-              }}
-            />
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                baseStats.totalDuration / 3600,
+              total:
+                12 *
+                isoDay *
+                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+              currentValueColor: "#ff5000",
+            }}
+          />
           </div>
         </div>
       </div>
@@ -450,7 +447,6 @@ const RealTimeByWeek = () => {
         <CardTitle
           title="Ejecución de extracción de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-14"
           actions={
             <div className="flex flex-row gap-2">

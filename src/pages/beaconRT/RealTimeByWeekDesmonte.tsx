@@ -2,29 +2,28 @@ import { useMemo, useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
-import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
-import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
+import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
+import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
+import type { PlanWeek } from "@/types/Plan";
 // Utils
 import {
   startOfWeek,
   endOfWeek,
   format,
-  eachDayOfInterval,
   getISODay,
+  addHours
 } from "date-fns";
+import { es } from "date-fns/locale";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
 // Icons
-import { es } from "date-fns/locale";
-import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import IconTruck from "@/icons/IconTruck";
-import IconScoop from "@/icons/IconScoop";
 
 const RealTimeByWeek = () => {
   const isoDay = getISODay(new Date());
@@ -53,7 +52,7 @@ const RealTimeByWeek = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
     { refetchInterval: 10000 }
   );
 
@@ -65,6 +64,33 @@ const RealTimeByWeek = () => {
     data : beaconTruck = []
   } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
 
+  const { data: planData = [] } = useFetchData<PlanWeek[]>(
+    "plan-week",
+    `planWeek?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    {
+      refetchInterval: 10000,
+    }
+  );
+
+  const planWeek = useMemo(() => {
+    if (!planData || planData.length === 0) return {
+      totalTonnage: 0,
+      planDay: [],
+    };
+    const plan = planData[0];
+    const safePlanDay = plan?.dataCalculate || [];
+
+    return {
+      totalTonnage: plan?.totalTonnage || 0,
+      planDay: safePlanDay.map((date) => ({
+        date: date.date,
+        tonnage: date.tonnageByTurno.dia + date.tonnageByTurno.noche,
+      })),
+    };
+  }, [planData]);
 
   const baseData = useMemo(() => {
     const mineral =
@@ -97,10 +123,21 @@ const RealTimeByWeek = () => {
         durationPerTripDay: 0,
         durationPerTripNight: 0,
         avgUnloadTime: 0,
+        avgLoadTime: 0,
+        avgDurationSuperficieTripsDay: 0,
+        avgDurationSubterraneoTripsDay: 0,
+        avgDurationSuperficieTripsNight: 0,
+        avgDurationSubterraneoTripsNight: 0,
       };
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
+    const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
+    const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
+    const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -181,6 +218,11 @@ const RealTimeByWeek = () => {
         return acc + truck.avgUnloadTime / 60;
       }, 0) / data.length;
 
+    const avgLoadTime =
+      data.reduce((acc, truck) => {
+        return acc + truck.avgFrontLaborDuration / 60;
+      }, 0) / data.length;
+
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
@@ -208,46 +250,59 @@ const RealTimeByWeek = () => {
       totalTMDay,
       totalTMNight,
       avgUnloadTime,
+      avgLoadTime,
+      avgDurationSuperficieTripsDay,
+      avgDurationSubterraneoTripsDay,
+      avgDurationSuperficieTripsNight,
+      avgDurationSubterraneoTripsNight,
     };
   }, [data, baseData]);
 
-  const tripsByShift = useMemo(() => {
-    if (!data) return { dia: [], noche: [] };
+  const tripsByDate = useMemo(() => {
+    if (!data) return [];
 
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
+    const allTrips = data.flatMap((unitGroup) => unitGroup.trips);
 
-    const allDays = eachDayOfInterval({
-      start: dateFilter[0].startDate,
-      end: dateFilter[0].endDate,
-    });
-
-    const grouped: {
-      dia: { day: string; label: string; trips: BeaconUnitTrip[] }[];
-      noche: { day: string; label: string; trips: BeaconUnitTrip[] }[];
-    } = { dia: [], noche: [] };
-
-    allDays.forEach((day) => {
-      const dayKey = format(day, "yyyy-MM-dd");
-      const labelRaw = format(day, "EEE dd", { locale: es });
-      const finalLabel = labelRaw.charAt(0).toUpperCase() + labelRaw.slice(1);
-
-      grouped.dia.push({ day: dayKey, label: finalLabel, trips: [] });
-      grouped.noche.push({ day: dayKey, label: finalLabel, trips: [] });
-    });
-
-    trips.forEach((trip) => {
-      const tripDate = new Date(trip.startDate);
-      const dayKey = format(tripDate, "yyyy-MM-dd");
-      const shift =
-        tripDate.getHours() >= 6 && tripDate.getHours() < 18 ? "dia" : "noche";
-
-      const dayGroup = grouped[shift].find((g) => g.day === dayKey);
-      if (dayGroup) {
-        dayGroup.trips.push(trip);
+    const grouped = allTrips.reduce((acc: Record<string, BeaconUnitTrip[]>, trip) => {
+      const tripDateTime = new Date(trip.endDate);
+      let assignedDate: Date;
+      if (tripDateTime.getHours() >= 18) {
+        assignedDate = new Date(tripDateTime);
+        assignedDate.setDate(assignedDate.getDate() + 1);
+      } else {
+        assignedDate = new Date(tripDateTime);
       }
+      const tripDate = format(assignedDate, 'yyyy-MM-dd');
+      if (!acc[tripDate]) {
+        acc[tripDate] = [];
+      }
+      acc[tripDate].push(trip);
+      return acc;
+    }, {});
+
+    const startDate = dateFilter[0].startDate;
+    const endDate = dateFilter[0].endDate;
+    const allDatesInRange: string[] = [];
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      allDatesInRange.push(format(currentDate, 'yyyy-MM-dd'));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    const result = allDatesInRange.map((date) => {
+      const dateObj = addHours(new Date(date), 5);
+      const dayAbbrev = format(dateObj, 'EEE', { locale: es });
+      const dayNumber = format(dateObj, 'd');
+      const capitalizedDay = dayAbbrev.charAt(0).toUpperCase() + dayAbbrev.slice(1);
+      const label = `${capitalizedDay} ${dayNumber}`; 
+      
+      return {
+        date,
+        label,
+        trips: grouped[date] || []
+      };
     });
 
-    return grouped;
+    return result;
   }, [data, dateFilter]);
 
   useEffect(() => {
@@ -266,55 +321,6 @@ const RealTimeByWeek = () => {
 
     return () => clearInterval(interval);
   }, [shiftFilter]);
-
-  const turnConfig = {
-    dia: {
-      title: "Turno Día",
-      color: "#ff5000",
-      iconColor: "text-[#fac34c]",
-      tm: baseStats.totalTMDay,
-      trips: tripsByShift.dia,
-      units: baseStats.totalUnitsDay,
-    },
-    noche: {
-      title: "Turno Noche",
-      color: "#ff5000",
-      iconColor: "text-[#3c3f43]",
-      tm: baseStats.totalTMNight,
-      trips: tripsByShift.noche,
-      units: baseStats.totalUnitsNight,
-    },
-  };
-
-  const active = turnConfig[shiftFilter];
-
-  const { data: dataPlan = [] } = useFetchGraphicData({
-    queryKey: "plan-week-history",
-    endpoint: "planWeek",
-    filters: `startDate=${format(
-      dateFilter[0].startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
-      shiftFilter ? `&shift=${shiftFilter}` : ""
-    }`,
-  });
-
-  const planDay = useMemo(() => {
-    if (!dataPlan || dataPlan.length === 0) return null;
-    const plan = dataPlan[0];
-    const safePlanDay = plan.dataCalculate || [];
-
-    return {
-      totalTonnage: plan.totalTonnage || 0,
-      planDayShift: [],
-      planDay: shiftFilter
-        ? safePlanDay.map((item: any) => ({
-            date: item.date,
-            tonnage: item.tonnageByTurno?.[shiftFilter] || 0,
-          }))
-        : safePlanDay,
-    };
-  }, [dataPlan, shiftFilter]);
 
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
@@ -340,110 +346,82 @@ const RealTimeByWeek = () => {
           },
         ]}
       />
-      <div className="flex flex-col justify-around">
-        <div>
-          <DonutChart
-            title="Plan General (TM)"
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 2400,
-              currentValueColor: "#ff5000",
-            }}
-          />
-          <Progress
-            title=""
-            value={0}
-            total={2400}
-            color="#ff5000"
-            showLegend={false}
-            className="mt-2"
-          />
-        </div>
-        <div>
+      <div className="flex flex-col items-center justify-around gap-0">
+        <IconTruck
+          className="fill-yellow-500 h-30 w-40"
+          color=""
+        />
+
+        <div className="flex flex-col gap-8">
           <DonutChart
             title="Extracción de Mineral (TM)"
-            size="medium"
+            size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planDay?.totalTonnage,
+              total: planWeek.totalTonnage,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planDay?.totalTonnage}
+            total={planWeek.totalTonnage}
             color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Disponibilidad de LHD y Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 24,
-              currentValueColor: "#ff5000",
-            }}
-          />
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                12 *
+
+        <div className="flex flex-col justify-center gap-4">
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Disponibilidad
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue:
+                  12 *
+                    isoDay *
+                    (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                  baseStats.totalMantanceTimeMin / 60,
+                total:
+                  12 *
                   isoDay *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                baseStats.totalMantanceTimeMin / 60,
-              total:
-                12 *
-                isoDay *
-                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#ff5000",
-            }}
-          />
-          <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Usabilidad de LHD y Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 24,
-              currentValueColor: "#ff5000",
-            }}
-          />
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                12 *
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+                currentValueColor: "#ff5000",
+              }}
+            />
+          </div>
+            <div>
+              <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Utilización
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue:
+                  12 *
+                    isoDay *
+                    (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                  baseStats.totalDuration / 3600,
+                total:
+                  12 *
                   isoDay *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                baseStats.totalDuration / 3600,
-              total:
-                12 *
-                isoDay *
-                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#ff5000",
-            }}
-          />
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+                currentValueColor: "#ff5000",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
         <CardTitle
-          title={`Ejecución de extracción de mineral ${active.title} (TM)`}
+          title="Ejecución de extracción de mineral acumulado (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-16"
           actions={
             <div className="flex flex-row gap-2">
@@ -462,26 +440,16 @@ const RealTimeByWeek = () => {
             </div>
           }
         >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: planDay?.totalTonnage,
-              currentValue: active.tm,
-              prediction: (active.tm / active.units) * 7,
-              currentValueColor: active.color,
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
+          <DonutAndSplineChartByDay
             mineralWeight={baseData.mineral}
-            chartData={active.trips}
-            mode="day"
-            planDay={planDay}
+            chartData={tripsByDate}
+            planDay={planWeek}
           />
         </CardTitle>
 
         <CardTitle
-          title={`Camión en ${active.title} (TM)`}
+          title="Ejecución de extracción de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-14"
           actions={
             <div className="flex flex-row gap-2">
@@ -498,7 +466,7 @@ const RealTimeByWeek = () => {
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex w-2 h-2 rounded-full" style={{background: active.color}}/>
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Mineral Extraído
                 </p>
@@ -511,13 +479,12 @@ const RealTimeByWeek = () => {
               </div>
             </div>
           }
-    >
-          <LineAndBarChartByHour
+        >
+          <LineAndBarChartByDay
             mineralWeight={baseData.mineral}
-            chartColor={active.color}
-            chartData={active.trips}
-            mode="day"
-            planDay={planDay}
+            chartColor="#ff5000"
+            chartData={tripsByDate}
+            planDay={planWeek}
           />
         </CardTitle>
 
@@ -529,13 +496,13 @@ const RealTimeByWeek = () => {
                 title: "Disponibilidad",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
                 currentValue:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12 -
+                    ? baseStats.totalUnitsDay * 12 -
                       baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * isoDay * 12 -
+                    : baseStats.totalUnitsNight * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
                 currentValueColor: "#ff5000",
               },
@@ -543,8 +510,8 @@ const RealTimeByWeek = () => {
                 title: "Utilización",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
                 currentValue:
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
@@ -559,13 +526,10 @@ const RealTimeByWeek = () => {
                 total: 100,
                 subData: [
                   {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
+                    title: "Tiempo de Carga por Camión",
+                    currentValue: baseStats.avgLoadTime
+                      ? Number(baseStats.avgLoadTime.toFixed(2))
+                      : 0,
                     total: 10,
                   },
                   {
@@ -574,30 +538,24 @@ const RealTimeByWeek = () => {
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
                     total: 10,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 10,
-                  },
+                  }
                 ],
               },
               {
-                title: "Real",
+                title: "Duración del Ciclo Subterraneo",
                 currentValue:
                   shiftFilter === "dia"
-                    ? Number(baseStats.durationPerTripDay.toFixed(2))
-                    : Number(baseStats.durationPerTripNight.toFixed(2)),
+                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
+                total: 100,
+                subData: [],
+              },
+              {
+                title: "Duración del Ciclo Superficie",
+                currentValue:
+                  shiftFilter === "dia"
+                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
                 total: 100,
                 subData: [],
               },
