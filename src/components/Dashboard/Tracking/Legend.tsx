@@ -27,17 +27,6 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
     return operativos.length;
   }, [data]);
 
-  const otr = useMemo(() => {
-    const operativos = data.filter(
-      (truck) => truck.status?.toLowerCase() === "operativo"
-    );
-    const inoperativos = data.filter(
-      (truck) => truck.status?.toLowerCase() === "inoperativo"
-    );
-    console.log(inoperativos);
-    return operativos.length;
-  }, [data]);
-
   const planSummary = useMemo(() => {
     let total = 0;
     let mineral = 0;
