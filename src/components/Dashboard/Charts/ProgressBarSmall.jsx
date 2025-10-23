@@ -7,12 +7,19 @@ const ProgressBarSmall = ({progressBarData}) => {
   return (
     <div className="progress-bar--container small">
       <span className="progress-bar-label">
-        <b className="text-white">{progressBarData.showTitle ? progressBarData.title : ""}</b> 
+        <b 
+          style={{
+            color:`${currentPercentage > 20 ? "#FFFFFF" : "#000000"}`
+          }}
+        >{progressBarData.showTitle ? progressBarData.title : ""}</b> 
         <b
           style={{
-            color:`${currentPercentage > 85 ? "#FFFFFF" : "#000000"}`
+            color: "#000000",
+            backgroundColor: "#ddddddd8",
+            padding: "1px 3px",
+            borderRadius: "4px",
           }}
-        >{progressBarData.currentValue} min</b> 
+        >{progressBarData.currentValue ? `${progressBarData.currentValue} min` : "No Data"}</b> 
       </span>
       <div
         className="currentValue-bar"

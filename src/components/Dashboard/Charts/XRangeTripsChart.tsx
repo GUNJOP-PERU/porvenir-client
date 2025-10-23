@@ -53,8 +53,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         totalTrips,
         totalHours: totalHours.toFixed(1),
         avgDuration: avgDuration.toFixed(1),
-        avgSubterraneo: avgSubterraneo.toFixed(1),
-        avgSuperficie: avgSuperficie.toFixed(1),
+        avgSubterraneo: avgSubterraneo,
+        avgSuperficie: avgSuperficie,
       };
     });
   }, [data]);
@@ -632,8 +632,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
     const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
     const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
-    const avgSubterraneo = tableData.reduce((acc, row) => acc + parseFloat(row.avgSubterraneo), 0) / tableData.length;
-    const avgSuperficie = tableData.reduce((acc, row) => acc + parseFloat(row.avgSuperficie), 0) / tableData.length;
+    const avgSubterraneo = tableData.reduce((acc, row) => acc + row.avgSubterraneo, 0) / tableData.length;
+    const avgSuperficie = tableData.reduce((acc, row) => acc + row.avgSuperficie, 0) / tableData.length;
 
     return {
       totalTrips,
@@ -667,8 +667,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           <div className="grid grid-cols-4 gap-1 text-xs font-bold text-gray-800">
             <div className="text-center text-black">{totals.totalTrips}</div>
             <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
-            <div className="text-center text-black">{(totals.avgSubterraneo).toFixed(2)}min</div>
-            <div className="text-center text-black">{(totals.avgSuperficie).toFixed(2)}min</div>
+            <div className="text-center text-black">
+              {totals.avgSubterraneo >= 60 ? `${(totals.avgSubterraneo / 60).toFixed(1)}hrs` : `${totals.avgSubterraneo.toFixed(1)}min`}
+            </div>
+            <div className="text-center text-black">
+              {totals.avgSuperficie >= 60 ? `${(totals.avgSuperficie / 60).toFixed(1)}hrs` : `${totals.avgSuperficie.toFixed(1)}min`}
+            </div>
           </div>
         </div>
 
@@ -686,8 +690,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               <div className="grid grid-cols-4 gap-1 text-xs w-full">
                 <div className="font-bold text-black text-center">{row.totalTrips}</div>
                 <div className="font-bold text-black text-center">{row.totalHours}h</div>
-                <div className="font-bold text-black text-center">{row.avgSubterraneo}min</div>
-                <div className="font-bold text-black text-center">{row.avgSuperficie}min</div>
+                <div className="font-bold text-black text-center">
+                  {row.avgSubterraneo >= 60 ? `${(row.avgSubterraneo / 60).toFixed(1)}hrs` : `${row.avgSubterraneo.toFixed(1)}min`}
+                </div>
+                <div className="font-bold text-black text-center">
+                  {row.avgSuperficie >= 60 ? `${(row.avgSuperficie / 60).toFixed(1)}hrs` : `${row.avgSuperficie.toFixed(1)}min`}
+                </div>
               </div>
             </div>
           ))}

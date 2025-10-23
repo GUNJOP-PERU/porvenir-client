@@ -124,6 +124,7 @@ const RealTimeByHourRT = () => {
     const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
     const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
     const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -479,7 +480,7 @@ const RealTimeByHourRT = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral Turno Noche (TM)"
+              title="Ejecución de extracción de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -514,7 +515,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Camion en Turno Noche (TM)"
+              title="Ejecución de extracción de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
