@@ -106,10 +106,21 @@ const RealTimeByHourRT = () => {
         durationPerTripDay: 0,
         durationPerTripNight: 0,
         avgUnloadTime: 0,
+        avgLoadTime: 0,
+        avgDurationSuperficieTripsDay: 0,
+        avgDurationSubterraneoTripsDay: 0,
+        avgDurationSuperficieTripsNight: 0,
+        avgDurationSubterraneoTripsNight: 0,
       };
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
+    const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
+    const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
+    const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -184,6 +195,10 @@ const RealTimeByHourRT = () => {
       data.reduce((acc, truck) => {
         return acc + truck.avgUnloadTime / 60;
       }, 0) / data.length;
+    const avgLoadTime =
+      data.reduce((acc, truck) => {
+        return acc + truck.avgFrontLaborDuration / 60;
+      }, 0) / data.length;
 
     const totalTM = totalTrips * baseData.desmonte;
     const totalTMDay = dayTrips * baseData.desmonte;
@@ -211,6 +226,11 @@ const RealTimeByHourRT = () => {
       totalTMDay,
       totalTMNight,
       avgUnloadTime,
+      avgLoadTime,
+      avgDurationSuperficieTripsDay,
+      avgDurationSubterraneoTripsDay,
+      avgDurationSuperficieTripsNight,
+      avgDurationSubterraneoTripsNight,
     };
   }, [data, baseData]);
 
@@ -295,57 +315,74 @@ const RealTimeByHourRT = () => {
           },
         ]}
       />
-      <div className="flex flex-col justify-around">
-        <div>
+      <div className="flex flex-col items-center justify-around gap-0">
+        <IconTruck
+          className="fill-yellow-500 h-30 w-40"
+          color=""
+        />
+        <div className="flex flex-col gap-8">
           <DonutChart
             title="Extracción de Desmonte (TM)"
-            size="medium"
+            size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
               total: planDay.totalTonnage,
-              currentValueColor: "#c19f55",
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
             total={planDay.totalTonnage}
-            color="#c19f55"
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          <h3 className="font-bold text-center leading-none text-[13px]">
-            Disponibilidad de Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                24 * baseStats.totalUnits -
-                baseStats.totalMaintenanceTimeMin / 60,
-              total: 24 * baseStats.totalUnits,
-              currentValueColor: "#c19f55",
-            }}
-          />
-          <h3 className="font-bold text-center leading-none text-[13px]">
-            Usabilidad de Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                24 * baseStats.totalUnitsNight +
-                24 * baseStats.totalUnitsDay -
-                baseStats.totalDuration / 3600,
-              total:
-                24 * baseStats.totalUnitsNight + 24 * baseStats.totalUnitsDay,
-              currentValueColor: "#c19f55",
-            }}
-          />
+
+        <div className="flex flex-col justify-center gap-4">
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Disponibilidad
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue:
+                  shiftFilter === "dia"
+                    ? baseStats.totalUnitsDay * 12 -
+                      baseStats.totalMaintenanceTimeMinDay / 60
+                    : baseStats.totalUnitsNight * 12 -
+                      baseStats.totalMaintenanceTimeMinNight / 60,
+                total:
+                  shiftFilter === "dia"
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
+                currentValueColor: "#ff5000",
+              }}
+            />
+          </div>
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Utilización
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue:
+                  shiftFilter === "dia"
+                    ? baseStats.totalDurationDay / 3600
+                    : baseStats.totalDurationNight / 3600,
+                total:
+                  shiftFilter === "dia"
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
+                currentValueColor: "#ff5000",
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -353,9 +390,8 @@ const RealTimeByHourRT = () => {
         {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de desmonte Turno Dia (TM)"
+              title="Ejecución de extracción de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
               className="custom-class"
               actions={
@@ -392,9 +428,8 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Camion en Turno Dia (TM)"
+              title="Ejecución de extracción de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
-              icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
@@ -436,7 +471,7 @@ const RealTimeByHourRT = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de desmonte Turno Noche (TM)"
+              title="Ejecución de extracción de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -473,7 +508,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Camion en Turno Noche (TM)"
+              title="Ejecución de extracción de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -531,7 +566,7 @@ const RealTimeByHourRT = () => {
                       baseStats.totalMaintenanceTimeMinDay / 60
                     : baseStats.totalUnitsNight * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
-                currentValueColor: "#c19f55",
+                currentValueColor: "#ff5000",
               },
               {
                 title: "Utilización",
@@ -543,7 +578,7 @@ const RealTimeByHourRT = () => {
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
                     : baseStats.totalDurationNight / 3600,
-                currentValueColor: "#c19f55",
+                currentValueColor: "#ff5000",
               },
             ]}
             tableData={[
@@ -553,13 +588,10 @@ const RealTimeByHourRT = () => {
                 total: 100,
                 subData: [
                   {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
+                    title: "Tiempo de Carga por Camión",
+                    currentValue: baseStats.avgLoadTime
+                      ? Number(baseStats.avgLoadTime.toFixed(2))
+                      : 0,
                     total: 10,
                   },
                   {
@@ -568,30 +600,24 @@ const RealTimeByHourRT = () => {
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
                     total: 10,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 10,
-                  },
+                  }
                 ],
               },
               {
-                title: "Real",
+                title: "Duración del Ciclo Subterraneo",
                 currentValue:
                   shiftFilter === "dia"
-                    ? Number(baseStats.durationPerTripDay.toFixed(2))
-                    : Number(baseStats.durationPerTripNight.toFixed(2)),
+                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
+                total: 100,
+                subData: [],
+              },
+              {
+                title: "Duración del Ciclo Superficie",
+                currentValue:
+                  shiftFilter === "dia"
+                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
                 total: 100,
                 subData: [],
               },

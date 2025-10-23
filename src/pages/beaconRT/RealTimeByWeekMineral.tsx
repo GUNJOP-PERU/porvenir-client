@@ -16,7 +16,6 @@ import {
   endOfWeek,
   format,
   getISODay,
-  set,
   addHours
 } from "date-fns";
 import { es } from "date-fns/locale";
@@ -124,10 +123,21 @@ const RealTimeByWeek = () => {
         durationPerTripDay: 0,
         durationPerTripNight: 0,
         avgUnloadTime: 0,
+        avgLoadTime: 0,
+        avgDurationSuperficieTripsDay: 0,
+        avgDurationSubterraneoTripsDay: 0,
+        avgDurationSuperficieTripsNight: 0,
+        avgDurationSubterraneoTripsNight: 0,
       };
     }
 
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
+    const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
+    const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
+    const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -208,6 +218,11 @@ const RealTimeByWeek = () => {
         return acc + truck.avgUnloadTime / 60;
       }, 0) / data.length;
 
+    const avgLoadTime =
+      data.reduce((acc, truck) => {
+        return acc + truck.avgFrontLaborDuration / 60;
+      }, 0) / data.length;
+
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
@@ -235,6 +250,11 @@ const RealTimeByWeek = () => {
       totalTMDay,
       totalTMNight,
       avgUnloadTime,
+      avgLoadTime,
+      avgDurationSuperficieTripsDay,
+      avgDurationSubterraneoTripsDay,
+      avgDurationSuperficieTripsNight,
+      avgDurationSubterraneoTripsNight,
     };
   }, [data, baseData]);
 
@@ -306,23 +326,20 @@ const RealTimeByWeek = () => {
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
         title="Reporte Semanal"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
-          dateFilter[0].startDate,
-          "dd-MM-yyyy"
-        )}.`}
+        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate,"dd-MM-yyyy")} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
         status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
+          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+            color: "#10aa18",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
+          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+            color: "#d1be16",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
+          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+            color: "#ca1616",
           },
         ]}
       />
@@ -374,26 +391,26 @@ const RealTimeByWeek = () => {
               }}
             />
           </div>
-            <div>
-              <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-              Utilización
-            </h3>
-            <DonutChart
-              title=""
-              size="medium"
-              donutData={{
-                currentValue:
-                  12 *
-                    isoDay *
-                    (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                  baseStats.totalDuration / 3600,
-                total:
-                  12 *
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+            Utilización
+          </h3>
+          <DonutChart
+            title=""
+            size="medium"
+            donutData={{
+              currentValue:
+                12 *
                   isoDay *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-                currentValueColor: "#ff5000",
-              }}
-            />
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                baseStats.totalDuration / 3600,
+              total:
+                12 *
+                isoDay *
+                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+              currentValueColor: "#ff5000",
+            }}
+          />
           </div>
         </div>
       </div>
@@ -430,7 +447,6 @@ const RealTimeByWeek = () => {
         <CardTitle
           title="Ejecución de extracción de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-14"
           actions={
             <div className="flex flex-row gap-2">
@@ -477,13 +493,13 @@ const RealTimeByWeek = () => {
                 title: "Disponibilidad",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
                 currentValue:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12 -
+                    ? baseStats.totalUnitsDay * 12 -
                       baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * isoDay * 12 -
+                    : baseStats.totalUnitsNight * 12 -
                       baseStats.totalMaintenanceTimeMinNight / 60,
                 currentValueColor: "#ff5000",
               },
@@ -491,8 +507,8 @@ const RealTimeByWeek = () => {
                 title: "Utilización",
                 total:
                   shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * isoDay * 12
-                    : baseStats.totalUnitsNight * isoDay * 12,
+                    ? baseStats.totalUnitsDay * 12
+                    : baseStats.totalUnitsNight * 12,
                 currentValue:
                   shiftFilter === "dia"
                     ? baseStats.totalDurationDay / 3600
@@ -507,13 +523,10 @@ const RealTimeByWeek = () => {
                 total: 100,
                 subData: [
                   {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
+                    title: "Tiempo de Carga por Camión",
+                    currentValue: baseStats.avgLoadTime
+                      ? Number(baseStats.avgLoadTime.toFixed(2))
+                      : 0,
                     total: 10,
                   },
                   {
@@ -522,30 +535,24 @@ const RealTimeByWeek = () => {
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
                     total: 10,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 10,
-                  },
+                  }
                 ],
               },
               {
-                title: "Real",
+                title: "Duración del Ciclo Subterraneo",
                 currentValue:
                   shiftFilter === "dia"
-                    ? Number(baseStats.durationPerTripDay.toFixed(2))
-                    : Number(baseStats.durationPerTripNight.toFixed(2)),
+                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
+                total: 100,
+                subData: [],
+              },
+              {
+                title: "Duración del Ciclo Superficie",
+                currentValue:
+                  shiftFilter === "dia"
+                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
+                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
                 total: 100,
                 subData: [],
               },

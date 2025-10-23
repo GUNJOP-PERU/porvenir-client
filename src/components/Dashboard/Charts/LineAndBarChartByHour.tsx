@@ -15,7 +15,6 @@ interface LineAndBarChartByHourProps {
     label?: string;
     trips: BeaconUnitTrip[];
   }[];
-  mode?: "hour" | "day";
   planDay?: {
     totalTonnage: number;
     planDayShift: PlanDay[];
@@ -23,24 +22,12 @@ interface LineAndBarChartByHourProps {
   }
 }
 
-const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", mode = "hour", planDay }: LineAndBarChartByHourProps) => {
-
-  const xLabels = mode === "day" 
-    ? chartData.map(item => item.label ?? "")
-    : chartData.map(item => item.hour ?? "");
-
+const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", planDay }: LineAndBarChartByHourProps) => {
+  const xLabels = chartData.map(item => item.hour ?? "");
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-
-  const currentPlanDay = planDay 
-  ? (
-      mode === "day"
-        ? planDay.planDay.map(p => p.tonnage)
-        : [
-            0, 
-            ...new Array(11).fill(planDay.totalTonnage / 11)
-          ]
-    )
-  : [];
+  const currentPlanDay = planDay
+    ? [0, ...new Array(11).fill(planDay.totalTonnage / 11)]
+    : [];
 
   const diffPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
@@ -86,9 +73,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         title: "",
-        categories: mode === "day" 
-        ? planDay?.planDay.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [] 
-        : currentPlanDay.map(e => `${roundAndFormat(e)} TM`),      
+        categories: currentPlanDay.map(e => `${roundAndFormat(e)} TM`),      
         opposite: false,
         lineColor: "transparent",
         labels: {
@@ -156,64 +141,23 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           };
         }),
         xAxis: 1,
-        visible: mode === "day",
-        showInLegend: mode === "day",
         animation: false,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
+            return `${roundAndFormat(diffPlanDay[this.point.index])} (${Math.round(Number(diffPlanDay[this.point.index])/mineralWeight)}V)`;
           },
         },
       },
-      {
-        name: "Diferencia",
-        data: diffPlanDay.map((value, index) => {
-          const hasTrips = (tripsCounts[index] || 0) > 0;
-          return {
-            y: value,
-            color: hasTrips ? diffColorPlanDay[index] : 'transparent',
-            borderColor: hasTrips ? diffColorPlanDay[index] : '#6b7280',
-            borderWidth: hasTrips ? 0 : 2
-          };
-        }),
-        visible: mode === "hour",
-        showInLegend: mode === "hour",
-        xAxis: 1,
-        animation: false,
-        dataLabels: {
-          enabled: true,
-          formatter: function (this: any) {
-            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
-          },
-        },
-      },
-      {
-        name: "Plan",
-        data: tripsCounts.map((e,i) => 
-          e > currentPlanDay[i] 
-            ? currentPlanDay[i] 
-            : e === 0 
-              ? NaN 
-              : e
-        ),  
-        color: chartColor,
-        visible: mode === "day",
-        showInLegend: mode === "day",
-        animation: false,
-      },
-      
       {
         name: "Plan",
         data: tripsCounts.map((e,i) => e > currentPlanDay[i] ? currentPlanDay[i] : e === 0 ? NaN : e),
-        visible: mode === "hour",
-        showInLegend: mode === "hour",
         color: chartColor,
         animation: false,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(this.y)}`;
+            return `${roundAndFormat(this.y)} ( ${Math.round(this.y/mineralWeight)}V )`;
           },
         },
       },
@@ -253,10 +197,18 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       layout: "vertical",
       floating: false,
       labelFormatter: function (this: any) {
-        if (this.index === 0 || this.index === 1) {
-          return `<span style='color:#000000'>Real</span>`;
+        if (this.index === 0) {
+          return `
+          <span style='display: flex; align-items: center; color:#000000'>
+            <span style='width: 8px; height: 8px; background-color: #ff5000; border-radius: 5px; display: inline-block; margin-right: 4px;'></span>
+            Real
+          </span>`;
         } else {
-          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+          return `
+          <span style='color:#A6A6A6'>
+            <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+            ${this.name}
+          </span>`;
         }
       },
       useHTML: true,
@@ -286,9 +238,8 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       firstHour: chartData?.[0]?.hour || '',
       lastHour: chartData?.[chartData?.length - 1]?.hour || '',
       totalTrips: chartData?.reduce((acc, val) => acc + val.trips.length, 0) || 0,
-      mode: mode,
     });
-  }, [chartData, mode]);
+  }, [chartData]);
 
   return (
     <>

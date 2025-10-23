@@ -53,8 +53,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         totalTrips,
         totalHours: totalHours.toFixed(1),
         avgDuration: avgDuration.toFixed(1),
-        avgSubterraneo: avgSubterraneo.toFixed(1),
-        avgSuperficie: avgSuperficie.toFixed(1),
+        avgSubterraneo: avgSubterraneo,
+        avgSuperficie: avgSuperficie,
       };
     });
   }, [data]);
@@ -104,7 +104,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       } else if (isPahuaypite) {
         tripColor = "#3c3c3c"; // Marrón para Pahuaypite
       } else if (hasDestination) {
-        tripColor = "#ff5000"; // Verde para otros destinos
+        tripColor = "#0aa7f0"; // Verde para otros destinos
       }
       
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
@@ -224,7 +224,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       specialPeriods.forEach((period, periodIndex) => {
         const color = period.type === 'planta' ? "#EF4444" : 
-                      period.type === 'bocamina' ? "#66d20e" : "#fe6d73";
+                      period.type === 'bocamina' ? "#66d20e" : "#fa4a4a";
         const periodType = period.type === 'planta' ? "Planta" :
                           period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
 
@@ -304,6 +304,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         if (shift === "dia") {
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
         } else {
+          if (0 <= today.getHours() && today.getHours() < 6) {
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            return new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 18, 0, 0).getTime();
+          }
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
         }
       })(),
@@ -312,6 +317,9 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         if (shift === "dia") {
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
         } else {
+          if (0 <= today.getHours() && today.getHours() < 6) {
+            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
+          }
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
           return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
@@ -632,8 +640,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
     const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
     const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
-    const avgSubterraneo = tableData.reduce((acc, row) => acc + parseFloat(row.avgSubterraneo), 0) / tableData.length;
-    const avgSuperficie = tableData.reduce((acc, row) => acc + parseFloat(row.avgSuperficie), 0) / tableData.length;
+    const avgSubterraneo = tableData.reduce((acc, row) => acc + row.avgSubterraneo, 0) / tableData.length;
+    const avgSuperficie = tableData.reduce((acc, row) => acc + row.avgSuperficie, 0) / tableData.length;
 
     return {
       totalTrips,
@@ -667,8 +675,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           <div className="grid grid-cols-4 gap-1 text-xs font-bold text-gray-800">
             <div className="text-center text-black">{totals.totalTrips}</div>
             <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
-            <div className="text-center text-black">{(totals.avgSubterraneo).toFixed(2)}min</div>
-            <div className="text-center text-black">{(totals.avgSuperficie).toFixed(2)}min</div>
+            <div className="text-center text-black">
+              {totals.avgSubterraneo >= 60 ? `${(totals.avgSubterraneo / 60).toFixed(1)}hrs` : `${totals.avgSubterraneo.toFixed(1)}min`}
+            </div>
+            <div className="text-center text-black">
+              {totals.avgSuperficie >= 60 ? `${(totals.avgSuperficie / 60).toFixed(1)}hrs` : `${totals.avgSuperficie.toFixed(1)}min`}
+            </div>
           </div>
         </div>
 
@@ -686,8 +698,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               <div className="grid grid-cols-4 gap-1 text-xs w-full">
                 <div className="font-bold text-black text-center">{row.totalTrips}</div>
                 <div className="font-bold text-black text-center">{row.totalHours}h</div>
-                <div className="font-bold text-black text-center">{row.avgSubterraneo}min</div>
-                <div className="font-bold text-black text-center">{row.avgSuperficie}min</div>
+                <div className="font-bold text-black text-center">
+                  {row.avgSubterraneo >= 60 ? `${(row.avgSubterraneo / 60).toFixed(1)}hrs` : `${row.avgSubterraneo.toFixed(1)}min`}
+                </div>
+                <div className="font-bold text-black text-center">
+                  {row.avgSuperficie >= 60 ? `${(row.avgSuperficie / 60).toFixed(1)}hrs` : `${row.avgSuperficie.toFixed(1)}min`}
+                </div>
               </div>
             </div>
           ))}

@@ -59,7 +59,7 @@ import SeguimientoDeExtraccion from "./pages/beaconRT/SeguimientoDeExtraccion";
 import DetectionReport from "./pages/beacon/DetectionReport";
 import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
 import RealTimeByDay from "./pages/beacon/ReportByWeek";
-import RealTimeByHour from "./pages/beacon/ReportByDayTruck";
+import RealTimeByHour from "./pages/beacon/ReportByTurnTruck";
 import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/DetectionTrip";

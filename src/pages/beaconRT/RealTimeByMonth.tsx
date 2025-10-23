@@ -471,7 +471,6 @@ const RealTimeByMonth = () => {
             mineralWeight={baseData.mineral}
             chartColor={active.color}
             chartData={active.trips}
-            mode="day"
             planDay={planDay}
           />
         </CardTitle>

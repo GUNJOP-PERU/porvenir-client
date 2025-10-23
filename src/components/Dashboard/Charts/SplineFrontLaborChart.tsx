@@ -128,7 +128,7 @@ const SplineFrontLaborChart = ({ trips, mineralWeight, planDay }: SplineFrontLab
             textOutline: "none"
           },
           formatter: function(this: any) {
-            return `${roundAndFormat(this.y)} TM, ${Math.ceil(this.y / mineralWeight)} viajes`;
+            return `${roundAndFormat(this.y)} TM, ${Math.ceil(this.y / mineralWeight)}V`;
           }
         },
       },

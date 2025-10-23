@@ -43,7 +43,7 @@ export default function FleetStatus() {
     mantenimiento: {
       name: "Mantenimiento Preventivo",
       color: "bg-yellow-950",
-      titleColor: "text-[#ffca16]",
+      titleColor: "text-[#d4a406]",
       items: [],
     },
     inoperativo: {

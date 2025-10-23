@@ -2,31 +2,31 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
-import DonutAndSplineChartByHour from "@/components/Dashboard/Charts/DonutAndSplineChartByHour";
-import LineAndBarChartByHour from "@/components/Dashboard/Charts/LineAndBarChartByHour";
+import DonutAndSplineChartByDay from "@/components/Dashboard/Charts/DonutAndSplineChartByDay";
+import LineAndBarChartByDay from "@/components/Dashboard/Charts/LineAndBarChartByDay";
 import CardTitle from "@/components/Dashboard/CardTitleV2";
 import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart";
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
+import type { PlanWeek } from "@/types/Plan";
 // Utils
 import {
   startOfWeek,
   endOfWeek,
   format,
-  eachDayOfInterval,
+  addHours,
 } from "date-fns";
+import { es } from "date-fns/locale";
 import { DateRange } from "react-date-range";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 // Icons
-import { es } from "date-fns/locale";
 import { useFetchGraphicData } from "@/hooks/useGraphicData";
 import IconTruck from "@/icons/IconTruck";
 
 const ReportByWeek = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const calendarRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [dateFilter, setDateFilter] = useState<
@@ -53,7 +53,7 @@ const ReportByWeek = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
     { refetchInterval: 10000 }
   );
 
@@ -61,10 +61,33 @@ const ReportByWeek = () => {
     refetchInterval: 10000,
   });
 
-  const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+  const { data: planData = [] } = useFetchData<PlanWeek[]>(
+    "plan-week",
+    `planWeek?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    {
+      refetchInterval: 10000,
+    }
+  );
 
+  const planWeek = useMemo(() => {
+    if (!planData || planData.length === 0) return {
+      totalTonnage: 0,
+      planDay: [],
+    };
+    const plan = planData[0];
+    const safePlanDay = plan?.dataCalculate || [];
+
+    return {
+      totalTonnage: plan?.totalTonnage || 0,
+      planDay: safePlanDay.map((date) => ({
+        date: date.date,
+        tonnage: date.tonnageByTurno.dia + date.tonnageByTurno.noche,
+      })),
+    };
+  }, [planData]);
 
   const baseData = useMemo(() => {
     const mineral =
@@ -97,10 +120,17 @@ const ReportByWeek = () => {
         durationPerTripDay: 0,
         durationPerTripNight: 0,
         avgUnloadTime: 0,
+        avgLoadTime: 0,
+        avgDurationSuperficieTrips: 0,
+        avgDurationSubterraneoTrips: 0
       };
     }
-
+    
     const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTrips = allTrips.filter((trip) => trip.location === "Superficie" ).reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
+    const avgDurationSubterraneoTrips = allTrips.filter((trip) => trip.location === "Subterraneo").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
+
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
@@ -181,6 +211,11 @@ const ReportByWeek = () => {
         return acc + truck.avgUnloadTime / 60;
       }, 0) / data.length;
 
+    const avgLoadTime =
+      data.reduce((acc, truck) => {
+        return acc + truck.avgFrontLaborDuration / 60;
+      }, 0) / data.length;
+
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
@@ -208,65 +243,68 @@ const ReportByWeek = () => {
       totalTMDay,
       totalTMNight,
       avgUnloadTime,
+      avgLoadTime,
+      avgDurationSuperficieTrips,
+      avgDurationSubterraneoTrips
     };
   }, [data, baseData]);
 
-  const tripsByShift = useMemo(() => {
-    if (!data) return { dia: [], noche: [] };
+  const tripsByDate = useMemo(() => {
+    if (!data) return [];
 
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
+    const allTrips = data.flatMap((unitGroup) => unitGroup.trips);
 
-    const allDays = eachDayOfInterval({
-      start: dateFilter[0].startDate,
-      end: dateFilter[0].endDate,
-    });
-
-    const grouped: {
-      dia: { day: string; label: string; trips: BeaconUnitTrip[] }[];
-      noche: { day: string; label: string; trips: BeaconUnitTrip[] }[];
-    } = { dia: [], noche: [] };
-
-    allDays.forEach((day) => {
-      const dayKey = format(day, "yyyy-MM-dd");
-      const labelRaw = format(day, "EEE dd", { locale: es });
-      const finalLabel = labelRaw.charAt(0).toUpperCase() + labelRaw.slice(1);
-
-      grouped.dia.push({ day: dayKey, label: finalLabel, trips: [] });
-      grouped.noche.push({ day: dayKey, label: finalLabel, trips: [] });
-    });
-
-    trips.forEach((trip) => {
-      const tripDate = new Date(trip.startDate);
-      const dayKey = format(tripDate, "yyyy-MM-dd");
-      const shift =
-        tripDate.getHours() >= 6 && tripDate.getHours() < 18 ? "dia" : "noche";
-
-      const dayGroup = grouped[shift].find((g) => g.day === dayKey);
-      if (dayGroup) {
-        dayGroup.trips.push(trip);
+    const grouped = allTrips.reduce((acc: Record<string, BeaconUnitTrip[]>, trip) => {
+      const tripDateTime = new Date(trip.endDate);
+      let assignedDate: Date;
+      if (tripDateTime.getHours() >= 18) {
+        assignedDate = new Date(tripDateTime);
+        assignedDate.setDate(assignedDate.getDate() + 1);
+      } else {
+        assignedDate = new Date(tripDateTime);
       }
+      const tripDate = format(assignedDate, 'yyyy-MM-dd');
+      if (!acc[tripDate]) {
+        acc[tripDate] = [];
+      }
+      acc[tripDate].push(trip);
+      return acc;
+    }, {});
+
+    const startDate = dateFilter[0].startDate;
+    const endDate = dateFilter[0].endDate;
+    const allDatesInRange: string[] = [];
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      allDatesInRange.push(format(currentDate, 'yyyy-MM-dd'));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    const result = allDatesInRange.map((date) => {
+      const dateObj = addHours(new Date(date), 5);
+      const dayAbbrev = format(dateObj, 'EEE', { locale: es });
+      const dayNumber = format(dateObj, 'd');
+      const capitalizedDay = dayAbbrev.charAt(0).toUpperCase() + dayAbbrev.slice(1);
+      const label = `${capitalizedDay} ${dayNumber}`; 
+      
+      return {
+        date,
+        label,
+        trips: grouped[date] || []
+      };
     });
 
-    return grouped;
+    return result;
   }, [data, dateFilter]);
 
   useEffect(() => {
-    refetch();
-  }, [shiftFilter]);
-
-  // Cerrar calendario al hacer clic fuera
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      
-      // No cerrar si el clic es en el botón o dentro del calendario
       if (
         (calendarRef.current && calendarRef.current.contains(target)) ||
         (buttonRef.current && buttonRef.current.contains(target))
       ) {
         return;
       }
-      
       setIsTooltipOpen(false);
     };
 
@@ -278,55 +316,6 @@ const ReportByWeek = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isTooltipOpen]);
-
-  const turnConfig = {
-    dia: {
-      title: "Turno Día",
-      color: "#fac34c",
-      iconColor: "text-[#fac34c]",
-      tm: baseStats.totalTMDay,
-      trips: tripsByShift.dia,
-      units: baseStats.totalUnitsDay,
-    },
-    noche: {
-      title: "Turno Noche",
-      color: "#00000050",
-      iconColor: "text-[#00000050]",
-      tm: baseStats.totalTMNight,
-      trips: tripsByShift.noche,
-      units: baseStats.totalUnitsNight,
-    },
-  };
-
-  const active = turnConfig[shiftFilter];
-
-  const { data: dataPlan = [] } = useFetchGraphicData({
-    queryKey: "plan-week-history",
-    endpoint: "planWeek",
-    filters: `startDate=${format(
-      dateFilter[0].startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
-      shiftFilter ? `&shift=${shiftFilter}` : ""
-    }`,
-  });
-
-  const planDay = useMemo(() => {
-    if (!dataPlan || dataPlan.length === 0) return null;
-    const plan = dataPlan[0];
-    const safePlanDay = plan.dataCalculate || [];
-
-    return {
-      totalTonnage: plan.totalTonnage || 0,
-      planDayShift: [],
-      planDay: shiftFilter
-        ? safePlanDay.map((item: any) => ({
-            date: item.date,
-            tonnage: item.tonnageByTurno?.[shiftFilter] || 0,
-          }))
-        : safePlanDay,
-    };
-  }, [dataPlan, shiftFilter]);
 
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
@@ -340,21 +329,8 @@ const ReportByWeek = () => {
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        count={data.length}
-        actions={
+        actionsRight={
           <div className="relative flex flex-row gap-2">
-            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Turno:
-              <select
-                value={shiftFilter}
-                onChange={(e) => setShiftFilter(e.target.value)}
-                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
-              >
-                {/* <option value="">Ambos</option> */}
-                <option value="dia">Turno Día</option>
-                <option value="noche">Turno Noche</option>
-              </select>
-            </label>
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
               Rango de Fechas:
               <button
@@ -400,133 +376,130 @@ const ReportByWeek = () => {
           </div>
         }
       />
-      <div className="flex flex-col justify-around">
-        <div>
-          <DonutChart
-            title="Plan General (TM)"
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 2400,
-              currentValueColor: "#14B8A6",
-            }}
-          />
-          <Progress
-            title=""
-            value={0}
-            total={2400}
-            color="#14B8A6"
-            showLegend={false}
-            className="mt-2"
-          />
-        </div>
-        <div>
+      <div className="flex flex-col items-center justify-around gap-0">
+        <IconTruck
+          className="fill-yellow-500 h-30 w-40"
+          color=""
+        />
+        <div className="flex flex-col gap-8">
           <DonutChart
             title="Extracción de Mineral (TM)"
-            size="medium"
+            size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planDay?.totalTonnage,
-              currentValueColor: "#14B8A6",
+              total: planWeek.totalTonnage,
+              currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planDay?.totalTonnage}
-            color="#14B8A6"
+            total={planWeek.totalTonnage}
+            color="#ff5000"
             showLegend={false}
             className="mt-2"
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Disponibilidad de LHD y Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 24,
-              currentValueColor: "#14B8A6",
-            }}
-          />
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue: 12 * 7 * (baseStats.totalUnitsNight + baseStats.totalUnitsDay) - baseStats.totalMantanceTimeMin / 60,
-              total: 12 * 7 * (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#14B8A6",
-            }}
-          />
-          <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Usabilidad de LHD y Camiones
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue: 0,
-              total: 24,
-              currentValueColor: "#14B8A6",
-            }}
-          />
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                12 *
-                  7 *
-                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                baseStats.totalDuration / 3600,
-              total:
-                12 *
-                7 *
-                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#14B8A6",
-            }}
-          />
+
+        <div className="flex flex-col justify-center gap-4">
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Disponibilidad
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue: 0,
+                total: 24,
+                currentValueColor: "#14B8A6",
+              }}
+            />
+          </div>
+          <div>
+            <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
+              Utilización
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue: 0,
+                total: 24,
+                currentValueColor: "#14B8A6",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
         <CardTitle
-          title={`Ejecución de extracción de mineral ${active.title} (TM)`}
+          title="Ejecución de extracción de mineral acumulado (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-16"
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
         >
-          <DonutAndSplineChartByHour
-            progressBarData={{
-              total: planDay?.totalTonnage,
-              currentValue: active.tm,
-              prediction: (active.tm / active.units) * 7,
-              currentValueColor: active.color,
-              showDifference: false,
-              forecastText: "Predicción",
-            }}
+          <DonutAndSplineChartByDay
             mineralWeight={baseData.mineral}
-            chartData={active.trips}
-            mode="day"
-            planDay={planDay}
+            chartData={tripsByDate}
+            planDay={planWeek}
           />
         </CardTitle>
 
         <CardTitle
-          title={`Camión en ${active.title} (TM)`}
+          title="Ejecución de extracción de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
-          icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-14"
+          actions={
+            <div className="flex flex-row gap-2">
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia positiva
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Diferencia negativa
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Mineral Extraído
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-1">
+                <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
+                <p className="text-[11px] font-bold">
+                  Planificado
+                </p>
+              </div>
+            </div>
+          }
         >
-          <LineAndBarChartByHour
+          <LineAndBarChartByDay
             mineralWeight={baseData.mineral}
-            chartColor={active.color}
-            chartData={active.trips}
-            mode="day"
-            planDay={planDay}
+            chartColor="#ff5000"
+            chartData={tripsByDate}
+            planDay={planWeek}
           />
         </CardTitle>
 
@@ -536,28 +509,14 @@ const ReportByWeek = () => {
             donutData={[
               {
                 title: "Disponibilidad",
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 7 * 12
-                    : baseStats.totalUnitsNight * 7 * 12,
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 7 * 12 -
-                      baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * 7 * 12 -
-                      baseStats.totalMaintenanceTimeMinNight / 60,
+                total: 0,
+                currentValue: 0,
                 currentValueColor: "#14B8A6",
               },
               {
                 title: "Utilización",
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 7 * 12
-                    : baseStats.totalUnitsNight * 7 * 12,
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalDurationDay / 3600
-                    : baseStats.totalDurationNight / 3600,
+                total: 0,
+                currentValue: 0,
                 currentValueColor: "#14B8A6",
               },
             ]}
@@ -568,13 +527,10 @@ const ReportByWeek = () => {
                 total: 100,
                 subData: [
                   {
-                    title: "Carga de Balde",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
                     title: "Tiempo de Carga de Camión",
-                    currentValue: 0,
+                    currentValue: baseStats.avgLoadTime
+                      ? Number(baseStats.avgLoadTime.toFixed(2))
+                      : 0,
                     total: 10,
                   },
                   {
@@ -583,30 +539,18 @@ const ReportByWeek = () => {
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
                     total: 10,
-                  },
-                  {
-                    title: "Falta de Camiones para cargar",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Demoras por material",
-                    currentValue: 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Paradas de producción",
-                    currentValue: 0,
-                    total: 10,
-                  },
+                  }
                 ],
               },
               {
-                title: "Real",
-                currentValue:
-                  shiftFilter === "dia"
-                    ? Number(baseStats.durationPerTripDay.toFixed(2))
-                    : Number(baseStats.durationPerTripNight.toFixed(2)),
+                title: "Duración del Ciclo Subterraneo",
+                currentValue: Number(baseStats.avgDurationSubterraneoTrips.toFixed(2)),
+                total: 100,
+                subData: [],
+              },
+              {
+                title: "Duración del Ciclo Superficie",
+                currentValue: Number(baseStats.avgDurationSuperficieTrips.toFixed(2)),
                 total: 100,
                 subData: [],
               },

@@ -39,11 +39,6 @@ const DonutAndSplineChartByDay = ({ chartColor= "#ff5000", chartData, mineralWei
     planDay.planDay.slice(0, i + 1).reduce((acc, val) => acc + val.tonnage, 0)
   );
 
-  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
-
-  const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
-    currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
-  );
   const options = {
     chart: {
       type: "areaspline",
@@ -111,6 +106,31 @@ const DonutAndSplineChartByDay = ({ chartColor= "#ff5000", chartData, mineralWei
     },
     series: [
       {
+        name: "Real",
+        data: acummulativeTripsCounts,
+        xAxis: 0,
+        fillColor: chartColor + "80",
+        color: chartColor,
+        animation: false,
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: chartColor,
+        },
+        dataLabels: {
+          enabled: true,
+          style: {
+            color: "#ff5000",
+            fontSize: "12px",
+            fontWeight: "bold",
+            textOutline: "none"
+          },
+          formatter: function(this: any) {
+            return `${roundAndFormat(this.y)} TM <br/> ${Math.ceil(this.y / mineralWeight)}V`;
+          }
+        },
+      },
+      {
         name: "Plan",
         data: accumulativePlanData,
         xAxis: 1,
@@ -133,20 +153,7 @@ const DonutAndSplineChartByDay = ({ chartColor= "#ff5000", chartData, mineralWei
           };
         }),
         zoneAxis: 'x',
-      },
-      {
-        name: "Real",
-        data: acummulativeTripsCounts,
-        xAxis: 0,
-        fillColor: chartColor + "80",
-        color: chartColor,
-        animation: false,
-        marker: {
-          fillColor: "white",
-          lineWidth: 2,
-          lineColor: chartColor,
-        },
-      },
+      }
     ],
     tooltip: {
       shared: true,

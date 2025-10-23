@@ -115,6 +115,7 @@ export type BeaconTruckStatus = {
   updatedAt: string,
   comments: string[],
   direction: "entrada" | "salida" | "-"
+  changeStatusDate: string
 }
 
 export type BocaminaByUnits = {

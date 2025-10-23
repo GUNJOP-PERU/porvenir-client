@@ -26,18 +26,14 @@ interface IDonutAndSplineChartByHourProps {
     label?: string;
     trips: BeaconUnitTrip[];
   }[];
-  mode?: "hour" | "day";
   planDay?: {
     totalTonnage: number;
     planDay: PlanDay[];
   }
 }
 
-const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, chartData, mineralWeight, mode = "hour", planDay }: IDonutAndSplineChartByHourProps) => {
-  const xLabels =
-    mode === "day"
-      ? chartData.map((item) => item.label) 
-      : chartData.map((item) => item.hour ?? "");
+const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, chartData, mineralWeight, planDay }: IDonutAndSplineChartByHourProps) => {
+  const xLabels = chartData.map((item) => item.hour ?? "");
 
   const tripsCounts = chartData.map(
     (item) => item.trips.length * mineralWeight
@@ -48,26 +44,15 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
       : tripsCounts.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
 
-  const planValue = mode === "day" ? 1200 : 100;
+  const planValue = 100;
   const planData = new Array(chartData.length).fill(planValue);
-  const accumulativePlanData = mode === "day" && planDay
-  ? planDay.planDay.map((p, i) => 
-      planDay.planDay.slice(0, i + 1).reduce((acc, val) => acc + val.tonnage, 0)
-    )
-  : planData.map((_, index) =>
+  const accumulativePlanData = planData.map((_, index) =>
       planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
     );
 
-    const currentPlanDay = planDay 
-    ? (
-        mode === "day"
-          ? planDay.planDay.map(p => p.tonnage)
-          : [
-              0, 
-              ...new Array(11).fill(planDay.totalTonnage / 11) 
-            ]
-      )
-    : [];
+  const currentPlanDay = planDay
+  ? [0,...new Array(11).fill(planDay.totalTonnage / 11)]
+  : [];
   
   const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
     currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
@@ -101,9 +86,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
         },
       },
       {
-        categories: mode === "day" ? accumulativePlanData.map(
-          (value) => `${roundAndFormat(value)} TM`
-        ) : accumulativeCurrentPlanDay.map(
+        categories: accumulativeCurrentPlanDay.map(
           (value) => `${roundAndFormat(value)} TM`
         ),
         opposite: false,
@@ -152,10 +135,22 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
           lineWidth: 2,
           lineColor: chartColor,
         },
+        dataLabels: {
+          enabled: true,
+          style: {
+            color: "#ff5000",
+            fontSize: "12px",
+            fontWeight: "bold",
+            textOutline: "none"
+          },
+          formatter: function(this: any) {
+            return `${roundAndFormat(this.y)} TM <br/> ${Math.ceil(this.y / mineralWeight)}V`;
+          }
+        },
       },
       {
         name: "Plan",
-        data: mode === "day" ? accumulativePlanData : accumulativeCurrentPlanDay,
+        data: accumulativeCurrentPlanDay,
         xAxis: 1,
         fillColor: "#b8b8b880",
         color: "#b8b8b8",
@@ -240,28 +235,6 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
 
   return (
     <div className="flex flex-col gap-0">
-      {/* <div className="flex flex-row items-center w-full">
-        <DonutChart
-          title=""
-          size="mini"
-          donutData={{
-            currentValue: progressBarData.currentValue,
-            total: progressBarData.total,
-            currentValueColor: progressBarData.currentValueColor,
-          }}
-        />
-        <Progress
-          title=""
-          value={progressBarData.currentValue}
-          total={progressBarData.total}
-          color={progressBarData.currentValueColor}
-          prediction={progressBarData.prediction}
-          predictionText={progressBarData.predictionText}
-          unit="TM"
-          className="py-0 px-2 w-full"
-          showLegend={false}
-        />
-      </div> */}
       <HighchartsReact 
         highcharts={Highcharts} 
         options={options} 

@@ -24,7 +24,6 @@ interface LineAndBarChartByDayProps {
 }
 
 const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#000000", planDay }: LineAndBarChartByDayProps) => {
-
   const xLabels = chartData.map(item => item.label ?? "")
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
   const currentPlanDay = planDay.planDay.map(p => p.tonnage);
@@ -41,7 +40,7 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
       ? "#f9c83e"
-      : "#3c3c3c";
+      : "#c19f55";
   });
 
   const options = {
@@ -141,13 +140,11 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
           };
         }),
         xAxis: 1,
-        visible: true,
-        showInLegend: true,
         animation: false,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
+            return `${roundAndFormat(diffPlanDay[this.point.index])} (${Math.round(Number(diffPlanDay[this.point.index])/mineralWeight)}V)`;
           },
         },
       },
@@ -159,9 +156,13 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
           return e > planValue ? planValue : e;
         }),
         color: chartColor,
-        visible: true,
-        showInLegend: true,
         animation: false,
+        dataLabels: {
+          enabled: true,
+          formatter: function (this: any) {
+            return `${roundAndFormat(this.y)} ( ${Math.round(this.y/mineralWeight)}V )`;
+          },
+        },
       },
     ],
     tooltip: {
@@ -199,10 +200,18 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
       layout: "vertical",
       floating: false,
       labelFormatter: function (this: any) {
-        if (this.index === 0 || this.index === 1) {
-          return `<span style='color:#000000'>Real</span>`;
+        if (this.index === 0) {
+          return `
+          <span style='display: flex; align-items: center; color:#000000'>
+            <span style='width: 8px; height: 8px; background-color: #ff5000; border-radius: 5px; display: inline-block; margin-right: 4px;'></span>
+            Real
+          </span>`;
         } else {
-          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+          return `
+          <span style='color:#A6A6A6'>
+            <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+            ${this.name}
+          </span>`;
         }
       },
       useHTML: true,

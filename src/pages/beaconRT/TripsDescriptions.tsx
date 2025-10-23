@@ -74,20 +74,20 @@ const TripsDescriptionRT = () => {
     <div className="flex flex-col flex-1 w-full gap-4">
       <PageHeader
         title="Reporte especifico de viajes en tiempo real"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate, 'dd-MM-yyyy')}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
+        directionTitle="column"
         status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
+          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+            color: "#10aa18",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
+          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+            color: "#d1be16",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
+          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+            color: "#ca1616",
           },
         ]}
         actions={
