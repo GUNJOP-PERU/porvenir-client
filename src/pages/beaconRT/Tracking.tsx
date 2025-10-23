@@ -31,6 +31,7 @@ import Toggle from "@/components/Dashboard/Tracking/Toggle";
 import clsx from "clsx";
 import Rute from "@/components/Dashboard/Tracking/Rute";
 import dayjs from "dayjs";
+import { formatFecha } from "@/lib/utilsGeneral";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -66,6 +67,42 @@ const MapControls = ({
     }
   }, [selectedTruckPosition, map]);
 
+  useEffect(() => {
+    let raf = 0;
+    const handleResize = () => {
+      // usar RAF para evitar layout thrash
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        try {
+          map.invalidateSize({ animate: false });
+        } catch (e) {
+          /* ignore */
+        }
+        // opcional: ajustar zoom en pantallas muy grandes
+        const width = window.innerWidth || 0;
+        const dpr = window.devicePixelRatio || 1;
+        if (width >= 2200 || dpr > 1.5) {
+          // aumentar zoom ligeramente para que elementos se vean más grandes
+          const target = Math.max(17.3, map.getZoom() + 0.8);
+          map.setZoom(target);
+        } else {
+          // para pantallas pequeñas, dejar zoom inicial configurado por mapConfig
+        }
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+
+    // llamado inicial en mount (importante cuando se renderiza en un contenedor invisible o se inserta en pantalla)
+    handleResize();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, [map]);
   return null;
 };
 
@@ -90,14 +127,7 @@ const TruckTracking = () => {
     () => ({
       centerLat: -13.0799,
       centerLng: -75.9929,
-      imageCenterLat: -13.0805, // Centro de la imagen
-      imageCenterLng: -75.99549, // Centro de la imagen
-      imageUrl: "/superficie.png",
-      imageScale: 0.007,
-      imageWidth: 0.01225,
-      imageHeight: 0.008,
-      opacity: 0.6,
-      zoom: 16.8,
+      zoom: 17,
     }),
     []
   );
@@ -184,15 +214,14 @@ const TruckTracking = () => {
               isSelected ? "truck-inner marker-highlight" : "truck-inner"
             }" style="
               background-color: ${color};
-              width: 25px;
-              height: 25px;
+              width: 1.8rem;
+              height: 1.8rem;
               border-radius: 50%;
               border: 2px solid #00000050;
               box-shadow: 0 2px 4px rgba(0,0,0,0.4);
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 12px;
               font-weight: bold;
               color: white;
               position: relative;
@@ -202,12 +231,11 @@ const TruckTracking = () => {
                 color: white;
                 padding: 2px 6px;
                 border-radius: 6px;
-                font-size: 0.7rem;
+                font-size: 0.9rem;
                 font-weight: bold;
                 white-space: nowrap;
                 text-align: center;
-                width: 25px;           
-                line-height: .7rem;
+                line-height: .8rem;
               ">
                 ${unitName}
               </span>
@@ -276,8 +304,8 @@ const TruckTracking = () => {
       const lng = isNaN(lngRaw) ? 0 : lngRaw;
       const count = trucks.length;
       const perRow = 4;
-      const offsetX = 0.00022; // separación horizontal
-      const offsetY = 0.00022; // separación vertical
+      const offsetX = 0.00030;
+      const offsetY = 0.00030;
 
       trucks.forEach((truck, i) => {
         const row = Math.floor(i / perRow);
@@ -300,14 +328,19 @@ const TruckTracking = () => {
             )}
           >
             <Popup>
-              <div className="text-sm max-w-xs space-y-1 select-none">
+              <div className="text-sm max-w-xs space-y-3 select-none">
                 <div className="flex items-center gap-2 justify-start">
-                  <span className="font-black text-xl text-blue-600 px-2 py-1 bg-zinc-100 rounded-md">
+                  <div className=" bg-zinc-100 rounded-lg w-12 h-12 flex flex-col items-center justify-center gap-[1px] ">
+                    <span className="text-[9px] text-blue-700 font-bold leading-none">
+                      CAM
+                    </span>
+                    <span className="font-black text-2xl text-blue-700 leading-none">
                     {truck.displayName || truck.name}
                   </span>
+                  </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold ${
+                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${
                         truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
@@ -317,7 +350,7 @@ const TruckTracking = () => {
                               .toLowerCase()
                               .includes("inoperativo") ||
                             truck.status.toLowerCase().includes("demora")
-                          ? "bg-orange-300 text-orange-800"
+                          ? "bg-[#ff758f] text-white"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
@@ -331,31 +364,30 @@ const TruckTracking = () => {
                     </span>
                     <span
                       className={clsx(
-                        "px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold",
+                        "text-[9px] leading-3 font-semibold",
                         truck.connectivity === "online"
-                          ? "bg-yellow-300 text-zinc-800"
-                          : "bg-zinc-300 text-zinc-800"
+                          ? "text-amber-400"
+                          : "text-zinc-500"
                       )}
                     >
-                      {truck.connectivity}
+                      {truck.connectivity}{" "}
+                      {truck.lastDate &&
+                      !isNaN(new Date(truck.lastDate).getTime()) ? (
+                        <TimeAgo datetime={truck.lastDate} locale="es" />
+                      ) : (
+                        "----"
+                      )}
                     </span>
                   </div>
                 </div>
-                <div className="border-t border-zinc-200 pt-2 flex flex-col">
-                  <span className="text-[10px] leading-3 font-semibold">
-                    {truck.connectivity === "online"
-                      ? "En línea"
-                      : "Fuera de línea"}{" "}
-                    {truck.lastDate &&
-                    !isNaN(new Date(truck.lastDate).getTime()) ? (
-                      <TimeAgo datetime={truck.lastDate} locale="es" />
-                    ) : (
-                      "----"
-                    )}
-                  </span>
-                  <span className="text-zinc-900 font-bold">
-                    Hora: {dayjs(truck.lastDate).format("HH:mm")}
-                  </span>
+
+                <div className="border-t border-zinc-200 flex flex-col text-sm pt-3">
+                    <span className="text-zinc-700 font-bold leading-none">
+                      Inicio: <b className="uppercase font-extrabold">{formatFecha(truck.changeStatusDate)}</b>
+                    </span>
+                    <span className="text-xs text-zinc-500 italic font-bold leading-none">
+                      Desde {dayjs(truck.changeStatusDate).fromNow()}
+                    </span>
                 </div>
               </div>
             </Popup>
@@ -427,7 +459,7 @@ const TruckTracking = () => {
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: bold;
                 line-height: 0.7rem;
               ">
@@ -436,9 +468,9 @@ const TruckTracking = () => {
                 color: #ffffff0;
                 padding: 2px 4px;
                 border-radius: 4px; 
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: bold;
-                line-height: 0.7rem;                            
+                line-height: 0.8rem;                            
               ">
                 ${
                   filteredData.filter(
@@ -505,9 +537,9 @@ const TruckTracking = () => {
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: bold;
-                line-height: 0.7rem;
+                line-height: 0.8rem;
               ">
               ${beacon.description}
               </div>
@@ -564,7 +596,7 @@ const TruckTracking = () => {
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: bold;
                 line-height: 0.7rem;
               ">
@@ -573,9 +605,9 @@ const TruckTracking = () => {
                   color: #ffffff0;
                   padding: 2px 4px;
                   border-radius: 4px; 
-                  font-size: 0.7rem;
+                  font-size: 0.8rem;
                   font-weight: bold;
-                  line-height: 0.7rem;                            
+                  line-height: 0.8rem;                            
                 ">
                   ${
                     filteredData.filter(
@@ -657,18 +689,18 @@ const TruckTracking = () => {
                 color: #ffffff0;
                 padding: 2px 6px 2px 2px;
                 border-radius: 5px;
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: bold;
-                line-height: 0.7rem;
+                line-height: 0.8rem;
           ">
             <span style="
               background: #ffffff85;
               color: #fffff;
               padding: 2px 5px;
               border-radius: 4px; 
-              font-size: 0.7rem;
+              font-size: 0.8rem;
               font-weight: bold;
-              line-height: 0.7rem;                            
+              line-height: 0.8rem;                            
             ">
               ${count}
             </span>
@@ -691,25 +723,17 @@ const TruckTracking = () => {
       centerLat,
       centerLng,
       zoom,
-      imageUrl,
-      imageWidth,
-      imageHeight,
-      opacity,
-      imageCenterLat,
-      imageCenterLng,
+ 
     } = mapConfig;
 
-    const imageBounds: [[number, number], [number, number]] = [
-      [imageCenterLat - imageHeight, imageCenterLng - imageWidth],
-      [imageCenterLat + imageHeight, imageCenterLng + imageWidth],
-    ];
+
     return (
       <div className="h-full w-full">
         <MapContainer
           center={[centerLat, centerLng]}
           zoom={zoom}
-          minZoom={17}
-          maxZoom={19}
+          minZoom={16.5}
+          maxZoom={17.4}
           zoomControl={false}
           style={{ height: "100%", width: "100%" }}
           className="z-0"
