@@ -210,7 +210,7 @@ const RealTimeByHourRT = () => {
     const totalTMNight = nightTrips * baseData.mineral;
 
     return {
-      totalUnits: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnits: data.length,
       totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
       totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
       totalTrips,
@@ -300,23 +300,19 @@ const RealTimeByHourRT = () => {
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
         title="Reporte por Turno"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
-          dateFilter[0].startDate,
-          "dd-MM-yyyy"
-        )}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
         status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
+          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+            color: "#10aa18",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
+          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+            color: "#d1be16",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
+          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+            color: "#ca1616",
           },
         ]}
       />
@@ -357,16 +353,8 @@ const RealTimeByHourRT = () => {
               title=""
               size="medium"
               donutData={{
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12 -
-                      baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * 12 -
-                      baseStats.totalMaintenanceTimeMinNight / 60,
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
+                currentValue: beaconTruck.filter((unit) => unit.status === "operativo").length,
+                total: beaconTruck.length,
                 currentValueColor: "#ff5000",
               }}
             />
@@ -379,14 +367,8 @@ const RealTimeByHourRT = () => {
               title=""
               size="medium"
               donutData={{
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalDurationDay / 3600
-                    : baseStats.totalDurationNight / 3600,
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
+                currentValue: beaconTruck.filter((unit) => unit.status === "operativo").length,
+                total: beaconTruck.length,
                 currentValueColor: "#ff5000",
               }}
             />
@@ -563,16 +545,8 @@ const RealTimeByHourRT = () => {
             donutData={[
               {
                 title: "Disponibilidad",
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12 -
-                      baseStats.totalMaintenanceTimeMinDay / 60
-                    : baseStats.totalUnitsNight * 12 -
-                      baseStats.totalMaintenanceTimeMinNight / 60,
+                total: beaconTruck.length,
+                currentValue: beaconTruck.filter((unit) => unit.status === "operativo").length,
                 currentValueColor: "#ff5000",
               },
               {

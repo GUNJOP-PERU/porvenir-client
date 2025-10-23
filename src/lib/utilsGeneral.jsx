@@ -123,7 +123,7 @@ export function roundAndFormat(valor) {
   if (valor > 1000) {
     resultado = Math.round(valor);
   } else {
-    resultado = Number(valor.toFixed(2));
+    resultado = Number(valor.toFixed(0));
   }
 
   return resultado.toLocaleString("es-MX");

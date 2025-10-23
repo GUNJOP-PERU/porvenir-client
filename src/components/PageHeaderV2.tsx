@@ -4,7 +4,7 @@ import { CircleFadingPlus } from "lucide-react";
 
 interface  PageHeaderProps {
   title: string,
-  description: string,
+  description?: string,
   count?: number,
   actions?: JSX.Element,
   refetch: () => void,
@@ -12,9 +12,10 @@ interface  PageHeaderProps {
   setDialogOpen: boolean,
   className?: string,
   status?: {
-    value: number,
+    value: number | string,
     color: string
-  }[]
+  }[],
+  directionTitle?: "row" | "column"
 }
 
 export default function PageHeader({
@@ -26,24 +27,27 @@ export default function PageHeader({
   isFetching,
   setDialogOpen,
   className,
-  status
+  status,
+  directionTitle = "row",
 } : PageHeaderProps ) {
   return (
-    <div className={`flex flex-wrap gap-2 justify-between ${className}`}>
-      <div>
-        <div className="flex items-center gap-2">
+    <div className={`flex flex-wrap gap-2 justify-between items-center ${className}`}>
+      <div className="flex flex-col">
+        <div
+          className="flex items-left gap-2"
+          style={{
+            flexDirection: directionTitle
+          }}
+        >
           <h1 className="text-md lg:text-xl font-bold leading-none">{title}</h1>
           {count && (
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
               {count}
             </span>
           )}
-          {status && 
-            status.map((stat, index) => (
-              <span key={index} className={`text-[10px] text-white rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold`} style={{backgroundColor: stat.color}}>
-                {stat.value}
-              </span>
-          ))}
+          <div className="flex flex-row gap-4">
+            {actions}
+          </div>
         </div>
         {description && <p className="text-zinc-400 text-[10.5px] lg:text-xs">{description}</p>}
       </div>
@@ -56,7 +60,14 @@ export default function PageHeader({
             </span>
           </Button>
         )}
-        {actions}
+        <div className="flex flex-row gap-4 items-center">
+          {status && 
+              status.map((stat, index) => (
+                <span key={index} className={`text-[13px] text-white rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-2 py-1 font-bold`} style={{backgroundColor: stat.color}}>
+                  {stat.value}
+                </span>
+            ))}
+        </div>
         <div className="flex flex-col justify-end">
           {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
         </div>

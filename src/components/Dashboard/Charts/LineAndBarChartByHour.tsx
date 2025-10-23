@@ -184,7 +184,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(diffPlanDay[this.point.index])}`;
+            return `${roundAndFormat(diffPlanDay[this.point.index])} (${Math.round(Number(roundAndFormat(diffPlanDay[this.point.index]))/mineralWeight)}V)`;
           },
         },
       },
@@ -213,7 +213,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(this.y)}`;
+            return `${roundAndFormat(this.y)} ( ${this.y/mineralWeight}V )`;
           },
         },
       },
@@ -254,9 +254,17 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       floating: false,
       labelFormatter: function (this: any) {
         if (this.index === 0 || this.index === 1) {
-          return `<span style='color:#000000'>Real</span>`;
+          return `
+          <span style='display: flex; align-items: center; color:#000000'>
+            <span style='width: 8px; height: 8px; background-color: #ff5000; border-radius: 5px; display: inline-block; margin-right: 4px;'></span>
+            Real
+          </span>`;
         } else {
-          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+          return `
+          <span style='color:#A6A6A6'>
+            <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+            ${this.name}
+          </span>`;
         }
       },
       useHTML: true,

@@ -152,6 +152,18 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
           lineWidth: 2,
           lineColor: chartColor,
         },
+        dataLabels: {
+          enabled: true,
+          style: {
+            color: "#ff5000",
+            fontSize: "12px",
+            fontWeight: "bold",
+            textOutline: "none"
+          },
+          formatter: function(this: any) {
+            return `${roundAndFormat(this.y)} TM, ${Math.ceil(this.y / mineralWeight)}V`;
+          }
+        },
       },
       {
         name: "Plan",

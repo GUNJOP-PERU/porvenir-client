@@ -104,7 +104,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       } else if (isPahuaypite) {
         tripColor = "#3c3c3c"; // Marrón para Pahuaypite
       } else if (hasDestination) {
-        tripColor = "#ff5000"; // Verde para otros destinos
+        tripColor = "#0aa7f0"; // Verde para otros destinos
       }
       
       const displayTripIndex = hasDestination ? ++validTripCounter : 0;
@@ -224,7 +224,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       specialPeriods.forEach((period, periodIndex) => {
         const color = period.type === 'planta' ? "#EF4444" : 
-                      period.type === 'bocamina' ? "#66d20e" : "#fe6d73";
+                      period.type === 'bocamina' ? "#66d20e" : "#fa4a4a";
         const periodType = period.type === 'planta' ? "Planta" :
                           period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
 
@@ -304,6 +304,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         if (shift === "dia") {
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
         } else {
+          if (0 <= today.getHours() && today.getHours() < 6) {
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            return new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 18, 0, 0).getTime();
+          }
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
         }
       })(),
@@ -312,6 +317,9 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         if (shift === "dia") {
           return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
         } else {
+          if (0 <= today.getHours() && today.getHours() < 6) {
+            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
+          }
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
           return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
