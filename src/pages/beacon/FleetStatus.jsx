@@ -230,12 +230,12 @@ export default function FleetStatus() {
                                     <div
                                       className={clsx(
                                         "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3 pr-0 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full",
-                                        item.connectivity === "online"
-                                          ? "text-amber-400 before:bg-amber-400"
-                                          : "text-zinc-300 before:bg-zinc-300"
+                                        item.connectivity === "online" 
+                                        ?   "text-white before:bg-white"
+                                        : "text-gray-400 before:bg-gray-400"
                                       )}
                                     >
-                                   {`Inicio: ${formatFecha(item.changeStatusDate)} (${dayjs(item.changeStatusDate).fromNow()})`}
+                                    {`Desde: ${formatFecha(item.changeStatusDate)} (${dayjs(item.changeStatusDate).fromNow()})`}
                                     </div>
                                   </div>
                                 </div>
@@ -250,8 +250,8 @@ export default function FleetStatus() {
                                     "relative text-[9.5px] select-none leading-[10px] text-left",
                                     "before:content-[''] before:inline-block before:w-[4px] before:h-[4px] before:rounded-full before:mr-1",
                                     item.connectivity === "online"
-                                      ? "text-amber-400 before:bg-amber-400"
-                                      : "text-zinc-300 before:bg-zinc-300"
+                                      ?   "text-white before:bg-white"
+                                      : "text-gray-400 before:bg-gray-400"
                                   )}
                                 >
                                   {item.connectivity === "online"

@@ -154,7 +154,10 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
     console.log("Datos Finales:", datosFinales);
 
     try {
-      const response = await postDataRequest("planDay/many", datosFinales);
+      const response = await postDataRequest("planDay/many", [
+        ...datosFinales.map((e) => ({ ...e, type: "blending" })),
+        ...datosFinales.map((e) => ({ ...e, type: "modificado" })),
+      ]);
 
       if (response.status >= 200 && response.status < 300) {
         alert("Datos enviados con éxito!");

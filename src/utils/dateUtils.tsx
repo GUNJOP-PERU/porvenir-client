@@ -60,6 +60,7 @@ export const getCurrentDay = () => {
   let currentShift = "dia";
   const currentDate = new Date();
   const isAfter6PM = currentDate.getHours() >= 18;
+  const isEnter00AM = 0 < currentDate.getHours() && currentDate.getHours() < 6;
 
   if (currentDate.getHours() < 18 && currentDate.getHours() >= 6) {
     currentShift = "dia";

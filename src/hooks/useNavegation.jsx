@@ -40,12 +40,12 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
           },
-          {
-            name: "Reporte por Turno Desmonte",
-            href: "/dashboard/beacon/detection-report-turn-desmonte-rt",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/beacon/detection-report-turn-desmonte-rt",
-          },
+          // {
+          //   name: "Reporte por Turno Desmonte",
+          //   href: "/dashboard/beacon/detection-report-turn-desmonte-rt",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/dashboard/beacon/detection-report-turn-desmonte-rt",
+          // },
           {
             name: "Reporte por Semana",
             href: "/dashboard/beacon/detection-report-week-rt",

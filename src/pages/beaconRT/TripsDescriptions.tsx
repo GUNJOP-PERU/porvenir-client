@@ -99,7 +99,7 @@ const TripsDescriptionRT = () => {
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#0aa7f0] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Viaje Completo
               </p>

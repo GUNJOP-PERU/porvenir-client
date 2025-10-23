@@ -40,8 +40,8 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const diffColorPlanDay = currentPlanDay.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
-      ? "#f9c83e"
-      : "#3c3c3c";
+      ? "#68c970"
+      : "#ff8b8b";
   });
 
   const options = {

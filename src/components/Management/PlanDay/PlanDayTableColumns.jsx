@@ -83,7 +83,13 @@ export const columns = [
       return <>{row.getValue("nro_volquetes")} und</>;
     },
   },
-
+  {
+    accessorKey: "type",
+    header: "Tipo",
+    cell: ({ row }) => {
+      return <>{row.getValue("type")}</>;
+    },
+  },
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (

@@ -206,7 +206,7 @@ export const superficieLocation: IBeaconUbication[] = [
 export const maintenanceLocation: IBeaconUbication[] = [
   {
     id: 6,
-    mac: ["BC:57:29:06:01:DF", "BC:57:29:03:5C:7D","BC:57:29:03:5C:81"],
+    mac: ["BC:57:29:06:01:DF","BC:57:29:03:5C:7D","BC:57:29:03:5C:81"],
     name: "TS_01",
     location: "mantenimiento",
     description: "TALLER SATURNO",
