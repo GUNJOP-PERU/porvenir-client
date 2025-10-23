@@ -16,7 +16,7 @@ function PlanDay() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = useFetchInfinityScroll("planDay", "planDay/items");
+  } = useFetchInfinityScroll("planDay", "planDay/items?type=blending");
 
   return (
     <>
