@@ -27,6 +27,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatFecha } from "@/lib/utilsGeneral";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -103,12 +104,18 @@ const UndergroundTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const timeAgo = dayjs().subtract(20, "minute");
+    const timeAgo = dayjs().subtract(30, "minute");
     const ubications = [
       "Int-BC-1820",
+      "Ext-BC-1820",
+      "Ext-BC-1800",
       "Int-BC-1800",
       "Int-BC-1875",
+      "Ext-BC-1875",
+      "Int-BC-1910",
+      "Ext-BC-1910",
       "Int-BC-1830",
+      "Ext-BC-1830",
       "Parrilla 1",
       "Parrilla 2",
       "Pocket 3",
@@ -127,8 +134,10 @@ const UndergroundTracking = () => {
   }, [data]);
 
   const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
-    const foundUbication = ubicationDataSub.find(
-      (u) => u.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
+    const foundUbication = ubicationDataSub.find((u) =>
+      u.mac.some(
+        (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+      )
     );
 
     setSelectedTruck({
@@ -229,8 +238,10 @@ const UndergroundTracking = () => {
 
     const coordMap = new Map<string, any[]>();
     filteredData.forEach((truck) => {
-      const findBeacon = ubicationDataSub.find(
-        (beacon) => beacon.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
+      const findBeacon = ubicationDataSub.find((beacon) =>
+        beacon.mac.some(
+          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+        )
       );
       const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
       const key = `${coord.latitud},${coord.longitud}`;
@@ -270,7 +281,7 @@ const UndergroundTracking = () => {
               truck.status,
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
-              truck.connectivity,
+              truck.connectivity
             )}
           >
             <Popup>
@@ -295,7 +306,8 @@ const UndergroundTracking = () => {
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {truck.status}
+                      {truck.status} {" "}<br/>
+                      {`Inicio: ${formatFecha(truck.changeStatusDate)} (${dayjs(truck.changeStatusDate).fromNow()})`}
                     </span>
                     <span
                       className={clsx(
@@ -322,6 +334,9 @@ const UndergroundTracking = () => {
                       "----"
                     )}
                   </span>
+                    <span className="text-zinc-900 font-bold">
+                      
+                    </span>
                 </div>
               </div>
             </Popup>
@@ -393,7 +408,12 @@ const UndergroundTracking = () => {
                 ${
                   filteredData.filter(
                     (truck) =>
-                      truck.lastUbicationMac && ubication.mac.some((mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase())
+                      truck.lastUbicationMac &&
+                      ubication.mac.some(
+                        (mac) =>
+                          mac.toLowerCase() ===
+                          truck.lastUbicationMac.toLowerCase()
+                      )
                   ).length
                 }
               </span>
@@ -465,19 +485,27 @@ const UndergroundTracking = () => {
 
     const ubications = [
       "Int-BC-1820",
+      "Ext-BC-1820",
+      "Ext-BC-1800",
       "Int-BC-1800",
       "Int-BC-1875",
+      "Ext-BC-1875",
+      "Int-BC-1910",
+      "Ext-BC-1910",
       "Int-BC-1830",
+      "Ext-BC-1830",
       "Parrilla 1",
       "Parrilla 2",
       "Pocket 3",
     ];
 
+    const twentyMinutesAgo = dayjs().subtract(30, "minute");
+
     return data
       .filter((truck) => {
         if (!truck.lastDate) return false;
         const lastUpdate = dayjs.utc(truck.lastDate);
-        const tooOld = lastUpdate.isBefore(dayjs.utc().subtract(60, "minute"));
+        const tooOld = lastUpdate.isBefore(twentyMinutesAgo);
 
         return (
           truck.status?.toLowerCase() === "operativo" &&
@@ -543,7 +571,10 @@ const UndergroundTracking = () => {
                 <span className="text-zinc-300">
                   Ubicación: {truck.lastUbication}
                 </span>
-                <TimeAgo datetime={truck.updatedAt} locale="es" />
+                <span className="text-zinc-300">
+                  Hora: {dayjs(truck.lastDate).format("HH:mm")}
+                </span>
+                <TimeAgo datetime={truck.lastDate} locale="es" />
               </TooltipContent>
             </Tooltip>
           ))}

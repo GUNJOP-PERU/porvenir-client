@@ -12,19 +12,9 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const ubications = [
-      "Parqueo",
-      "Int-BC-1820",
-      "Int-BC-1800",
-      "Int-BC-1875",
-      "Int-BC-1930",
-      "Int-BC-1910",
-      "Pahuaypite",
-      "Cancha 100",
-      "Faja 4",
-    ];
+    const ubications = ["Taller Saturno"];
 
-    const twentyMinutesAgo = dayjs().subtract(20, "minute");
+    const twentyMinutesAgo = dayjs().subtract(30, "minute");
 
     return data
       .filter((truck) => {
@@ -37,7 +27,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
           truck.status?.toLowerCase() === "operativo" &&
           (truck.direction?.toLowerCase() === "salida" ||
             truck.direction?.toLowerCase() === "-") &&
-          ubications.includes(truck.lastUbication) &&
+          !ubications.includes(truck.lastUbication) &&
           tooOld
         );
       })
@@ -77,9 +67,9 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
                 Ubicación: {truck.lastUbication}
               </span>
               <span className="text-zinc-300">
-                Dirección: {truck.direction}
+                Hora: {dayjs(truck.lastDate).format("HH:mm")}
               </span>
-              <TimeAgo datetime={truck.updatedAt} locale="es" />
+              <TimeAgo datetime={truck.lastDate} locale="es" />
             </TooltipContent>
           </Tooltip>
         ))}

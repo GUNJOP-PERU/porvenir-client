@@ -27,7 +27,7 @@ interface IWifiLocation {
 export const ubicationBocamina: IBeaconUbication[] = [
   {
     id: 1,
-    mac: ["BC:57:29:06:02:33"],
+    mac: ["BC:57:29:06:02:33","BC:57:29:03:5C:6A"],
     name: "BC1910_01",
     location: "bocamina",
     description: "BC-1910",
@@ -41,7 +41,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 2,
-    mac: ["BC:57:29:06:02:3A"],
+    mac: ["BC:57:29:06:02:3A","BC:57:29:03:5C:94"],
     name: "BC1875_01",
     location: "bocamina",
     description: "BC-1875",
@@ -55,7 +55,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 3,
-    mac: ["BC:57:29:06:02:38"],
+    mac: ["BC:57:29:06:02:38","BC:57:29:03:5C:77"],
     name: "BC1820_01",
     location: "bocamina",
     description: "BC-1820",
@@ -69,7 +69,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 4,
-    mac: ["BC:57:29:06:02:39"],
+    mac: ["BC:57:29:06:02:39","BC:57:29:03:5C:86"],
     name: "BC1800_01",
     location: "bocamina",
     description: "BC-1800",
@@ -206,7 +206,7 @@ export const superficieLocation: IBeaconUbication[] = [
 export const maintenanceLocation: IBeaconUbication[] = [
   {
     id: 6,
-    mac: ["BC:57:29:06:01:DF", "BC:57:29:03:5C:7D"],
+    mac: ["BC:57:29:06:01:DF", "BC:57:29:03:5C:7D","BC:57:29:03:5C:81"],
     name: "TS_01",
     location: "mantenimiento",
     description: "TALLER SATURNO",
@@ -254,7 +254,7 @@ const ubicationData: IBeaconUbication[] = [
   // },
   {
     id: 9,
-    mac: ["BC:57:29:06:02:2F"],
+    mac: ["BC:57:29:06:02:2F","BC:57:29:01:C9:18"],
     name: "C100_01",
     location: "destinations",
     description: "CANCHA 100",
@@ -280,7 +280,7 @@ const ubicationData: IBeaconUbication[] = [
   },
   {
     id: 10,
-    mac: ["BC:57:29:06:02:2C"],
+    mac: ["BC:57:29:06:02:2C","BC:57:29:01:C9:02"],
     name: "F4_01",
     location: "destinations",
     description: "FAJA 4",
@@ -302,38 +302,38 @@ const ubicationData: IBeaconUbication[] = [
     createdAt: "2024-07-22T08:02:00Z",
     updatedAt: "2024-08-22T08:02:00Z",
   },
-  {
-    id: 11,
-    mac: ["BC:57:29:06:02:37"],
-    name: "PH_01",
-    location: "destinations",
-    description: "PAHUAYPITE",
-    color: "",
-    position: {
-      latitud: -13.083056,
-      longitud: -76.0,
-    },
-    geocerca: [
-      [-13.08413515313085, -75.99973526195751],
-      [-13.08581405138343, -75.99921819067556],
-      [-13.08789472725863, -75.99975830311132],
-      [-13.0882605386127, -75.99921305801304],
-      [-13.08763944133891, -75.99838612133834],
-      [-13.08697099450283, -75.99738881546654],
-      [-13.08645487338296, -75.99735339414492],
-      [-13.08525462670112, -75.99753169581066],
-      [-13.08487488050902, -75.99785887260191],
-      [-13.08443063453759, -75.99862179696771],
-      [-13.08379932949288, -75.99958183519249],
-      [-13.08333999467739, -75.99989830830179],
-      [-13.08413515313085, -75.99973526195751],
-    ],
-    createdAt: "2024-07-22T08:02:00Z",
-    updatedAt: "2024-08-22T08:02:00Z",
-  },
+  // {
+  //   id: 11,
+  //   mac: ["BC:57:29:06:02:37"],
+  //   name: "PH_01",
+  //   location: "destinations",
+  //   description: "PAHUAYPITE",
+  //   color: "",
+  //   position: {
+  //     latitud: -13.083056,
+  //     longitud: -76.0,
+  //   },
+  //   geocerca: [
+  //     [-13.08413515313085, -75.99973526195751],
+  //     [-13.08581405138343, -75.99921819067556],
+  //     [-13.08789472725863, -75.99975830311132],
+  //     [-13.0882605386127, -75.99921305801304],
+  //     [-13.08763944133891, -75.99838612133834],
+  //     [-13.08697099450283, -75.99738881546654],
+  //     [-13.08645487338296, -75.99735339414492],
+  //     [-13.08525462670112, -75.99753169581066],
+  //     [-13.08487488050902, -75.99785887260191],
+  //     [-13.08443063453759, -75.99862179696771],
+  //     [-13.08379932949288, -75.99958183519249],
+  //     [-13.08333999467739, -75.99989830830179],
+  //     [-13.08413515313085, -75.99973526195751],
+  //   ],
+  //   createdAt: "2024-07-22T08:02:00Z",
+  //   updatedAt: "2024-08-22T08:02:00Z",
+  // },
   {
     id: 34,
-    mac: ["bc:57:29:01:c9:03", "bc:57:29:01:c9:18"],
+    mac: ["bc:57:29:01:c9:03", "bc:57:29:01:c9:18","BC:57:29:08:08:26"],
     name: "PARK. VOLQUETES",
     location: "destinations",
     description: "PARQUEO VOLQUETES",
@@ -808,7 +808,7 @@ const wifiLocation: IWifiLocation[] = [
 const ubicationDataSub: IBeaconUbication[] = [
   {
     id: 1,
-    mac: ["BC:57:29:06:02:3A"],
+    mac: ["BC:57:29:06:02:3A","BC:57:29:03:5C:94"],
     name: "BC1875_01",
     location: "bocamina",
     description: "BC-1875",
@@ -822,7 +822,7 @@ const ubicationDataSub: IBeaconUbication[] = [
   },
   {
     id: 2,
-    mac: ["BC:57:29:06:02:38"],
+   mac: ["BC:57:29:06:02:38","BC:57:29:03:5C:77"],
     name: "BC1820_01",
     location: "bocamina",
     description: "BC-1820",
@@ -836,7 +836,7 @@ const ubicationDataSub: IBeaconUbication[] = [
   },
   {
     id: 4,
-    mac: ["BC:57:29:06:02:39"],
+    mac: ["BC:57:29:06:02:39","BC:57:29:03:5C:86"],
     name: "BC1800_01",
     location: "bocamina",
     description: "BC-1800",

@@ -1,9 +1,8 @@
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 import IconTruck from "@/icons/IconTruck";
-import { ubicationDataSub } from "@/pages/beaconRT/UbicationLocation";
 import type { BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 type Plan = {
   phase: string; // "mineral" o "desmonte"
@@ -28,7 +27,16 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
     return operativos.length;
   }, [data]);
 
-  // const counts =35;
+  const otr = useMemo(() => {
+    const operativos = data.filter(
+      (truck) => truck.status?.toLowerCase() === "operativo"
+    );
+    const inoperativos = data.filter(
+      (truck) => truck.status?.toLowerCase() === "inoperativo"
+    );
+    console.log(inoperativos);
+    return operativos.length;
+  }, [data]);
 
   const planSummary = useMemo(() => {
     let total = 0;
