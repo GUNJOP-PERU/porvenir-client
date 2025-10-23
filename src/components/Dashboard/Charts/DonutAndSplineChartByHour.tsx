@@ -161,7 +161,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
             textOutline: "none"
           },
           formatter: function(this: any) {
-            return `${roundAndFormat(this.y)} TM, ${Math.ceil(this.y / mineralWeight)}V`;
+            return `${roundAndFormat(this.y)} TM <br/> ${Math.ceil(this.y / mineralWeight)}V`;
           }
         },
       },

@@ -213,7 +213,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
-            return `${roundAndFormat(this.y)} ( ${this.y/mineralWeight}V )`;
+            return `${roundAndFormat(this.y)} ( ${Math.round(this.y/mineralWeight)}V )`;
           },
         },
       },

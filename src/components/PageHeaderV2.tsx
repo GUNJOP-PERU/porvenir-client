@@ -7,6 +7,7 @@ interface  PageHeaderProps {
   description?: string,
   count?: number,
   actions?: JSX.Element,
+  actionsRight?: JSX.Element,
   refetch: () => void,
   isFetching: boolean,
   setDialogOpen: boolean,
@@ -23,6 +24,7 @@ export default function PageHeader({
   description,
   count,
   actions,
+  actionsRight,
   refetch,
   isFetching,
   setDialogOpen,
@@ -45,11 +47,11 @@ export default function PageHeader({
               {count}
             </span>
           )}
-          <div className="flex flex-row gap-4">
-            {actions}
-          </div>
         </div>
         {description && <p className="text-zinc-400 text-[10.5px] lg:text-xs">{description}</p>}
+        <div className="flex flex-row gap-4">
+          {actions}
+        </div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         {setDialogOpen && (
@@ -68,7 +70,8 @@ export default function PageHeader({
                 </span>
             ))}
         </div>
-        <div className="flex flex-col justify-end">
+        <div className="flex flex-row items-center justify-end">
+          {actionsRight}
           {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
         </div>
       </div>

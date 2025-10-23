@@ -93,12 +93,12 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-hour-truck",
           },
-          {
-            name: "Reporte por Dia Scoop",
-            href: "dashboard/real-time-by-hour-scoop",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/real-time-by-hour-scoop",
-          },
+          // {
+          //   name: "Reporte por Dia Scoop",
+          //   href: "dashboard/real-time-by-hour-scoop",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/dashboard/real-time-by-hour-scoop",
+          // },
           {
             name: "Reporte por Semana",
             href: "/dashboard/real-time-by-day",
