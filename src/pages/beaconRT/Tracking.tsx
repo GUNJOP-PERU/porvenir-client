@@ -66,43 +66,6 @@ const MapControls = ({
       lastPositionRef.current = [...selectedTruckPosition] as [number, number];
     }
   }, [selectedTruckPosition, map]);
-
-  useEffect(() => {
-    let raf = 0;
-    const handleResize = () => {
-      // usar RAF para evitar layout thrash
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        try {
-          map.invalidateSize({ animate: false });
-        } catch (e) {
-          /* ignore */
-        }
-        // opcional: ajustar zoom en pantallas muy grandes
-        const width = window.innerWidth || 0;
-        const dpr = window.devicePixelRatio || 1;
-        if (width >= 2200 || dpr > 1.5) {
-          // aumentar zoom ligeramente para que elementos se vean más grandes
-          const target = Math.max(17.3, map.getZoom() + 0.8);
-          map.setZoom(target);
-        } else {
-          // para pantallas pequeñas, dejar zoom inicial configurado por mapConfig
-        }
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
-
-    // llamado inicial en mount (importante cuando se renderiza en un contenedor invisible o se inserta en pantalla)
-    handleResize();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-    };
-  }, [map]);
   return null;
 };
 
