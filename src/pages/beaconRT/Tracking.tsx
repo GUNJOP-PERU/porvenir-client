@@ -114,18 +114,8 @@ const TruckTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const timeAgo = dayjs().subtract(20, "minute");
-    const ubications = [
-      "Int-BC-1820",
-      "Int-BC-1800",
-      "Int-BC-1875",
-      "Int-BC-1930",
-      "Int-BC-1910",
-      "Parqueo",
-      "Pahuaypite",
-      "Cancha 100",
-      "Faja 4",
-    ];
+    const timeAgo = dayjs().subtract(30, "minute");
+    const ubications = ["Taller Saturno"];
 
     return data.filter((truck) => {
       if (!truck.lastDate) return false;
@@ -133,7 +123,7 @@ const TruckTracking = () => {
       if (truck.direction?.toLowerCase() === "entrada") return false;
       const lastUpdate = dayjs(truck.lastDate);
       if (
-        ubications.includes(truck.lastUbication) &&
+        !ubications.includes(truck.lastUbication) &&
         lastUpdate.isBefore(timeAgo)
       ) {
         return false;
@@ -331,7 +321,13 @@ const TruckTracking = () => {
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {truck.status}
+                      {truck.status === "operativo"
+                        ? "Operativo"
+                        : truck.status === "inoperativo"
+                        ? "Mantenimiento Correctivo"
+                        : truck.status === "mantenimiento"
+                        ? "Mantenimiento Preventivo"
+                        : truck.status}
                     </span>
                     <span
                       className={clsx(
@@ -356,6 +352,9 @@ const TruckTracking = () => {
                     ) : (
                       "----"
                     )}
+                  </span>
+                  <span className="text-zinc-900 font-bold">
+                    Hora: {dayjs(truck.lastDate).format("HH:mm")}
                   </span>
                 </div>
               </div>
