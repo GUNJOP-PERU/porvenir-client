@@ -250,8 +250,8 @@ const UndergroundTracking = () => {
       const lng = !isNaN(lngRaw || 0) ? lngRaw : 0;
       const count = trucks.length;
       const perRow = 4;
-       const offsetX = 0.00030;
-      const offsetY = 0.00030;
+       const offsetX = 0.00020;
+      const offsetY = 0.00020;
 
       trucks.forEach((truck, i) => {
         const row = Math.floor(i / perRow);
