@@ -34,7 +34,7 @@ const UtilizacionDeFlota = () => {
       dateFilter,
       "yyyy-MM-dd"
     )}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
-    { refetchInterval: 2000 }
+    { refetchInterval: 5000 }
   );
 
   const mineDetection = useMemo(() => {
@@ -119,15 +119,7 @@ const UtilizacionDeFlota = () => {
           return totalMinutes >= 780;
         });
 
-        // const lastItem = unit.tracks[unit.tracks.length - 1]?.uuid;
         let isLateBocamina = false;
-
-        // if (lastItem !== firstAfternoonBocamina?.uuid) {
-        //   return {
-        //     unit: unit.unit,
-        //     firstBocamina: null,
-        //   };
-        // }
 
         if (firstAfternoonBocamina) {
           const bocaminaStartTime = new Date(firstAfternoonBocamina.f_inicio);
@@ -347,6 +339,7 @@ const UtilizacionDeFlota = () => {
     setInterval(() => {
       setDateFilter(getCurrentDay().endDate);
       setCurrentIsoDay(getISODay(new Date()));
+      setShiftFilter(getCurrentDay().shift);
     }, 5000);
   }, []);
 
