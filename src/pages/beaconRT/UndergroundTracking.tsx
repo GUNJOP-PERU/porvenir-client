@@ -536,7 +536,7 @@ const UndergroundTracking = () => {
         ubicationData={ubicationDataSub}
       />
       <Legend data={data} />
-      <div className="absolute bottom-2 right-2 bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col select-none">
+      <div className="absolute bottom-2 right-2 bg-black/75 rounded-xl p-2 z-10 w-40 border border-zinc-800 space-y-1 flex flex-col select-none">
          <div className="text-green-500 font-extrabold text-[10px] flex items-center gap-1">
           <div className="bg-green-900 p-[2px] rounded-[5px] w-[18px] h-[18px] font-bold text-green-400 flex items-center justify-center">
             {filteredDataRute.length}
