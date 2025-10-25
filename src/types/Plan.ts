@@ -9,6 +9,7 @@ export type PlanDay = {
   state: "active" | "inactive",
   shift: "dia" | "noche",
   accept: string[],
+  type: "blending" | "modificado",
   day: number,
   month: number,
   year: number,

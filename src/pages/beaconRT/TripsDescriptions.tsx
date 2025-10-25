@@ -46,8 +46,8 @@ const TripsDescriptionRT = () => {
       return ({
         ...unit,
         allTrips: [
-          ...unit.trips,
           ...unit.beforeInitialTrips.map((trip) => ({...trip,endUbication: ""})),
+          ...unit.trips,
           ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))
         ].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
       })
@@ -77,7 +77,7 @@ const TripsDescriptionRT = () => {
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
-        className="col-span-2"
+        className="col-span-2 mb-2"
         directionTitle="column"
         status={[
           { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
@@ -93,15 +93,15 @@ const TripsDescriptionRT = () => {
         actions={
           <div className="flex flex-row gap-2">
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#0aa7f0] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
-                Viaje Incompleto
+                Viaje Superficie
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#0aa7f0] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#096bdb] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
-                Viaje Completo
+                Viaje Subterráneo
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
@@ -126,6 +126,12 @@ const TripsDescriptionRT = () => {
               <span className="flex bg-[#EF4444] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Mantenimiento
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Otros
               </p>
             </div>
           </div>

@@ -56,12 +56,58 @@ const TripsDescriptionRT = () => {
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
-        className="col-span-2"
+        className="col-span-2 mb-4"
         count={data.length}
         actions={
+          <div className="flex flex-row gap-2">
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#0aa7f0] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viaje Superficie
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#096bdb] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viaje Subterráneo
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viaje Desmonte
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Remanejo
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Bocamina
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#EF4444] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Mantenimiento
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Otros
+              </p>
+            </div>
+          </div>
+        }
+        actionsRight={
           <div className="relative flex flex-row gap-2">
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Turno:
+              Turno
               <select
                 value={shiftFilter}
                 onChange={(e) => setShiftFilter(e.target.value)}
@@ -72,7 +118,7 @@ const TripsDescriptionRT = () => {
               </select>
             </label>
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Fecha:
+              Fecha
               <button
                 onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"

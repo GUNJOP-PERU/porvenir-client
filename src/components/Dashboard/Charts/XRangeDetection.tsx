@@ -42,35 +42,6 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
   const allSeriesData: any[] = [];
   
   data.forEach((unit, unitIndex) => {
-    // Agregar barra base gris para representar todo el período de tiempo
-    const today = new Date();
-    let periodStart: number, periodEnd: number;
-    
-    if (shift === "dia") {
-      periodStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
-      periodEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-    } else {
-      periodStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      periodEnd = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
-    }
-    
-    // Barra de fondo gris para todo el período
-    allSeriesData.push({
-      x: periodStart,
-      x2: periodEnd,
-      y: unitIndex,
-      color: "#e5e7eb", // Gris claro para horas no mapeadas
-      borderWidth: 0,
-      borderColor: "transparent",
-      isBackground: true,
-      unitName: unit.unit.toUpperCase(),
-      name: `${unit.unit} - Período sin mapear`,
-      zIndex: 0 // Asegurar que esté en el fondo
-    });
-
-    // Función para determinar el tipo de track
     const getTrackType = (track: any) => {
       const isMaintenanceDetection = track.ubicationType && (
         track.ubication?.toLowerCase().includes("taller") || 
@@ -89,7 +60,6 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
       return 'other';
     };
 
-    // Agrupar SOLO tracks consecutivos de parqueo y mantenimiento
     const tracks = unit.tracks || [];
     const groupedTracks: any[] = [];
     
@@ -120,7 +90,6 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
           groupedTracks.push(groupedTrack);
           i = endIndex; // Saltar los tracks ya agrupados
         } else {
-          // Track individual de parqueo o mantenimiento
           groupedTracks.push({
             ...currentTrack,
             isGrouped: false,
@@ -129,7 +98,6 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
           });
         }
       } else {
-        // Para planta, bocamina y other: nunca agrupar, mantener individuales
         groupedTracks.push({
           ...currentTrack,
           isGrouped: false,
@@ -142,40 +110,29 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
     let firstBocaminaFound = false; // Bandera para rastrear la primera bocamina
       
     groupedTracks.forEach((track: any, trackIndex: number) => {
-      console.log("Procesando track agrupado:", track.ubication, "- Tamaño del grupo:", track.groupSize);
       const currentTrackType = getTrackType(track);
 
-      // Mostrar todos los tracks
       const startTime = getTimestamp(track.f_inicio);
       const endTime = getTimestamp(track.f_final);
-      const duration = (endTime - startTime) / 1000 / 60; // duración en minutos
+      const duration = (endTime - startTime) / 1000 / 60;
       
-      // Determinar color según el tipo
-      let color = "#10b981"; // Verde para "other"
+      let color = "#10b981"; 
       
       if (currentTrackType === 'planta') {
-        color = "#EF4444"; // Rojo
+        color = "#EF4444";
       } else if (currentTrackType === 'bocamina') {
-        color = "#c77dff"; // Morado
+        color = "#c77dff";
       } else if (currentTrackType === 'mantenimiento') {
-        color = "#f3d111"; // Amarillo
+        color = "#f3d111";
       } else if (currentTrackType === 'parqueo') {
-        color = "#fda618"; // Naranja
+        color = "#0508b3";
       }
       
       const trackTypeLabel = currentTrackType === 'planta' ? "Planta" :
                             currentTrackType === 'bocamina' ? "Bocamina" : 
                             currentTrackType === 'parqueo' ? "Parqueo" : 
                             currentTrackType === 'mantenimiento' ? "Mantenimiento" : "Otra Ubicación";
-      
-      // Determinar si debe mostrar tooltip (solo primera bocamina, todas las plantas)
-      const showTooltip = currentTrackType === 'planta' || (currentTrackType === 'bocamina' && !firstBocaminaFound);
-      
-      // Si es la primera bocamina, marcar como encontrada
-      if (currentTrackType === 'bocamina' && !firstBocaminaFound) {
-        firstBocaminaFound = true;
-      }
-      
+
       allSeriesData.push({
         x: startTime,
         x2: endTime,
@@ -196,8 +153,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
         duration: duration,
         shift: track.shift,
         name: `${unit.unit} - ${trackTypeLabel}${track.isGrouped ? ` (${track.groupSize} agrupados)` : ''} #${trackIndex + 1}`,
-        zIndex: 1, // Asegurar que aparezca sobre el fondo gris
-        showTooltip: showTooltip, // Nueva propiedad para controlar tooltip
+        zIndex: 1,
         isGrouped: track.isGrouped,
         groupSize: track.groupSize
       });
@@ -260,24 +216,6 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
       labels: {
         format: "{value:%H:%M}",
       },
-      min: (() => {
-        const today = new Date();
-        if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
-        } else {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-        }
-      })(),
-      max: (() => {
-        const today = new Date();
-        if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
-        } else {
-          const tomorrow = new Date(today);
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
-        }
-      })(),
     }, {
       // Eje X superior
       type: "datetime",
@@ -434,58 +372,7 @@ const XRangeDetection = ({ data }: XRangeTripsChartProps) => {
           allowOverlap: true,
           defer: false,
           formatter: function() {
-            // Solo mostrar etiquetas para tracks que tienen showTooltip habilitado
-            if (this.point.isTrackDetection && !this.point.isBackground && this.point.showTooltip) {
-              const timeLabel = new Date(this.point.x).toLocaleTimeString('es-ES', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              });
-              
-              let prefix = "O"; // Other por defecto
-              let bgColor = "#10b981"; // Verde para "other"
-              
-              if (this.point.isPlanta) {
-                prefix = "P";
-                bgColor = "#EF4444";
-              } else if (this.point.isBocamina) {
-                prefix = "B";
-                bgColor = "#c77dff";
-              } else if (this.point.isParqueo) {
-                prefix = "PQ";
-                bgColor = "#FFA500";
-              } else if (this.point.isMaintenance) {
-                prefix = "M";
-                bgColor = "#f59e0b";
-              }
-              
-              // Alternar posición de etiquetas para evitar solapamiento
-              const trackIndex = this.point.trackIndex || 0;
-              const isEven = trackIndex % 2 === 0;
-              const topPosition = isEven ? -28 : 25;
-              
-              return `
-                <div style="
-                  background: ${bgColor};
-                  color: #ffffff;
-                  width: 100px;
-                  padding: 2px 6px;
-                  border-radius: 4px;                       
-                  font-size: 0.65rem;
-                  font-weight: bold;
-                  position: relative;
-                  top: ${topPosition - 5}px; 
-                  z-index: 1;
-                  white-space: nowrap;
-                  text-align: center;
-                  border: 1px solid #00000050;
-                ">
-                  ${this.point.trackType}${this.point.trackIndex}
-                  <br/>
-                  <span style="font-size: 0.55rem;">${timeLabel}</span>
-                </div>`;
-            }
-            
-            return null; // No mostrar etiquetas para otros tipos
+            return null;
           },
           style: {
             color: "#FFFFFF",

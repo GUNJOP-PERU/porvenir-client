@@ -14,7 +14,7 @@ import { format, set } from "date-fns";
 import { getCurrentDay } from "@/utils/dateUtils";
 import type { TruckStatus, UnitTripDetections } from "../../types/Beacon";
 
-const ProductionStatus = () => {
+const UtilizacionDeFlota = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
     {
@@ -529,4 +529,4 @@ const ProductionStatus = () => {
   );
 }
 
-export default ProductionStatus;
+export default UtilizacionDeFlota;

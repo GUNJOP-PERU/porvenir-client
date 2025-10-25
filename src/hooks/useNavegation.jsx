@@ -66,9 +66,9 @@ export const useNavigation = () => {
           },
           {
             name: "Utilización de flota",
-            href: "/dashboard/beacon/production-status-rt",
+            href: "/dashboard/beacon/utilizacion-de-flota",
             icon: <LandPlot />,
-            active: pathname === "/dashboard/beacon/production-status-rt",
+            active: pathname === "/dashboard/beacon/utilizacion-de-flota",
           },
           {
             name: "Seguimiento de Extracción",
@@ -130,10 +130,10 @@ export const useNavigation = () => {
         title: "Development",
         items: [
           {
-            name: "Reporte de detección",
-            href: "/dashboard/beacon/detection-report-rt",
+            name: "Linea de Tiempo de Detección",
+            href: "/dashboard/development/timeline-detection-report",
             icon: <TbReportAnalytics />,
-            active: pathname === "/dashboard/beacon/detection-report-rt",
+            active: pathname === "/dashboard/development/timeline-detection-report",
           },
           {
             name: "Tracking Superficie",

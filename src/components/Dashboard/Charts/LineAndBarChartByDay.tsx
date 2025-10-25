@@ -16,7 +16,17 @@ interface LineAndBarChartByDayProps {
   }[];
   planDay: {
     totalTonnage: number;
-    planDay: {
+    totalTonnageBlending: number;
+    totalTonnageModificado: number;
+    planWeek: {
+      date: string;
+      tonnage: number;
+    }[];
+    planDataBlending: {
+      date: string;
+      tonnage: number;
+    }[];
+    planDataModificado: {
       date: string;
       tonnage: number;
     }[];
@@ -36,8 +46,9 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
     tonnage: item.trips.filter(trip => trip.shift === 'noche').length * mineralWeight
   }))
 
-  const currentPlanDay = planDay.planDay.map(p => p.tonnage);
-  const diffPlanDay = currentPlanDay.map((exp, i) => {
+  const planWeek = planDay.planWeek.map(p => p.tonnage);
+
+  const diffPlanDay = planWeek.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
       typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
@@ -45,7 +56,7 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
     return +e;
   });
 
-  const diffColorPlanDay = currentPlanDay.map((exp, i) => {
+  const diffColorPlanDay = planWeek.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
       ? "#68c970"
@@ -56,7 +67,7 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
     chart: {
       type: "column",
       height: 300,
-      marginBottom: 50,
+      marginBottom: 90,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -81,8 +92,39 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
       },
       {
         title: "",
-        categories: planDay?.planDay.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [],
+        categories: planDay.planDataModificado.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [],
         opposite: false,
+        linkedTo: 0,
+        lineColor: "transparent",
+        labels: {
+          y: 0,
+          style: {
+            color: "#00000080",
+            fontSize: "0.7em",
+            fontWeight: "bold",
+          },
+        },
+      },
+      {
+        title: "",
+        categories: planDay.planDataBlending.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [],
+        opposite: false,
+        linkedTo: 0,
+        lineColor: "transparent",
+        labels: {
+          y: 0,
+          style: {
+            color: "#00000080",
+            fontSize: "0.7em",
+            fontWeight: "bold",
+          },
+        },
+      },
+      {
+        title: "",
+        categories: planDay.planWeek.map(p => `${roundAndFormat(p.tonnage)} TM`) ?? [],
+        opposite: false,
+        linkedTo: 0,
         lineColor: "transparent",
         labels: {
           y: 0,
@@ -224,10 +266,20 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
           </span>`;
         } else if (this.index === 1) {
           return `
-          <span style='color:#A6A6A6'>
-            <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
-            Plan
-          </span>`;
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+            <span style='color:#A6A6A6'>
+              <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+              P.Campo
+            </span>
+            <span style='color:#A6A6A6'>
+              <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; display: inline-block; margin-right: 5px;'></span>  
+              P.Blending
+            </span>
+            <span style='color:#A6A6A6'>
+              <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; display: inline-block; margin-right: 5px;'></span>  
+              P.Semanal
+            </span>
+          </div>`;
         }
       },
       useHTML: true,
@@ -241,10 +293,10 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
       symbolWidth: 0,
       symbolHeight: 0,
       symbolRadius: 2,
-      itemMarginTop: 4,
+      itemMarginTop: 6,
       itemMarginBottom: 0,
       x: 0,
-      y: 20,
+      y: 24,
     },
     credits: {
       enabled: false,

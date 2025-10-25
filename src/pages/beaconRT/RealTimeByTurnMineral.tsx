@@ -73,13 +73,20 @@ const RealTimeByHourRT = () => {
 
   const planDay = useMemo(() => {
     const currentDate = format(getCurrentDay().startDate, "yyyy-MM-dd");
-    const filteredPlanData = planData.filter(
+    const filteredPlanData  = planData.filter(
       (day) =>
         day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
     );
+    const planDataBlending = filteredPlanData.filter(day => day.type === "blending" || day.type !== "modificado");
+    const planDataModificado = filteredPlanData.filter(day => day.type === "modificado");
+
     return {
       totalTonnage: filteredPlanData.reduce((acc, day) => acc + day.tonnage, 0),
+      totalTonnageBlending: planDataBlending.reduce((acc, day) => acc + day.tonnage, 0),
+      totalTonnageModificado: planDataModificado.reduce((acc, day) => acc + day.tonnage, 0),
       planDayShift: filteredPlanData,
+      planDataBlending,
+      planDataModificado,
       planDay: filteredPlanData,
     };
   }, [planData, shiftFilter]);
@@ -252,10 +259,10 @@ const RealTimeByHourRT = () => {
       dia: { hour: string; trips: BeaconUnitTrip[] }[];
       noche: { hour: string; trips: BeaconUnitTrip[] }[];
     } = {
-      dia: hours.slice(6, 18).map((hour) => ({ hour, trips: [] })),
+      dia: hours.slice(7, 19).map((hour) => ({ hour, trips: [] })),
       noche: [
-        ...hours.slice(18, 24).map((hour) => ({ hour, trips: [] })),
-        ...hours.slice(0, 6).map((hour) => ({ hour, trips: [] })),
+        ...hours.slice(19, 24).map((hour) => ({ hour, trips: [] })),
+        ...hours.slice(0, 7).map((hour) => ({ hour, trips: [] })),
       ],
     };
 
@@ -266,8 +273,7 @@ const RealTimeByHourRT = () => {
           ? `0${tripDate.getHours()}`
           : tripDate.getHours()
       }:00`;
-      const shift =
-        tripDate.getHours() >= 6 && tripDate.getHours() < 18 ? "dia" : "noche";
+      const shift = tripDate.getHours() >= 7 && tripDate.getHours() < 19 ? "dia" : "noche";
 
       const hourGroup = grouped[shift].find((group) => group.hour === hour);
       if (hourGroup) {

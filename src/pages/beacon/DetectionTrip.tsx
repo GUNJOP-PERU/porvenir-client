@@ -101,7 +101,7 @@ const BeaconTripDashboard = () => {
         setDialogOpen={false}
         className="col-span-2"
         count={data.length}
-        actions={
+        actionsRight={
           <div className="relative flex flex-row gap-2">
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
               Turno:

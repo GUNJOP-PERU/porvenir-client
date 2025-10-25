@@ -24,6 +24,15 @@ export const getCurrentWeekDates = () => {
   return weekDates;
 };
 
+export const getWeekDates = (startDate: Date) => {
+  const weekStart = startOfWeek(startDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(startDate, { weekStartsOn: 1 });
+  const currentWeekDates = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
+  const weekDates = currentWeekDates.map(date => format(date, 'yyyy-MM-dd'));
+  return weekDates;
+};
+
 export const getCurrentWeekDatesFormatted = () => {
   const currentDate = new Date();
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -59,10 +68,10 @@ export const getHoursByTurns = () => {
 export const getCurrentDay = () => {
   let currentShift = "dia";
   const currentDate = new Date();
-  const isAfter6PM = currentDate.getHours() >= 18;
-  const isEnter00AM = 0 < currentDate.getHours() && currentDate.getHours() < 6;
+  const isAfter7PM = currentDate.getHours() >= 19;
+  const isEnter00AM = 0 < currentDate.getHours() && currentDate.getHours() < 7;
 
-  if (currentDate.getHours() < 18 && currentDate.getHours() >= 6) {
+  if (currentDate.getHours() < 19 && currentDate.getHours() >= 7) {
     currentShift = "dia";
   } else {
     currentShift = "noche";
@@ -70,10 +79,10 @@ export const getCurrentDay = () => {
 
   return {
     shift: currentShift,
-    startDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
-    endDate: isAfter6PM ? addDays(currentDate, 1) : currentDate,
-    startDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
-    endDateString: format(isAfter6PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
+    startDate: isAfter7PM ? addDays(currentDate, 1) : currentDate,
+    endDate: isAfter7PM ? addDays(currentDate, 1) : currentDate,
+    startDateString: format(isAfter7PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
+    endDateString: format(isAfter7PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
   };
 }
 

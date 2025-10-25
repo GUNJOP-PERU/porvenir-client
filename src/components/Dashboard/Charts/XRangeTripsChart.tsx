@@ -59,6 +59,22 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     });
   }, [data]);
 
+  const totals = useMemo(() => {
+    const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
+    const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
+    const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
+    const avgSubterraneo = tableData.reduce((acc, row) => acc + row.avgSubterraneo, 0) / tableData.length;
+    const avgSuperficie = tableData.reduce((acc, row) => acc + row.avgSuperficie, 0) / tableData.length;
+
+    return {
+      totalTrips,
+      totalHours,
+      avgDuration,
+      avgSubterraneo,
+      avgSuperficie,
+    }
+  }, [tableData]);
+
   const getTimestamp = (dateValue: any): number => {
     if (typeof dateValue === 'string') {
       return new Date(dateValue).getTime();
@@ -70,7 +86,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   };
 
   const allSeriesData: any[] = [];
-  const bocaminaAnnotations: any[] = [];
   let bocaminaCounter = 0;
   
   data.forEach((unit, unitIndex) => {
@@ -79,35 +94,24 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
     unit.allTrips.forEach((trip, tripIndex) => {
       const tripStartTime = getTimestamp(trip.startDate);
       const tripEndTime = getTimestamp(trip.endDate);
-      
-      const tripDurationMinutes = (tripEndTime - tripStartTime) / 1000 / 60;
-      
-      const hasDestination = trip.endUbication && trip.endUbication.trim() !== "";
-      const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
-      
-      // Verificar si el viaje tiene detecciones de bocamina
-      const tripDetections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
-      const hasBocaminaDetections = tripDetections.some((detection: any) => 
-        detection.ubication?.toLowerCase().includes('bocamina') ||
-        detection.ubicationType?.toLowerCase().includes('bocamina')
-      );
-      
-      const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
-        ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
-         (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
-        tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
-        !hasBocaminaDetections;
-      
-      let tripColor = "#dbdbdb"; // Gris por defecto (sin destino)
-      if (isCancha100ToFaja4) {
-        tripColor = "#f9c83e"; // Celeste para Cancha 100 ↔ Faja 4 (>10 min)
-      } else if (isPahuaypite) {
-        tripColor = "#3c3c3c"; // Marrón para Pahuaypite
-      } else if (hasDestination) {
-        tripColor = "#0aa7f0"; // Verde para otros destinos
+      const isDesmonte = trip.tripType === "Desmonte";
+      const isRemanejo = trip.remanejo;
+      const isSuperficie = trip.location === "Superficie";
+      const isSubterraneo = trip.location === "Subterraneo";
+      const isCompleteTrip = trip.endUbication && trip.endUbication.trim() !== "";
+
+      let tripColor = "#dbdbdb";
+      if (isDesmonte) {
+        tripColor = "#3c3c3c";
+      } else if (isRemanejo) {
+        tripColor = "#f9c83e";
+      } else if (isSuperficie) {
+        tripColor = "#0aa7f0";
+      } else if (isSubterraneo) {
+        tripColor = "#096bdb";
       }
       
-      const displayTripIndex = hasDestination ? ++validTripCounter : 0;
+      const displayTripIndex = isCompleteTrip ? ++validTripCounter : 0;
       
       allSeriesData.push({
         x: tripStartTime,
@@ -120,18 +124,14 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         tripIndex: displayTripIndex,
         originalTripIndex: tripIndex + 1,
         isFullTrip: true,
-        hasDestination: hasDestination,
-        isPahuaypite: isPahuaypite,
-        isCancha100ToFaja4: isCancha100ToFaja4,
+        hasDestination: isCompleteTrip,
         unitName: unit.unit.toUpperCase(),
-        name: `${unit.unit} - ${hasDestination ? `Viaje ${displayTripIndex}${isCancha100ToFaja4 ? ' (C100↔F4 10-50min)' : isPahuaypite ? ' (Pahuaypite)' : ''}` : 'Sin destino'}`
+        name: `${unit.unit} - ${isCompleteTrip ? `Viaje ${displayTripIndex}` : 'Otros'}`
       });
 
       const detections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
-      
       const specialPeriods: any[] = [];
-      let currentMaintenancePeriod: any = null;
-      
+
       detections.forEach((detection, detectionIndex) => {
         const isMaintenanceDetection = detection.ubicationType && (
           detection.ubication?.toLowerCase().includes("taller saturno")
@@ -140,37 +140,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         const isBocaminaDetection = detection.ubication?.toLowerCase().includes('bocamina') ||
           detection.ubicationType?.toLowerCase().includes('bocamina');
 
-        const isPlantaDetection = detection.ubication?.toLowerCase().includes('planta') ||
-          detection.ubicationType?.toLowerCase().includes('planta');
-
-        if (isPlantaDetection) {
-          if (currentMaintenancePeriod) {
-            specialPeriods.push(currentMaintenancePeriod);
-            currentMaintenancePeriod = null;
-          }
-          
-          const startTime = getTimestamp(detection.f_inicio);
-          const endTime = getTimestamp(detection.f_final);
-          const duration = (endTime - startTime) / 1000 / 60;
-          
-          const plantaPeriod = {
-            startTime: startTime,
-            endTime: endTime,
-            detections: [detection],
-            startIndex: detectionIndex,
-            type: 'planta',
-            hasLabel: duration > 0,
-            bocaminaIndex: bocaminaCounter++
-          };
-          
-          specialPeriods.push(plantaPeriod);
-        }
-        else if (isBocaminaDetection) {
-          if (currentMaintenancePeriod) {
-            specialPeriods.push(currentMaintenancePeriod);
-            currentMaintenancePeriod = null;
-          }
-          
+        if (isBocaminaDetection) {
           const startTime = getTimestamp(detection.f_inicio);
           const endTime = getTimestamp(detection.f_final);
           const duration = (endTime - startTime) / 1000 / 60;
@@ -181,52 +151,30 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             detections: [detection],
             startIndex: detectionIndex,
             type: 'bocamina',
-            hasLabel: duration > 0,
             bocaminaIndex: bocaminaCounter++
           };
           
           specialPeriods.push(bocaminaPeriod);
         }
         else if (isMaintenanceDetection) {
-          const currentStartTime = getTimestamp(detection.f_inicio);
-          
-          const canConsolidate = currentMaintenancePeriod && 
-            ((currentStartTime - currentMaintenancePeriod.endTime) / 1000 / 60) < 5;
-          
-          if (!currentMaintenancePeriod || !canConsolidate) {
-            if (currentMaintenancePeriod) {
-              specialPeriods.push(currentMaintenancePeriod);
-            }
-            
-            currentMaintenancePeriod = {
-              startTime: currentStartTime,
-              endTime: getTimestamp(detection.f_final),
-              detections: [detection],
-              startIndex: detectionIndex,
-              type: 'maintenance'
-            };
-          } else {
-            currentMaintenancePeriod.endTime = getTimestamp(detection.f_final);
-            currentMaintenancePeriod.detections.push(detection);
-          }
-        }
-        else {
-          if (currentMaintenancePeriod) {
-            specialPeriods.push(currentMaintenancePeriod);
-            currentMaintenancePeriod = null;
-          }
+          const startTime = getTimestamp(detection.f_inicio);
+          const endTime = getTimestamp(detection.f_final);
+          const duration = (endTime - startTime) / 1000 / 60;
+
+          const maintenancePeriod = {
+            startTime: startTime,
+            endTime: endTime,
+            detections: [detection],
+            startIndex: detectionIndex,
+            type: 'maintenance',
+          };
+          specialPeriods.push(maintenancePeriod);
         }
       });
 
-      if (currentMaintenancePeriod) {
-        specialPeriods.push(currentMaintenancePeriod);
-      }
-
       specialPeriods.forEach((period, periodIndex) => {
-        const color = period.type === 'planta' ? "#EF4444" : 
-                      period.type === 'bocamina' ? "#66d20e" : "#fa4a4a";
-        const periodType = period.type === 'planta' ? "Planta" :
-                          period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
+        const color = period.type === 'bocamina' ? "#66d20e" : "#fa4a4a";
+        const periodType = period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
 
         const parentTrip = allSeriesData.find(item => 
           item.trip === trip && item.isFullTrip
@@ -302,27 +250,27 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       min: (() => {
         const today = new Date();
         if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0).getTime();
         } else {
-          if (0 <= today.getHours() && today.getHours() < 6) {
+          if (0 <= today.getHours() && today.getHours() < 7) {
             const yesterday = new Date(today);
             yesterday.setDate(yesterday.getDate() - 1);
-            return new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 18, 0, 0).getTime();
+            return new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 19, 0, 0).getTime();
           }
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0, 0).getTime();
         }
       })(),
       max: (() => {
         const today = new Date();
         if (shift === "dia") {
-          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0, 0).getTime();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0, 0).getTime();
         } else {
-          if (0 <= today.getHours() && today.getHours() < 6) {
-            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0).getTime();
+          if (0 <= today.getHours() && today.getHours() < 7) {
+            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0).getTime();
           }
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
-          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).getTime();
+          return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 7, 0, 0).getTime();
         }
       })(),
     }, {
@@ -351,7 +299,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       gridLineColor: "#000000a9",
       labels: {
         align: "right",
-        useHTML: true, // 👈 esto permite usar HTML
+        useHTML: true,
         formatter: function () {
           const labelText = this.value.toString().split("-").pop();
           return `<div style="
@@ -390,59 +338,18 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       formatter: function (this: any) {
         const point = this.point;
         const trip: BeaconUnitTrip = point.trip;
-        const detection = point.detection;
         const startTime = format(new Date(point.x), "HH:mm:ss");
         const endTime = format(new Date(point.x2), "HH:mm:ss");
         const duration = ((point.x2 - point.x) / 1000 / 60).toFixed(1);
+        const remanejo = trip.remanejo ? "Sí" : "No";
 
         if (point.isFullTrip) {
-          const detections = Array.isArray(trip.trip)
-            ? trip.trip
-            : [trip.trip];
-          const allLocations = [
-            ...new Set(
-              detections
-                .filter((d: any) => d.ubication && d.ubication.trim() !== "")
-                .map((d: any) => d.ubication)
-            ),
-          ].join(", ");
-
           const routeText = point.hasDestination
             ? `${trip.startUbication} → ${trip.endUbication}`
-            : `${trip.startUbication} (Sin destino definido)`;
-
-          const isPahuaypite = trip.endUbication && trip.endUbication.toLowerCase().includes('pahuaypite');
-          
-          const tripDurationMinutes = ((point.x2 - point.x) / 1000 / 60);
-          
-          const tooltipTripDetections = Array.isArray(trip.trip) ? trip.trip : [trip.trip];
-          const tooltipHasBocaminaDetections = tooltipTripDetections.some((detection: any) => 
-            detection.ubication?.toLowerCase().includes('bocamina') ||
-            detection.ubicationType?.toLowerCase().includes('bocamina')
-          );
-          
-          const isCancha100ToFaja4 = trip.startUbication && trip.endUbication && 
-            ((trip.startUbication.toLowerCase().includes('cancha 100') && trip.endUbication.toLowerCase().includes('faja 4')) ||
-              (trip.startUbication.toLowerCase().includes('faja 4') && trip.endUbication.toLowerCase().includes('cancha 100'))) &&
-            tripDurationMinutes > 10 && tripDurationMinutes <= 50 &&
-            !tooltipHasBocaminaDetections;
-          const tripLabel = point.hasDestination
-            ? `Viaje #${point.tripIndex}`
-            : "Sin Destino";
+            : `${trip.startUbication} ---`;
 
           let tooltipColor = "#6b7280";
           let tooltipColorAlpha = "#6b728015";
-          
-          if (isCancha100ToFaja4) {
-            tooltipColor = "#00BFFF";
-            tooltipColorAlpha = "#00BFFF15";
-          } else if (isPahuaypite) {
-            tooltipColor = "#8B4513";
-            tooltipColorAlpha = "#8B451315";
-          } else if (point.hasDestination) {
-            tooltipColor = "#10b981";
-            tooltipColorAlpha = "#10b98115";
-          }
 
           return `
             <div style="
@@ -476,20 +383,11 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
                   ${trip.shift.toUpperCase()}
                 </span>
               </div>
-          
-              <div style="
-                color: ${tooltipColor};
-                font-weight: 600;
-                font-size: 12px;
-                margin-bottom: 8px;
-              ">
-                ${tripLabel}${isCancha100ToFaja4 ? ' 🔄 C100↔F4 (Sin bocaminas)' : isPahuaypite ? ' 🏔️ Pahuaypite' : ''}
-              </div>
-          
               <div style="margin-bottom: 8px; line-height: 1.5;">
                 <div><b style="color:#bbb;">Inicio:</b> <span>${startTime}</span></div>
                 <div><b style="color:#bbb;">Fin:</b> <span>${endTime}</span></div>
                 <div><b style="color:#bbb;">Duración:</b> <span>${formatDurationMinutes(duration)}</span></div>
+                <div><b style="color:#bbb;">Remanejo:</b> <span>${remanejo}</span></div>
               </div>
           
               <div style="
@@ -511,9 +409,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           ].join(", ");
           const periodType = point.isBocamina ? "Bocamina" : "Mantenimiento";
 
-          const tripReference =
-            point.tripIndex > 0 ? `Viaje #${point.tripIndex}` : "Sin destino";
-
           return `
           <div style="
             padding: 10px 14px;
@@ -533,7 +428,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               <b style="color:${point.isBocamina ? "#3b82f6" : "#f59e0b"}">
                 ${periodType.toUpperCase()}
               </b>
-              <span style="color:#aaa;"> — ${tripReference}</span>
             </div>
 
             <div style="margin-bottom: 4px;">
@@ -574,47 +468,12 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           allowOverlap: true,
           defer: false,
           formatter: function(this: any) {
-            // Para bocaminas con duración > 0, mostrar etiqueta especial
-            // if (this.point.isBocamina && this.point.specialPeriod?.hasLabel) {
-            //   const timeLabel = new Date(this.point.x).toLocaleTimeString('es-ES', { 
-            //     hour: '2-digit', 
-            //     minute: '2-digit' 
-            //   });
-            //   const duration = ((this.point.x2 - this.point.x) / 1000 / 60).toFixed(1);
-            //   const bocaminaName = this.point.specialPeriod.detections[0].ubication;
-            //   const bocaminaIndex = this.point.specialPeriod.bocaminaIndex;
-              
-            //   const isEven = bocaminaIndex % 2 === 0;
-            //   const topPosition = isEven ? -33 : 32;
-              
-            //   return `
-            //     <div
-            //       style="
-            //       background: #66d20e;
-            //       color: #000000;
-            //       width: 80px;
-            //       padding: 3px 6px;
-            //       border-radius: 5px;                       
-            //       font-size: 0.6rem;
-            //       font-weight: bold;
-            //       position: relative;
-            //       top: ${topPosition}px; z-index: 1;
-            //       white-space: nowrap;"
-            //     >
-            //       ${bocaminaName}<br/>
-            //       <span style="color:#000000">${timeLabel} / ${formatDurationMinutes(duration)}</span>
-            //     </div>`;
-            // }
-            
-            // Formato estándar para otros elementos
             if (this.point.isFullTrip && this.point.hasDestination) {
-              // Solo mostrar "V" si el viaje tiene destino
               return `V${this.point.tripIndex}`;
             } else if(this.point.isMaintenance) {
               const prefix = "M";
               return `${prefix}${this.point.tripIndex}.${this.point.periodIndex}`;
             }
-            // No mostrar label para viajes sin destino
           },
           style: {
             color: "#FFFFFF",
@@ -634,23 +493,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       enabled: false,
     },
     series: series as any,
-  }), [data, allSeriesData,shift]);
-
-  const totals = useMemo(() => {
-    const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
-    const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
-    const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
-    const avgSubterraneo = tableData.reduce((acc, row) => acc + row.avgSubterraneo, 0) / tableData.length;
-    const avgSuperficie = tableData.reduce((acc, row) => acc + row.avgSuperficie, 0) / tableData.length;
-
-    return {
-      totalTrips,
-      totalHours,
-      avgDuration,
-      avgSubterraneo,
-      avgSuperficie,
-    }
-  }, [tableData]);
+  }), [data, allSeriesData, shift]);
 
   const chartHeight = (data.length * 64) + 15 ;
   const rowHeight = 59;

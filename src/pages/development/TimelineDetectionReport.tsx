@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
+import { Calendar } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import CardItem from "@/components/Dashboard/CardItemV2";
 import Loader from "@/components/Loader";
@@ -9,21 +10,16 @@ import XRangeDetection from "@/components/Dashboard/Charts/XRangeDetection";
 import type { BeaconCycle, UnitTripDetections } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { getCurrentDay } from "@/utils/dateUtils";
 
 type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours"
 
-const DetectionReportRT = () => {
+const TimelineDetectionReport = () => {
   const [activeTab, setActiveTab] = useState<'chart' | 'table'>('chart');
-  const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
-  const [dateFilter, setDateFilter] = useState<[{ startDate: Date; endDate: Date; key: string }]>([
-    {
-      startDate: new Date(getCurrentDay().startDate),
-      endDate: new Date(getCurrentDay().endDate),
-      key: "selection",
-    }
-  ]);
+  const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [dateFilter, setDateFilter] = useState<Date>(subDays(new Date(), 1));
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const {
     data,
@@ -32,32 +28,26 @@ const DetectionReportRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    "trip-group-by-days-rt",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    "trips-detection-historico",
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
   const {
     data : tripsDesmonte = [],
     refetch : tripsDesmonteRefetch,
-    isFetching: tripsDesmonteIsFetching,
-    isLoading: tripsDesmonteLoading,
-    isError: tripsDesmonteError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days-rt-desmonte",
-    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
   const {
     data : beaconDetectionData,
     refetch : beaconDetectionRefetch,
-    isFetching : beaconDetectionIsFetching,
-    isLoading: beaconDetectionLoading,
-    isError: beaconDetectionError,
   } = useFetchData<UnitTripDetections[]>(
     "trip-group-by-days-rt",
-    `beacon-track/group-by-unit?date=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/group-by-unit?date=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
@@ -191,7 +181,6 @@ const DetectionReportRT = () => {
     return beaconDetectionData.map(unit => {
       const tracks = unit.tracks || [];
       
-      // Encontrar la primera bocamina
       const firstBocamina = tracks.find(track => 
         track.ubication?.toLowerCase().includes('bocamina') ||
         track.ubicationType?.toLowerCase().includes('bocamina')
@@ -245,23 +234,6 @@ const DetectionReportRT = () => {
     });
   }, [beaconDetectionData]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (getCurrentDay().shift !== shiftFilter) {
-        setShiftFilter(getCurrentDay().shift);
-        setDateFilter([{
-          startDate: new Date(getCurrentDay().startDate),
-          endDate: new Date(getCurrentDay().endDate),
-          key: "selection",
-        }]);
-        refetch();
-        beaconDetectionRefetch();
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   if (tripsLoading || tripsError || data === undefined || beaconDetectionData === undefined) {
     return (
       <div className="h-full w-full flex items-center justify-center">
@@ -273,22 +245,49 @@ const DetectionReportRT = () => {
   return (
     <div className="flex flex-col w-full gap-2">
       <PageHeader
-        title="Reporte de Detección por turno"
+        title="Linea de tiempo de Detección"
         description=""
         refetch={ () => { refetch(); beaconDetectionRefetch() }}
         isFetching={isFetching}
         setDialogOpen={false}
-        status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
-            color: "#2fd685",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
-            color: "#e6bf27",
-          },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
-            color: "#ff4d4f",
-          },
-        ]}
+        actionsRight={
+          <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Turno:
+              <select
+                value={shiftFilter}
+                onChange={(e) => setShiftFilter(e.target.value)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                <option value="dia">Turno Día</option>
+                <option value="noche">Turno Noche</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Fecha:
+              <button
+                onClick={() => setIsTooltipOpen(!isTooltipOpen)}
+                className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
+              >
+                {dateFilter && (
+                  `${format(dateFilter, "dd/MM/yyyy")}`
+                )}
+              </button>
+            </label>
+            {isTooltipOpen && (
+              <div className="absolute right-0 top-10 z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                <Calendar
+                  editableDateInputs={false}
+                  onChange={(item) => {
+                    setDateFilter(item);
+                    setIsTooltipOpen(false);
+                  }}
+                  date={dateFilter}
+                />
+              </div>
+            )}
+          </div>
+        }
       />
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
         <CardItem
@@ -335,7 +334,6 @@ const DetectionReportRT = () => {
         />
       </div>
 
-      {/* Pestañas */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="flex border-b border-gray-200">
           <button
@@ -437,4 +435,4 @@ const DetectionReportRT = () => {
   );
 };
 
-export default DetectionReportRT;
+export default TimelineDetectionReport;

@@ -95,22 +95,17 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
         header: "Unidad",
         cell: ({ row }) => (
           <div className="flex items-center font-bold text-zinc-500">
-         
-              CAM {row.original.unit.split("-").pop()}
-         
+            CAM {row.original.unit.split("-").pop()}
           </div>
         ),
-       
       },
       {
         accessorKey: "totalTrips",
         header: "Total de Viajes",
-       
       },
       {
         accessorKey: "trips",
         header: "Tiempo Total (hrs)",
-       
         cell: ({ row }) => {
           const totalDuration =
             row.original.trips.reduce(
@@ -123,7 +118,6 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
       {
         accessorKey: "bocaminaStats",
         header: "Bocaminas Detectadas",
-       
         cell: ({ row }) => {
           const bocaminas = row.original.bocaminaStats
             .map((b) => b.name)
@@ -134,7 +128,6 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
       {
         accessorKey: "trips",
         header: "Total de puntos detectados",
-       
         cell: ({ row }) => {
           const puntos = row.original.trips.reduce(
             (acc, trip) => acc + trip.trip.length,
@@ -285,6 +278,9 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                               Material
                             </th>
                             <th scope="col" className="px-4 py-2 ">
+                              Remanejo
+                            </th>
+                            <th scope="col" className="px-4 py-2 ">
                               Turno
                             </th>
                             <th scope="col" className="px-4 py-2 ">
@@ -305,7 +301,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                                 {trip.startUbication}, <b>{formatFecha(trip.startDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.frontLaborList.length > 0 ? trip.frontLaborList.join(", ") : "N/A"}
+                                {trip.frontLaborList.length > 0 ? trip.frontLaborList.map((labor) => labor.name).join(", ") : "N/A"}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.endUbication}, <b>{formatFecha(trip.endDate)}</b>
@@ -315,6 +311,9 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.tripType}
+                              </td>
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
+                                {trip.remanejo ? "Sí" : "No"}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {trip.shift === "dia" ? (

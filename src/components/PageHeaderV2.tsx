@@ -70,7 +70,7 @@ export default function PageHeader({
                 </span>
             ))}
         </div>
-        <div className="flex flex-row items-center justify-end">
+        <div className="flex flex-row items-end justify-end gap-2">
           {actionsRight}
           {refetch && <ButtonRefresh refetch={refetch} isFetching={isFetching} />}
         </div>

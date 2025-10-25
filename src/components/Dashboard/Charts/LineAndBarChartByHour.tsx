@@ -17,19 +17,29 @@ interface LineAndBarChartByHourProps {
   }[];
   planDay?: {
     totalTonnage: number;
+    totalTonnageBlending: number;
+    totalTonnageModificado: number;
     planDayShift: PlanDay[];
     planDay: PlanDay[];
+    planDataBlending: PlanDay[];
+    planDataModificado: PlanDay[];
   }
 }
 
 const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "#000000", planDay }: LineAndBarChartByHourProps) => {
   const xLabels = chartData.map(item => item.hour ?? "");
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
-  const currentPlanDay = planDay
+  const planDayTotal = planDay
     ? [0, ...new Array(11).fill(planDay.totalTonnage / 11)]
     : [];
+  const planDayBlending = planDay
+  ? [0, ...new Array(11).fill(planDay.totalTonnageBlending / 11)]
+  : [];
+  const planDayModificado = planDay
+  ? [0, ...new Array(11).fill(planDay.totalTonnageModificado / 11)]
+  : [];
 
-  const diffPlanDay = currentPlanDay.map((exp, i) => {
+  const diffPlanDay = planDayBlending.map((exp, i) => {
     const currentData = tripsCounts;
     const value =
       typeof currentData[i] === "number" ? (currentData[i] as number) : 0;
@@ -37,7 +47,7 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
     return +e;
   });
 
-  const diffColorPlanDay = currentPlanDay.map((exp, i) => {
+  const diffColorPlanDay = planDayBlending.map((exp, i) => {
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
       ? "#68c970"
@@ -47,8 +57,8 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const options = {
     chart: {
       type: "column",
-      height: 280,
-      marginBottom: 50,
+      height: 300,
+      marginBottom: 78,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -73,8 +83,24 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         title: "",
-        categories: currentPlanDay.map(e => `${roundAndFormat(e)} TM`),      
+        categories: planDayModificado.map(e => `${roundAndFormat(e)} TM`),      
         opposite: false,
+        linkedTo: 0,
+        lineColor: "transparent",
+        labels: {
+          y: 0,
+          style: {
+            color: "#00000080",
+            fontSize: "0.7em",
+            fontWeight: "bold",
+          },
+        },
+      },
+      {
+        title: "",
+        categories: planDayBlending.map(e => `${roundAndFormat(e)} TM`),      
+        opposite: false,
+        linkedTo: 0,
         lineColor: "transparent",
         labels: {
           y: 0,
@@ -151,9 +177,10 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
       },
       {
         name: "Plan",
-        data: tripsCounts.map((e,i) => e > currentPlanDay[i] ? currentPlanDay[i] : e === 0 ? NaN : e),
+        data: tripsCounts.map((e,i) => e > planDayBlending[i] ? planDayBlending[i] : e === 0 ? NaN : e),
         color: chartColor,
         animation: false,
+        xAxis: 0,
         dataLabels: {
           enabled: true,
           formatter: function (this: any) {
@@ -205,10 +232,17 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
           </span>`;
         } else {
           return `
-          <span style='color:#A6A6A6'>
-            <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
-            ${this.name}
-          </span>`;
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style='color:#A6A6A6'>
+                <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+                P.Campo
+              </span>
+              <span style='color:#A6A6A6'>
+                <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; display: inline-block; margin-right: 5px;'></span>  
+                P.Blending
+              </span>
+            </div>
+          `;
         }
       },
       useHTML: true,

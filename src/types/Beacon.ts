@@ -41,7 +41,8 @@ export type BeaconUnitTrip = {
   tripDuration: number,
   tripDurationMin: number,
   unloadTime: number,
-  tripType: "Mineral" | "Desmonte" | "Vacio",
+  tripType: "Mineral" | "Desmonte",
+  remanejo: boolean,
   trip: BeaconDetection[],
   location: "Superficie" | "Subterraneo"
   bocaminaList: {

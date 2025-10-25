@@ -28,16 +28,19 @@ interface IDonutAndSplineChartByHourProps {
   }[];
   planDay?: {
     totalTonnage: number;
+    totalTonnageBlending: number;
+    totalTonnageModificado: number;
+    planDayShift: PlanDay[];
     planDay: PlanDay[];
+    planDataBlending: PlanDay[];
+    planDataModificado: PlanDay[];
   }
 }
 
 const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, chartData, mineralWeight, planDay }: IDonutAndSplineChartByHourProps) => {
   const xLabels = chartData.map((item) => item.hour ?? "");
+  const tripsCounts = chartData.map((item) => item.trips.length * mineralWeight);
 
-  const tripsCounts = chartData.map(
-    (item) => item.trips.length * mineralWeight
-  );
   const acummulativeTripsCounts = tripsCounts.map((trip, index) =>
     trip === 0
       ? NaN
@@ -45,23 +48,28 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
   );
 
   const planValue = 100;
-  const planData = new Array(chartData.length).fill(planValue);
-  const accumulativePlanData = planData.map((_, index) =>
-      planData.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
-    );
 
-  const currentPlanDay = planDay
-  ? [0,...new Array(11).fill(planDay.totalTonnage / 11)]
+  const currentPlanDayBlending = planDay
+  ? [0,...new Array(11).fill(planDay.totalTonnageBlending / 11)]
+  : [];
+
+  const currentPlanDayModificado = planDay
+  ? [0,...new Array(11).fill(planDay.totalTonnageModificado / 11)]
   : [];
   
-  const accumulativeCurrentPlanDay = currentPlanDay.map((_, index) =>
-    currentPlanDay.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  const accumulativeCurrentPlanDayBlending = currentPlanDayBlending.map((_, index) =>
+    currentPlanDayBlending.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
   );
+
+  const accumulativeCurrentPlanDayModificado = currentPlanDayModificado.map((_, index) =>
+    currentPlanDayModificado.slice(0, index + 1).reduce((acc, val) => acc + val, 0)
+  );
+
   const options = {
     chart: {
       type: "areaspline",
       height: 300,
-      marginBottom: 55,
+      marginBottom: 78,
       marginTop: 40,
       marginLeft: 50,
       marginRight: 0,
@@ -86,10 +94,27 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
         },
       },
       {
-        categories: accumulativeCurrentPlanDay.map(
+        categories: accumulativeCurrentPlanDayModificado.map(
           (value) => `${roundAndFormat(value)} TM`
         ),
         opposite: false,
+        linkedTo: 0,
+        lineColor: "transparent",
+        labels: {
+          y: 0,
+          style: {
+            color: "#00000080",
+            fontSize: "0.7em",
+            fontWeight: "bold",
+          },
+        },
+      },
+      {
+        categories: accumulativeCurrentPlanDayBlending.map(
+          (value) => `${roundAndFormat(value)} TM`
+        ),
+        opposite: false,
+        linkedTo: 0,
         lineColor: "transparent",
         labels: {
           y: 0,
@@ -150,7 +175,7 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
       },
       {
         name: "Plan",
-        data: accumulativeCurrentPlanDay,
+        data: accumulativeCurrentPlanDayBlending,
         xAxis: 1,
         fillColor: "#b8b8b880",
         color: "#b8b8b8",
@@ -198,9 +223,24 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
       floating: false,
       labelFormatter: function (this: any) {
         if (this.index === 0) {
-          return `<span style='color:#000000'>${this.name}</span>`;
+          return `
+          <span style='display: flex; align-items: center; color:#000000'>
+            <span style='width: 8px; height: 8px; background-color: #ff5000; border-radius: 5px; display: inline-block; margin-right: 4px;'></span>
+            Real
+          </span>`;
         } else {
-          return `<span style='color:#A6A6A6'>${this.name}</span>`;
+          return `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style='color:#A6A6A6'>
+                <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; transform: rotate(45deg); display: inline-block; margin-right: 5px;'></span>  
+                P.Campo
+              </span>
+              <span style='color:#A6A6A6'>
+                <span style='width:8px; height: 8px; border-color: #A6A6A6; border-width: 2px; border-style: solid; display: inline-block; margin-right: 5px;'></span>  
+                P.Blending
+              </span>
+            </div>
+          `;
         }
       },
       useHTML: true,
@@ -211,8 +251,8 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
         textTransform: "uppercase",
       },
       itemHoverStyle: { color: "black" },
-      symbolWidth: 10,
-      symbolHeight: 9,
+      symbolWidth: 0,
+      symbolHeight: 0,
       symbolRadius: 2,
       itemMarginTop: 4,
       itemMarginBottom: 0,

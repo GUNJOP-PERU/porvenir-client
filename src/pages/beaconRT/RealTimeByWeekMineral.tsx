@@ -9,7 +9,7 @@ import DonutAndTableChart from "@/components/Dashboard/Charts/DonutAndTableChart
 // Types
 import type { BeaconCycle, BeaconUnitTrip } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
-import type { PlanWeek } from "@/types/Plan";
+import type { PlanDay, PlanWeek } from "@/types/Plan";
 // Utils
 import {
   startOfWeek,
@@ -21,7 +21,12 @@ import {
 import { es } from "date-fns/locale";
 import Progress from "@/components/Dashboard/Charts/Progress";
 import DonutChart from "@/components/Dashboard/Charts/DonutChart";
-import { getCurrentDay, getCurrentWeekStartEndDates } from "@/utils/dateUtils";
+import {
+  getCurrentDay,
+  getCurrentWeekStartEndDates,
+  getCurrentWeekDates,
+  planDayDateParser
+} from "@/utils/dateUtils";
 // Icons
 import IconTruck from "@/icons/IconTruck";
 
@@ -75,22 +80,62 @@ const RealTimeByWeek = () => {
     }
   );
 
+  const { data: planDayData = [] } = useFetchData<PlanDay[]>(
+    "planday-w-",
+    `planDay/by-date-range?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    {
+      refetchInterval: 10000,
+    }
+  );
+
   const planWeek = useMemo(() => {
-    if (!planData || planData.length === 0) return {
-      totalTonnage: 0,
-      planDay: [],
-    };
     const plan = planData[0];
     const safePlanDay = plan?.dataCalculate || [];
+    const planDataBlending = planDayData.filter(day => day.type === "blending" || day.type !== "modificado");
+    const planDataModificado = planDayData.filter(day => day.type === "modificado");
+    const allWeekDates: string[] = getCurrentWeekDates();
+
+    const blendingGroupedByDate = planDataBlending.reduce((acc, day) => {
+      const dateKey = planDayDateParser(day.date);
+      if (!acc[dateKey]) {
+        acc[dateKey] = { date: dateKey, tonnage: 0 };
+      }
+      acc[dateKey].tonnage += day.tonnage;
+      return acc;
+    }, {} as Record<string, { date: string; tonnage: number }>);
+    const modificadoGroupedByDate = planDataModificado.reduce((acc, day) => {
+      const dateKey = planDayDateParser(day.date);
+      if (!acc[dateKey]) {
+        acc[dateKey] = { date: dateKey, tonnage: 0 };
+      }
+      acc[dateKey].tonnage += day.tonnage;
+      return acc;
+    }, {} as Record<string, { date: string; tonnage: number }>);
+
+    const blendingByDateSorted = allWeekDates.map(date => ({
+      date,
+      tonnage: blendingGroupedByDate[date]?.tonnage || 0
+    }));
+    const modificadoByDateSorted = allWeekDates.map(date => ({
+      date,
+      tonnage: modificadoGroupedByDate[date]?.tonnage || 0
+    }));
 
     return {
       totalTonnage: plan?.totalTonnage || 0,
-      planDay: safePlanDay.map((date) => ({
+      totalTonnageBlending: planDataBlending.reduce((acc, day) => acc + day.tonnage, 0),
+      totalTonnageModificado: planDataModificado.reduce((acc, day) => acc + day.tonnage, 0),
+      planWeek: safePlanDay.map((date) => ({
         date: date.date,
         tonnage: date.tonnageByTurno.dia + date.tonnageByTurno.noche,
       })),
+      planDataBlending: blendingByDateSorted,
+      planDataModificado: modificadoByDateSorted,
     };
-  }, [planData]);
+  }, [planData, planDayData]);
 
   const baseData = useMemo(() => {
     const mineral =
@@ -266,8 +311,8 @@ const RealTimeByWeek = () => {
     const grouped = allTrips.reduce((acc: Record<string, BeaconUnitTrip[]>, trip) => {
       const tripDateTime = new Date(trip.endDate);
       let assignedDate: Date;
-      if (tripDateTime.getHours() >= 18) {
-        assignedDate = new Date(tripDateTime);
+      if (tripDateTime.getHours() >= 19) {
+        assignedDate = tripDateTime;
         assignedDate.setDate(assignedDate.getDate() + 1);
       } else {
         assignedDate = new Date(tripDateTime);

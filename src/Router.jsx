@@ -46,13 +46,11 @@ import HomeUsers from "./pages/management/Users";
 // import WeekReport from "./pages/dashboard/WeekReport";
 
 // Beacon Real Time
-import DetectionReportRT from "./pages/beaconRT/DetectionReport";
 import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeekMineral";
 import RealTimeByHourMineralRT from "./pages/beaconRT/RealTimeByTurnMineral";
-import RealTimeByHourDesmonteRT from "./pages/beaconRT/RealTimeByTurnDesmonte";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
-import ProductionStatus from "./pages/beaconRT/UtilizacionDeFlota";
+import UtilizacionDeFlota from "./pages/beaconRT/UtilizacionDeFlota";
 import UndergroundTracking from "./pages/beaconRT/UndergroundTracking";
 import SeguimientoDeExtraccion from "./pages/beaconRT/SeguimientoDeExtraccion";
 // Beacon
@@ -63,11 +61,11 @@ import RealTimeByHour from "./pages/beacon/ReportByTurnTruck";
 import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
-// import Tracking from "./pages/beacon/Tracking";
 import FleetStatus from "./pages/beacon/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
 import TripsDescription from "./pages/beacon/TripsDescriptions";
 // Development
+import TimelineDetectionReport from "./pages/development/TimelineDetectionReport";
 import TrackingDevelopment from "./pages/development/Tracking";
 import UndergroundTrackingDevelopment from "./pages/development/UndergroundTracking";
 
@@ -88,23 +86,14 @@ const protectedRoutes = [
   { path: "wap", element: <PageWap /> },
 
   // Beacon RT
-  { path: "dashboard/beacon/detection-report-rt", element: <DetectionReportRT /> },
   { path: "dashboard/beacon/detection-report-turn-mineral-rt", element: <RealTimeByHourMineralRT /> },
-  { path: "dashboard/beacon/detection-report-turn-desmonte-rt", element: <RealTimeByHourDesmonteRT /> },
   { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
   { path: "dashboard/beacon/detection-report-month-rt", element: <RealTimeByMonthRT /> },
   { path: "dashboard/beacon/trips-description-rt", element: <TripsDescriptionRT /> },
   { path: "dashboard/beacon/underground-tracking", element: <UndergroundTracking /> },
   { path: "dashboard/beacon/seguimiento-de-extraccion", element: <SeguimientoDeExtraccion /> },
-
-  // Development
-  { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },
-  {
-    path: "dashboard/development/underground-tracking",
-    element: <UndergroundTrackingDevelopment />
-  },
-
-  //Dashboard-Beacon
+  { path: "dashboard/beacon/utilizacion-de-flota", element: <UtilizacionDeFlota /> },
+  // Historico Beacon
   { path: "/", element: <TrackingRT /> },
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
@@ -116,7 +105,10 @@ const protectedRoutes = [
   { path: "dashboard/fleet-status", element: <FleetStatus /> },
   { path: "dashboard/", element: <FleetStatus /> },
   { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
-  { path: "dashboard/beacon/production-status-rt", element: <ProductionStatus /> },
+  // Development
+  { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },
+  { path: "dashboard/development/timeline-detection-report", element: <TimelineDetectionReport /> },
+  { path: "dashboard/development/underground-tracking",element: <UndergroundTrackingDevelopment />},
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

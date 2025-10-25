@@ -213,7 +213,7 @@ const DetectionReport = () => {
         isFetching={isFetching}
         count={data ? data.length : 0}
         setDialogOpen={false}
-        actions={
+        actionsRight={
           <div className="relative flex flex-row gap-2">
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
               Turno:
