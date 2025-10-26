@@ -107,7 +107,7 @@ const TruckTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const timeAgo = dayjs().subtract(60, "minute");
+    const timeAgo = dayjs().subtract(30, "minute");
     const ubications = ["Taller Saturno"];
 
     return data.filter((truck) => {
