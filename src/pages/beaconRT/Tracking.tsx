@@ -239,16 +239,7 @@ const TruckTracking = () => {
       const displayName =
         truckNameParts.length > 2 ? truckNameParts[2] : truck.name;
 
-      if (findBeacon && findBeacon.name === "PARK. VOLQUETES") {
-        const differenceInMinutes =
-          (new Date().getTime() - new Date(truck.lastDate).getTime()) / 60000;
-
-        if (differenceInMinutes <= 15) {
-          coordMap
-            .get(key)!
-            .push({ ...truck, coordinates: coord, displayName });
-        }
-      } else {
+      if (findBeacon) {
         coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
       }
     });
@@ -267,8 +258,8 @@ const TruckTracking = () => {
       const lng = isNaN(lngRaw) ? 0 : lngRaw;
       const count = trucks.length;
       const perRow = 4;
-      const offsetX = 0.00030;
-      const offsetY = 0.00030;
+      const offsetX = 0.0003;
+      const offsetY = 0.0003;
 
       trucks.forEach((truck, i) => {
         const row = Math.floor(i / perRow);
@@ -298,8 +289,8 @@ const TruckTracking = () => {
                       CAM
                     </span>
                     <span className="font-black text-2xl text-blue-700 leading-none">
-                    {truck.displayName || truck.name}
-                  </span>
+                      {truck.displayName || truck.name}
+                    </span>
                   </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
@@ -345,12 +336,15 @@ const TruckTracking = () => {
                 </div>
 
                 <div className="border-t border-zinc-200 flex flex-col text-sm pt-3">
-                    <span className="text-zinc-700 font-bold leading-none">
-                      Inicio: <b className="uppercase font-extrabold">{formatFecha(truck.changeStatusDate)}</b>
-                    </span>
-                    <span className="text-xs text-zinc-500 italic font-bold leading-none">
-                      Desde {dayjs(truck.changeStatusDate).fromNow()}
-                    </span>
+                  <span className="text-zinc-700 font-bold leading-none">
+                    Inicio:{" "}
+                    <b className="uppercase font-extrabold">
+                      {formatFecha(truck.changeStatusDate)}
+                    </b>
+                  </span>
+                  <span className="text-xs text-zinc-500 italic font-bold leading-none">
+                    Desde {dayjs(truck.changeStatusDate).fromNow()}
+                  </span>
                 </div>
               </div>
             </Popup>
@@ -682,13 +676,7 @@ const TruckTracking = () => {
   };
 
   const MapaCamiones = useMemo(() => {
-    const {
-      centerLat,
-      centerLng,
-      zoom,
- 
-    } = mapConfig;
-
+    const { centerLat, centerLng, zoom } = mapConfig;
 
     return (
       <div className="h-full w-full">
