@@ -399,6 +399,9 @@ const UtilizacionDeFlota = () => {
                 </div>
                 <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-100">
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
+                  Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
+                  </span>
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                     {truck.lastDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.lastDate),
@@ -642,7 +645,7 @@ const UtilizacionDeFlota = () => {
                 </div>
                 <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
                   <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
-                    {truck.lastUbication}
+                    Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <br />
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
