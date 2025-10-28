@@ -50,11 +50,11 @@ const DonutAndSplineChartByHour = ({ chartColor= "#ff5000", progressBarData, cha
   const planValue = 100;
 
   const currentPlanDayBlending = planDay
-  ? [0,...new Array(11).fill(planDay.totalTonnageBlending / 11)]
+  ? new Array(12).fill(planDay.totalTonnageBlending / 12)
   : [];
 
   const currentPlanDayModificado = planDay
-  ? [0,...new Array(11).fill(planDay.totalTonnageModificado / 11)]
+  ? new Array(12).fill(planDay.totalTonnageModificado / 12)
   : [];
   
   const accumulativeCurrentPlanDayBlending = currentPlanDayBlending.map((_, index) =>

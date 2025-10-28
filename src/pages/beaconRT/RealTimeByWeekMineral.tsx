@@ -94,7 +94,7 @@ const RealTimeByWeek = () => {
   const planWeek = useMemo(() => {
     const plan = planData[0];
     const safePlanDay = plan?.dataCalculate || [];
-    const planDataBlending = planDayData.filter(day => day.type === "blending" || day.type !== "modificado");
+    const planDataBlending = planDayData.filter(day => day.type === "blending");
     const planDataModificado = planDayData.filter(day => day.type === "modificado");
     const allWeekDates: string[] = getCurrentWeekDates();
 

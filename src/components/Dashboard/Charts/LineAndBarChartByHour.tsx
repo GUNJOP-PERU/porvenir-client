@@ -30,13 +30,13 @@ const LineAndBarChartByHour = ({ title, chartData, mineralWeight, chartColor = "
   const xLabels = chartData.map(item => item.hour ?? "");
   const tripsCounts = chartData.map(item => item.trips.length * mineralWeight);
   const planDayTotal = planDay
-    ? [0, ...new Array(11).fill(planDay.totalTonnage / 11)]
+    ? new Array(12).fill(planDay.totalTonnage / 12)
     : [];
   const planDayBlending = planDay
-  ? [0, ...new Array(11).fill(planDay.totalTonnageBlending / 11)]
+  ? new Array(12).fill(planDay.totalTonnageBlending / 12)
   : [];
   const planDayModificado = planDay
-  ? [0, ...new Array(11).fill(planDay.totalTonnageModificado / 11)]
+  ? new Array(12).fill(planDay.totalTonnageModificado / 12)
   : [];
 
   const diffPlanDay = planDayBlending.map((exp, i) => {

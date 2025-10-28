@@ -57,7 +57,7 @@ const RealTimeByHourRT = () => {
       (day) =>
         day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
     );
-    const planDataBlending = filteredPlanData.filter(day => day.type === "blending" || day.type !== "modificado");
+    const planDataBlending = filteredPlanData.filter(day => day.type === "blending");
     const planDataModificado = filteredPlanData.filter(day => day.type === "modificado");
 
     return {

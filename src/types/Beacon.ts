@@ -161,7 +161,8 @@ export type UnitTripDetections = {
     shift: string,
     dateString: string,
     ubication: string,
-    ubicationType: string
+    ubicationType: string,
+    ubicationSubType: string
   }[]
 }
 

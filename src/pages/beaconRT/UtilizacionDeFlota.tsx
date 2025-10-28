@@ -28,7 +28,7 @@ const UtilizacionDeFlota = () => {
     }
   );
 
-  const { data: beaconDetectionData } = useFetchData<UnitTripDetections[]>(
+  const { data: beaconDetectionData = [] } = useFetchData<UnitTripDetections[]>(
     "trip-group-by-days-rt",
     `beacon-track/group-by-unit?date=${format(
       dateFilter,
@@ -38,63 +38,77 @@ const UtilizacionDeFlota = () => {
   );
 
   const mineDetection = useMemo(() => {
-    if (
-      !Array.isArray(beaconDetectionData) ||
-      beaconDetectionData.length === 0
-    ) {
-      return [];
-    }
+    const unitBCValidDetections: any[] = []
+    const validBC = [
+        "Int-BC-1820",
+        "Int-BC-1800",
+        "Int-BC-1875",
+        "Int-BC-1930",
+        "Int-BC-1910",
+      ]
+    const validExtBC = [
+        "Ext-BC-1820",
+        "Ext-BC-1800",
+        "Ext-BC-1875",
+        "Ext-BC-1930",
+        "Ext-BC-1910",
+      ]
 
-    return beaconDetectionData
-      .map((unit) => {
-        const firstBocamina = unit.tracks?.find((track) =>
-          [
-            "Int-BC-1820",
-            "Int-BC-1800",
-            "Int-BC-1875",
-            "Int-BC-1930",
-            "Int-BC-1910",
-          ].includes(track.ubication)
-        );
+    beaconDetectionData.forEach((unit) => {
+      const unitBCValidation : any[] = []
+      const bcDetection = unit.tracks.filter((track) => validBC.some((bc) => bc === track.ubication))
+      let isLateBocamina = false;
 
-        // const lastItem = unit.tracks?.[unit.tracks.length - 1]?.uuid;
-        let isLateBocamina = false;
+      bcDetection.forEach((track) => {
+        const indexFirstBocamina = unit.tracks.findIndex(t => t.uuid === track.uuid);
+        const detectionAfter = unit.tracks[indexFirstBocamina + 1];
+        const detectionBefore = unit.tracks[indexFirstBocamina - 1];
 
-        if (firstBocamina) {
-          const startTime = dayjs(firstBocamina.f_inicio);
-          const dayShiftLimit = startTime.hour(8).minute(30);
-          const nightShiftLimit = startTime.hour(20).minute(30);
+        const startTime = dayjs(track.f_inicio);
+        const dayShiftLimit = startTime.hour(8).minute(30);
+        const nightShiftLimit = startTime.hour(20).minute(30);
+        const duration = track.f_final && track.f_inicio
+          ? dayjs(track.f_final).diff(
+              dayjs(track.f_inicio),
+              "minute"
+            )
+          : 0;
 
-          if (shiftFilter === "dia") {
-            isLateBocamina = startTime.isAfter(dayShiftLimit);
-          } else if (shiftFilter === "noche") {
-            isLateBocamina = startTime.isAfter(nightShiftLimit);
+        if (shiftFilter === "dia") {
+          isLateBocamina = startTime.isAfter(dayShiftLimit);
+        } else if (shiftFilter === "noche") {
+          isLateBocamina = startTime.isAfter(nightShiftLimit);
+        }
+
+        if(track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820"){
+          if(detectionAfter?.ubication === "Int-1800" || detectionBefore?.ubication === "Int-1800" || detectionAfter?.ubication === "Ext-1800" || detectionBefore?.ubication === "Ext-1800"){
+            return
           }
         }
 
-        const duration =
-          firstBocamina?.f_final && firstBocamina?.f_inicio
-            ? dayjs(firstBocamina.f_final).diff(
-                dayjs(firstBocamina.f_inicio),
-                "minute"
-              )
-            : 0;
-
-        return {
-          unit: unit.unit,
-          firstBocamina: firstBocamina
-            ? {
+        if(detectionAfter?.ubicationSubType === "superficie"){
+          return
+        } else if(validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie"){
+          unitBCValidation.push({
+            unit: unit.unit,
+            firstBocamina: {
                 isLate: isLateBocamina,
-                ubication: firstBocamina.ubication,
-                ubicationType: firstBocamina.ubicationType,
-                startTime: firstBocamina.f_inicio,
-                endTime: firstBocamina.f_final,
+                ubication: track.ubication,
+                ubicationType: track.ubicationType,
+                startTime: track.f_inicio,
+                endTime: track.f_final,
                 duration: duration.toFixed(1),
-              }
-            : null,
-        };
+            }
+          })
+        }
       })
-      .filter((item) => item.firstBocamina !== null);
+
+      if(unitBCValidation.length > 0){
+        unitBCValidDetections.push(unitBCValidation[0])
+      }
+    })
+
+    return unitBCValidDetections
   }, [beaconDetectionData, shiftFilter]);
 
   const lunchTimeMineDetection = useMemo(() => {
@@ -227,25 +241,25 @@ const UtilizacionDeFlota = () => {
       const isEndOfTurn = (() => {
         const lastTime = new Date(truck.lastDate).getTime();
         const endDayShiftStart = set(new Date(), {
-          hours: 17,
-          minutes: 0,
-          seconds: 0,
-          milliseconds: 0,
-        }).getTime();
-        const endDayShiftEnd = set(new Date(), {
           hours: 18,
           minutes: 0,
           seconds: 0,
           milliseconds: 0,
         }).getTime();
+        const endDayShiftEnd = set(new Date(), {
+          hours: 19,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+        }).getTime();
         const endNightShiftStart = set(new Date(), {
-          hours: 5,
+          hours: 6,
           minutes: 0,
           seconds: 0,
           milliseconds: 0,
         }).getTime();
         const endNightShiftEnd = set(new Date(), {
-          hours: 6,
+          hours: 7,
           minutes: 0,
           seconds: 0,
           milliseconds: 0,
@@ -262,8 +276,8 @@ const UtilizacionDeFlota = () => {
       } else if (
         isEndOfTurn &&
         isParqueo &&
-        ((5 <= new Date().getHours() && new Date().getHours() < 6) ||
-          (17 <= new Date().getHours() && new Date().getHours() < 18))
+        ((6 <= new Date().getHours() && new Date().getHours() < 7) ||
+          (18 <= new Date().getHours() && new Date().getHours() < 19))
       ) {
         finalParqueoUnits.push(truck);
       } else if (
