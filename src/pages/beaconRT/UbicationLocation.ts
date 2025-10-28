@@ -333,7 +333,7 @@ const ubicationData: IBeaconUbication[] = [
   // },
   {
     id: 34,
-    mac: ["bc:57:29:01:c9:03", "bc:57:29:01:c9:18","BC:57:29:08:08:26"],
+    mac: ["bc:57:29:01:c9:03","BC:57:29:08:08:26"],
     name: "PARK. VOLQUETES",
     location: "destinations",
     description: "PARQUEO VOLQUETES",
