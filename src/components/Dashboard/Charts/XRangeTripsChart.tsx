@@ -91,6 +91,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   
   data.forEach((unit, unitIndex) => {
     let validTripCounter = 0;
+    let remanejoCounter = 0;
     
     unit.allTrips.forEach((trip, tripIndex) => {
       const tripStartTime = getTimestamp(trip.startDate);
@@ -113,6 +114,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       }
       
       const displayTripIndex = isCompleteTrip && !isRemanejo ? ++validTripCounter : 0;
+      const displayRemanejoIndex = isRemanejo ? ++remanejoCounter : 0;
       
       allSeriesData.push({
         x: tripStartTime,
@@ -123,6 +125,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         borderWidth: 1,
         trip: trip,
         tripIndex: displayTripIndex,
+        remanejoIndex: displayRemanejoIndex,
         originalTripIndex: tripIndex + 1,
         isFullTrip: true,
         hasDestination: isCompleteTrip,
@@ -474,7 +477,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
               return `V${this.point.tripIndex}`;
             } else if(this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === true) {
-              return `R${this.point.tripIndex}`;
+              return `R${this.point.remanejoIndex}`;
             } else if(this.point.isMaintenance) {
               const prefix = "M";
               return `${prefix}${this.point.tripIndex}.${this.point.periodIndex}`;
