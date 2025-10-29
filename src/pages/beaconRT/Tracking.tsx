@@ -343,7 +343,10 @@ const TruckTracking = () => {
                     </b>
                   </span>
                   <span className="text-xs text-zinc-500 italic font-bold leading-none">
-                    Desde {dayjs(truck.changeStatusDate).fromNow()}
+                    {truck.status.toLowerCase().includes("mantenimiento") ?
+                      "En taller " : "Operativo "
+                    }
+                    {dayjs(truck.changeStatusDate).fromNow()}
                   </span>
                 </div>
               </div>

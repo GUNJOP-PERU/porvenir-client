@@ -14,10 +14,12 @@ import { format, set, getISODay, setDate } from "date-fns";
 import { getCurrentDay } from "@/utils/dateUtils";
 import type { TruckStatus, UnitTripDetections } from "../../types/Beacon";
 import dayjs from "dayjs";
+// Utils
+import { calculateAvgHour } from "@/utils/utilization";
 
 const UtilizacionDeFlota = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
-  const [currentIsoDay, setCurrentIsoDay] = useState<number>(getISODay(new Date()));
+  const [showOtherColumns, setShowOtherColumns] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Date>(getCurrentDay().endDate);
 
   const { data = [] } = useFetchData<TruckStatus[]>(
@@ -40,21 +42,21 @@ const UtilizacionDeFlota = () => {
   const mineDetection = useMemo(() => {
     const unitBCValidDetections: any[] = []
     const validBC = [
-        "Int-BC-1820",
-        "Int-BC-1800",
-        "Int-BC-1875",
-        "Ext-BC-1800",
-        "Ext-BC-1875",
-        "Int-BC-1930",
-        "Int-BC-1910",
-      ]
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Ext-BC-1800",
+      "Ext-BC-1875",
+      "Int-BC-1930",
+      "Int-BC-1910",
+    ]
     const validExtBC = [
-        "Ext-BC-1820",
-        "Ext-BC-1800",
-        "Ext-BC-1875",
-        "Ext-BC-1930",
-        "Ext-BC-1910",
-      ]
+      "Ext-BC-1820",
+      "Ext-BC-1800",
+      "Ext-BC-1875",
+      "Ext-BC-1930",
+      "Ext-BC-1910",
+    ]
 
     beaconDetectionData.forEach((unit) => {
       const unitBCValidation : any[] = []
@@ -130,74 +132,103 @@ const UtilizacionDeFlota = () => {
   }, [beaconDetectionData, shiftFilter]);
 
   const lunchTimeMineDetection = useMemo(() => {
-    if (!beaconDetectionData || beaconDetectionData.length === 0) {
-      return [];
+    const unitBCValidDetections: any[] = []
+    if(!(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia")){
+      return []
     }
+    const validBC = [
+      "Int-BC-1820",
+      "Int-BC-1800",
+      "Int-BC-1875",
+      "Ext-BC-1800",
+      "Ext-BC-1875",
+      "Int-BC-1930",
+      "Int-BC-1910",
+    ]
+    const validExtBC = [
+      "Ext-BC-1820",
+      "Ext-BC-1800",
+      "Ext-BC-1875",
+      "Ext-BC-1930",
+      "Ext-BC-1910",
+    ]
 
-    return beaconDetectionData
-      .map((unit) => {
-        const firstAfternoonBocamina = unit.tracks?.find((track) => {
-          const isBocamina =
-            track.ubication?.toLowerCase().includes("bocamina") ||
-            track.ubicationType?.toLowerCase().includes("bocamina");
+    beaconDetectionData.forEach((unit) => {
+      const unitBCValidation : any[] = []
+      const bcDetection = unit.tracks.filter((track) => {
+        const isBocamina = validBC.some((bc) => bc === track.ubication)
+        if (!isBocamina) return false;
+        const trackTime = new Date(track.f_inicio);
+        const hours = trackTime.getHours();
+        const minutes = trackTime.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
 
-          if (!isBocamina) return false;
+        return totalMinutes >=750;
+      })
+      let isLateBocamina = false;
 
-          const trackTime = new Date(track.f_inicio);
-          const hours = trackTime.getHours();
-          const minutes = trackTime.getMinutes();
-          const totalMinutes = hours * 60 + minutes;
+      bcDetection.forEach((track) => {
+        const indexFirstBocamina = unit.tracks.findIndex(t => t.uuid === track.uuid);
+        const detectionAfter = unit.tracks[indexFirstBocamina + 1];
+        const detectionBefore = unit.tracks[indexFirstBocamina - 1];
 
-          return totalMinutes >= 780;
-        });
+        const startTime = dayjs(track.f_inicio);
+        const dayShiftLimit = startTime.hour(13).minute(30);
+        const duration = track.f_final && track.f_inicio
+          ? dayjs(track.f_final).diff(
+              dayjs(track.f_inicio),
+              "minute"
+            )
+          : 0;
 
-        let isLateBocamina = false;
+        if (shiftFilter === "dia") {
+          isLateBocamina = startTime.isAfter(dayShiftLimit);
+        }
 
-        if (firstAfternoonBocamina) {
-          const bocaminaStartTime = new Date(firstAfternoonBocamina.f_inicio);
-          const hours = bocaminaStartTime.getHours();
-          const minutes = bocaminaStartTime.getMinutes();
-          const totalMinutes = hours * 60 + minutes;
-
-          const dayShiftLimit = 13 * 60 + 30;
-          const nightShiftLimit = 1 * 60 + 30;
-
-          if (shiftFilter === "dia") {
-            isLateBocamina = totalMinutes > dayShiftLimit;
-          } else if (shiftFilter === "noche") {
-            isLateBocamina = totalMinutes > nightShiftLimit;
+        if(track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820"){
+          if(detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800"){
+            return
           }
         }
 
-        return {
-          unit: unit.unit,
-          firstBocamina: firstAfternoonBocamina
-            ? {
-                isLate: isLateBocamina,
-                ubication: firstAfternoonBocamina.ubication,
-                ubicationType: firstAfternoonBocamina.ubicationType,
-                startTime: firstAfternoonBocamina.f_inicio,
-                endTime: firstAfternoonBocamina.f_final,
-                duration:
-                  firstAfternoonBocamina.f_final &&
-                  firstAfternoonBocamina.f_inicio
-                    ? (
-                        (new Date(firstAfternoonBocamina.f_final).getTime() -
-                          new Date(firstAfternoonBocamina.f_inicio).getTime()) /
-                        1000 /
-                        60
-                      ).toFixed(1)
-                    : "0",
+        if(track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800"){
+          if(detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie"){
+            return unitBCValidation.push({
+              unit: unit.unit,
+              firstBocamina: {
+                  isLate: isLateBocamina,
+                  ubication: track.ubication,
+                  ubicationType: track.ubicationType,
+                  startTime: track.f_inicio,
+                  endTime: track.f_final,
+                  duration: duration.toFixed(1),
               }
-            : null,
-        };
+            })
+          }
+        }
+
+        if(detectionAfter?.ubicationSubType === "superficie"){
+          return
+        } else if(validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie"){
+          return unitBCValidation.push({
+            unit: unit.unit,
+            firstBocamina: {
+                isLate: isLateBocamina,
+                ubication: track.ubication,
+                ubicationType: track.ubicationType,
+                startTime: track.f_inicio,
+                endTime: track.f_final,
+                duration: duration.toFixed(1),
+            }
+          })
+        }
       })
-      .filter((item) => item.firstBocamina !== null)
-      .sort((a, b) => {
-        const numA = parseInt(a.unit.match(/\d+$/)?.[0] || "0", 10);
-        const numB = parseInt(b.unit.match(/\d+$/)?.[0] || "0", 10);
-        return numA - numB;
-      });
+
+      if(unitBCValidation.length > 0){
+        unitBCValidDetections.push(unitBCValidation[0])
+      }
+    })
+    return unitBCValidDetections
   }, [beaconDetectionData, shiftFilter]);
 
   const truckFiltered = useMemo(() => {
@@ -237,29 +268,17 @@ const UtilizacionDeFlota = () => {
           seconds: 0,
           milliseconds: 0,
         }).getTime();
-        const lunchNightStart = set(new Date(), {
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-          milliseconds: 0,
-        }).getTime();
-        const lunchNightEnd = set(new Date(), {
-          hours: 1,
-          minutes: 0,
-          seconds: 0,
-          milliseconds: 0,
-        }).getTime();
 
         return (
-          (lastTime >= lunchStart && lastTime <= lunchEnd) ||
-          (lastTime >= lunchNightStart && lastTime <= lunchNightEnd)
+          (lastTime >= lunchStart && lastTime <= lunchEnd) &&
+          (getISODay(new Date()) === 3 && getCurrentDay().shift === "dia")
         );
       })();
 
       const isEndOfTurn = (() => {
         const lastTime = new Date(truck.lastDate).getTime();
         const endDayShiftStart = set(new Date(), {
-          hours: 18,
+          hours: 17,
           minutes: 0,
           seconds: 0,
           milliseconds: 0,
@@ -271,7 +290,7 @@ const UtilizacionDeFlota = () => {
           milliseconds: 0,
         }).getTime();
         const endNightShiftStart = set(new Date(), {
-          hours: 6,
+          hours: 5,
           minutes: 0,
           seconds: 0,
           milliseconds: 0,
@@ -294,8 +313,8 @@ const UtilizacionDeFlota = () => {
       } else if (
         isEndOfTurn &&
         isParqueo &&
-        ((6 <= new Date().getHours() && new Date().getHours() < 7) ||
-          (18 <= new Date().getHours() && new Date().getHours() < 19))
+        ((5 <= new Date().getHours() && new Date().getHours() < 7) ||
+          (17 <= new Date().getHours() && new Date().getHours() < 19))
       ) {
         finalParqueoUnits.push(truck);
       } else if (
@@ -370,16 +389,18 @@ const UtilizacionDeFlota = () => {
   useEffect(() => {
     setInterval(() => {
       setDateFilter(getCurrentDay().endDate);
-      setCurrentIsoDay(getISODay(new Date()));
       setShiftFilter(getCurrentDay().shift);
+      if(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia"){
+        setShowOtherColumns(true);
+      }
     }, 5000);
   }, []);
 
   return (
     <div
-      className={clsx(`flex-1 w-full bg-cover bg-no-repeat bg-center p-4 grid grid-cols-1 md:grid-cols-2 ${currentIsoDay === 3 ? "xl:grid-cols-5" : "xl:grid-cols-3"} gap-2 grid-rows-3 xl:grid-rows-1`)}
+      className={clsx(`flex-1 w-full bg-cover bg-no-repeat bg-center grid grid-cols-1 md:grid-cols-2 ${showOtherColumns ? "xl:grid-cols-5" : "xl:grid-cols-3"} gap-2 grid-rows-3 xl:grid-rows-1`)}
     >
-      <div className="flex flex-col bg-[#4F3400] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#4f330000] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
         >
@@ -387,8 +408,8 @@ const UtilizacionDeFlota = () => {
             {truckFiltered.parqueoUnits.length} / {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none"
-            style={{ color: itemColors.parqueo.color }}
+            className="text-sm font-bold select-none text-black"
+            // style={{ color: itemColors.parqueo.color }}
           >
             Parqueo
           </h4>
@@ -419,13 +440,13 @@ const UtilizacionDeFlota = () => {
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                   Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
-                  {/* <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
-                    {truck.lastDate &&
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
+                    {truck.arriveDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.arriveDate),
                         "HH:mm"
                       )}`}
-                  </span> */}
+                  </span>
                 </div>
               </div>
             </div>
@@ -433,29 +454,50 @@ const UtilizacionDeFlota = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-[#1e3a1d] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d00] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
-          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
-            {mineDetection.length} / {truckFiltered.totalTruck}
+          <div className="text-xs font-semibold text-white select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            {mineDetection.filter(
+              (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
+            ).filter(
+              (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
+            ).filter(
+              (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+            ).length} / {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none"
-            style={{ color: "#e0aaff" }}
+            className="text-sm font-bold select-none text-black"
+            // style={{ color: "#e0aaff" }}
           >
             Primer Ingreso a Mina
           </h4>
+          <div className="ml-auto px-2 text-xs font-semibold text-white select-none h-6 w-fit rounded-[7px] bg-black/80 flex items-center justify-center">
+            Promedio: {calculateAvgHour(mineDetection.filter(
+              (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
+            ).filter(
+              (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
+            ).filter(
+              (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+            ).map(t => t.firstBocamina.startTime))}
+          </div>
         </div>
         <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-          {mineDetection.filter((truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)).map((truck, index) => (
+          {mineDetection.filter(
+              (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
+            ).filter(
+              (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
+            ).filter(
+              (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+            ).map((truck, index) => (
             <div
               key={index}
               className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
               style={{
                 background: truck.firstBocamina?.isLate
                   ? "#a81313"
-                  : "#1fa24680",
+                  : "#1fa246",
               }}
             >
               <div
@@ -499,8 +541,8 @@ const UtilizacionDeFlota = () => {
         </div>
       </div>
 
-      {currentIsoDay === 3 && (
-        <div className="flex flex-col bg-[#132027] p-2 rounded-xl h-[calc(100vh-88px)]">
+      {showOtherColumns && (
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#13202700] p-2 rounded-xl h-[calc(100vh-88px)]">
           <div
             className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
           >
@@ -508,14 +550,16 @@ const UtilizacionDeFlota = () => {
               {truckFiltered.lunchTrucks.length} / {truckFiltered.totalTruck}
             </div>
             <h4
-              className="text-sm font-bold select-none"
-              style={{ color: itemColors.unMove.color }}
+              className="text-sm font-bold select-none text-black"
+              // style={{ color: itemColors.unMove.color }}
             >
               En Refrigerio
             </h4>
           </div>
           <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {truckFiltered.lunchTrucks.map((truck, index) => (
+            {truckFiltered.lunchTrucks.filter(
+              (truck) => !lunchTimeMineDetection.some((e) => e.name === truck.name)
+            ).map((truck, index) => (
               <div
                 key={index}
                 className={`p-0.5 rounded-lg shadow ${itemColors.unMove.outer} cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1`}
@@ -540,14 +584,15 @@ const UtilizacionDeFlota = () => {
 
                 <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
                   <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
-                    {truck.lastUbication}
+                    Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
+                  <br />
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-white">
-                    {/* {truck.lastDate &&
+                    {truck.arriveDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.arriveDate),
                         "HH:mm"
-                      )}`} */}
+                      )}`}
                   </span>
                 </div>
               </div>
@@ -556,30 +601,34 @@ const UtilizacionDeFlota = () => {
         </div>
       )}
 
-      { currentIsoDay === 3 &&(
-        <div className="flex flex-col bg-[#1e3a1d] p-2 rounded-xl h-[calc(100vh-88px)]">
+      { showOtherColumns &&(
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d00] p-2 rounded-xl h-[calc(100vh-88px)]">
           <div
             className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
           >
             <div className="text-[10px] font-semibold text-zinc-200 select-none h-5 w-9 rounded-[5px] bg-black/80 flex items-center justify-center">
-              {lunchTimeMineDetection.length} / {truckFiltered.totalTruck}
+              {lunchTimeMineDetection.filter(
+                (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+              ).length} / {truckFiltered.totalTruck}
             </div>
             <h4
-              className="text-[12px] font-bold select-none leading-4"
-              style={{ color: "#e0aaff" }}
+              className="text-sm font-bold select-none text-black"
+              // style={{ color: "#e0aaff" }}
             >
               Ingreso a mina después del refrigerio
             </h4>
           </div>
           <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
-            {lunchTimeMineDetection.map((truck, index) => (
+            {lunchTimeMineDetection.filter(
+              (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+            ).map((truck, index) => (
               <div
                 key={index}
                 className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
                 style={{
                   background: truck.firstBocamina?.isLate
                     ? "#a81313"
-                    : "#1fa24680",
+                    : "#1fa246",
                 }}
               >
                 <div
@@ -624,7 +673,7 @@ const UtilizacionDeFlota = () => {
         </div>
       )}
 
-      <div className="flex flex-col bg-[#2B302B] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#2B302B00] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.guardia.color}`}
         >
@@ -633,8 +682,8 @@ const UtilizacionDeFlota = () => {
             {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none"
-            style={{ color: itemColors.guardia.color }}
+            className="text-sm font-bold select-none text-black"
+            // style={{ color: itemColors.guardia.color }}
           >
             Fin de guardia
           </h4>
@@ -666,10 +715,13 @@ const UtilizacionDeFlota = () => {
                     Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <br />
-                  {/* <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
-                    Fin de guardia:{" "}
-                    {format(new Date(truck.arriveDate), "HH:mm")}
-                  </span> */}
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
+                    {truck.arriveDate &&
+                      `Hora de Inicio: ${format(
+                        new Date(truck.arriveDate),
+                        "HH:mm"
+                      )}`}
+                  </span>
                 </div>
               </div>
             </div>

@@ -139,17 +139,17 @@ export default function FleetStatus() {
 
   return (
     <>
-      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center  p-4 flex flex-col gap-1">
-        <div className="  rounded-xl py-2 px-4">
+      <div className="flex-1 w-full bg-cover bg-no-repeat bg-center flex flex-col gap-1">
+        <div className="rounded-xl pb-2 px-0">
           <div className="flex items-center gap-2">
-            <h1 className="text-zinc-200 text-md lg:text-xl font-bold leading-none">
+            <h1 className="text-black text-md lg:text-xl font-bold leading-none">
               Disponibilidad y utilización de la flota
             </h1>
-            <span className="text-[10px] text-zinc-300 bg-zinc-500 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
+            <span className="text-[10px] text-white bg-zinc-500 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
               {data?.length || 0}
             </span>
           </div>
-          <p className="text-zinc-400 text-[10.5px] lg:text-xs">
+          <p className="text-black text-[10.5px] lg:text-xs">
             Resumen de Estatus Operativo (Operativos, Mantenimiento, Fuera de
             Servicio) {new Date().toLocaleDateString()}
           </p>
