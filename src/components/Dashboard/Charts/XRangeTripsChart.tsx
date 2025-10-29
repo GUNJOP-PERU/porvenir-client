@@ -33,7 +33,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
   const tableData = useMemo(() => {
     return data.map(unit => {
       const tripsWithDestination = unit.allTrips.filter(trip => 
-        trip.endUbication && trip.endUbication.trim() !== ''
+        (trip.endUbication && trip.endUbication.trim() !== '') &&
+        trip.remanejo === false
       );
       
       const totalTrips = tripsWithDestination.length;
@@ -111,7 +112,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         tripColor = "#096bdb";
       }
       
-      const displayTripIndex = isCompleteTrip ? ++validTripCounter : 0;
+      const displayTripIndex = isCompleteTrip && !isRemanejo ? ++validTripCounter : 0;
       
       allSeriesData.push({
         x: tripStartTime,
@@ -126,6 +127,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         isFullTrip: true,
         hasDestination: isCompleteTrip,
         unitName: unit.unit.toUpperCase(),
+        remanejo: isRemanejo,
         name: `${unit.unit} - ${isCompleteTrip ? `Viaje ${displayTripIndex}` : 'Otros'}`
       });
 
@@ -195,6 +197,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           isSpecialDetection: true,
           isBocamina: period.type === 'bocamina',
           isMaintenance: period.type === 'maintenance',
+          remanejo: isRemanejo,
           unitName: unit.unit.toUpperCase(),
           name: `${unit.unit} - ${periodType} ${parentTripIndex > 0 ? parentTripIndex : 'S/N'}.${periodIndex + 1}`
         });
@@ -468,8 +471,10 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           allowOverlap: true,
           defer: false,
           formatter: function(this: any) {
-            if (this.point.isFullTrip && this.point.hasDestination) {
+            if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
               return `V${this.point.tripIndex}`;
+            } else if(this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === true) {
+              return `R${this.point.tripIndex}`;
             } else if(this.point.isMaintenance) {
               const prefix = "M";
               return `${prefix}${this.point.tripIndex}.${this.point.periodIndex}`;
