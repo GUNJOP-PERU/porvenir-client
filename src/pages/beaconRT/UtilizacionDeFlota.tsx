@@ -24,7 +24,7 @@ const UtilizacionDeFlota = () => {
     "beacon-truck",
     "beacon-truck",
     {
-      refetchInterval: 10000,
+      refetchInterval: 5000,
     }
   );
 
@@ -43,6 +43,8 @@ const UtilizacionDeFlota = () => {
         "Int-BC-1820",
         "Int-BC-1800",
         "Int-BC-1875",
+        "Ext-BC-1800",
+        "Ext-BC-1875",
         "Int-BC-1930",
         "Int-BC-1910",
       ]
@@ -81,15 +83,31 @@ const UtilizacionDeFlota = () => {
         }
 
         if(track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820"){
-          if(detectionAfter?.ubication === "Int-1800" || detectionBefore?.ubication === "Int-1800" || detectionAfter?.ubication === "Ext-1800" || detectionBefore?.ubication === "Ext-1800"){
+          if(detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800"){
             return
+          }
+        }
+
+        if(track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800"){
+          if(detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie"){
+            return unitBCValidation.push({
+              unit: unit.unit,
+              firstBocamina: {
+                  isLate: isLateBocamina,
+                  ubication: track.ubication,
+                  ubicationType: track.ubicationType,
+                  startTime: track.f_inicio,
+                  endTime: track.f_final,
+                  duration: duration.toFixed(1),
+              }
+            })
           }
         }
 
         if(detectionAfter?.ubicationSubType === "superficie"){
           return
         } else if(validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie"){
-          unitBCValidation.push({
+          return unitBCValidation.push({
             unit: unit.unit,
             firstBocamina: {
                 isLate: isLateBocamina,
@@ -283,7 +301,7 @@ const UtilizacionDeFlota = () => {
       } else if (
         isParqueo &&
         new Date().getTime() - new Date(truck.lastDate).getTime() <
-          15 * 60 * 1000
+          20 * 60 * 1000
       ) {
         parqueoUnits.push(truck);
       } else if (isSuperficie || isDestination) {
@@ -401,13 +419,13 @@ const UtilizacionDeFlota = () => {
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                   Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
+                  {/* <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                     {truck.lastDate &&
                       `Hora de Inicio: ${format(
-                        new Date(truck.lastDate),
+                        new Date(truck.arriveDate),
                         "HH:mm"
                       )}`}
-                  </span>
+                  </span> */}
                 </div>
               </div>
             </div>
@@ -525,11 +543,11 @@ const UtilizacionDeFlota = () => {
                     {truck.lastUbication}
                   </span>
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-white">
-                    {truck.lastDate &&
+                    {/* {truck.lastDate &&
                       `Hora de Inicio: ${format(
-                        new Date(truck.lastDate),
+                        new Date(truck.arriveDate),
                         "HH:mm"
-                      )}`}
+                      )}`} */}
                   </span>
                 </div>
               </div>
@@ -648,10 +666,10 @@ const UtilizacionDeFlota = () => {
                     Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <br />
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
+                  {/* <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
                     Fin de guardia:{" "}
-                    {format(new Date(truck.lastDate || 0), "HH:mm")}
-                  </span>
+                    {format(new Date(truck.arriveDate), "HH:mm")}
+                  </span> */}
                 </div>
               </div>
             </div>

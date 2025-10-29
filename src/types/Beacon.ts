@@ -174,6 +174,7 @@ export type TruckStatus = {
   lastDate: string
   lastUbication: string
   lastUbicationMac: string
+  arriveDate: string
   name: string
   status: string
   tag: string
