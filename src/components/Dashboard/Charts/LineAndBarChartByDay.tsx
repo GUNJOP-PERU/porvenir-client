@@ -60,7 +60,7 @@ const LineAndBarChartByDay= ({ title, chartData, mineralWeight, chartColor = "#0
     const currentData = tripsCounts;
     return currentData[i] !== undefined && currentData[i] >= exp
       ? "#68c970"
-      : "#ff8b8b";
+      : "#f9c83e";
   });
 
   const options = {

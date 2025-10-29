@@ -502,7 +502,7 @@ const RealTimeByWeek = () => {
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#ff8b8b] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Diferencia negativa
                 </p>

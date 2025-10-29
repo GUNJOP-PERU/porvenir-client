@@ -507,13 +507,13 @@ const ReportByWeek = () => {
           actions={
             <div className="flex flex-row gap-2">
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#68c970] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Diferencia positiva
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
                 <p className="text-[11px] font-bold">
                   Diferencia negativa
                 </p>
