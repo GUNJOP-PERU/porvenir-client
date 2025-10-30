@@ -39,15 +39,13 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       
       const totalTrips = tripsWithDestination.length;
       const totalDuration = unit.allTrips.reduce((acc, trip) => {
-        const start = new Date(trip.startDate).getTime();
-        const end = new Date(trip.endDate).getTime();
-        return acc + (end - start);
+        return acc + trip.tripDurationMin;
       }, 0);
       
-      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips / 1000 / 60 : 0;
-      const totalHours = totalDuration / 1000 / 60 / 60;
-      const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
-      const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
+      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
+      const totalHours = totalDuration / 60;
+      const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
+      const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
       
       return {
         unit: unit.unit.toUpperCase(),

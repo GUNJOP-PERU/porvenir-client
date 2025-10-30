@@ -33,14 +33,14 @@ const XRangeTripsChartHistorico = ({
       const totalDuration = unit.allTrips.reduce((acc, trip) => {
         const start = new Date(trip.startDate).getTime();
         const end = new Date(trip.endDate).getTime();
-        return acc + (end - start);
+        return acc + trip.tripDuration;
       }, 0);
       
-      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips / 1000 / 60 : 0;
-      const totalHours = totalDuration / 1000 / 60 / 60;
-      const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
-      const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.totalDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
-      
+      const avgDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
+      const totalHours = totalDuration / 60;
+      const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
+      const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
+
       return {
         unit: unit.unit.toUpperCase(),
         totalTrips,
@@ -83,6 +83,7 @@ const XRangeTripsChartHistorico = ({
 
   data.forEach((unit, unitIndex) => {
     let validTripCounter = 0;
+    let remanejoCounter = 0;
     
     unit.allTrips.forEach((trip, tripIndex) => {
       const tripStartTime = getTimestamp(trip.startDate);
@@ -104,8 +105,9 @@ const XRangeTripsChartHistorico = ({
         tripColor = "#096bdb";
       }
       
-      const displayTripIndex = isCompleteTrip ? ++validTripCounter : 0;
-      
+      const displayTripIndex = isCompleteTrip && !isRemanejo ? ++validTripCounter : 0;
+      const displayRemanejoIndex = isRemanejo ? ++remanejoCounter : 0;
+
       allSeriesData.push({
         x: tripStartTime,
         x2: tripEndTime,
@@ -115,10 +117,12 @@ const XRangeTripsChartHistorico = ({
         borderWidth: 1,
         trip: trip,
         tripIndex: displayTripIndex,
+        remanejoIndex: displayRemanejoIndex,
         originalTripIndex: tripIndex + 1,
         isFullTrip: true,
         hasDestination: isCompleteTrip,
         unitName: unit.unit.toUpperCase(),
+        remanejo: isRemanejo,
         name: `${unit.unit} - ${isCompleteTrip ? `Viaje ${displayTripIndex}` : 'Otros'}`
       });
 
@@ -188,6 +192,7 @@ const XRangeTripsChartHistorico = ({
           isSpecialDetection: true,
           isBocamina: period.type === 'bocamina',
           isMaintenance: period.type === 'maintenance',
+          remanejo: isRemanejo,
           unitName: unit.unit.toUpperCase(),
           name: `${unit.unit} - ${periodType} ${parentTripIndex > 0 ? parentTripIndex : 'S/N'}.${periodIndex + 1}`
         });
@@ -441,8 +446,10 @@ const XRangeTripsChartHistorico = ({
             allowOverlap: true,
             defer: false,
             formatter: function(this: any) {
-              if (this.point.isFullTrip && this.point.hasDestination) {
+              if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
                 return `V${this.point.tripIndex}`;
+              } else if(this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === true) {
+                return `R${this.point.remanejoIndex}`;
               } else if(this.point.isMaintenance) {
                 const prefix = "M";
                 return `${prefix}${this.point.tripIndex}.${this.point.periodIndex}`;
