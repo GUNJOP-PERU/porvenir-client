@@ -101,7 +101,7 @@ const TruckTracking = () => {
     error,
     refetch,
   } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
-    refetchInterval: 2000,
+    refetchInterval: 3000,
   });
 
   const filteredData = useMemo(() => {
