@@ -32,51 +32,69 @@ const SeguimientoDeExtraccion = () => {
       key: "selection",
     },
   ]);
-  
 
   const {
-    data : mineralTripsData = [],
-    refetch : refetchMineral,
+    data: mineralTripsData = [],
+    refetch: refetchMineral,
     isFetching,
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-rt",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip?material=mineral&startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
+      shiftFilter ? `&shift=${shiftFilter}` : ""
+    }`,
     { refetchInterval: 5000 }
   );
 
   const {
-    data : desmonteTripsData = [],
-    refetch : refetchDesmonte,
-    isFetching : isFetchingDesmonte,
+    data: desmonteTripsData = [],
+    refetch: refetchDesmonte,
+    isFetching: isFetchingDesmonte,
     isLoading: desmonteLoading,
     isError: desmonteError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-rt",
-    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    `beacon-track/trip?material=desmonte&startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}${
+      shiftFilter ? `&shift=${shiftFilter}` : ""
+    }`,
     { refetchInterval: 5000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral",
-    { refetchInterval: 5000,}
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+    refetchInterval: 5000,
+  });
+
+  const { data: beaconTruck = [] } = useFetchData<{ status: string }[]>(
+    "beacon-truck",
+    "beacon-truck",
+    { refetchInterval: 10000 }
   );
 
-  const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
-
-
-  const { data: planData = [], refetch: refetchPlanDay } = useFetchData<PlanDay[]>(
+  const { data: planData = [], refetch: refetchPlanDay } = useFetchData<
+    PlanDay[]
+  >(
     "planday-rt",
-    `planDay/by-date-range?startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
-    { refetchInterval: 5000, }
+    `planDay/by-date-range?startDate=${format(
+      dateFilter[0].startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    { refetchInterval: 5000 }
   );
 
   const { data: planWeek } = useFetchData<PlanWeek>(
     "planWeek-rt",
-    `planWeek?startDate=${format(weekFilter.startDate,"yyyy-MM-dd")}&endDate=${format(weekFilter.endDate, "yyyy-MM-dd")}`,
-    { refetchInterval: 5000, }
+    `planWeek?startDate=${format(
+      weekFilter.startDate,
+      "yyyy-MM-dd"
+    )}&endDate=${format(weekFilter.endDate, "yyyy-MM-dd")}`,
+    { refetchInterval: 5000 }
   );
 
   const baseData = useMemo(() => {
@@ -88,11 +106,27 @@ const SeguimientoDeExtraccion = () => {
   }, [mineralData]);
 
   const planDay = useMemo(() => {
-    const mineralPlan = planData.filter((plan) => plan.phase === "mineral" && plan.shift === shiftFilter);
-    const desmontePlan = planData.filter((plan) => plan.phase === "desmonte" && plan.shift === shiftFilter);
+    const mineralPlan = planData.filter(
+      (plan) =>
+        plan.phase === "mineral" &&
+        plan.type === "blending" &&
+        plan.shift === shiftFilter
+    );
+    const desmontePlan = planData.filter(
+      (plan) =>
+        plan.phase === "desmonte" &&
+        plan.type === "blending" &&
+        plan.shift === shiftFilter
+    );
     const totalTonnage = planData.reduce((acc, plan) => acc + plan.tonnage, 0);
-    const mineralTonnage = mineralPlan.reduce((acc, plan) => acc + plan.tonnage, 0);
-    const desmonteTonnage = desmontePlan.reduce((acc, plan) => acc + plan.tonnage, 0);
+    const mineralTonnage = mineralPlan.reduce(
+      (acc, plan) => acc + plan.tonnage,
+      0
+    );
+    const desmonteTonnage = desmontePlan.reduce(
+      (acc, plan) => acc + plan.tonnage,
+      0
+    );
     const mineralTrips = mineralTonnage / baseData.mineral;
     const desmonteTrips = desmonteTonnage / baseData.desmonte;
     const totalTrips = mineralTrips + desmonteTrips;
@@ -106,28 +140,32 @@ const SeguimientoDeExtraccion = () => {
       mineralTrips,
       desmonteTrips,
       totalTrips,
-    }
+    };
   }, [planData, shiftFilter, baseData]);
 
   const mineralTrips = useMemo(() => {
-    if(mineralTripsData.length === 0) return [];
+    if (mineralTripsData.length === 0) return [];
 
     const allTrips = mineralTripsData.map((unit) => unit.trips).flat();
 
     return allTrips.map((trip) => ({
       ...trip,
-      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0].name : "Otros",
+      frontLabor: trip.frontLaborList[0]
+        ? trip.frontLaborList[0].name
+        : "Otros",
     }));
   }, [mineralTripsData]);
 
   const desmonteTrips = useMemo(() => {
-    if(desmonteTripsData.length === 0) return [];
+    if (desmonteTripsData.length === 0) return [];
 
     const allTrips = desmonteTripsData.map((unit) => unit.trips).flat();
 
     return allTrips.map((trip) => ({
       ...trip,
-      frontLabor: trip.frontLaborList[0] ? trip.frontLaborList[0].name : "Otros",
+      frontLabor: trip.frontLaborList[0]
+        ? trip.frontLaborList[0].name
+        : "Otros",
     }));
   }, [mineralTripsData]);
 
@@ -160,17 +198,26 @@ const SeguimientoDeExtraccion = () => {
           "dd-MM-yyyy"
         )}.`}
         className="col-span-2"
-        refetch={() => { refetchMineral(); refetchDesmonte() }}
+        refetch={() => {
+          refetchMineral();
+          refetchDesmonte();
+        }}
         isFetching={isFetching}
         setDialogOpen={false}
         status={[
-          { value: beaconTruck.filter((unit) => unit.status === "operativo").length,
+          {
+            value: beaconTruck.filter((unit) => unit.status === "operativo")
+              .length,
             color: "#2fd685",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "mantenimiento").length,
+          {
+            value: beaconTruck.filter((unit) => unit.status === "mantenimiento")
+              .length,
             color: "#e6bf27",
           },
-          { value: beaconTruck.filter((unit) => unit.status === "inoperativo").length,
+          {
+            value: beaconTruck.filter((unit) => unit.status === "inoperativo")
+              .length,
             color: "#ff4d4f",
           },
         ]}
@@ -178,7 +225,7 @@ const SeguimientoDeExtraccion = () => {
 
       <div className="grid grid-cols-[8fr_2fr] gap-2">
         <div className="flex flex-col">
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_250px] gap-2"> 
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_250px] gap-2">
             <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
               <CardItem
                 value={planDay.totalTonnage}
@@ -187,13 +234,20 @@ const SeguimientoDeExtraccion = () => {
                 unid="tm"
               />
               <CardItem
-                value={(mineralTrips.length * baseData.mineral) + (desmonteTrips.length * baseData.desmonte)}
+                value={
+                  mineralTrips.length * baseData.mineral +
+                  desmonteTrips.length * baseData.desmonte
+                }
                 title="Tonelaje Ejecutado (TM)"
                 valueColor="text-[#f79d65]"
                 unid="tm"
               />
               <CardItem
-                value={(mineralTrips.length * baseData.mineral) + (desmonteTrips.length * baseData.desmonte) - planDay.totalTonnage}
+                value={
+                  mineralTrips.length * baseData.mineral +
+                  desmonteTrips.length * baseData.desmonte -
+                  planDay.totalTonnage
+                }
                 title="Variación (TM)"
                 valueColor="text-[#d4a373]"
                 unid="tm"
@@ -211,7 +265,11 @@ const SeguimientoDeExtraccion = () => {
                 unid="viajes"
               />
               <CardItem
-                value={(mineralTrips.length + desmonteTrips.length) - planDay.totalTrips}
+                value={
+                  mineralTrips.length +
+                  desmonteTrips.length -
+                  planDay.totalTrips
+                }
                 title="Variaciones Viajes"
                 valueColor="text-[#076594]"
                 unid="viajes"
@@ -222,7 +280,9 @@ const SeguimientoDeExtraccion = () => {
               size="medium"
               type="pie"
               donutData={{
-                currentValue: mineralTrips.length * baseData.mineral + desmonteTrips.length * baseData.desmonte,
+                currentValue:
+                  mineralTrips.length * baseData.mineral +
+                  desmonteTrips.length * baseData.desmonte,
                 total: planDay.totalTonnage ? planDay.totalTonnage : 1,
                 currentValueColor: "#ff5000",
               }}
@@ -238,16 +298,12 @@ const SeguimientoDeExtraccion = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Mineral Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -266,7 +322,10 @@ const SeguimientoDeExtraccion = () => {
                   unid="tm"
                 />
                 <CardItem
-                  value={(mineralTrips.length * baseData.mineral) - planDay.mineralTonnage}
+                  value={
+                    mineralTrips.length * baseData.mineral -
+                    planDay.mineralTonnage
+                  }
                   title="Variación (TM)"
                   valueColor="text-[#d4a373]"
                   unid="tm"
@@ -322,16 +381,12 @@ const SeguimientoDeExtraccion = () => {
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Desmonte Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Desmonte Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -350,7 +405,10 @@ const SeguimientoDeExtraccion = () => {
                   unid="tm"
                 />
                 <CardItem
-                  value={(desmonteTrips.length * baseData.desmonte) - planDay.desmonteTonnage}
+                  value={
+                    desmonteTrips.length * baseData.desmonte -
+                    planDay.desmonteTonnage
+                  }
                   title="Variación (TM)"
                   valueColor="text-[#d4a373]"
                   unid="tm"
@@ -384,8 +442,12 @@ const SeguimientoDeExtraccion = () => {
                   title="Avance de Extracción de Desmonte"
                   size="medium"
                   donutData={{
-                    currentValue:  planDay.desmonteTonnage ? desmonteTrips.length * baseData.desmonte : 1,
-                    total: planDay.desmonteTonnage ? planDay.desmonteTonnage : 1,
+                    currentValue: planDay.desmonteTonnage
+                      ? desmonteTrips.length * baseData.desmonte
+                      : 1,
+                    total: planDay.desmonteTonnage
+                      ? planDay.desmonteTonnage
+                      : 1,
                     currentValueColor: "#ff5000",
                   }}
                 />
@@ -404,7 +466,9 @@ const SeguimientoDeExtraccion = () => {
             size="large"
             type="pie"
             donutData={{
-              currentValue: mineralTrips.length * baseData.mineral + desmonteTrips.length * baseData.desmonte,
+              currentValue:
+                mineralTrips.length * baseData.mineral +
+                desmonteTrips.length * baseData.desmonte,
               total: 12500,
               currentValueColor: "#ff5000",
             }}
@@ -412,23 +476,12 @@ const SeguimientoDeExtraccion = () => {
           <BarChartFrontLabor
             title="VH - Producción"
             color="#ff5000"
-            data={[
-              { name: "TJ 010B", value: 6.3 },
-              { name: "TJ 220B", value: 6.2 },
-              { name: "TJ 005", value: 5.5 },
-              { name: "TJ 650", value: 5.5 },
-              { name: "TJ 740B", value: 5.1 }
-            ]}
+            trips={mineralTrips}
           />
           <BarChartFrontLabor
             title="VH - Avances"
             color="#b8b8b8"
-            data={[
-              { name: "INCIMET ZA", value: 6.3 },
-              { name: "INCIMET ZJ", value: 5.8 },
-              { name: "AESA", value: 5.7 },
-              { name: "AV NEXA", value: 3.5 },
-            ]}
+            trips={planDay.mineralPlan}
           />
         </div>
       </div>
