@@ -81,7 +81,13 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/update-truck-plan-day",
             icon: <TbReportAnalytics />,
             active: pathname === "/dashboard/beacon/update-truck-plan-day",
-          }
+          },
+          {
+            name: "Disponibilidad",
+            href: "/dashboard/beacon/availability",
+            icon: <TbReportAnalytics />,
+            active: pathname === "/dashboard/beacon/availability",
+          },
         ],
       },
       {

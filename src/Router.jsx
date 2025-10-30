@@ -69,6 +69,7 @@ import TimelineDetectionReport from "./pages/development/TimelineDetectionReport
 import TrackingDevelopment from "./pages/development/Tracking";
 import UndergroundTrackingDevelopment from "./pages/development/UndergroundTracking";
 import UpdateTruckPlanDay from "./pages/beaconRT/UpdateTruckPlanDay";
+import { Availability } from "./pages/beaconRT/Availability";
 
 const protectedRoutes = [
   { path: "users", element: <HomeUsers /> },
@@ -95,6 +96,7 @@ const protectedRoutes = [
   { path: "dashboard/beacon/seguimiento-de-extraccion", element: <SeguimientoDeExtraccion /> },
   { path: "dashboard/beacon/utilizacion-de-flota", element: <UtilizacionDeFlota /> },
    { path: "dashboard/beacon/update-truck-plan-day", element: <UpdateTruckPlanDay /> },
+   { path: "dashboard/beacon/availability", element: <Availability /> },
   // Historico Beacon
   { path: "/", element: <TrackingRT /> },
   { path: "dashboard/detection-report", element: <DetectionReport /> },

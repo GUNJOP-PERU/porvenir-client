@@ -106,8 +106,9 @@ export const getDefaultDate = () => {
 
 export const getDefaultShift = () => {
   const now = dayjs();
-  return (now.hour() >= 7 && now.hour() < 18) ? "dia" : "noche";
+  return (now.hour() >= 7 && now.hour() < 19) ? "dia" : "noche";
 };
+
 
 export const getDefaultDateObj = () => {
   const now = dayjs();
