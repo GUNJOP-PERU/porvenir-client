@@ -392,6 +392,8 @@ const UtilizacionDeFlota = () => {
       setShiftFilter(getCurrentDay().shift);
       if(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia"){
         setShowOtherColumns(true);
+      } else {
+        setShowOtherColumns(false);
       }
     }, 5000);
   }, []);
@@ -400,7 +402,7 @@ const UtilizacionDeFlota = () => {
     <div
       className={clsx(`flex-1 w-full bg-cover bg-no-repeat bg-center grid grid-cols-1 md:grid-cols-2 ${showOtherColumns ? "xl:grid-cols-5" : "xl:grid-cols-3"} gap-2 grid-rows-3 xl:grid-rows-1`)}
     >
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#4f330000] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#4f33008c] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
         >
@@ -454,7 +456,7 @@ const UtilizacionDeFlota = () => {
         </div>
       </div>
 
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d00] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
@@ -542,7 +544,7 @@ const UtilizacionDeFlota = () => {
       </div>
 
       {showOtherColumns && (
-        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#13202700] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1320278c] p-2 rounded-xl h-[calc(100vh-88px)]">
           <div
             className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
           >
@@ -602,7 +604,7 @@ const UtilizacionDeFlota = () => {
       )}
 
       { showOtherColumns &&(
-        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d00] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-88px)]">
           <div
             className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
           >
@@ -673,7 +675,7 @@ const UtilizacionDeFlota = () => {
         </div>
       )}
 
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#2B302B00] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#2B302B8c] p-2 rounded-xl h-[calc(100vh-88px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.guardia.color}`}
         >
