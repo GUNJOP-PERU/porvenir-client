@@ -1,10 +1,11 @@
-export default function IconTruck({ className, color }) {
+export default function IconTruck({ className, color, style }) {
     return (
         <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlSpace="preserve"
         viewBox="0 0 8.642 5"
         className={className}
+        style={style}
       >
         <path
           d="M82.365 346.075v-11.476h344.999v11.476z"

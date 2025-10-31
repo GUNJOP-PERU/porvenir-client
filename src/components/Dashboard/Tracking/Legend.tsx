@@ -61,12 +61,12 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
           className={clsx(
             "rounded-xl py-1 px-1 flex items-center gap-2",
             counts === 0
-              ? "bg-zinc-500 text-black" // plomo
+              ? "bg-zinc-500 text-black"
               : counts >= 38
-              ? "bg-[#16a34a] text-black" // verde
+              ? "bg-[#16a34a] text-black"
               : counts >= 36 && counts <= 37
-              ? "bg-[#ca8a04] text-black" // amarillo
-              : "bg-[#ee3232] text-white animate-pulse duration-1000 " // rojo
+              ? "bg-[#ca8a04] text-black"
+              : "bg-[#ee3232] text-white animate-pulse duration-1000 "
           )}
         >
           <div className="w-14 h-14 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white gap-[1px]">
@@ -79,7 +79,11 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
           </div>
           <div className="flex flex-col gap-0.5 min-w-0 pr-2">
             <IconTruck
-              className="h-12 w-18"
+              className=""
+              style={{
+                height: `${(counts > 35 ? counts * 48 / 35 : 48)}px`,
+                width: `${(counts > 35 ? counts * 72 / 35 : 72)}px`
+              }}
               color={
                 counts === 0
                   ? "#1dd3b0" // plomo

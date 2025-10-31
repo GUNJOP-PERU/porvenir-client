@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { cva } from "class-variance-authority";
 import IconWarning from "@/icons/IconWarning";
-// import IconClose from "@/icons/IconClose";
+import IconClose from "@/icons/IconClose";
 import IconCheckMark from "@/icons/IconCheckMark";
 import parse from 'html-react-parser';
 import clsx from "clsx";
+// Icons
+import { IoClose } from "react-icons/io5";
 
 const ToastContext = createContext();
 
@@ -34,6 +36,26 @@ export function ToastProvider({ children }) {
   const [visibleFS, setVisibleFS] = useState(false);
   const [visibleTruckStatus, setVisibleTruckStatus] = useState(false);
   let toastTimer = null;
+  let toastFSTimer = null;
+  let toastTruckStatusTimer = null;
+
+  const closeToast = () => {
+    setVisible(false);
+    setTimeout(() => setToast(null), 300);
+    if (toastTimer) clearTimeout(toastTimer);
+  };
+
+  const closeToastTruckStatus = () => {
+    setVisibleTruckStatus(false);
+    setTimeout(() => setToastTruckStatus(null), 300);
+    if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
+  };
+
+  const closeToastFS = () => {
+    setVisibleFS(false);
+    setTimeout(() => setToastFS(null), 300);
+    if (toastFSTimer) clearTimeout(toastFSTimer);
+  };
 
   const addToast = ({ title, message, variant = "default" }) => {
     setToast({ title, message, variant });
@@ -80,7 +102,13 @@ export function ToastProvider({ children }) {
 
   useEffect(() => {
     return () => {
-      if (toastTimer) clearTimeout(toastTimer);
+      if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastFSTimer) clearTimeout(toastFSTimer);
     };
   }, []);
 
@@ -114,6 +142,12 @@ export function ToastProvider({ children }) {
                 </p>
               )}
             </div>
+            <button
+              onClick={closeToast}
+              className="absolute top-2 right-2 text-white z-50"
+            >
+              <IoClose color="#FFFFFF" />
+            </button>
           </div>
         </div>
       )}
@@ -133,7 +167,7 @@ export function ToastProvider({ children }) {
             {toastTruckStatus.variant === "warning" && (
               <IconWarning className="text-yellow-500 w-6 h-6" />
             )}
-            <div className="grid gap-0.5 ">
+            <div className="grid gap-0.5">
               <h4 className="text-xs font-medium">
                 {toastTruckStatus.title || "Notificación"}
               </h4>
@@ -143,6 +177,12 @@ export function ToastProvider({ children }) {
                 </p>
               )}
             </div>
+            <button
+              onClick={closeToastTruckStatus}
+              className="absolute top-2 right-2 text-white z-50"
+            >
+              <IoClose color="#FFFFFF" />
+            </button>
           </div>
         </div>
       )}
@@ -156,24 +196,32 @@ export function ToastProvider({ children }) {
             {/* 🔥 Aquí cambia el icono según el tipo de Toast */}
             
             <div className="flex flex-col gap-0.5 ">
-              <div className="flex flex-row items-center gap-2">
-                {toastFS.variant === "destructive" && (
-                  <IconWarning className="text-red-500 w-6 h-6" />
-                )}
-                {toastFS.variant === "success" && (
-                  <IconCheckMark className="text-green-500 w-6 h-6" />
-                )}
-                {toastFS.variant === "warning" && (
-                  <IconWarning className="text-yellow-500 w-6 h-6" />
-                )}
-                <div>
-                  <h4 className="text-base font-medium">
-                    {toastFS.title || "Notificación"}
-                  </h4>
-                  <h5 className="text-xs font-medium pl-1">
-                    {toastFS.subTitle || "Notificación"}
-                  </h5>
+              <div className="flex flex-row items-center gap-2 justify-between">
+                <div className="flex flex-row items-center gap-2">
+                  {toastFS.variant === "destructive" && (
+                    <IconWarning className="text-red-500 w-6 h-6" />
+                  )}
+                  {toastFS.variant === "success" && (
+                    <IconCheckMark className="text-green-500 w-6 h-6" />
+                  )}
+                  {toastFS.variant === "warning" && (
+                    <IconWarning className="text-yellow-500 w-6 h-6" />
+                  )}
+                  <div>
+                    <h4 className="text-base font-medium">
+                      {toastFS.title || "Notificación"}
+                    </h4>
+                    <h5 className="text-xs font-medium pl-1">
+                      {toastFS.subTitle || "Notificación"}
+                    </h5>
+                  </div>
                 </div>
+                <button
+                  onClick={closeToastFS}
+                  className="absolute top-2 right-2 text-white z-50"
+                >
+                  <IoClose color="#FFFFFF" />
+                </button>
               </div>
               {toastFS.message && (
                 <p className="text-[12px] text-gray-400 leading-3 ">
