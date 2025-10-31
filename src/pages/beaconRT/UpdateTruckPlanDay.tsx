@@ -8,6 +8,7 @@ import IconTruck from "@/icons/IconTruck";
 import { getCurrentDay } from "@/utils/dateUtils";
 import type { BeaconCycle } from "@/types/Beacon";
 import { roundAndFormat } from "@/lib/utilsGeneral";
+import { useAuthStore } from "@/store/AuthStore";
 
 type Volquete = {
   _id: string;
@@ -40,6 +41,7 @@ const extractNumber = (tag: string) => {
 
 export default function UpdateTruckPlanDay() {
   const { addToast } = useToast();
+  const userType = useAuthStore((state) => state.type);
   const { data: mineralTripsData = [] } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-rt",
     `beacon-track/trip?material=mineral&startDate=${
@@ -278,7 +280,10 @@ export default function UpdateTruckPlanDay() {
                 )}
               </div>
 
-              <Droppable droppableId={columnId}>
+              <Droppable
+                droppableId={columnId}
+                isDropDisabled={userType !== "admin" && userType !== "edit"}
+              >
                 {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}

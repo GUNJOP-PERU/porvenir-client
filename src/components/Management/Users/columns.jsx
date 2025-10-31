@@ -71,13 +71,34 @@ export const columns = [
   {
     accessorKey: "type",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo de usuario" />
+      <DataTableColumnHeader column={column} title="Accesos Web" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.original.type || ""}
+          <span
+            className={clsx(
+              "relative text-[10px] py-[1px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[8px] before:top-1/2 before:-translate-y-1/2 pl-4",
+              row.original?.type === "view"
+                ? "text-blue-500 bg-blue-50 before:bg-blue-500"
+                : row.original?.type === "edit"
+                ? "text-yellow-500 bg-yellow-50 before:bg-yellow-500"
+                : row.original?.type === "plan-editor"
+                ? "text-orange-500 bg-orange-50 before:bg-orange-500"
+                : row.original?.type === "admin"
+                ? "text-purple-500 bg-purple-50 before:bg-purple-500"
+                : "text-gray-500 bg-gray-50 before:bg-gray-500" 
+            )}
+          >
+            {row.getValue("type") === "admin"
+              ? "Administrador"
+              : row.getValue("type") === "edit"
+              ? "Edición"
+              : row.getValue("type") === "view"
+              ? "Solo Lectura"
+              : row.getValue("type") === "plan-editor"
+              ? "Planeador"
+              : "Ninguno"}
           </span>
         </div>
       );

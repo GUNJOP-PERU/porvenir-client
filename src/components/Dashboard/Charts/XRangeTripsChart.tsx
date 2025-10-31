@@ -139,14 +139,14 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         const isMaintenanceDetection = detection.ubicationType && (
           detection.ubication?.toLowerCase().includes("taller saturno")
         );
-
         const isBocaminaDetection = detection.ubication?.toLowerCase().includes('bocamina') ||
           detection.ubicationType?.toLowerCase().includes('bocamina');
+        const isParking = detection.ubication?.toLowerCase().includes('parqueo') ||
+          detection.ubicationType?.toLowerCase().includes('parqueo');
 
         if (isBocaminaDetection) {
           const startTime = getTimestamp(detection.f_inicio);
           const endTime = getTimestamp(detection.f_final);
-          const duration = (endTime - startTime) / 1000 / 60;
           
           const bocaminaPeriod = {
             startTime: startTime,
@@ -162,7 +162,6 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         else if (isMaintenanceDetection) {
           const startTime = getTimestamp(detection.f_inicio);
           const endTime = getTimestamp(detection.f_final);
-          const duration = (endTime - startTime) / 1000 / 60;
 
           const maintenancePeriod = {
             startTime: startTime,
@@ -172,12 +171,24 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             type: 'maintenance',
           };
           specialPeriods.push(maintenancePeriod);
+        } else if (isParking) {
+          const startTime = getTimestamp(detection.f_inicio);
+          const endTime = getTimestamp(detection.f_final);
+
+          const parkingPeriod = {
+            startTime: startTime,
+            endTime: endTime,
+            detections: [detection],
+            startIndex: detectionIndex,
+            type: 'parking',
+          };
+          specialPeriods.push(parkingPeriod);
         }
       });
 
       specialPeriods.forEach((period, periodIndex) => {
-        const color = period.type === 'bocamina' ? "#66d20e" : "#fa4a4a";
-        const periodType = period.type === 'bocamina' ? "Bocamina" : "Mantenimiento";
+        const color = period.type === 'bocamina' ? "#66d20e" : period.type === "maintenance" ? "#fa4a4a" : "#8c00ff";
+        const periodType = period.type === 'bocamina' ? "Bocamina" : period.type === "maintenance" ? "Mantenimiento" : "Parqueo";
 
         const parentTrip = allSeriesData.find(item => 
           item.trip === trip && item.isFullTrip
@@ -198,7 +209,9 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           isSpecialDetection: true,
           isBocamina: period.type === 'bocamina',
           isMaintenance: period.type === 'maintenance',
+          isParking: period.type === 'parking',
           remanejo: isRemanejo,
+          periodType: periodType,
           unitName: unit.unit.toUpperCase(),
           name: `${unit.unit} - ${periodType} ${parentTripIndex > 0 ? parentTripIndex : 'S/N'}.${periodIndex + 1}`
         });
@@ -411,7 +424,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           const locations = [
             ...new Set(specialPeriod.detections.map((d: any) => d.ubication)),
           ].join(", ");
-          const periodType = point.isBocamina ? "Bocamina" : "Mantenimiento";
+          const periodType = point.periodType;
 
           return `
           <div style="
@@ -429,7 +442,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
             </div>
 
             <div style="margin-bottom: 6px;">
-              <b style="color:${point.isBocamina ? "#3b82f6" : "#f59e0b"}">
+              <b style="color:${point.color}">
                 ${periodType.toUpperCase()}
               </b>
             </div>

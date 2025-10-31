@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import TimeAgo from "timeago-react";
-import { putDataRequest } from "@/api/api";
 import { useToast } from "@/hooks/useToaster";
 import { ModalComment } from "@/components/Dashboard/FleetStatus/ModalComment";
 import IconTruck from "@/icons/IconTruck";
-import PageHeader from "@/components/PageHeader";
+import { useAuthStore } from "@/store/AuthStore";
 import clsx from "clsx";
 import {
   Tooltip,
@@ -32,6 +31,7 @@ export default function FleetStatus() {
   } = useFetchData("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTruck, setSelectedTruck] = useState(null);
+  const userType = useAuthStore((state) => state.type);
 
   const [columns, setColumns] = useState({
     operativo: {
@@ -171,7 +171,10 @@ export default function FleetStatus() {
                     {column.name}
                   </h4>
                 </div>
-                <Droppable droppableId={columnId}>
+                <Droppable
+                  droppableId={columnId}
+                  isDropDisabled={userType !== "admin" && userType !== "edit"}
+                >
                   {(provided, snapshot) => (
                     <div
                       {...provided.droppableProps}

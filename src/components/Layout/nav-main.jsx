@@ -10,6 +10,7 @@ export function NavMain() {
   const { isCollapsed } = useAuthStore();
   const paths = useNavigation();
   const location = useLocation();
+  const userType = useAuthStore((state) => state.type);
   const pathname = location.pathname;
 
   return (
@@ -59,16 +60,17 @@ export function NavMain() {
             </div>
           ))}
         </div>
-
-        <div className={clsx("py-2 ", isCollapsed ? "px-3" : "px-5")}>
-          <NavItem
-            name="Configuración"
-            href="/configuration"
-            icon={<Settings />}
-            active={pathname === "/configuration"}
-            isCollapsed={isCollapsed}
-          />
-        </div>
+        {userType === "admin" &&
+          <div className={clsx("py-2 ", isCollapsed ? "px-3" : "px-5")}>
+            <NavItem
+              name="Configuración"
+              href="/configuration"
+              icon={<Settings />}
+              active={pathname === "/configuration"}
+              isCollapsed={isCollapsed}
+            />
+          </div>
+        }
       </nav>
     </div>
   );

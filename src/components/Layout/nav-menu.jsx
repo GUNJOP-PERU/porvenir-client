@@ -5,12 +5,15 @@ import clsx from "clsx";
 import { ChevronDown, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuthStore } from "@/store/AuthStore";
 
 export function NavMenu() {
   const paths = useNavigation();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const userType = useAuthStore((state) => state.type);
   const pathname = location.pathname;
+
   return (
     <>
       <div className="flex gap-4 items-center md:hidden">
@@ -78,15 +81,17 @@ export function NavMenu() {
             </div>
           ))}
           </div>
-           <div className="py-2 px-3">
-                    <NavItem
-                      name="Configuración"
-                      href="/configuration"
-                      icon={<Settings />}
-                      active={pathname === "/configuration"}
-                      onClose={() => setIsOpen(false)} 
-                    />
-                  </div>
+          {userType === "admin" &&
+            <div className="py-2 px-3">
+              <NavItem
+                name="Configuración"
+                href="/configuration"
+                icon={<Settings />}
+                active={pathname === "/configuration"}
+                onClose={() => setIsOpen(false)} 
+              />
+            </div>
+          }
         </div>
       </div>
     </>

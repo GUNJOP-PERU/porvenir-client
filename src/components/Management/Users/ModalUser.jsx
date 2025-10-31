@@ -43,7 +43,7 @@ const FormSchema = z.object({
   cargo: z.string().min(1, { message: "*Cargo requerido" }),
   role: z.string().min(1, { message: "*Rol requerido" }),
   code: z.string().min(8, { message: "*El usuario debe tener mínimo 8 dígitos" }),
-  type: z.enum(["user", "supervisor", "admin"], { message: "*Tipo de usuario requerido" }),
+  type: z.enum(["admin", "edit", "view", "plan-editor", "none"], { message: "*Tipo de usuario requerido" }),
   password: z.string().min(8, { message: "*La contraseña debe tener mínimo 8 dígitos" }),
   isActive: z.boolean().default(true),
 });
@@ -76,7 +76,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         role: dataCrud.role || "",
         code: dataCrud.code || "",
         password: dataCrud.password || "",
-        type: dataCrud.type || "user",
+        type: dataCrud.type || "view",
         isActive: dataCrud.isActive ?? true,
       });
     } else {
@@ -86,7 +86,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
         role: "",
         code: "",
         password: "",
-        type: "user",
+        type: "view",
         isActive: true,
       });
     }
@@ -153,7 +153,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="code"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Nombre de usuario</FormLabel>
+                    <FormLabel>Nombre de usuario (código - DNI)</FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
@@ -190,7 +190,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="type"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Tipo de usuario</FormLabel>
+                    <FormLabel>Accesos Plataforma Web</FormLabel>
 
                     <Select
                       onValueChange={field.onChange}
@@ -203,14 +203,20 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="user">
-                          Usuario (solo lectura)
-                        </SelectItem>
-                        <SelectItem value="contratista">
-                          Contratista
-                        </SelectItem>
                         <SelectItem value="admin">
                           Administrador
+                        </SelectItem>
+                        <SelectItem value="edit">
+                          Editor
+                        </SelectItem>
+                        <SelectItem value="plan-editor">
+                          Planeador
+                        </SelectItem>
+                        <SelectItem value="view">
+                          Solo Lectura
+                        </SelectItem>
+                        <SelectItem value="none">
+                          Sin Acceso
                         </SelectItem>
                       </SelectContent>
                     </Select>

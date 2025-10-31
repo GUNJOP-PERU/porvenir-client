@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
+import { GiMineWagon } from "react-icons/gi";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaTimeline } from "react-icons/fa6";
 import { useAuthStore } from "@/store/AuthStore";
@@ -24,14 +25,14 @@ export const useNavigation = () => {
         items: [
           {
             name: "Tracking Superficie",
-            href: "/",
+            href: "/",  
             icon: <IconRadar />,
             active: pathname === "/",
           },
           {
             name: "Tracking Subterraneo",
             href: "/dashboard/beacon/underground-tracking",
-            icon: <ChartArea />,
+            icon: <GiMineWagon />,
             active: pathname === "/dashboard/beacon/underground-tracking",
           },
           {
@@ -132,32 +133,63 @@ export const useNavigation = () => {
           }
         ],
       },
-      {
-        title: "Development",
-        items: [
-          {
-            name: "Linea de Tiempo de Detección",
-            href: "/dashboard/development/timeline-detection-report",
-            icon: <TbReportAnalytics />,
-            active: pathname === "/dashboard/development/timeline-detection-report",
-          },
-          {
-            name: "Tracking Superficie",
-            href: "/dashboard/development/tracking",
-            icon: <IconRadar />,
-            active: pathname === "/dashboard/development/tracking",
-          },
-          {
-            name: "Tracking Subterraneo",
-            href: "/dashboard/development/underground-tracking",
-            icon: <ChartArea />,
-            active: pathname === "/dashboard/development/underground-tracking",
-          },
-        ],
-      },
+      // {
+      //   title: "Development",
+      //   items: [
+      //     {
+      //       name: "Linea de Tiempo de Detección",
+      //       href: "/dashboard/development/timeline-detection-report",
+      //       icon: <TbReportAnalytics />,
+      //       active: pathname === "/dashboard/development/timeline-detection-report",
+      //     },
+      //     {
+      //       name: "Tracking Superficie",
+      //       href: "/dashboard/development/tracking",
+      //       icon: <IconRadar />,
+      //       active: pathname === "/dashboard/development/tracking",
+      //     },
+      //     {
+      //       name: "Tracking Subterraneo",
+      //       href: "/dashboard/development/underground-tracking",
+      //       icon: <ChartArea />,
+      //       active: pathname === "/dashboard/development/underground-tracking",
+      //     },
+      //   ],
+      // },
     ];
 
-    if (userType === "admin") {
+    if(userType === "plan-editor") {
+      return [
+        {
+          title: "Gestión",
+          items: [
+            {
+              name: "Planes",
+              icon: <IconPlan />,
+              items: [
+                {
+                  name: "Plan Diario",
+                  href: "/planDay",
+                  active: pathname === "/planDay",
+                },
+                {
+                  name: "Plan Semanal",
+                  href: "/planWeek",
+                  active: pathname === "/planWeek",
+                },
+                {
+                  name: "Plan Mensual",
+                  href: "/planMonth",
+                  active: pathname === "/planMonth",
+                },
+              ],
+            }
+          ],
+        },
+      ];
+    }
+
+    if (userType === "admin" || userType === "edit") {
       return [
         {
           title: "Gestión",

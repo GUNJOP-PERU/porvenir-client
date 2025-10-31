@@ -39,7 +39,7 @@ export default function Login() {
         token,
       };
 
-      if (!userLogued.user.rol || !["Admin", "SuperAdmin", "Web"].includes(userLogued.user.rol)) {
+      if (!userLogued.user.rol || !["admin", "view", "edit", "plan-editor"].includes(userLogued.user.type)) {
         setShowError(true);
         setTimeout(() => {
           setShowError(false);
