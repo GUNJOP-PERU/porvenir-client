@@ -4,6 +4,7 @@ import IconWarning from "@/icons/IconWarning";
 // import IconClose from "@/icons/IconClose";
 import IconCheckMark from "@/icons/IconCheckMark";
 import parse from 'html-react-parser';
+import clsx from "clsx";
 
 const ToastContext = createContext();
 
@@ -28,8 +29,10 @@ const toastVariants = cva(
 export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
   const [toastFS, setToastFS] = useState(null);
+  const [toastTruckStatus, setToastTruckStatus] = useState(null);
   const [visible, setVisible] = useState(false);
   const [visibleFS, setVisibleFS] = useState(false);
+  const [visibleTruckStatus, setVisibleTruckStatus] = useState(false);
   let toastTimer = null;
 
   const addToast = ({ title, message, variant = "default" }) => {
@@ -41,6 +44,18 @@ export function ToastProvider({ children }) {
     toastTimer = setTimeout(() => {
       setVisible(false);
       setTimeout(() => setToast(null), 300);
+    }, 30000);
+  };
+
+  const addToastTruckStatus = ({ title, message, variant = "default" }) => {
+    setToastTruckStatus({ title, message, variant });
+    setVisibleTruckStatus(true);
+
+    if (toastTimer) clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+      setVisibleTruckStatus(false);
+      setTimeout(() => setToastTruckStatus(null), 300);
     }, 30000);
   };
 
@@ -70,7 +85,7 @@ export function ToastProvider({ children }) {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ addToast, addToastFS }}>
+    <ToastContext.Provider value={{ addToast, addToastFS, addToastTruckStatus }}>
       {children}
       {toast && (
         <div className="fixed bottom-5 right-5 z-[9999] max-w-[300px] min-w-[250px]">
@@ -96,6 +111,35 @@ export function ToastProvider({ children }) {
               {toast.message && (
                 <p className="text-[11px] text-gray-400 leading-3 ">
                   {toast.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {toastTruckStatus && (
+        <div className={clsx(`fixed ${toast ? "bottom-24":"bottom-5"} right-5 z-[9999] max-w-[300px] min-w-[250px]`)}>
+          <div
+            className={`${toastVariants({ variant: toastTruckStatus.variant })} ${
+              visibleTruckStatus ? "error-visible" : "error-hidden"
+            } error-login`}
+          >
+            {toastTruckStatus.variant === "destructive" && (
+              <IconWarning className="text-red-500 w-6 h-6" />
+            )}
+            {toastTruckStatus.variant === "success" && (
+              <IconCheckMark className="text-green-500 w-6 h-6" />
+            )}
+            {toastTruckStatus.variant === "warning" && (
+              <IconWarning className="text-yellow-500 w-6 h-6" />
+            )}
+            <div className="grid gap-0.5 ">
+              <h4 className="text-xs font-medium">
+                {toastTruckStatus.title || "Notificación"}
+              </h4>
+              {toastTruckStatus.message && (
+                <p className="text-[11px] text-gray-400 leading-3 ">
+                  {toastTruckStatus.message}
                 </p>
               )}
             </div>
