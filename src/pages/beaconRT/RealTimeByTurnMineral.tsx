@@ -308,11 +308,11 @@ const RealTimeByHourRT = () => {
     const currentDate = new Date();
     let hoursPassed = 0;
     if(shiftFilter === "dia") {
-      hoursPassed = currentDate.getHours() - 7;
+      hoursPassed = currentDate.getHours() + currentDate.getMinutes() / 60 - 7;
     } else if (currentDate.getHours() < 7 && shiftFilter === "noche") {
-      hoursPassed = currentDate.getHours() + 5;
+      hoursPassed = currentDate.getHours() + currentDate.getMinutes() / 60 + 5;
     } else {
-      hoursPassed = currentDate.getHours() - 19;
+      hoursPassed = currentDate.getHours() + currentDate.getMinutes() / 60 - 19;
     }
 
     setPlanPrediction(Number((valueByHour * hoursPassed).toFixed(0)));
