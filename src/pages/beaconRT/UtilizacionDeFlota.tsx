@@ -355,8 +355,8 @@ const UtilizacionDeFlota = () => {
 
   const itemColors = {
     parqueo: {
-      outer: "bg-[#8b5e34]",
-      inner: "bg-[#bc8a5f]",
+      outer: "bg-[#bc8a5f]",
+      inner: "bg-[#8b5e34]",
       color: "#e7bc91",
     },
     superficie: {
@@ -365,13 +365,13 @@ const UtilizacionDeFlota = () => {
       color: "#ff7b9c",
     },
     unMove: {
-      outer: "bg-[#418CB1]",
-      inner: "bg-[#64ADD0]",
+      outer: "bg-[#64ADD0]",
+      inner: "bg-[#418CB1]",
       color: "#8ecae6",
     },
     mina: {
-      outer: "bg-[#5F8E65]",
-      inner: "bg-[#85A789]",
+      outer: "bg-[#85A789]",
+      inner: "bg-[#5F8E65]",
       color: "#aec3b0",
     },
     mantenimiento: {
@@ -380,9 +380,9 @@ const UtilizacionDeFlota = () => {
       color: "#ecba03",
     },
     guardia: {
-      outer: "bg-[#5F8E65]",
-      inner: "bg-[#85A789]",
-      color: "#aec3b0",
+      outer: "bg-[#a8dadc]",
+      inner: "bg-[#76B8BB]",
+      color: "#D7F1F3",
     },
   };
 
@@ -402,15 +402,15 @@ const UtilizacionDeFlota = () => {
     <div
       className={clsx(`flex-1 w-full bg-cover bg-no-repeat bg-center grid grid-cols-1 md:grid-cols-2 ${showOtherColumns ? "xl:grid-cols-5" : "xl:grid-cols-3"} gap-2 grid-rows-3 xl:grid-rows-1`)}
     >
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#4f33008c] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-200 shadow-sm flex flex-col bg-zinc-100 p-2 rounded-xl h-[calc(100vh-100px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded  ${itemColors.parqueo.color}`}
         >
-          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+          <div className="text-xs font-semibold text-zinc-600 select-none h-6 w-12 rounded-[7px] bg-zinc-200 flex items-center justify-center">
             {truckFiltered.parqueoUnits.length} / {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none text-black"
+            className="text-sm font-bold select-none text-zinc-500"
             // style={{ color: itemColors.parqueo.color }}
           >
             Parqueo
@@ -456,11 +456,11 @@ const UtilizacionDeFlota = () => {
         </div>
       </div>
 
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-200 shadow-sm flex flex-col bg-zinc-100 p-2 rounded-xl h-[calc(100vh-100px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
         >
-          <div className="text-xs font-semibold text-white select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+          <div className="text-xs font-semibold text-zinc-600 select-none h-6 w-12 rounded-[7px] bg-zinc-200 flex items-center justify-center">
             {mineDetection.filter(
               (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
             ).filter(
@@ -470,12 +470,12 @@ const UtilizacionDeFlota = () => {
             ).length} / {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none text-black"
+            className="text-sm font-bold select-none text-zinc-500"
             // style={{ color: "#e0aaff" }}
           >
             Primer Ingreso a Mina
           </h4>
-          <div className="ml-auto px-2 text-xs font-semibold text-white select-none h-6 w-fit rounded-[7px] bg-black/80 flex items-center justify-center">
+          <div className="ml-auto px-2 text-xs font-semibold text-white select-none h-6 w-fit rounded-[7px] bg-yellow-700 flex items-center justify-center">
             Promedio: {calculateAvgHour(mineDetection.filter(
               (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
             ).filter(
@@ -498,16 +498,16 @@ const UtilizacionDeFlota = () => {
               className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
               style={{
                 background: truck.firstBocamina?.isLate
-                  ? "#a81313"
-                  : "#1fa246",
+                  ? "#FE979C"
+                  : "#00C23B",
               }}
             >
               <div
                 className="rounded-lg py-1 px-1 flex items-center gap-2"
                 style={{
                   background: truck.firstBocamina?.isLate
-                    ? "#ee3232"
-                    : "#29ca59",
+                    ? "#fe6d73"
+                    : "#4BD575",
                 }}
               >
                 <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px]">
@@ -520,17 +520,17 @@ const UtilizacionDeFlota = () => {
                 <div className="flex flex-col gap-0.5 min-w-0">
                   <IconTruck
                     className="h-7 w-11"
-                    color={itemColors.mina.color}
+                    color={"#ffffff70"}
                   />
                 </div>
               </div>
 
-              <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-1 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
-                <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+              <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-1 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-700">
+                <span className="text-[10px] text-center font-semibold text-zinc-700 leading-none truncate">
                   {truck.firstBocamina?.ubication}
                 </span>
                 <br />
-                <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
+                <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-zinc-700">
                   Ingreso a Mina:{" "}
                   {format(
                     new Date(truck.firstBocamina?.startTime || 0),
@@ -544,15 +544,15 @@ const UtilizacionDeFlota = () => {
       </div>
 
       {showOtherColumns && (
-        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1320278c] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1320278c] p-2 rounded-xl h-[calc(100vh-100px)]">
           <div
             className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.unMove.color}`}
           >
-            <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+            <div className="text-xs font-semibold text-zinc-600 select-none h-6 w-12 rounded-[7px] bg-zinc-200 flex items-center justify-center">
               {truckFiltered.lunchTrucks.length} / {truckFiltered.totalTruck}
             </div>
             <h4
-              className="text-sm font-bold select-none text-black"
+              className="text-sm font-bold select-none text-zinc-500"
               // style={{ color: itemColors.unMove.color }}
             >
               En Refrigerio
@@ -584,12 +584,12 @@ const UtilizacionDeFlota = () => {
                   </div>
                 </div>
 
-                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
-                  <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-700">
+                  <span className="text-[10px] text-center font-semibold text-zinc-700 leading-none truncate">
                     Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <br />
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-white">
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center flex items-center gap-1 truncate text-zinc-700">
                     {truck.arriveDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.arriveDate),
@@ -604,17 +604,17 @@ const UtilizacionDeFlota = () => {
       )}
 
       { showOtherColumns &&(
-        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-88px)]">
+        <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-100px)]">
           <div
             className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
           >
-            <div className="text-[10px] font-semibold text-zinc-200 select-none h-5 w-9 rounded-[5px] bg-black/80 flex items-center justify-center">
+            <div className="text-[10px] font-semibold text-zinc-600 select-none h-5 w-9 rounded-[5px] bg-zinc-200 flex items-center justify-center">
               {lunchTimeMineDetection.filter(
                 (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
               ).length} / {truckFiltered.totalTruck}
             </div>
             <h4
-              className="text-sm font-bold select-none text-black"
+              className="text-sm font-bold select-none text-zinc-500"
               // style={{ color: "#e0aaff" }}
             >
               Ingreso a mina después del refrigerio
@@ -656,12 +656,12 @@ const UtilizacionDeFlota = () => {
                   </div>
                 </div>
 
-                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
-                  <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-700">
+                  <span className="text-[10px] text-center font-semibold text-zinc-700 leading-none truncate">
                     {truck.firstBocamina?.ubication}
                   </span>
                   <br />
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-white">
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] text-center text-zinc-700">
                     Ingreso a Mina:{" "}
                     {format(
                       new Date(truck.firstBocamina?.startTime || 0),
@@ -675,16 +675,16 @@ const UtilizacionDeFlota = () => {
         </div>
       )}
 
-      <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#2B302B8c] p-2 rounded-xl h-[calc(100vh-88px)]">
+      <div className="border border-zinc-200 shadow-sm flex flex-col bg-zinc-100 p-2 rounded-xl h-[calc(100vh-100px)]">
         <div
           className={`w-full flex gap-2 items-center select-none px-1 pb-1 rounded ${itemColors.guardia.color}`}
         >
-          <div className="text-xs font-semibold text-zinc-200 select-none h-6 w-12 rounded-[7px] bg-black/80 flex items-center justify-center">
+          <div className="text-xs font-semibold text-zinc-600 select-none h-6 w-12 rounded-[7px] bg-zinc-200 flex items-center justify-center">
             {truckFiltered.finalParqueoUnits.length} /{" "}
             {truckFiltered.totalTruck}
           </div>
           <h4
-            className="text-sm font-bold select-none text-black"
+            className="text-sm font-bold select-none text-zinc-500"
             // style={{ color: itemColors.guardia.color }}
           >
             Fin de guardia
@@ -712,12 +712,12 @@ const UtilizacionDeFlota = () => {
                     />
                   </div>
                 </div>
-                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-300">
-                  <span className="text-[10px] text-center font-semibold text-white leading-none truncate">
+                <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-700">
+                  <span className="text-[10px] text-center font-semibold text-zinc-700 leading-none truncate">
                     Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <br />
-                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
+                  <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-zinc-700">
                     {truck.arriveDate &&
                       `Hora de Inicio: ${format(
                         new Date(truck.arriveDate),
