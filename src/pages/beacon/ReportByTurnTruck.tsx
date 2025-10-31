@@ -322,14 +322,14 @@ const RealTimeByHourRT = () => {
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planDay.totalTonnage,
+              total: planDay.totalTonnageBlending,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planDay.totalTonnage}
+            total={planDay.totalTonnageBlending}
             color="#ff5000"
             showLegend={false}
             className="mt-2"

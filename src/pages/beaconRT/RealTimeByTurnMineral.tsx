@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import PageHeader from "@/components/PageHeaderV2";
@@ -21,6 +21,7 @@ import IconTruck from "@/icons/IconTruck";
 
 const RealTimeByHourRT = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
+  const [planPrediction, setPlanPrediction] = useState<number>(0);
   const [dateFilter, setDateFilter] = useState<
     [{ startDate: Date; endDate: Date; key: string }]
   >([
@@ -302,6 +303,32 @@ const RealTimeByHourRT = () => {
     return () => clearInterval(interval);
   }, [shiftFilter, refetch]);
 
+  const calculatePlanPrediction = useCallback(() => {
+    const valueByHour = planDay.totalTonnageBlending / 12;
+    const currentDate = new Date();
+    let hoursPassed = 0;
+    if(shiftFilter === "dia") {
+      hoursPassed = currentDate.getHours() - 7;
+    } else if (currentDate.getHours() < 7 && shiftFilter === "noche") {
+      hoursPassed = currentDate.getHours() + 5;
+    } else {
+      hoursPassed = currentDate.getHours() - 19;
+    }
+
+    setPlanPrediction(Number((valueByHour * hoursPassed).toFixed(0)));
+  }, [planDay.totalTonnageBlending, shiftFilter]);
+
+  useEffect(() => {
+    // Ejecutar inmediatamente al montar
+    calculatePlanPrediction();
+    
+    const interval = setInterval(() => {
+      calculatePlanPrediction();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [calculatePlanPrediction]);
+
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
@@ -341,11 +368,11 @@ const RealTimeByHourRT = () => {
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planDay.totalTonnage}
+            total={planDay.totalTonnageBlending}
             color="#ff5000"
             showLegend={false}
             className="mt-2"
-            prediction={prediction.predictedTotalTM}
+            prediction={planPrediction}
             predictionText="Proyección"
           />
         </div>
