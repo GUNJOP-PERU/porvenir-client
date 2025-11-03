@@ -446,7 +446,30 @@ const XRangeTripsChartHistorico = ({
             allowOverlap: true,
             defer: false,
             formatter: function(this: any) {
-              if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
+              if (this.point.isBocamina) {
+                const bocaminaIndex = this.point.specialPeriod?.bocaminaIndex || 0;
+                const isEven = bocaminaIndex % 2 === 0;
+                const topPosition = isEven ? "20px" : "-20px";
+                
+                return `
+                  <div style="
+                    width: 15px;
+                    height: 15px;
+                    background-color: #FFFFFF;
+                    border-radius: 50%;
+                    border: 2px solid #ffffff;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    top: ${topPosition};
+                    margin-bottom: 0px;
+                  ">
+                    ⛏️
+                  </div>
+                `;
+              } else if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
                 return `V${this.point.tripIndex}`;
               } else if(this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === true) {
                 return `R${this.point.remanejoIndex}`;
