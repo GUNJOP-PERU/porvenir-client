@@ -491,20 +491,21 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
               
               return `
                 <div style="
-                  width: 15px;
-                  height: 15px;
+                  width: 25px;
+                  height: 25px;
                   background-color: #FFFFFF;
                   border-radius: 50%;
-                  border: 2px solid #ffffff;
                   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
                   display: flex;
                   align-items: center;
                   justify-content: center;
+                  transform: translateX(-50%);
                   position: relative;
                   top: ${topPosition};
                   margin-bottom: 0px;
+                  overflow: hidden;
                 ">
-                  ⛏️
+                  <img src="/mine_icon_v2.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Mine" />
                 </div>
               `;
             } else if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {

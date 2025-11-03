@@ -466,7 +466,7 @@ const XRangeTripsChartHistorico = ({
                     top: ${topPosition};
                     margin-bottom: 0px;
                   ">
-                    ⛏️
+                    <img src="/mine_icon_v2.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Mine" />
                   </div>
                 `;
               } else if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
