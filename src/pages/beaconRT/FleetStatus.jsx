@@ -36,20 +36,17 @@ export default function FleetStatus() {
   const [columns, setColumns] = useState({
     operativo: {
       name: "Equipos Operativos",
-      color: "bg-green-950",
-      titleColor: "text-[#46fea5d4]",
+      color: "bg-zinc-50",
       items: [],
     },
     mantenimiento: {
       name: "Mantenimiento Preventivo",
-      color: "bg-yellow-950",
-      titleColor: "text-[#d4a406]",
+      color: "bg-zinc-50",
       items: [],
     },
     inoperativo: {
       name: "Mantenimiento Correctivo",
-      color: "bg-red-950",
-      titleColor: "text-[#ff9592]",
+      color: "bg-zinc-50",
       items: [],
     },
   });
@@ -121,19 +118,19 @@ export default function FleetStatus() {
 
   const itemColors = {
     operativo: {
-      outer: "bg-green-700/50",
-      inner: "bg-green-600",
-      color: "#46fea5d4",
+      outer: "bg-[#a7c957]",
+      inner: "bg-[#86AA31]",
+      color: "#D0EE8C",
     },
     mantenimiento: {
-      outer: "bg-yellow-700/50",
-      inner: "bg-yellow-600",
-      color: "#ecba03",
+      outer: "bg-yellow-400",
+      inner: "bg-yellow-500",
+      color: "#ffd97d",
     },
     inoperativo: {
-      outer: "bg-red-700/50",
-      inner: "bg-red-600",
-      color: "#ff9592",
+      outer: "bg-[#ff9b85]",
+      inner: "bg-[#ee6055]",
+      color: "#FFAFA9",
     },
   };
 
@@ -143,13 +140,13 @@ export default function FleetStatus() {
         <div className="rounded-xl pb-2 px-0">
           <div className="flex items-center gap-2">
             <h1 className="text-black text-md lg:text-xl font-bold leading-none">
-              Disponibilidad y utilización de la flota
+              Disponibilidad de la flota
             </h1>
-            <span className="text-[10px] text-white bg-zinc-500 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
+            <span className="text-[10px] text-zinc-400 bg-zinc-100 rounded-[6px] min-w-5 w-fit h-5 flex items-center justify-center px-1 font-bold">
               {data?.length || 0}
             </span>
           </div>
-          <p className="text-black text-[10.5px] lg:text-xs">
+          <p className="text-zinc-400 text-[10.5px] lg:text-xs">
             Resumen de Estatus Operativo (Operativos, Mantenimiento, Fuera de
             Servicio) {new Date().toLocaleDateString()}
           </p>
@@ -159,15 +156,15 @@ export default function FleetStatus() {
             {Object.entries(columns).map(([columnId, column]) => (
               <div
                 key={columnId}
-                className={`w-full flex flex-col items-center select-none p-2 rounded-xl xl:h-[calc(100vh-150px)] h-[calc(28vh)] ${column.color}`}
+                className={`w-full flex flex-col items-center select-none p-2 rounded-xl xl:h-[calc(100vh-150px)] h-[calc(28vh)] border border-zinc-200 bg-zinc-100`}
               >
-                <div className="w-full pl-1 pb-1 flex items-center gap-2 h-9">
-                  <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-[7px] bg-black/80 flex items-center justify-center">
+                <div className="w-full pl-1 flex items-center gap-2 h-7">
+                  <div
+                    className={`text-[10px] font-semibold text-zinc-600 select-none size-[18px] rounded-[5px] flex items-center justify-center bg-zinc-200`}
+                  >
                     {column.items.length}
                   </div>
-                  <h4
-                    className={`${column.titleColor} text-sm font-bold select-none`}
-                  >
+                  <h4 className={`text-zinc-500 text-sm font-bold select-none`}>
                     {column.name}
                   </h4>
                 </div>
@@ -180,7 +177,7 @@ export default function FleetStatus() {
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                       className={`p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 xl:grid-cols-4 items-start auto-rows-min gap-1.5  ${
-                        snapshot.isDraggingOver ? "bg-black/20" : ""
+                        snapshot.isDraggingOver ? "bg-zinc-200" : ""
                       }`}
                     >
                       {column.items.map((item, index) => (
@@ -200,9 +197,9 @@ export default function FleetStatus() {
                                   <div
                                     className={`p-0.5 rounded-lg shadow ${
                                       itemColors[columnId].outer
-                                    } cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1 ${
+                                    } cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-black ease-in-out duration-300 flex flex-col gap-1 ${
                                       snapshot.isDragging
-                                        ? "opacity-80 rotate-[10deg]"
+                                        ? "rotate-[10deg]"
                                         : ""
                                     }`}
                                   >
@@ -233,12 +230,16 @@ export default function FleetStatus() {
                                     <div
                                       className={clsx(
                                         "text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3 pr-0 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full",
-                                        item.connectivity === "online" 
-                                        ?   "text-white before:bg-white"
-                                        : "text-gray-400 before:bg-gray-400"
+                                        item.connectivity === "online"
+                                          ? "text-zinc-700 before:bg-zinc-700"
+                                          : "text-zinc-700 before:bg-zinc-700"
                                       )}
                                     >
-                                    {`Desde: ${formatFecha(item.changeStatusDate)} (${dayjs(item.changeStatusDate).fromNow()})`}
+                                      {`Desde: ${formatFecha(
+                                        item.changeStatusDate
+                                      )} `}{" "}
+                                      <br />(
+                                      {dayjs(item.changeStatusDate).fromNow()})
                                     </div>
                                   </div>
                                 </div>
@@ -246,15 +247,15 @@ export default function FleetStatus() {
 
                               <TooltipContent
                                 side="bottom"
-                                className="bg-black text-white text-[11px] px-2.5 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1"
+                                className="bg-black text-white text-[11px] px-2.5 py-2.5 rounded-lg max-w-[200px] shadow-none flex flex-col gap-1"
                               >
                                 <span
                                   className={clsx(
                                     "relative text-[9.5px] select-none leading-[10px] text-left",
                                     "before:content-[''] before:inline-block before:w-[4px] before:h-[4px] before:rounded-full before:mr-1",
                                     item.connectivity === "online"
-                                      ?   "text-white before:bg-white"
-                                      : "text-gray-400 before:bg-gray-400"
+                                      ? "text-amber-400 before:bg-amber-400"
+                                      : "text-zinc-700 before:bg-zinc-700"
                                   )}
                                 >
                                   {item.connectivity === "online"
@@ -270,9 +271,7 @@ export default function FleetStatus() {
                                     <span className="font-semibold text-zinc-400 text-[10px]">
                                       Comentario:
                                     </span>
-                                    <p className="">
-                                      - {item.comment}
-                                    </p>
+                                    <p className="">- {item.comment}</p>
                                   </div>
                                 )}
                               </TooltipContent>
