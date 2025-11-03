@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { PlanContent } from "./PlanDayContent";
 import { PlanHeader } from "./PlanDayHeader";
+import { FrontLaborSubHeader } from "./FrontLaborSubHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useQueryClient } from "@tanstack/react-query";
 import { getDefaultShift, getDefaultDateObj } from "@/lib/utilsGeneral";
@@ -33,7 +34,12 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
   const [dataHotTable, setDataHotTable] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
+  const [showFrontLaborSubHeader, setShowFrontLaborSubHeader] = useState(false);
+  const {
+    data: dataLaborList,
+    refetch: refetchLaborList,
+    isLoading: loadingLaborList,
+  } = useFetchData(
     "frontLabor-General",
     "frontLabor", 
     {
@@ -192,7 +198,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[570px]">
+      <DialogContent className="w-[670px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
@@ -204,13 +210,20 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
             </div>
           </div>
         </DialogHeader>
-        <div className="flex flex-col gap-7">
+        <div className="flex flex-col">
           <PlanHeader
             form={form}
             onSubmit={onSubmit}
             dataLaborList={dataLaborList}
+            refetchLaborList={refetchLaborList}
+            loadingLaborList={loadingLaborList}
             hasData={dataHotTable.length > 0}
             loadingGlobal={loadingGlobal}
+            frontLaborSubHeader={showFrontLaborSubHeader}
+            setShowFrontLaborSubHeader={setShowFrontLaborSubHeader}
+          />
+          <FrontLaborSubHeader
+            frontLaborSubHeader={showFrontLaborSubHeader}
           />
           <div className="flex flex-col gap-3">
             <div>

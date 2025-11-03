@@ -174,7 +174,7 @@ export const useNavigation = () => {
               icon: <IconPlan />,
               items: [
                 {
-                  name: "Plan Diario",
+                  name: "Plan Turno",
                   href: "/planDay",
                   active: pathname === "/planDay",
                 },
@@ -231,7 +231,7 @@ export const useNavigation = () => {
               icon: <IconPlan />,
               items: [
                 {
-                  name: "Plan Diario",
+                  name: "Plan Turno",
                   href: "/planDay",
                   active: pathname === "/planDay",
                 },

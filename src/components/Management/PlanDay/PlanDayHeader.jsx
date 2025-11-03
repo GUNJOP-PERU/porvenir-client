@@ -26,19 +26,24 @@ import { es } from "date-fns/locale";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./PlanDayFilterItems";
 import IconEdit from "@/icons/IconEdit";
+import { ButtonRefresh } from "../../../components/ButtonRefresh";
 
 export const PlanHeader = ({
   form,
   onSubmit,
   dataLaborList,
+  refetchLaborList,
+  loadingLaborList,
   hasData,
   loadingGlobal,
+  frontLaborSubHeader,
+  setShowFrontLaborSubHeader
 }) => {
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex gap-2 justify-between"
+        className="flex gap-2 justify-between mb-4"
       >
         <div className="flex gap-2">
           <FormField
@@ -85,7 +90,7 @@ export const PlanHeader = ({
                         )}
                       >
                         {field.value ? (
-                         format(field.value, "dd MMM", { locale: es })
+                          format(field.value, "dd MMM", { locale: es })
                         ) : (
                           <span>Fecha</span>
                         )}
@@ -128,6 +133,28 @@ export const PlanHeader = ({
               </FormItem>
             )}
           />
+          <ButtonRefresh
+            refetch={refetchLaborList}
+            isFetching={loadingLaborList}
+            showText={false}
+          />
+          <Button
+            type="button"
+            variant="tertiary"
+            onClick={() => setShowFrontLaborSubHeader(!frontLaborSubHeader)}
+          >
+            {frontLaborSubHeader ? (
+              <>
+                <IconEdit className="w-5 h-5 stroke-primary" />
+                Cancelar
+              </>
+            ) : (
+              <>
+                <CircleFadingPlus className="text-primary w-4 h-4" />
+                Front Labor
+              </>
+            )}
+          </Button>
         </div>
         <Button type="submit" disabled={loadingGlobal} variant="tertiary">
           {hasData ? (

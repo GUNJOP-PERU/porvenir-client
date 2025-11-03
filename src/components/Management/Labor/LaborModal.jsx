@@ -49,7 +49,7 @@ const FormSchema = z.object({
   status: z.boolean().default(true),
 });
 
-export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
+export const  LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
   const handleFormSubmit = useHandleFormSubmit();

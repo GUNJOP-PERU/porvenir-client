@@ -97,8 +97,8 @@ export function FilterItems({ title, options = [], field, loadingGlobal }) {
               </div>
             ) : (
               <div
+                className="flex flex-col"
                 style={{
-                  height: `${virtualizer.getTotalSize()}px`,
                   position: "relative",
                 }}
               >
@@ -110,14 +110,7 @@ export function FilterItems({ title, options = [], field, loadingGlobal }) {
                     <div
                       key={item.name}
                       ref={virtualizer.measureElement}
-                      data-index={virtualRow.index}
                       className="flex items-center px-2 py-1.5 cursor-pointer hover:bg-gray-100 rounded-lg"
-                      style={{
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${
-                          virtualRow.start - index * virtualRow.size
-                        }px)`,
-                      }}
                       onClick={() => toggleSelection(item.name)}
                     >
                       <div

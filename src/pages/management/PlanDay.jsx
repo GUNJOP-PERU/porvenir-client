@@ -21,7 +21,7 @@ function PlanDay() {
   return (
     <>
       <PageHeader
-        title="Gestión de Plan Diario"
+        title="Gestión del Plan de Turno"
         description="Administre los planes y sus caractestisticas."
         count={countItems(data)}
         refetch={refetch}
