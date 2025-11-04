@@ -15,7 +15,7 @@ export const useGraphicData = (symbol, endpoint,keyPrefix = "dashboard") => {
   return { data, isLoading, isError, error };
 };
 
-export function useFetchGraphicData({ queryKey, endpoint,filters }) {
+export function useFetchGraphicData({ queryKey, endpoint,filters, refetchInterval = 3000 }) {
   return useQuery({
     queryKey: ["dashboard", queryKey, filters ],
     queryFn: () => getDataGraphicRequest(`${endpoint}?${filters}`),
@@ -23,6 +23,7 @@ export function useFetchGraphicData({ queryKey, endpoint,filters }) {
     refetchOnWindowFocus: false,
     retry: 1, 
     retryDelay: 2000,
+    refetchInterval,
   });
 }
 export function useFetchDataRealtime({ queryKey, endpoint }) {
