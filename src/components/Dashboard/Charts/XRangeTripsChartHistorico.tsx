@@ -26,21 +26,20 @@ const XRangeTripsChartHistorico = ({
   const tableData = useMemo(() => {
     return data.map(unit => {
       const tripsWithDestination = unit.allTrips.filter(trip => 
-        trip.endUbication && trip.endUbication.trim() !== ''
+        (trip.endUbication && trip.endUbication.trim() !== '') &&
+        trip.remanejo === false
       );
       
       const totalTrips = tripsWithDestination.length;
       const totalDuration = unit.allTrips.reduce((acc, trip) => {
-        const start = new Date(trip.startDate).getTime();
-        const end = new Date(trip.endDate).getTime();
-        return acc + trip.tripDuration;
+        return acc + trip.tripDurationMin;
       }, 0);
       
       const avgDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
       const totalHours = totalDuration / 60;
       const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
       const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
-
+      
       return {
         unit: unit.unit.toUpperCase(),
         totalTrips,
