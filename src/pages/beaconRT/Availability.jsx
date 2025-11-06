@@ -41,71 +41,79 @@ export const Availability = () => {
   });
 
   const dataFiltered = useMemo(() => {
-  if (!data || data.length === 0) {
-    // aun así devolvemos todas las horas del turno con ceros para mantener la forma
-    const hoursEmpty = (form.shift === "dia"
-      ? Array.from({ length: 13 }, (_, i) => 7 + i) // 7..19
-      : [...Array.from({ length: 5 }, (_, i) => 19 + i), ...Array.from({ length: 7 }, (_, i) => i)] // 19..23,0..6
-    );
+    if (!data || data.length === 0) {
+      const hoursEmpty =
+        form.shift === "dia"
+          ? Array.from({ length: 12 }, (_, i) => 7 + i) // 7..19
+          : [
+              ...Array.from({ length: 5 }, (_, i) => 19 + i),
+              ...Array.from({ length: 7 }, (_, i) => i),
+            ];
 
-    return hoursEmpty.map((h) => ({
-      dateString: form.date,
-      hours: String(h).padStart(2, "0") + ":00",
-      operativo: 0,
-      inoperativo: 0,
-      mantenimiento: 0,
-      disponibilidad: 0,
-    }));
-  }
+      return hoursEmpty.map((h) => ({
+        dateString: form.date,
+        hours: String(h).padStart(2, "0") + ":00",
+        operativo: 0,
+        inoperativo: 0,
+        mantenimiento: 0,
+        disponibilidad: 0,
+      }));
+    }
 
-  // helper para normalizar el hour value de cada snapshot (soporta number, "18", "18:00")
-  const normalizeHour = (raw) => {
-    if (typeof raw === "number") return raw;
-    if (!raw) return NaN;
-    const s = String(raw).trim();
-    const m = s.match(/^(\d{1,2})/);
-    return m ? Number(m[1]) : NaN;
-  };
-
-  // construir lista de horas del turno
-  const shiftHours =
-    form.shift === "dia"
-      ? Array.from({ length: 12 }, (_, i) => 7 + i) // 7..18
-      : [...Array.from({ length: 5 }, (_, i) => 19 + i), ...Array.from({ length: 7 }, (_, i) => i)]; // 19..23,0..6
-
-  // Para cada hora, sumar todos los snapshots que correspondan a esa hora
-  const result = shiftHours.map((hour) => {
-    const matchingSnapshots = data.filter((snap) => normalizeHour(snap.hours) === hour);
-
-    // Si hay múltiples snapshots en la misma hora, los acumulamos
-    const counts = matchingSnapshots.reduce(
-      (acc, snap) => {
-        (snap.data || []).forEach((item) => {
-          const s = String(item.status || "").toLowerCase().trim();
-          if (s === "operativo") acc.operativo++;
-          else if (s === "inoperativo") acc.inoperativo++;
-          else if (s === "mantenimiento") acc.mantenimiento++;
-        });
-        return acc;
-      },
-      { operativo: 0, inoperativo: 0, mantenimiento: 0 }
-    );
-
-    const total = counts.operativo + counts.inoperativo + counts.mantenimiento;
-    const disponibilidad = total ? Number(((counts.operativo / total) * 100).toFixed(2)) : 0;
-
-    return {
-      dateString: form.date,
-      hours: String(hour).padStart(2, "0") + ":00",
-      operativo: counts.operativo,
-      inoperativo: counts.inoperativo,
-      mantenimiento: counts.mantenimiento,
-      disponibilidad,
+    const normalizeHour = (raw) => {
+      if (typeof raw === "number") return raw;
+      if (!raw) return NaN;
+      const s = String(raw).trim();
+      const m = s.match(/^(\d{1,2})/);
+      return m ? Number(m[1]) : NaN;
     };
-  });
 
-  return result;
-}, [data, form.date, form.shift]);
+    const shiftHours =
+      form.shift === "dia"
+        ? Array.from({ length: 12 }, (_, i) => 7 + i)
+        : [
+            ...Array.from({ length: 5 }, (_, i) => 19 + i),
+            ...Array.from({ length: 7 }, (_, i) => i),
+          ];
+
+    const result = shiftHours.map((hour) => {
+      const matchingSnapshots = data.filter(
+        (snap) => normalizeHour(snap.hours) === hour
+      );
+
+      const counts = matchingSnapshots.reduce(
+        (acc, snap) => {
+          (snap.data || []).forEach((item) => {
+            const s = String(item.status || "")
+              .toLowerCase()
+              .trim();
+            if (s === "operativo") acc.operativo++;
+            else if (s === "inoperativo") acc.inoperativo++;
+            else if (s === "mantenimiento") acc.mantenimiento++;
+          });
+          return acc;
+        },
+        { operativo: 0, inoperativo: 0, mantenimiento: 0 }
+      );
+
+      const total =
+        counts.operativo + counts.inoperativo + counts.mantenimiento;
+      const disponibilidad = total
+        ? Number(((counts.operativo / total) * 100).toFixed(2))
+        : 0;
+
+      return {
+        dateString: form.date,
+        hours: String(hour).padStart(2, "0") + ":00",
+        operativo: counts.operativo,
+        inoperativo: counts.inoperativo,
+        mantenimiento: counts.mantenimiento,
+        disponibilidad,
+      };
+    });
+
+    return result;
+  }, [data, form.date, form.shift]);
 
   return (
     <div className="flex-1 w-full bg-cover bg-no-repeat bg-center flex flex-col gap-4">
@@ -176,11 +184,7 @@ export const Availability = () => {
           icon={BrickWall}
           classIcon="text-[#74add1]"
         >
-          <ChartAvailability
-            data={dataFiltered}
-            isLoading={isFetching}
-            isError={isError}
-          />
+          <ChartAvailability data={dataFiltered} isError={isError} />
         </CardTitle>
         <CardTitle
           title="Cantidad de vehiculos por estado"
@@ -188,11 +192,7 @@ export const Availability = () => {
           icon={BrickWall}
           classIcon="text-[#74add1]"
         >
-          <TimelineStatus
-            data={dataFiltered}
-            isLoading={isFetching}
-            isError={isError}
-          />
+          <TimelineStatus data={dataFiltered} isError={isError} />
         </CardTitle>
       </div>
     </div>
