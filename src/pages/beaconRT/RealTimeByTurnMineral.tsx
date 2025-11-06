@@ -21,7 +21,6 @@ import IconTruck from "@/icons/IconTruck";
 
 const RealTimeByHourRT = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
-  const [planPrediction, setPlanPrediction] = useState<number>(0);
   const [dateFilter, setDateFilter] = useState<
     [{ startDate: Date; endDate: Date; key: string }]
   >([
@@ -93,7 +92,7 @@ const RealTimeByHourRT = () => {
   }, [planData, shiftFilter]);
 
   const prediction = useMemo(() => {
-    return calculateTripPrediction(data, beaconTruck, baseData.mineral);
+    return calculateTripPrediction(data, beaconTruck, baseData.mineral, planDay.totalTonnageBlending);
   }, [data, beaconTruck, baseData.mineral, shiftFilter]);
 
   const baseStats = useMemo(() => {
@@ -314,8 +313,6 @@ const RealTimeByHourRT = () => {
     } else {
       hoursPassed = currentDate.getHours() + currentDate.getMinutes() / 60 - 19;
     }
-
-    setPlanPrediction(Number((valueByHour * hoursPassed).toFixed(0)));
   }, [planDay.totalTonnageBlending, shiftFilter]);
 
   useEffect(() => {
@@ -373,7 +370,7 @@ const RealTimeByHourRT = () => {
             color="#ff5000"
             showLegend={false}
             className="mt-2"
-            prediction={planPrediction}
+            prediction={prediction.predictedTotalTM}
             predictionText="Proyección"
           />
         </div>

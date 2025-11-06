@@ -43,12 +43,16 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       
       const avgDuration = totalTrips > 0 ? totalDuration / totalTrips : 0;
       const totalHours = totalDuration / 60;
+      const totalTripsSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length;
+      const totalTripsSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").length;
       const avgSubterraneo = tripsWithDestination.filter((trip) => trip.location === "Subterraneo").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Subterraneo").length || 1);
       const avgSuperficie = tripsWithDestination.filter((trip) => trip.location === "Superficie").reduce((acc, trip) => acc + trip.tripDurationMin, 0) / (tripsWithDestination.filter((trip) => trip.location === "Superficie").length || 1);
       
       return {
         unit: unit.unit.toUpperCase(),
         totalTrips,
+        totalTripsSubterraneo,
+        totalTripsSuperficie,
         totalHours: totalHours.toFixed(1),
         avgDuration: avgDuration.toFixed(1),
         avgSubterraneo: avgSubterraneo,
@@ -59,6 +63,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
   const totals = useMemo(() => {
     const totalTrips = tableData.reduce((acc, row) => acc + row.totalTrips, 0);
+    const totalTripsSubterraneo = tableData.reduce((acc, row) => acc + row.totalTripsSubterraneo, 0);
+    const totalTripsSuperficie = tableData.reduce((acc, row) => acc + row.totalTripsSuperficie, 0);
     const totalHours = tableData.reduce((acc, row) => acc + parseFloat(row.totalHours), 0);
     const avgDuration = tableData.reduce((acc, row) => acc + parseFloat(row.avgDuration), 0);
     const avgSubterraneo = tableData.reduce((acc, row) => acc + row.avgSubterraneo, 0) / tableData.length;
@@ -68,6 +74,8 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       totalTrips,
       totalHours,
       avgDuration,
+      totalTripsSubterraneo,
+      totalTripsSuperficie,
       avgSubterraneo,
       avgSuperficie,
     }
@@ -101,13 +109,13 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
 
       let tripColor = "#dbdbdb";
       if (isDesmonte) {
-        tripColor = "#3c3c3c";
+        tripColor = "#ff5000"; // #3c3c3c
       } else if (isRemanejo) {
-        tripColor = "#f9c83e";
+        tripColor = "#ff5000"; //#f9c83e
       } else if (isSuperficie) {
-        tripColor = "#0aa7f0";
+        tripColor = "#ff5000"; // #0aa7f0
       } else if (isSubterraneo) {
-        tripColor = "#096bdb";
+        tripColor = "#ff5000"; // #096bdb
       }
       
       const displayTripIndex = isCompleteTrip && !isRemanejo ? ++validTripCounter : 0;
@@ -186,7 +194,7 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
       });
 
       specialPeriods.forEach((period, periodIndex) => {
-        const color = period.type === 'bocamina' ? "#66d20e" : period.type === "maintenance" ? "#fa4a4a" : "#8c00ff";
+        const color = period.type === 'bocamina' ? "#66d20e" : period.type === "maintenance" ? "#dbdbdb" : "#dbdbdb";
         const periodType = period.type === 'bocamina' ? "Bocamina" : period.type === "maintenance" ? "Mantenimiento" : "Parqueo";
 
         const parentTrip = allSeriesData.find(item => 
@@ -484,31 +492,32 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
           allowOverlap: true,
           defer: false,
           formatter: function(this: any) {
-            if (this.point.isBocamina) {
-              const bocaminaIndex = this.point.specialPeriod?.bocaminaIndex || 0;
-              const isEven = bocaminaIndex % 2 === 0;
-              const topPosition = isEven ? "20px" : "-20px";
+            // if (this.point.isBocamina) {
+            //   const bocaminaIndex = this.point.specialPeriod?.bocaminaIndex || 0;
+            //   const isEven = bocaminaIndex % 2 === 0;
+            //   const topPosition = isEven ? "20px" : "-20px";
               
-              return `
-                <div style="
-                  width: 25px;
-                  height: 25px;
-                  background-color: #FFFFFF;
-                  border-radius: 50%;
-                  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  transform: translateX(-50%);
-                  position: relative;
-                  top: ${topPosition};
-                  margin-bottom: 0px;
-                  overflow: hidden;
-                ">
-                  <img src="/mine_icon_v2.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Mine" />
-                </div>
-              `;
-            } else if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
+            //   return `
+            //     <div style="
+            //       width: 25px;
+            //       height: 25px;
+            //       background-color: #FFFFFF;
+            //       border-radius: 50%;
+            //       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            //       display: flex;
+            //       align-items: center;
+            //       justify-content: center;
+            //       transform: translateX(-50%);
+            //       position: relative;
+            //       top: ${topPosition};
+            //       margin-bottom: 0px;
+            //       overflow: hidden;
+            //     ">
+            //       <img src="/mine_icon_v2.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Mine" />
+            //     </div>
+            //   `;
+            // } else
+            if (this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === false) {
               return `V${this.point.tripIndex}`;
             } else if(this.point.isFullTrip && this.point.hasDestination && this.point.remanejo === true) {
               return `R${this.point.remanejoIndex}`;
@@ -546,25 +555,25 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       
-      <div className="w-[350px] min-w-[350px] flex flex-col mt-[-40px]">
+      <div className="w-[350px] min-w-[350px] flex flex-col mt-[-20px]">
         <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
-          <div className="grid grid-cols-4 gap-1 text-xs font-semibold text-gray-700">
-            <div className="text-center">Viajes</div>
+          <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-gray-700">
+            {/* <div className="text-center">Viajes</div> */}
             <div className="text-center">Horas</div>
-            <div className="text-center">Avg. Subterráneo</div>
-            <div className="text-center">Avg. Superficie</div>
+            <div className="text-center">Subterráneo</div>
+            <div className="text-center">Superficie</div>
           </div>
         </div>
 
         <div className="bg-gray-50 border border-gray-200 px-3 py-2 border-t-2 border-t-gray-400 h-[40px]">
-          <div className="grid grid-cols-4 gap-1 text-xs font-bold text-gray-800">
-            <div className="text-center text-black">{totals.totalTrips}</div>
+          <div className="grid grid-cols-3 gap-1 text-xs font-bold text-gray-800">
+            {/* <div className="text-center text-black">{totals.totalTrips}</div> */}
             <div className="text-center text-black">{totals.totalHours.toFixed(1)}h</div>
             <div className="text-center text-black">
-              {totals.avgSubterraneo >= 60 ? `${(totals.avgSubterraneo / 60).toFixed(1)}hrs` : `${totals.avgSubterraneo.toFixed(1)}min`}
+              <p>{totals.totalTripsSubterraneo} vjs.</p>
             </div>
             <div className="text-center text-black">
-              {totals.avgSuperficie >= 60 ? `${(totals.avgSuperficie / 60).toFixed(1)}hrs` : `${totals.avgSuperficie.toFixed(1)}min`}
+              <p>{totals.totalTripsSuperficie} vjs.</p>
             </div>
           </div>
         </div>
@@ -580,14 +589,21 @@ const XRangeTripsChart = ({ data }: XRangeTripsChartProps) => {
                 borderBottom: '1px solid #f3f4f6'
               }}
             >
-              <div className="grid grid-cols-4 gap-1 text-xs w-full">
-                <div className="font-bold text-black text-center">{row.totalTrips}</div>
-                <div className="font-bold text-black text-center">{row.totalHours}h</div>
+              <div className="grid grid-cols-3 gap-1 text-xs w-full">
+                {/* <div className="flex flex-col text-black text-center">
+                  <p><b>Sub.</b> {row.totalTripsSubterraneo}</p>
+                  <p><b>Sup.</b> {row.totalTripsSuperficie}</p>
+                </div> */}
                 <div className="font-bold text-black text-center">
-                  {row.avgSubterraneo >= 60 ? `${(row.avgSubterraneo / 60).toFixed(1)}hrs` : `${row.avgSubterraneo.toFixed(1)}min`}
+                  {row.totalHours}h
                 </div>
                 <div className="font-bold text-black text-center">
-                  {row.avgSuperficie >= 60 ? `${(row.avgSuperficie / 60).toFixed(1)}hrs` : `${row.avgSuperficie.toFixed(1)}min`}
+                  <p>{row.totalTripsSubterraneo} vjs.</p>
+                  <p>prom. {row.avgSubterraneo >= 60 ? `${(row.avgSubterraneo / 60).toFixed(1)} h` : `${row.avgSubterraneo.toFixed(1)} min`}</p>
+                </div>
+                <div className="font-bold text-black text-center">
+                  <p>{row.totalTripsSuperficie} vjs.</p>
+                  <p>prom. {row.avgSuperficie >= 60 ? `${(row.avgSuperficie / 60).toFixed(1)} h` : `${row.avgSuperficie.toFixed(1)} min`}</p>
                 </div>
               </div>
             </div>

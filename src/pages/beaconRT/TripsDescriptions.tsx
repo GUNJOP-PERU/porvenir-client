@@ -92,7 +92,7 @@ const TripsDescriptionRT = () => {
         ]}
         actions={
           <div className="flex flex-row gap-2">
-            <div className="flex flex-row items-center gap-1">
+            {/* <div className="flex flex-row items-center gap-1">
               <span className="flex bg-[#0aa7f0] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Viaje Superficie
@@ -123,15 +123,21 @@ const TripsDescriptionRT = () => {
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
-              <p className="text-[11px] font-bold">
-                Bocamina
-              </p>
-            </div>
-            <div className="flex flex-row items-center gap-1">
               <span className="flex bg-[#EF4444] w-2 h-2 rounded-full"/>
               <p className="text-[11px] font-bold">
                 Mantenimiento
+              </p>
+            </div> */}
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Viajes
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-1">
+              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
+              <p className="text-[11px] font-bold">
+                Bocamina
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">

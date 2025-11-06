@@ -28,7 +28,7 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
       type: "column",
       height: 430,
       backgroundColor: "transparent",
-      marginLeft: 110,
+      marginLeft: 105,
       marginRight: 0
     },
     title: {
@@ -51,13 +51,13 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
       tickLength: 0,
     },
     yAxis: {
-      title: { text: null },
+      title: { text: "Disponibilidad" },
       labels: { enabled: false },
+      lineWidth: 1,
+      lineColor: "#D9D9D9",
       gridLineColor: "#D9D9D9",
-      gridLineWidth: 0.5,
-      gridLineDashStyle: "Dash",
+      gridLineWidth: 1,
     },
-
     plotOptions: {
       column: {
         stacking: "normal",
@@ -65,7 +65,7 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
         pointPadding: 0.05,
         groupPadding: 0.05,
         borderWidth: 0,
-        pointWidth: 120,
+        pointWidth: 115,
         dataLabels: {
           enabled: true,
           style: {
@@ -98,12 +98,12 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
           },
         },
       },
-      {
-        type: "spline",
-        name: "Operativo",
-        data: chartData,
-        color: "#f9c83e",
-      },
+      // {
+      //   type: "spline",
+      //   name: "Operativo",
+      //   data: chartData,
+      //   color: "#f9c83e",
+      // },
     ],
     tooltip: {
       shared: true,

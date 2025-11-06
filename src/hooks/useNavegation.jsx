@@ -66,7 +66,7 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/fleet-status",
           },
           {
-            name: "Utilización de flota",
+            name: "Registro de Ingreso y Salida",
             href: "/dashboard/beacon/utilizacion-de-flota",
             icon: <LandPlot />,
             active: pathname === "/dashboard/beacon/utilizacion-de-flota",
@@ -84,7 +84,7 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/update-truck-plan-day",
           },
           {
-            name: "Disponibilidad",
+            name: "Disponibilidad Hora a Hora",
             href: "/dashboard/beacon/availability",
             icon: <TbReportAnalytics />,
             active: pathname === "/dashboard/beacon/availability",

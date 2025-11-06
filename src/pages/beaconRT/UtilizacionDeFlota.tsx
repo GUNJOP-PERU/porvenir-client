@@ -413,7 +413,7 @@ const UtilizacionDeFlota = () => {
             className="text-sm font-bold select-none text-zinc-500"
             // style={{ color: itemColors.parqueo.color }}
           >
-            Parqueo
+            Parqueo (Inicio de turno)
           </h4>
         </div>
         <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
@@ -471,12 +471,11 @@ const UtilizacionDeFlota = () => {
           </div>
           <h4
             className="text-sm font-bold select-none text-zinc-500"
-            // style={{ color: "#e0aaff" }}
           >
             Primer Ingreso a Mina
           </h4>
-          <div className="ml-auto px-2 text-xs font-semibold text-white select-none h-6 w-fit rounded-[7px] bg-yellow-700 flex items-center justify-center">
-            Promedio: {calculateAvgHour(mineDetection.filter(
+          <div className="ml-auto px-2 text-xs font-bold text-white select-none h-6 w-fit rounded-[7px] bg-orange-600 flex items-center justify-center">
+            Prom. Hora de Ingreso: {calculateAvgHour(mineDetection.filter(
               (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
             ).filter(
               (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
@@ -687,7 +686,7 @@ const UtilizacionDeFlota = () => {
             className="text-sm font-bold select-none text-zinc-500"
             // style={{ color: itemColors.guardia.color }}
           >
-            Fin de guardia
+            Parqueo (Fin de turno)
           </h4>
         </div>
         <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">

@@ -1,4 +1,4 @@
-import { startOfWeek, endOfWeek, format, eachDayOfInterval, addDays, addHours, add } from "date-fns";
+import { startOfWeek, endOfWeek, format, eachDayOfInterval, addDays, addHours, set } from "date-fns";
 
 export const getCurrentWeekStartEndDates = () => {
   const currentDate = new Date();
@@ -79,8 +79,8 @@ export const getCurrentDay = () => {
 
   return {
     shift: currentShift,
-    startDate: isAfter7PM ? addDays(currentDate, 1) : currentDate,
-    endDate: isAfter7PM ? addDays(currentDate, 1) : currentDate,
+    startDate: isAfter7PM ? addDays(currentDate, 1) : set(currentDate, { hours: 7, minutes: 0, seconds: 0, milliseconds: 0 }),
+    endDate: isAfter7PM ? addDays(currentDate, 1) : set(currentDate, { hours: 19, minutes: 0, seconds: 0, milliseconds: 0 }),
     startDateString: format(isAfter7PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
     endDateString: format(isAfter7PM ? addDays(currentDate, 1) : currentDate, "yyyy-MM-dd"),
   };
