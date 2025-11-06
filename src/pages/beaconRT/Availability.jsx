@@ -70,7 +70,7 @@ export const Availability = () => {
   // construir lista de horas del turno
   const shiftHours =
     form.shift === "dia"
-      ? Array.from({ length: 13 }, (_, i) => 7 + i) // 7..19
+      ? Array.from({ length: 12 }, (_, i) => 7 + i) // 7..18
       : [...Array.from({ length: 5 }, (_, i) => 19 + i), ...Array.from({ length: 7 }, (_, i) => i)]; // 19..23,0..6
 
   // Para cada hora, sumar todos los snapshots que correspondan a esa hora

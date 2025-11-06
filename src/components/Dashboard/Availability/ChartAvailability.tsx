@@ -28,6 +28,8 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
       type: "column",
       height: 430,
       backgroundColor: "transparent",
+      marginLeft: 110,
+      marginRight: 0
     },
     title: {
       text: "",
@@ -63,6 +65,7 @@ const ChartAvailability = ({ data, isLoading, isError }: HeatmapProps) => {
         pointPadding: 0.05,
         groupPadding: 0.05,
         borderWidth: 0,
+        pointWidth: 120,
         dataLabels: {
           enabled: true,
           style: {
