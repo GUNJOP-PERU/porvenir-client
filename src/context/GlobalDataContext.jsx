@@ -124,7 +124,10 @@ export const GlobalDataProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      setData(null);
+      setData(setData((values) => ({
+          ...values,
+          truckStatus: []
+        })));
       throw error;
     }
   }, [data.truckStatus, addToast, addToastTruckStatus]);
