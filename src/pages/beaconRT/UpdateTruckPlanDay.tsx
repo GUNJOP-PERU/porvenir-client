@@ -9,13 +9,13 @@ import { getCurrentDay } from "@/utils/dateUtils";
 import type { BeaconCycle } from "@/types/Beacon";
 import { roundAndFormat } from "@/lib/utilsGeneral";
 import { useAuthStore } from "@/store/AuthStore";
+import IconMineral from "@/icons/IconMineral";
+import IconClearance from "@/icons/IconClearance";
 
 type Volquete = {
   _id: string;
   id?: string;
-  type: string;
-  tagName: string;
-  plate: string;
+  tag: string;
 };
 
 type Plan = {
@@ -53,13 +53,13 @@ export default function UpdateTruckPlanDay() {
   );
   const { data: planData = [], refetch } = useFetchData<Plan[]>(
     "plan-extract-realtime",
-    "planDay/byDay?type=executed&populate=true",
+    `planDay/by-date-range?startDate=${getCurrentDay().startDateString}&endDate=${getCurrentDay().endDateString}&type=executed&shift=${getCurrentDay().shift}`,
     {}
   );
 
   const { data: availableTrucks = [] } = useFetchData<Volquete[]>(
-    "vehicle",
-    "vehicle?type=truck",
+    "beacon-truck",
+    "beacon-truck",
     {}
   );
 
@@ -97,13 +97,11 @@ export default function UpdateTruckPlanDay() {
       titleColor: "text-[#D1686D]",
       isValid: false,
       items: unassigned
-        .slice() // evita mutar availableTrucks
-        .sort((a, b) => extractNumber(a.tagName) - extractNumber(b.tagName))
+        .slice() 
+        .sort((a, b) => extractNumber(a.tag) - extractNumber(b.tag))
         .map((v) => ({
           id: v._id,
-          tagName: v.tagName,
-          plate: v.plate,
-          type: v.type,
+          tag: v.tag,
           color: "#FE979C",
           bgColor: "bg-[#fe6d73]",
         })),
@@ -119,17 +117,16 @@ export default function UpdateTruckPlanDay() {
         color: "bg-zinc-800",
         titleColor: "text-[#ff5000]",
         tonnage: plan.tonnage,
+         phase: plan.phase,
         tonnageExecuted: tripInfo?.tonnage || 0,
         trips: tripInfo?.trips || 0,
         isValid: true,
         items: (plan.volquetes || [])
-          .slice() // evita mutar plan.volquetes
-          .sort((a, b) => extractNumber(a.tagName) - extractNumber(b.tagName))
+          .slice() 
+          .sort((a, b) => extractNumber(a.tag) - extractNumber(b.tag))
           .map((v) => ({
             id: v._id,
-            tagName: v.tagName,
-            plate: v.plate,
-            type: v.type,
+            tag: v.tag,
             color: "#FF9464",
             bgColor: "bg-[#ff5000]",
           })),
@@ -184,9 +181,7 @@ export default function UpdateTruckPlanDay() {
               ...destPlan.volquetes,
               {
                 _id: moved.id,
-                tagName: moved.tagName,
-                plate: moved.plate,
-                type: moved.type,
+                tag: moved.tag,
               },
             ],
           };
@@ -252,7 +247,39 @@ export default function UpdateTruckPlanDay() {
               <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-b-[7px] bg-white/10 flex items-center justify-center absolute top-0 right-0">
                 {column.items.length}
               </div>
-              <div className="w-full h-12 flex flex-col justify-center gap-1 px-2">
+              <div className="w-full h-20 flex flex-col justify-center gap-1 px-2">
+                {column.phase && (
+                  <div className="flex items-center gap-1">
+                    <div
+                      className={clsx(
+                        "size-6 flex items-center justify-center rounded-[8px] border",
+                        column.phase === "mineral"
+                          ? "bg-[#134E4A] border-[#14B8A6]"
+                          : column.phase === "desmonte"
+                          ? "bg-[#78350F] border-[#f59e0b]"
+                          : "bg-zinc-700 border-zinc-600"
+                      )}
+                    >
+                      {column.phase === "mineral" ? (
+                        <IconMineral className="w-4 h-4 text-blue-400" />
+                      ) : column.phase === "desmonte" ? (
+                        <IconClearance className="w-4 h-4 fill-[#f59e0b]" />
+                      ) : null}
+                    </div>
+                    <span
+                      className={clsx(
+                        "text-xs font-bold uppercase",
+                        column.phase === "mineral"
+                          ? "text-[#14B8A6]"
+                          : column.phase === "desmonte"
+                          ? "text-[#f59e0b]"
+                          : "text-zinc-600"
+                      )}
+                    >
+                      {column.phase}
+                    </span>
+                  </div>
+                )}
                 <h4
                   className={`${column.titleColor} text-sm uppercase font-bold select-none truncate leading-none`}
                 >
@@ -319,7 +346,7 @@ export default function UpdateTruckPlanDay() {
                                   CAM
                                 </span>
                                 <span>
-                                  {item.tagName?.split("-").pop() || "?"}
+                                  {item.tag?.split("-").pop() || "?"}
                                 </span>
                               </div>
                               <div className="flex flex-col gap-0.5 min-w-0">
