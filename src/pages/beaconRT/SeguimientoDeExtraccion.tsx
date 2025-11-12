@@ -84,16 +84,7 @@ const SeguimientoDeExtraccion = () => {
     `planDay/by-date-range?startDate=${format(
       dateFilter[0].startDate,
       "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
-    { refetchInterval: 5000 }
-  );
-
-  const { data: planWeek } = useFetchData<PlanWeek>(
-    "planWeek-rt",
-    `planWeek?startDate=${format(
-      weekFilter.startDate,
-      "yyyy-MM-dd"
-    )}&endDate=${format(weekFilter.endDate, "yyyy-MM-dd")}`,
+    )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}&type=modificado`,
     { refetchInterval: 5000 }
   );
 
@@ -109,13 +100,11 @@ const SeguimientoDeExtraccion = () => {
     const mineralPlan = planData.filter(
       (plan) =>
         plan.phase === "mineral" &&
-        plan.type === "blending" &&
         plan.shift === shiftFilter
     );
     const desmontePlan = planData.filter(
       (plan) =>
         plan.phase === "desmonte" &&
-        plan.type === "blending" &&
         plan.shift === shiftFilter
     );
     const totalTonnage = planData.reduce((acc, plan) => acc + plan.tonnage, 0);
@@ -192,7 +181,7 @@ const SeguimientoDeExtraccion = () => {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <PageHeader
-        title="Seguimiento de Extracción"
+        title="Seguimiento de Extracción / Plan de Campo"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
           dateFilter[0].startDate,
           "dd-MM-yyyy"

@@ -37,6 +37,7 @@ export function DataTable({
   hasNextPage,
   tableType,
   hideToolbar = false,
+  toolbarContent,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -84,47 +85,6 @@ export function DataTable({
     filters: [],
   };
 
-  const isMobile = useIsMobile(); // Detecta si es móvil
-
-  // Definir columnas que se ocultarán en móviles
-  const hiddenColumnsOnMobile = [
-    "address",
-    "updatedAt",
-    "description",
-    "role",
-    "cargo",
-    "guard",
-    "plate",
-    "horometer",
-    "odometer",
-    "year",
-    "type",
-    "nro_volquetes",
-    "state",
-    "id",
-    "reasonNoPlanned",
-    "statusOperator",
-    "statusSupervisor",
-    "workOrderOk",
-    "checkListOk",
-    "vehicleType",
-    "vehicleTagName",
-    "tagName",
-    "start",
-    "duration",
-    "material",
-    "activityName",
-    "tonnage",
-  ];
-
-  useEffect(() => {
-    table.getAllColumns().forEach((column) => {
-      if (hiddenColumnsOnMobile.includes(column.id)) {
-        column.toggleVisibility(!isMobile); // Oculta en móviles, muestra en desktop
-      }
-    });
-  }, [isMobile, table]);
-
   if (isLoading) return <SkeletonWrapper isLoading={isLoading} />;
   if (isError) {
     return (
@@ -147,6 +107,7 @@ export function DataTable({
           isFetching={isFetching}
           searchColumns={searchColumns}
           filters={filters}
+          toolbarContent={toolbarContent}
         />
       )}
       <div

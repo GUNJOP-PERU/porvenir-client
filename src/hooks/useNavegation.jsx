@@ -136,7 +136,14 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/trips-description",
             icon: <FaTimeline />,
             active: pathname === "/dashboard/beacon/trips-description",
-          }
+          },
+
+          {
+            name: "Viajes Realizados",
+            href: "/dashboard/beacon/trips",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/beacon/trips",
+          },
         ],
       },
       // {

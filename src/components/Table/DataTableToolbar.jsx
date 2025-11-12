@@ -6,12 +6,12 @@ import { Input } from "../ui/input";
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
 import { DataExport } from "./DataExport";
 
-
 export function DataTableToolbar({
   table,
   isFetching,
   filters = [], // Filtros dinámicos pasados como props
   searchColumns = [], // Columnas en las que se aplicará el buscador
+  toolbarContent,
 }) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -66,6 +66,7 @@ export function DataTableToolbar({
 
           {/* Filtros con Motion */}
           <div className="flex items-center gap-1">
+            {toolbarContent}
             <AnimatePresence>
               {filters.map((filter) => (
                 <motion.div key={filter.columnId}>
@@ -93,7 +94,11 @@ export function DataTableToolbar({
               )}
             </AnimatePresence>
           </div>
-          <DataExport data={table.getCoreRowModel().rows.map((row) => row.original)} fileName="data-table" disabled={table.getCoreRowModel().rows.length === 0 || isFetching} />
+          <DataExport
+            data={table.getCoreRowModel().rows.map((row) => row.original)}
+            fileName="data-table"
+            disabled={table.getCoreRowModel().rows.length === 0 || isFetching}
+          />
         </>
       )}
     </div>

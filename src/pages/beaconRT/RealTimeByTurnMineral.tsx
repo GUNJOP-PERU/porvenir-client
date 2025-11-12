@@ -74,9 +74,11 @@ const RealTimeByHourRT = () => {
 
   const planDay = useMemo(() => {
     const currentDate = format(getCurrentDay().startDate, "yyyy-MM-dd");
-    const filteredPlanData  = planData.filter(
+    const filteredPlanData = planData.filter(
       (day) =>
-        day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
+        day.shift === shiftFilter &&
+        planDayDateParser(day.date) === currentDate &&
+        day.phase === "mineral"
     );
     const planDataBlending = filteredPlanData.filter(day => day.type === "blending");
     const planDataModificado = filteredPlanData.filter(day => day.type === "modificado");
@@ -332,7 +334,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno"
+        title="Reporte por Turno / Mineral"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}

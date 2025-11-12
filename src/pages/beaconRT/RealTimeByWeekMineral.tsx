@@ -94,8 +94,9 @@ const RealTimeByWeek = () => {
   const planWeek = useMemo(() => {
     const plan = planData[0];
     const safePlanDay = plan?.dataCalculate || [];
-    const planDataBlending = planDayData.filter(day => day.type === "blending");
-    const planDataModificado = planDayData.filter(day => day.type === "modificado");
+    const filteredPlanDayData = planDayData.filter(day => day.phase === "mineral");
+    const planDataBlending = filteredPlanDayData.filter(day => day.type === "blending");
+    const planDataModificado = filteredPlanDayData.filter(day => day.type === "modificado");
     const allWeekDates: string[] = getCurrentWeekDates();
 
     const blendingGroupedByDate = planDataBlending.reduce((acc, day) => {
@@ -370,7 +371,7 @@ const RealTimeByWeek = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte Semanal"
+        title="Reporte Semanal / Mineral"
         description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate,"dd-MM-yyyy")} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}.`}
         refetch={refetch}
         isFetching={isFetching}

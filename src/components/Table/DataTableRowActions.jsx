@@ -30,6 +30,7 @@ import { MineralChargeModal } from "@/components/Configuration/Modal/MineralChar
 import { ActivityAverageModal } from "@/components/Configuration/Modal/ActivityAverageModal";
 import { TurnCardModal } from "@/components/Configuration/Modal/TurnCardModal";
 import { ModalDelete } from "../ModalDelete";
+import { TripModal } from "../Dashboard/Trips/TripModal";
 
 export function DataTableRowActions({
   componentToShow,
@@ -161,6 +162,14 @@ export function DataTableRowActions({
     ),
     planWeek: (
       <PlanWeekModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
+    trip: (
+      <TripModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}

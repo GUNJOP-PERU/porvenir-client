@@ -57,4 +57,11 @@ export const tableConfigs = {
         { columnId: "material", title: "Material", options: dataMaterial },
     ],
   },
+  trips: {
+    searchColumns: ["unit"],
+    filters: [
+        { columnId: "shift", title: "Turno", options: turn },
+        { columnId: "tripType", title: "Material", options: dataMaterial },
+    ],
+  },
 };

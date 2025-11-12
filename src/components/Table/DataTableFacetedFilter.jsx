@@ -86,7 +86,7 @@ export function DataTableFacetedFilter({ column, title, options }) {
                           : "opacity-50 [&_svg]:invisible"
                       )}
                     >
-                      <Check className="w-3 h-3" />
+                      <Check className="w-3 h-3 text-white" />
                     </div>
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />

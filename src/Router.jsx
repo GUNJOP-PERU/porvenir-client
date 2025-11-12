@@ -70,6 +70,7 @@ import TrackingDevelopment from "./pages/development/Tracking";
 import UndergroundTrackingDevelopment from "./pages/development/UndergroundTracking";
 import UpdateTruckPlanDay from "./pages/beaconRT/UpdateTruckPlanDay";
 import { Availability } from "./pages/beaconRT/Availability";
+import PageTrips from "./pages/beacon/Trips";
 
 const protectedRoutes = [
   { path: "users", element: <HomeUsers /> },
@@ -109,11 +110,12 @@ const protectedRoutes = [
   { path: "dashboard/fleet-status", element: <FleetStatus /> },
   { path: "dashboard/", element: <FleetStatus /> },
   { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
+  { path: "dashboard/beacon/trips", element: <PageTrips /> },
+
   // Development
   { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },
   { path: "dashboard/development/timeline-detection-report", element: <TimelineDetectionReport /> },
   { path: "dashboard/development/underground-tracking",element: <UndergroundTrackingDevelopment />},
- 
 
   //Configuración
   { path: "configuration", element: <Configuration /> },

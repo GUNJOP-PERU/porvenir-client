@@ -19,7 +19,7 @@ export function useFetchData(queryKey, endpoint, options = {}) {
   });
 }
 
-export function useFetchInfinityScroll(queryKey, endpoint, limit = 12, filters = "") {
+export function useFetchInfinityScroll(queryKey, endpoint, limit = 20, filters = "") {
   return useInfiniteQuery({
     queryKey: ["crud",queryKey],
     queryFn: async ({ pageParam = 1 }) => {
@@ -49,7 +49,7 @@ export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
     queryKey: ["crud", queryKey, { filters }],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await getDataRequest(
-        `${endpoint}?page=${pageParam}&limit=12&${filters}`
+        `${endpoint}?page=${pageParam}&limit=20&${filters}`
       );
       return response;
     },
@@ -68,6 +68,28 @@ export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
         .map(page => page.data.data)
         .flat()
         .sort((a, b) => new Date(b.start) - new Date(a.start)) || [];
+    },
+  });
+}
+
+export function useFetchTrucks({ queryKey, endpoint, filters }) {
+  return useQuery({
+    queryKey: ["crud", queryKey, { filters }],
+    queryFn: async () => {
+      const response = await getDataRequest(`${endpoint}?limit=1000&${filters}`);
+      return response;
+    },
+    cacheTime: Infinity,
+    staleTime: 0,
+    refetchOnReconnect: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: 1,
+    retryDelay: 2000,
+    select: (data) => {
+      if (!data?.data) return [];
+      return data.data
+        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
     },
   });
 }
