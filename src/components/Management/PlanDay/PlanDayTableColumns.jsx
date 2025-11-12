@@ -27,7 +27,7 @@ export const columns = [
             {row.getValue("frontLabor")}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.phase || ""} / {row.original?.day || ""}/{row.original?.month || ""}/{row.original?.year || ""}
+            {row.original?.phase || ""} / {row.original?.dateString || ""}
           </span>
         </div>
       );

@@ -73,7 +73,7 @@ export function formatDurationHour(durationInSeconds) {
 export function formatDurationMinutes(value) {
   if (value == null) return "-";
 
-  let totalSeconds = Math.round(value * 60);
+  const totalSeconds = Math.round(value * 60); // ✅ convertir minutos → segundos
 
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -83,6 +83,8 @@ export function formatDurationMinutes(value) {
   if (totalSeconds < 3600) return `${minutes}m ${seconds}s`;
   return `${hours}h ${minutes}m ${seconds}s`;
 }
+
+
 
 
 export function formatThousands(value) {

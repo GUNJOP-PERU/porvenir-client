@@ -12,7 +12,8 @@ export function useHandleFormSubmit() {
         : await postDataRequest(`${endpoint}/${postId ? id:""}`, data);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["crud",variables.endpoint] });
+      const invalidateKey = variables.invalidateKey || ["crud", variables.endpoint];
+      queryClient.invalidateQueries({ queryKey: invalidateKey });
       addToast({
         title: variables.isEdit ? "Editado correctamente" : "Creado correctamente",
         message: variables.isEdit ? "Los cambios se han guardado con éxito." : "Dato creado con éxito.",
@@ -38,10 +39,11 @@ export function useHandleFormSubmit() {
     setLoadingGlobal,
     onClose,
     reset,
+    invalidateKey,
   }) {
     try {
       setLoadingGlobal(true);
-      await mutation.mutateAsync({ isEdit,postId, endpoint, id, data });
+      await mutation.mutateAsync({ isEdit,postId, endpoint, id, data ,invalidateKey});
 
       if (onClose) onClose();
       if (reset) reset();
