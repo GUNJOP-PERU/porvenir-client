@@ -124,7 +124,7 @@ export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
           </div>
           <div className="flex justify-between w-full ">
             <span className="text-[#1dd3b0] leading-none text-xs font-bold">
-             {planSummary?.mineral ?? counts} / {planSummary.mineralPercent || 100}%
+              {planSummary?.mineral ?? counts} / {planSummary.mineralPercent || 100}%
             </span>
             <span className="text-[#daa588] leading-none text-xs font-bold">
               {planSummary.desmonte} / {planSummary.desmontePercent || 0}%

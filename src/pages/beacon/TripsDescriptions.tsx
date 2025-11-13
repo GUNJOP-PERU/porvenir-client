@@ -56,7 +56,7 @@ const TripsDescriptionRT = () => {
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
-        className="col-span-2 mb-4"
+        className="col-span-2 mb-2"
         count={data.length}
         actions={
           <div className="flex flex-row gap-2">

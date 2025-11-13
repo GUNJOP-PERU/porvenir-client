@@ -32,7 +32,10 @@ export const GlobalDataProvider = ({ children }) => {
       setData((values) => ({...values, globalMineral: response.data}));
       return response;
     } catch (error) {
-      setData(null);
+      setData((values) => ({
+        ...values,
+        globalMineral: []
+      }));
       throw error;
     }
   }, []);
@@ -44,7 +47,10 @@ export const GlobalDataProvider = ({ children }) => {
       setData((values) => ({...values, activityAverage: response.data}));
       return response;
     } catch (error) {
-      setData(null);
+      setData((values) => ({
+        ...values,
+        activityAverage: []
+      }));
       throw error;
     }
   }, []);
@@ -124,10 +130,10 @@ export const GlobalDataProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      setData(setData((values) => ({
+      setData((values) => ({
           ...values,
           truckStatus: []
-        })));
+        }));
       throw error;
     }
   }, [data.truckStatus, addToast, addToastTruckStatus]);

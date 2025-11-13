@@ -509,7 +509,7 @@ const XRangeTripsChartHistorico = ({
   );
 
   const chartHeight = (data.length * 64) + 15 ;
-  const rowHeight = 59;
+  const rowHeight = 59.5;
 
   return (
     <div className="w-full flex gap-2">
@@ -517,7 +517,7 @@ const XRangeTripsChartHistorico = ({
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       
-      <div className="w-[350px] min-w-[350px] flex flex-col mt-[-40px]">
+      <div className="w-[350px] min-w-[350px] flex flex-col mt-[-20px]">
         <div className="bg-gray-100 border border-gray-200 rounded-t-lg px-3 py-1">
           <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-gray-700">
             {/* <div className="text-center">Viajes</div> */}
