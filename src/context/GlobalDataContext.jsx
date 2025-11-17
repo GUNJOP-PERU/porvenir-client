@@ -55,7 +55,7 @@ export const GlobalDataProvider = ({ children }) => {
       const response = await getDataRequest(endpoint);
 
       if(response.data) {
-        const lastTruckStats = data.truckStatus;
+        const lastTruckStats = data.truckStatus || [];
         const lastTruckOperative = lastTruckStats.filter(truck => truck.status === "operativo").length;
         const newTruckStats = response.data.map((truck) => ({
           id: truck._id,

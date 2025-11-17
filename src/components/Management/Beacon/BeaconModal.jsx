@@ -19,6 +19,8 @@ import {
 } from "../../ui/dialog";
 import {
   Form,
+  FormControl,
+  FormDescription,
   // FormControl,
   FormField,
   FormItem,
@@ -26,20 +28,27 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../../ui/select";
 import { useFetchData } from "@/hooks/useGlobalQuery";
+import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
-  mac: z.string().min(1, { message: "*Nombre requerido" }).transform((val) => val.replace(/\s+/g, "")),
-  type: z.string().min(1, { message: "*Nombre requerido" }).transform((val) => val.trim()),
-  ubicationType: z.string().min(1, { message: "*Tipo requerido" }).transform((val) => val.trim()),
-  ubication: z.string().min(1, { message: "*Ubicación requerida" }).transform((val) => val.trim()),
+  mac: z
+    .string()
+    .min(1, { message: "*Nombre requerido" })
+    .transform((val) => val.replace(/\s+/g, "")),
+  type: z
+    .string()
+    .min(1, { message: "*Nombre requerido" })
+    .transform((val) => val.trim()),
+  ubicationType: z
+    .string()
+    .min(1, { message: "*Tipo requerido" })
+    .transform((val) => val.trim()),
+  ubication: z
+    .string()
+    .min(1, { message: "*Ubicación requerida" })
+    .transform((val) => val.trim()),
+  isActive: z.boolean().default(true),
 });
 
 export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
@@ -58,6 +67,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       type: dataCrud?.type || "",
       ubicationType: dataCrud?.ubicationType || "",
       ubication: dataCrud?.ubication || "",
+      isActive: dataCrud?.isActive ?? true,
     },
   });
 
@@ -70,6 +80,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         type: dataCrud.type || "",
         ubicationType: dataCrud.ubicationType || "",
         ubication: dataCrud.ubication || "",
+        isActive: dataCrud.isActive ?? true,
       });
     } else {
       reset({
@@ -77,6 +88,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         type: "",
         ubicationType: "",
         ubication: "",
+        isActive: true,
       });
     }
   }, [dataCrud, reset]);
@@ -135,7 +147,9 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       disabled={loadingGlobal}
                       placeholder="Ej. 00:1A:7D:DA:71:13"
                       value={field.value}
-                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toUpperCase())
+                      }
                     />
                     <FormMessage />
                   </FormItem>
@@ -191,72 +205,30 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
-
-              {/* <FormField
-                control={control}
-                name="ubicationType"
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-8 px-6">
+              <FormField
+                control={form.control}
+                name="isActive"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Tipo de ubicación</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={loadingGlobal}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories?.map((i) => (
-                          <SelectItem key={i} value={i}>
-                            {i}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                  <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
+                    <div className="flex flex-col  justify-center ">
+                      <FormLabel>Activar/Desactivar</FormLabel>
+                      <FormDescription className="pt-0">
+                        Se deshabilitará el beacon.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        aria-readonly
+                        disabled={loadingGlobal}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={control}
-                name="ubication"
-                render={({ field }) => {
-                  const ubicationTypeSelected = form.watch("ubicationType");
-                  const ubications =
-                    dataUbicationType?.[ubicationTypeSelected]?.map(
-                      (item) => item.name
-                    ) || [];
-
-                  return (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Ubicación</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={loadingGlobal || ubications.length === 0}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccione" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {ubications.map((name) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              /> */}
             </div>
             <Separator className="my-6" />
             <div className="flex gap-3 justify-end pt-0 pb-4 p-6">

@@ -93,3 +93,24 @@ export function useFetchTrucks({ queryKey, endpoint, filters }) {
     },
   });
 }
+export function useFetchGeneral({ queryKey, endpoint, filters }) {
+  return useQuery({
+    queryKey: ["crud", queryKey, { filters }],
+    queryFn: async () => {
+      const response = await getDataRequest(`${endpoint}?${filters}`);
+      return response;
+    },
+    cacheTime: Infinity,
+    staleTime: 0,
+    refetchOnReconnect: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: 1,
+    retryDelay: 2000,
+    select: (data) => {
+      if (!data?.data) return [];
+      return data.data
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    },
+  });
+}

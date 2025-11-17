@@ -59,7 +59,6 @@ import BeaconDetectionTable from "./pages/beacon/BeaconDetectionTable";
 import RealTimeByDay from "./pages/beacon/ReportByWeek";
 import RealTimeByHour from "./pages/beacon/ReportByTurnTruck";
 import RealTimeByHourScoop from "./pages/beacon//RealTimeByDayScoop";
-import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
 import FleetStatus from "./pages/beaconRT/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
@@ -71,6 +70,8 @@ import UndergroundTrackingDevelopment from "./pages/development/UndergroundTrack
 import UpdateTruckPlanDay from "./pages/beaconRT/UpdateTruckPlanDay";
 import { Availability } from "./pages/beaconRT/Availability";
 import PageTrips from "./pages/beacon/Trips";
+import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
+import ChangeHistory from "./pages/beaconRT/ChangeHistory";
 
 const protectedRoutes = [
   { path: "users", element: <HomeUsers /> },
@@ -78,10 +79,6 @@ const protectedRoutes = [
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
   { path: "newPlanMonth", element: <NewPlanMonth /> },
-  // { path: "company", element: <PageCompany /> },
-  // { path: "cycleTruck", element: <PageCycleTruck /> },
-  // { path: "activityTruck", element: <PageActivity /> },
-  // { path: "incidence", element: <Incidence /> },
   { path: "labor", element: <HomeLabor /> },
   { path: "destiny", element: <PageDestiny /> },
   { path: "ubications", element: <PageUbications /> },
@@ -89,33 +86,72 @@ const protectedRoutes = [
   { path: "wap", element: <PageWap /> },
 
   // Beacon RT
-  { path: "dashboard/beacon/detection-report-turn-mineral-rt", element: <RealTimeByHourMineralRT /> },
-  { path: "dashboard/beacon/detection-report-week-rt", element: <RealTimeByDayRT /> },
-  { path: "dashboard/beacon/detection-report-month-rt", element: <RealTimeByMonthRT /> },
-  { path: "dashboard/beacon/trips-description-rt", element: <TripsDescriptionRT /> },
-  { path: "dashboard/beacon/underground-tracking", element: <UndergroundTracking /> },
-  { path: "dashboard/beacon/seguimiento-de-extraccion", element: <SeguimientoDeExtraccion /> },
-  { path: "dashboard/beacon/utilizacion-de-flota", element: <UtilizacionDeFlota /> },
-   { path: "dashboard/beacon/update-truck-plan-day", element: <UpdateTruckPlanDay /> },
-   { path: "dashboard/beacon/availability", element: <Availability /> },
+  {
+    path: "dashboard/beacon/detection-report-turn-mineral-rt",
+    element: <RealTimeByHourMineralRT />,
+  },
+  {
+    path: "dashboard/beacon/detection-report-week-rt",
+    element: <RealTimeByDayRT />,
+  },
+  {
+    path: "dashboard/beacon/detection-report-month-rt",
+    element: <RealTimeByMonthRT />,
+  },
+  {
+    path: "dashboard/beacon/trips-description-rt",
+    element: <TripsDescriptionRT />,
+  },
+  {
+    path: "dashboard/beacon/underground-tracking",
+    element: <UndergroundTracking />,
+  },
+  {
+    path: "dashboard/beacon/seguimiento-de-extraccion",
+    element: <SeguimientoDeExtraccion />,
+  },
+  {
+    path: "dashboard/beacon/utilizacion-de-flota",
+    element: <UtilizacionDeFlota />,
+  },
+  {
+    path: "dashboard/beacon/update-truck-plan-day",
+    element: <UpdateTruckPlanDay />,
+  },
+  { path: "dashboard/beacon/availability", element: <Availability /> },
+
   // Historico Beacon
   { path: "/", element: <TrackingRT /> },
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
-  { path: "dashboard/real-time-by-hour-scoop", element: <RealTimeByHourScoop /> },
+  {
+    path: "dashboard/real-time-by-hour-scoop",
+    element: <RealTimeByHourScoop />,
+  },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
-  { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
-  { path: "dashboard/beacon-detection-table", element: <BeaconDetectionTable /> },
-  { path: "dashboard/fleet-status", element: <FleetStatus /> },
-  { path: "dashboard/", element: <FleetStatus /> },
   { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
   { path: "dashboard/beacon/trips", element: <PageTrips /> },
+  { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
+  {
+    path: "dashboard/beacon-detection-table",
+    element: <BeaconDetectionTable />,
+  },
+  { path: "dashboard/fleet-status", element: <FleetStatus /> },
+  { path: "dashboard/", element: <FleetStatus /> },
+
+  { path: "dashboard/change-history", element: <ChangeHistory /> },
 
   // Development
   { path: "dashboard/development/tracking", element: <TrackingDevelopment /> },
-  { path: "dashboard/development/timeline-detection-report", element: <TimelineDetectionReport /> },
-  { path: "dashboard/development/underground-tracking",element: <UndergroundTrackingDevelopment />},
+  {
+    path: "dashboard/development/timeline-detection-report",
+    element: <TimelineDetectionReport />,
+  },
+  {
+    path: "dashboard/development/underground-tracking",
+    element: <UndergroundTrackingDevelopment />,
+  },
 
   //Configuración
   { path: "configuration", element: <Configuration /> },
@@ -134,9 +170,7 @@ export default function Router() {
       children: [
         {
           element: <Layout />,
-          children: [
-            ...protectedRoutes,
-          ],
+          children: [...protectedRoutes],
         },
       ],
     },
@@ -148,52 +182,3 @@ export default function Router() {
 
   return <RouterProvider router={router} />;
 }
-
-  // { path: "dashboard/weekReport", element: <WeekReport /> },
-  // { path: "dashboard/unproductiveReport", element: <UnproductiveReport /> },
-  // { path: "dashboard/productionMonth", element: <ProductionMonth /> },
-  // { path: "dashboard/productionUV", element: <Utilization /> },
-  // { path: "dashboard/productionTruck", element: <ProductionTruck /> },
-  // { path: "newPlanMonth", element: <NewPlanMonth /> },
-  // { path: "company", element: <PageCompany /> },
-  // { path: "cycleTruck", element: <PageCycleTruck /> },
-  // { path: "activityTruck", element: <PageActivity /> },
-  // { path: "incidence", element: <Incidence /> },
-
-  //Gestion
-  // { path: "users", element: <HomeUsers /> },
-  // { path: "vehicle", element: <HomeVehicles /> },
-  // { path: "workOrder", element: <WorkerOrders /> },
-  // { path: "checklist", element: <Checklist /> },
-  //Dashboard
-  // { path: "dashboard/timelineTruck", element: <TimelineTruck /> },
-  // { path: "dashboard/paretoTruck", element: <ParetoTruck /> },
-  // {
-  //   path: "/",
-  //   element: <ProductionLayout />,
-  //   handle: {
-  //     tabs: [
-  //       { to: "", label: "Tiempo Real" },
-  //       { to: "historical", label: "Histórico" },
-  //     ],
-  //   },
-  //   children: [
-  //     { index: true, element: <RealTimeExtract /> },
-  //     { path: "historical", element: <HistoricalExtract /> },
-  //   ],
-  // },
-  // {
-  //   path: "dashboard/timeDistribution",
-  //   element: <ProductionLayout />,
-  //   handle: {
-  //     tabs: [
-  //       { to: "realtime", label: "Tiempo Real" },
-  //       { to: "historical", label: "Histórico" },
-  //     ],
-  //   },
-  //   children: [
-  //     { index: true, element: <Navigate to="realtime" replace /> },
-  //     { path: "realtime", element: <TimeDistribution /> },
-  //     { path: "historical", element: <TimeDistributionHistorical /> },
-  //   ],
-  // },
