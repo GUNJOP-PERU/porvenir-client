@@ -78,7 +78,7 @@ export const columns = [
             {row.original.tableName}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
-            Tabla Afectada
+            {row.original.field_modified} {row.original.field_modified > 1 ? "campos modificados" : "campo modificado"}
           </span>
         </div>
       );
@@ -92,7 +92,7 @@ export const columns = [
         <div className="flex space-x-2">
           <span
             className={clsx(
-              "relative text-[10px] py-[1px] px-2 rounded-[8px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[8px] before:top-1/2 before:-translate-y-1/2 pl-4",
+              "relative text-[10px] leading-none font-semibold py-1 pl-4 pr-2  rounded-[5px] before:content-[''] before:absolute before:w-1 before:h-1 before:rounded-full before:left-[8px] before:top-1/2 before:-translate-y-1/2 ",
               row.original?.action === "CREATE"
                 ? "text-green-600 bg-green-50 before:bg-green-500"
                 : row.original?.action === "UPDATE"
