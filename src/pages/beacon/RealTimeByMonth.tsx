@@ -61,7 +61,7 @@ const RealTimeByMonth = () => {
 
   const { data: planMonthData = [] } = useFetchData<PlanMonth[]>(
     "plan-month",
-    `planMonth?year=${dayjs().year()}`,
+    `planMonth?year=${dayjs().year()}&phase=mineral`,
     {
       refetchInterval: 10000,
     }
