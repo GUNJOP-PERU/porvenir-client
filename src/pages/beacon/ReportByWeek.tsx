@@ -425,14 +425,14 @@ const ReportByWeek = () => {
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planWeek.totalTonnage,
+              total: planWeek.totalTonnageBlending,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planWeek.totalTonnage}
+            total={planWeek.totalTonnageBlending}
             color="#ff5000"
             showLegend={false}
             className="mt-2"

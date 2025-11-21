@@ -138,6 +138,8 @@ const RealTimeByWeek = () => {
     };
   }, [planData, planDayData]);
 
+  console.log(planWeek)
+
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -401,14 +403,14 @@ const RealTimeByWeek = () => {
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
-              total: planWeek.totalTonnage,
+              total: planWeek.totalTonnageBlending || 0,
               currentValueColor: "#ff5000",
             }}
           />
           <Progress
             title=""
             value={baseStats.totalTM}
-            total={planWeek.totalTonnage}
+            total={planWeek.totalTonnageBlending || 0}
             color="#ff5000"
             showLegend={false}
             className="mt-2"

@@ -403,7 +403,7 @@ const SeguimientoDeExtraccion = () => {
                   unid="tm"
                 />
                 <CardItem
-                  value={planDay.desmonteTonnage}
+                  value={planDay.desmonteTrips}
                   title="Viajes Programados"
                   valueColor="text-[#00a6fb]"
                   unid="viajes"

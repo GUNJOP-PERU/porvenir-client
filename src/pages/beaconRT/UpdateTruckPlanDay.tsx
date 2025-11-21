@@ -220,7 +220,7 @@ export default function UpdateTruckPlanDay() {
 
   return (
     <div className="flex-1 w-full bg-zinc-900 p-4 flex flex-col gap-3">
-      <div className="rounded-xl py-2 px-4">
+      <div className="rounded-xl py-2 px-4 ">
         <h1 className="text-zinc-200 text-md lg:text-xl font-bold leading-none">
           Ejecución de Volquetes por Frente de Labor
         </h1>
@@ -230,9 +230,10 @@ export default function UpdateTruckPlanDay() {
         </p>
       </div>
 
-      <div
+     <div className="h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+       <div
         className={clsx(
-          "grid gap-2 flex-1",
+          "grid gap-2 flex-1 min-h-0",
           Object.keys(columns).length <= 5
             ? "grid-cols-5 grid-rows-1"
             : "grid-cols-5 grid-rows-2"
@@ -368,6 +369,7 @@ export default function UpdateTruckPlanDay() {
           ))}
         </DragDropContext>
       </div>
+     </div>
     </div>
   );
 }

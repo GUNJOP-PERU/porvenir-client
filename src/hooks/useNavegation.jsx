@@ -41,12 +41,6 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
           },
-          // {
-          //   name: "Reporte por Turno Desmonte",
-          //   href: "/dashboard/beacon/detection-report-turn-desmonte-rt",
-          //   icon: <ChartArea />,
-          //   active: pathname === "/dashboard/beacon/detection-report-turn-desmonte-rt",
-          // },
           {
             name: "Reporte por Semana",
             href: "/dashboard/beacon/detection-report-week-rt",
@@ -106,17 +100,17 @@ export const useNavigation = () => {
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-hour-truck",
           },
-          // {
-          //   name: "Reporte por Dia Scoop",
-          //   href: "dashboard/real-time-by-hour-scoop",
-          //   icon: <ChartArea />,
-          //   active: pathname === "/dashboard/real-time-by-hour-scoop",
-          // },
           {
             name: "Reporte por Semana",
             href: "/dashboard/real-time-by-day",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
+          },
+          {
+            name: "Reporte por Mes",
+            href: "/dashboard/real-time-by-month",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-month",
           },
           {
             name: "Detección de Viajes",
@@ -143,6 +137,12 @@ export const useNavigation = () => {
             href: "/dashboard/beacon/trips",
             icon: <FaTimeline />,
             active: pathname === "/dashboard/beacon/trips",
+          },
+          {
+            name: "Historial de Cambios",
+            href: "/dashboard/change-history",
+            icon: <FaTimeline />,
+            active: pathname === "/dashboard/change-history",
           },
         ],
       },
@@ -215,6 +215,11 @@ export const useNavigation = () => {
                   name: "Usuarios",
                   href: "/users",
                   active: pathname === "/users",
+                },
+                {
+                  name: "Vehiculos",
+                  href: "/vehicles",
+                  active: pathname === "/vehicles",
                 },
                 {
                   name: "Origen / Labor",
