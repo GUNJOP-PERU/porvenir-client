@@ -72,9 +72,11 @@ import { Availability } from "./pages/beaconRT/Availability";
 import PageTrips from "./pages/beacon/Trips";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import ChangeHistory from "./pages/beaconRT/ChangeHistory";
+import Vehicles from "./pages/management/Vehicles";
 
 const protectedRoutes = [
   { path: "users", element: <HomeUsers /> },
+  { path: "vehicles", element: <Vehicles /> },
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },

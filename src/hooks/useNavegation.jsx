@@ -217,6 +217,11 @@ export const useNavigation = () => {
                   active: pathname === "/users",
                 },
                 {
+                  name: "Vehiculos",
+                  href: "/vehicles",
+                  active: pathname === "/vehicles",
+                },
+                {
                   name: "Origen / Labor",
                   href: "/labor",
                   active: pathname === "/labor",

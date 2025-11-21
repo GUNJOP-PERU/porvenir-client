@@ -55,7 +55,7 @@ export const GlobalDataProvider = ({ children }) => {
       const response = await getDataRequest(endpoint);
 
       if(response.data) {
-        const lastTruckStats = data.truckStatus || [];
+        const lastTruckStats = data?.truckStatus ?? [];
         const lastTruckOperative = lastTruckStats.filter(truck => truck.status === "operativo").length;
         const newTruckStats = response.data.map((truck) => ({
           id: truck._id,
@@ -127,7 +127,7 @@ export const GlobalDataProvider = ({ children }) => {
       setData(null);
       throw error;
     }
-  }, [data.truckStatus, addToast, addToastTruckStatus]);
+  }, [data?.truckStatus, addToast, addToastTruckStatus]);
 
   const refreshGlobalData = useCallback(async () => {
     fetchMineralData("mineral?isActive=active");
