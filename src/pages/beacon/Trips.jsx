@@ -1,4 +1,5 @@
 import { columns } from "@/components/Dashboard/Trips/TripsColumns";
+import ExcelExportButton from "@/components/ExcelExportButton";
 import PageHeader from "@/components/PageHeader";
 import { DataTable } from "@/components/Table/DataTable";
 import { Button } from "@/components/ui/button";
@@ -71,6 +72,12 @@ export default function PageTrips() {
         tableType={"trips"}
         toolbarContent={
           <>
+           <ExcelExportButton
+              data={data}
+              filename="viajes_realizados"
+              sheetName="Resumen Viajes Realizados"
+              disabled={data.length === 0}
+            />
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -107,7 +114,6 @@ export default function PageTrips() {
                 />
               </PopoverContent>
             </Popover>
-
             <Select
               value={selectedUnit}
               onValueChange={(value) => setSelectedUnit(value)}

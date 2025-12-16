@@ -103,7 +103,7 @@ const UndergroundTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
   
-    const tenMinutesAgo = dayjs().subtract(10, "minute");
+    const tenMinutesAgo = dayjs().subtract(2, "minute");
   
     return data.filter((truck) => {
       if (!truck.lastDate) return false;

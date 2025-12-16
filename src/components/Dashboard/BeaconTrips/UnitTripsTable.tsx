@@ -1,4 +1,4 @@
-import { useMemo, useState,  useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { BeaconCycle } from "@/types/Beacon";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -18,6 +18,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
+  Triangle,
 } from "lucide-react";
 import { formatFecha, roundAndFormat } from "@/lib/utilsGeneral";
 import IconDay from "@/icons/IconDay";
@@ -63,41 +64,43 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
 
   const columns = useMemo<ColumnDef<BeaconCycle>[]>(
     () => [
+      // {
+      //   id: "index",
+      //   header: "#",
+      //   cell: ({ row }) => (
+      //     <span className="text-zinc-400 text-[10px]">#{row.index + 1}</span>
+      //   ),
+      //   enableSorting: false,
+      //   enableColumnFilter: false,
+      //   size: 1,
+      // },
       {
-        id: "index",
-        header: "#",
+        id: "unit",
+        header: "Unidad",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <span className="text-zinc-400 text-[10px]">
-              #{row.index + 1}
-            </span>
             {row.getCanExpand() && (
               <button
                 onClick={row.getToggleExpandedHandler()}
-                className="mr-2 text-blue-500 hover:text-blue-800 text-xs"
+                className="mr-1 text-xs cursor-pointer"
               >
-                {/* {row.getIsExpanded() ? "▼" : "▶"} */}
-                <ChevronRight
-                  className={`ml-2 h-4 w-4 transition-transform ease-in-out duration-300 ${
-                    row.getIsExpanded() ? "rotate-90" : ""
+                <Triangle
+                  className={`size-2.5 text-blue-400 transition-transform ${
+                    row.getIsExpanded()
+                      ? "rotate-180 fill-blue-400"
+                      : "rotate-90 fill-blue-200"
                   }`}
                 />
               </button>
             )}
+            <div className="flex items-center font-bold text-blue-900">
+              CAM {row.original.unit.split("-").pop()}
+            </div>
           </div>
         ),
         enableSorting: false,
         enableColumnFilter: false,
-        size: 60,
-      },
-      {
-        accessorKey: "unit",
-        header: "Unidad",
-        cell: ({ row }) => (
-          <div className="flex items-center font-bold text-zinc-500">
-            CAM {row.original.unit.split("-").pop()}
-          </div>
-        ),
+        size: 100,
       },
       {
         accessorKey: "totalTrips",
@@ -176,19 +179,19 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
   });
 
   return (
-    <div className="flex flex-col h-full pb- gap-1">
+    <div className="flex flex-col h-full pb- gap-2">
       <div className="flex flex-col w-[250px]">
         <select
           value={filters.unit}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, unit: e.target.value }))
           }
-          className="bg-white h-8 px-2 py-0 text-xs border-[2px] border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+          className="bg-white h-7 px-2 py-0 text-xs border border-zinc-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent uppercase"
         >
           <option value="">Todas las unidades</option>
           {unitList.map((unit, index) => (
             <option key={index} value={unit}>
-             CAM {unit.split("-").pop()}
+              CAM {unit.split("-").pop()}
             </option>
           ))}
         </select>
@@ -202,7 +205,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="h-10 px-2 text-left align-middle font-medium text-zinc-400 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] first:rounded-l-lg last:rounded-r-lg uppercase"
+                    className="h-8 px-2 text-left align-middle text-zinc-400 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] first:rounded-l-lg last:rounded-r-lg uppercase pl-4"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
@@ -243,7 +246,7 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-4 py-3 whitespace-nowrap text-xs"
+                      className="px-4 py-2 whitespace-nowrap text-xs"
                       style={{ width: cell.column.getSize() }}
                     >
                       {flexRender(
@@ -256,55 +259,63 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
                 {row.getIsExpanded() && (
                   <tr className="">
                     <td colSpan={row.getAllCells().length}>
-                      <table className="w-full  text-left text-zinc-400">
-                        <thead className="bg-sky-50 text-[10px] h-8 px-2 text-left align-middle font-medium text-blue-500 uppercase">
+                      <table className="w-full text-left text-zinc-400">
+                        <thead className="bg-sky-50 text-[10px] px-2 text-left align-middle font-medium text-blue-500 uppercase">
                           <tr>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 pl-8 ">
                               Unidad
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Inicio
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Origen
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Destino
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Duración
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Material
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Remanejo
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Turno
                             </th>
-                            <th scope="col" className="px-4 py-2 ">
+                            <th scope="col" className="px-4 py-1.5 ">
                               Detecciones
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="text-xs divide-y divide-blue-50 text-gray-500">
+                        <tbody className="text-xs divide-y divide-blue-50 text-zinc-500">
                           {row.original.trips.map((trip, index) => (
                             <tr
                               key={index}
-                              className="bg-blue-50/20  hover:bg-sky-50  cursor-default "
+                              className="bg-blue-50/20  hover:bg-sky-50 cursor-default "
                             >
-                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5 font-bold text-zinc-500">
-                                CAM {row.original.unit.split("-").pop()}
+                              <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5 pl-8">
+                                <span className="font-semibold text-xs text-blue-900 border-b border-dashed border-gray-400 ">
+                                  CAM {row.original.unit.split("-").pop()}
+                                </span>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.startUbication}, <b>{formatFecha(trip.startDate)}</b>
+                                {trip.startUbication},{" "}
+                                <b>{formatFecha(trip.startDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.frontLaborList.length > 0 ? trip.frontLaborList.map((labor) => labor.name).join(", ") : "N/A"}
+                                {trip.frontLaborList.length > 0
+                                  ? trip.frontLaborList
+                                      .map((labor) => labor.name)
+                                      .join(", ")
+                                  : "N/A"}
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
-                                {trip.endUbication}, <b>{formatFecha(trip.endDate)}</b>
+                                {trip.endUbication},{" "}
+                                <b>{formatFecha(trip.endDate)}</b>
                               </td>
                               <td className="first:rounded-l-lg last:rounded-r-lg px-4 py-1.5">
                                 {roundAndFormat(trip.totalDurationMin)}
@@ -338,60 +349,58 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
         </table>
       </div>
 
-      <div className="px-4 py-2 border-zinc-200 bg-zinc-50 rounded-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-400">
-              Mostrando{" "}
-              {table.getState().pagination.pageIndex *
-                table.getState().pagination.pageSize +
-                1}{" "}
-              a{" "}
-              {Math.min(
-                (table.getState().pagination.pageIndex + 1) *
-                  table.getState().pagination.pageSize,
-                table.getFilteredRowModel().rows.length
-              )}{" "}
-              de {table.getFilteredRowModel().rows.length} registros
-            </span>
-          </div>
+      <div className="py-4 px-4 border-zinc-200 bg-zinc-50 rounded-lg flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-zinc-500">
+            Mostrando{" "}
+            {table.getState().pagination.pageIndex *
+              table.getState().pagination.pageSize +
+              1}{" "}
+            a{" "}
+            {Math.min(
+              (table.getState().pagination.pageIndex + 1) *
+                table.getState().pagination.pageSize,
+              table.getFilteredRowModel().rows.length
+            )}{" "}
+            de {table.getFilteredRowModel().rows.length} registros
+          </span>
+        </div>
 
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-              className=" size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
-            >
-              <ChevronLeftIcon className="w-4 h-4" />
-            </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className=" size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100"
+          >
+            <ChevronsLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100"
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+          </button>
 
-            <span className="px-1 py-1 text-xs text-zinc-500 font-medium">
-              Página {table.getState().pagination.pageIndex + 1} de{" "}
-              {table.getPageCount()}
-            </span>
+          <span className="px-1 text-[11px] leading-none text-zinc-500 font-medium select-none">
+            Página {table.getState().pagination.pageIndex + 1} de{" "}
+            {table.getPageCount()}
+          </span>
 
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
-            >
-              <ChevronRightIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-              className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-100"
-            >
-              <ChevronsRight className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100"
+          >
+            <ChevronRightIcon className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className="size-7 flex items-center justify-center border border-zinc-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

@@ -104,7 +104,7 @@ const UndergroundTracking = () => {
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const timeAgo = dayjs().subtract(30, "minute");
+    const timeAgo = dayjs().subtract(2, "minute");
     const ubications = [
       "Int-BC-1820",
       "Ext-BC-1820",
@@ -499,7 +499,7 @@ const UndergroundTracking = () => {
       "Pocket 3",
     ];
 
-    const twentyMinutesAgo = dayjs().subtract(30, "minute");
+    const twentyMinutesAgo = dayjs().subtract(2, "minute");
 
     return data
       .filter((truck) => {

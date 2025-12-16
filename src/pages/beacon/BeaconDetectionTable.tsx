@@ -13,6 +13,7 @@ import { format } from "date-fns";
 // Components
 import { Calendar } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
+import ExcelExportButton from "@/components/ExcelExportButton";
 
 const BeaconDetectionTable = () => {
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
@@ -287,6 +288,12 @@ const BeaconDetectionTable = () => {
                 Ultima por unidad
               </button>
             </label>
+             <ExcelExportButton
+              data={data}
+              filename="deteccion_beacons"
+              sheetName="Resumen Deteccion Beacons"
+              disabled={data.length === 0}
+            />
           </div>
         }
       />
@@ -422,7 +429,7 @@ const BeaconDetectionTable = () => {
           </div>
 
           {/* Paginación */}
-          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between px-4 py-3 bg-white border-t">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-700">

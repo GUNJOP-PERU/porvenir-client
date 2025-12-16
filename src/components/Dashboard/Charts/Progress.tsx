@@ -1,6 +1,6 @@
 import { roundAndFormat } from "@/lib/utilsGeneral";
 import { AnimatedNumber } from "../CardItem";
-import "./styles.css"
+import "./styles.css";
 
 interface ProgressProps {
   title?: string;
@@ -25,10 +25,17 @@ export default function Progress({
   predictionText,
   className = "border border-zinc-100 shadow-sm rounded-xl p-4",
   showLegend = true,
-  size = "medium"
-} : ProgressProps) {
-  const progress = total > 0 ? Math.min((value / total) * 100, 100) : 0;
-  const predictionPosition = prediction !== undefined ? Math.min((prediction / total) * 100, 100) : 0;
+  size = "medium",
+}: ProgressProps) {
+  const visualMax = Math.max(total, prediction ?? 0);
+
+  const progressPercent = visualMax > 0 ? (value / visualMax) * 100 : 0;
+  const totalPercent = visualMax > 0 ? (total / visualMax) * 100 : 0;
+  const predictionPercent =
+    prediction !== undefined && visualMax > 0
+      ? (prediction / visualMax) * 100
+      : 0;
+
   return (
     <div className={`flex flex-col gap-0.5 ${className}`}>
       {title && (
@@ -36,7 +43,9 @@ export default function Progress({
           {title}
         </span>
       )}
-      <div className="flex gap-2">
+
+      <div className="flex flex-col gap-1">
+        {/* Leyenda */}
         {showLegend && (
           <div className="flex items-center justify-between gap-1">
             <h1 className="flex items-end gap-1 font-extrabold text-xl lg:text-xl">
@@ -49,41 +58,89 @@ export default function Progress({
           </div>
         )}
 
-        <div className="relative flex-1 h-8 bg-[#b8b8b8] rounded-full">
+        <div
+          className="relative flex-1 h-8 flex gap-[1px] rounded"
+          style={{
+            backgroundColor:
+              value === 0 || (total === 0 && (prediction ?? 0) === 0)
+                ? "#b8b8b8"
+                : "transparent",
+          }}
+        >
           <div
-            className="h-full rounded-full flex items-center"
-            style={{ width: `${progress}%`, backgroundColor: color }}
+            className="h-8 bg-[#b8b8b8] rounded overflow-hidden"
+            style={{ width: `${totalPercent}%` }}
           >
-            <h1 className="absolute left-0 top-0 h-full flex flex-row items-center gap-1 font-bold text-[10px] text-white lg:text-[10px] pl-4 whitespace-nowrap">
-              Completado <AnimatedNumber value={value} loading={false} /> de {roundAndFormat(total)} {unit}
-            </h1>
+            <div
+              className="h-full flex items-center"
+              style={{ width: `${progressPercent}%`, backgroundColor: color }}
+            >
+              <h1 className="absolute left-0 top-0 h-full flex flex-row items-center gap-1 font-bold text-[10px] text-white pl-2.5 whitespace-nowrap">
+                Extraído <AnimatedNumber value={value} loading={false} /> de{" "}
+                {roundAndFormat(total)} {unit}
+              </h1>
+            </div>
           </div>
+
+          {prediction !== undefined && prediction > total && (
+            <div
+              className="h-8 bg-black/50 rounded"
+              style={{
+                width: `${predictionPercent - totalPercent}%`,
+              }}
+            />
+          )}
+
+          {total > 0 && value > total && (
+            <div
+              className="h-8 bg-green-500 rounded"
+              style={{
+                width: `${((value - total) / visualMax) * 100}%`,
+              }}
+            />
+          )}
+
           {prediction !== undefined && prediction > 0 && (
             <div
+              className="absolute bottom-0 "
               style={{
+                left: `${predictionPercent}%`,
                 height: "calc(100% + 15px)",
-                left:`${predictionPosition}%`,
-                borderLeft: `2px dotted ${color || "#032e20"}`
+                borderLeft: `2px dotted ${color}`,
               }}
-              className="absolute bottom-0"
             >
               <p
-                className="absolute top-0 right-0 flex flex-row gap-2 items-center font-semibold text-[12px]"
+                className="absolute top-0 right-0 flex flex-row gap-1 items-center font-semibold text-[11px] leading-none"
                 style={{
-                  bottom: "calc(100% + 0px)"
+                  bottom: "calc(100% + 0px)",
+                  whiteSpace: "nowrap",
+                  transform:
+                    predictionPercent > 50 ? "translateX(-100%)" : "none",
+                  left: 0,
+                  right: predictionPercent > 50 ? "auto" : 0,
                 }}
               >
-                {predictionText ? predictionText : "Forecast"}
+                {predictionText || "Forecast"}
                 <span
-                  className="text-white py-0.5 px-2 rounded-xl text-[11px] text-nowrap"
-                  style={{backgroundColor: `${color || "#04c285"}`}}
+                  className="text-white py-0.5 px-1 rounded-[4px] text-[11px] leading-none text-nowrap"
+                  style={{ backgroundColor: color }}
                 >
-                  {prediction} {unit}
+                  {prediction} <small>{unit}</small>
                 </span>
               </p>
             </div>
           )}
         </div>
+        {value < total && (
+          <span className="text-right font-bold text-[10px] leading-none text-red-600">
+            Faltante -{roundAndFormat(total - value)} {unit}
+          </span>
+        )}
+        {value > total && (
+          <span className="text-right font-bold text-[10px] leading-none text-green-600">
+            Excedente +{roundAndFormat(value - total)} {unit}
+          </span>
+        )}
       </div>
     </div>
   );

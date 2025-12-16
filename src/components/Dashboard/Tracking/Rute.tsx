@@ -15,7 +15,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
 
     const ubications = ["Taller Saturno", "Parrilla 2", "Parrilla 1","Pocket 3" ];
 
-    const twentyMinutesAgo = dayjs().subtract(20, "minute");
+    const twentyMinutesAgo = dayjs().subtract(2, "minute");
 
     return data
       .filter((truck) => {
@@ -42,7 +42,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
   const filteredDataInoperativo = useMemo(() => {
     if (!Array.isArray(data)) return [];
 
-    const twentyMinutesAgo = dayjs().subtract(30, "minute");
+    const twentyMinutesAgo = dayjs().subtract(2, "minute");
 
     return data
       .filter((truck) => {

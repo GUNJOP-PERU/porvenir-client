@@ -66,7 +66,9 @@ const DonutChart = ({
       margin: [-6, -6, -6, -6],
     },
     title: {
-      text: `${Math.round((donutData.total ? donutData?.currentValue / donutData?.total : 0) * 100)}%`,
+      text: `${Math.round(
+        (donutData.total ? donutData?.currentValue / donutData?.total : 0) * 100
+      )}%`,
       verticalAlign: "middle",
       style: {
         fontSize: fontSizeMap[size],
@@ -94,18 +96,32 @@ const DonutChart = ({
     series: [
       {
         name: "",
-        data: [
-          {
-            name: "Valor Actual",
-            y: donutData?.currentValue || 0,
-            color: donutData.currentValueColor || "#04c285",
-          },
-          {
-            name: "Restante",
-            y: (donutData?.total || 0) - (donutData?.currentValue || 0),
-            color: "#b8b8b8",
-          },
-        ],
+        data:
+          donutData.currentValue <= donutData.total
+            ? [
+                {
+                  name: "Valor Actual",
+                  y: donutData.currentValue,
+                  color: donutData.currentValueColor || "#04c285",
+                },
+                {
+                  name: "Restante",
+                  y: donutData.total - donutData.currentValue,
+                  color: "#b8b8b8",
+                },
+              ]
+            : [
+                {
+                  name: "Total",
+                  y: donutData.total,
+                  color: donutData.currentValueColor || "#04c285",
+                },
+                {
+                  name: "Excedente",
+                  y: donutData.currentValue - donutData.total,
+                  color: "#68c970",
+                },
+              ],
       },
     ],
     credits: {
