@@ -8,10 +8,17 @@ import { FaTimeline } from "react-icons/fa6";
 import { useAuthStore } from "@/store/AuthStore";
 import {
   ChartArea,
+  ChartBarStacked,
+  ChartColumnStacked,
+  ChartNoAxesCombined,
+  CopyCheck,
+  FileChartPie,
   LandPlot,
   MapPin,
-  Waypoints
+  Pickaxe,
+  Waypoints,
 } from "lucide-react";
+import IconVehicle from "@/icons/Dashboard/IconVehicle";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -25,7 +32,7 @@ export const useNavigation = () => {
         items: [
           {
             name: "Tracking Superficie",
-            href: "/",  
+            href: "/",
             icon: <IconRadar />,
             active: pathname === "/",
           },
@@ -39,7 +46,8 @@ export const useNavigation = () => {
             name: "Reporte por Turno Mineral",
             href: "/dashboard/beacon/detection-report-turn-mineral-rt",
             icon: <ChartArea />,
-            active: pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
+            active:
+              pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
           },
           {
             name: "Reporte por Semana",
@@ -124,7 +132,7 @@ export const useNavigation = () => {
             icon: <IconRadar />,
             active: pathname === "/dashboard/beacon-detection-table",
           },
-          
+
           {
             name: "Linea de Tiempo",
             href: "/dashboard/beacon/trips-description",
@@ -146,32 +154,54 @@ export const useNavigation = () => {
           },
         ],
       },
-      // {
-      //   title: "Development",
-      //   items: [
-      //     {
-      //       name: "Linea de Tiempo de Detección",
-      //       href: "/dashboard/development/timeline-detection-report",
-      //       icon: <TbReportAnalytics />,
-      //       active: pathname === "/dashboard/development/timeline-detection-report",
-      //     },
-      //     {
-      //       name: "Tracking Superficie",
-      //       href: "/dashboard/development/tracking",
-      //       icon: <IconRadar />,
-      //       active: pathname === "/dashboard/development/tracking",
-      //     },
-      //     {
-      //       name: "Tracking Subterraneo",
-      //       href: "/dashboard/development/underground-tracking",
-      //       icon: <ChartArea />,
-      //       active: pathname === "/dashboard/development/underground-tracking",
-      //     },
-      //   ],
-      // },
+      {
+        title: "Tablet / Análisis",
+        items: [
+          {
+            name: "Reporte de extracción",
+            href: "/tablet/productionExtract/realtime",
+            icon: <ChartColumnStacked />,
+            active:
+              pathname === "/tablet/productionExtract/realtime" ||
+              pathname === "/tablet/productionExtract/historical",
+          },
+          {
+            name: "Distribución de tiempo",
+            href: "/tablet/timeDistribution/realtime",
+            icon: <ChartBarStacked />,
+            active:
+              pathname === "/tablet/timeDistribution/realtime" ||
+              pathname === "/tablet/timeDistribution/historical",
+          },
+          {
+            name: "Reporte Semanal",
+            href: "/tablet/week-report",
+            icon: <FileChartPie />,
+            active: pathname === "/tablet/week-report",
+          },
+          {
+            name: "Reporte de Improductivos",
+            href: "/tablet/unproductive-report",
+            icon: <ChartNoAxesCombined />,
+            active: pathname === "/tablet/unproductive-report",
+          },
+          // {
+          //   name: "Producción Mensual",
+          //   href: "/tablet/productionMonth",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/tablet/productionMonth",
+          // },
+          // {
+          //   name: "Utilización y Velocidad",
+          //   href: "/tablet/utilization",
+          //   icon: <ChartArea />,
+          //   active: pathname === "/tablet/utilization",
+          // },
+        ],
+      },
     ];
 
-    if(userType === "plan-editor") {
+    if (userType === "plan-editor") {
       return [
         {
           title: "Gestión",
@@ -196,7 +226,7 @@ export const useNavigation = () => {
                   active: pathname === "/planMonth",
                 },
               ],
-            }
+            },
           ],
         },
       ];
@@ -208,9 +238,14 @@ export const useNavigation = () => {
           title: "Gestión",
           items: [
             {
-              name: "Ubicaciones",
+              name: "General",
               icon: <MapPin />,
               items: [
+                {
+                  name: "Compañia",
+                  href: "/company",
+                  active: pathname === "/company",
+                },
                 {
                   name: "Usuarios",
                   href: "/users",
@@ -221,6 +256,12 @@ export const useNavigation = () => {
                   href: "/vehicles",
                   active: pathname === "/vehicles",
                 },
+              ],
+            },
+            {
+              name: "Ubicaciones",
+              icon: <MapPin />,
+              items: [
                 {
                   name: "Origen / Labor",
                   href: "/labor",
@@ -277,7 +318,45 @@ export const useNavigation = () => {
             },
           ],
         },
-        ...basePaths
+        {
+          title: "Monitoreo",
+          items: [
+            {
+              name: "Trabajos planificados",
+              href: "/workOrder",
+              icon: <Pickaxe />,
+              active: pathname === "/workOrder",
+            },
+            {
+              name: "Checklist",
+              href: "/checklist",
+              icon: <CopyCheck />,
+              active: pathname === "/checklist",
+            },
+            {
+              name: "Truck",
+              icon: <IconVehicle />,
+              items: [
+                {
+                  name: "Ciclos Truck",
+                  href: "/cycleTruck",
+                  active: pathname === "/cycleTruck",
+                },
+                {
+                  name: "Actividades Truck",
+                  href: "/activityTruck",
+                  active: pathname === "/activityTruck",
+                },
+                {
+                  name: "Incidencias Truck",
+                  href: "/incidence",
+                  active: pathname === "/incidence",
+                },
+              ],
+            },
+          ],
+        },
+        ...basePaths,
       ];
     }
 
