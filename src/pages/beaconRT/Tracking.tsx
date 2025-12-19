@@ -3,7 +3,6 @@ import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,
-  ImageOverlay,
   MapContainer,
   Marker,
   Polyline,
@@ -88,8 +87,8 @@ const TruckTracking = () => {
 
   const mapConfig = useMemo(
     () => ({
-      centerLat: -13.0799,
-      centerLng: -75.9929,
+      centerLat: -10.6078,
+      centerLng: -76.2103,
       zoom: 17,
     }),
     []
@@ -538,7 +537,7 @@ const TruckTracking = () => {
         <Marker
           key={`bocamina-label-${bocamina.id}`}
           position={[
-            bocamina.position.latitud + 0.0005,
+            bocamina.position.latitud - 0.0005,
             bocamina.position.longitud,
           ]}
           icon={L.divIcon({
@@ -615,7 +614,7 @@ const TruckTracking = () => {
         <Circle
           key={`taller-circle-${taller.id}`}
           center={[taller.position.latitud, taller.position.longitud]}
-          radius={120}
+          radius={60}
           pathOptions={{
             color,
             fillColor: "black",
@@ -631,7 +630,7 @@ const TruckTracking = () => {
         <Marker
           key={`taller-label-${taller.id}`}
           position={[
-            taller.position.latitud - 0.0011,
+            taller.position.latitud - 0.0005,
             taller.position.longitud,
           ]}
           icon={L.divIcon({
