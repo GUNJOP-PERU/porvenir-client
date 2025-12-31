@@ -90,8 +90,8 @@ export function DataTable({
     return (
       <div className="space-y-4 flex-1 flex flex-col">
         <div className="max-w-[150px] leading-3 mx-auto flex-1 flex flex-col items-center justify-center gap-1">
-          <IconWarning className="w-6 h-6 text-[#D32F2F]" />
-          <p className="text-center text-[#B71C1C] text-[10px] font-medium">
+          <IconWarning className="size-8 text-[#D32F2F]" />
+          <p className="text-center text-[#B71C1C] text-[11px] font-medium">
             Hubo un error al cargar los datos. Por favor, intente nuevamente mas
             tarde.
           </p>

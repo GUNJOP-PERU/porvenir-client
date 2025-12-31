@@ -5,18 +5,17 @@ import { countItems } from "@/lib/utilsGeneral";
 import { useState } from "react";
 import PageHeader from "../../components/PageHeader";
 import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
+import { useFetchData } from "@/hooks/useGlobalQueryV2";
 
 function PlanDay() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const {
     data = [],
-    isFetching,
+    isFetching, 
     isLoading,
     isError,
     refetch,
-    fetchNextPage,
-    hasNextPage,
-  } = useFetchInfinityScroll("planDay", "planDay/items", 20, "type=blending");
+  } = useFetchData("planDay", "planDay/groups?type=blending");
 
   return (
     <>
@@ -34,8 +33,7 @@ function PlanDay() {
         isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
-        fetchNextPage={fetchNextPage}
-        hasNextPage={hasNextPage}
+      
         tableType={"planDays"}
       />
       <ModalPlanDay

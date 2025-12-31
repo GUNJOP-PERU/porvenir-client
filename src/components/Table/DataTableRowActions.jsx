@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
+import { ListCollapse, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -31,6 +31,8 @@ import { ActivityAverageModal } from "@/components/Configuration/Modal/ActivityA
 import { TurnCardModal } from "@/components/Configuration/Modal/TurnCardModal";
 import { ModalDelete } from "../ModalDelete";
 import { TripModal } from "../Dashboard/Trips/TripModal";
+import { VetaModal } from "../Management/Veta/VetaModal";
+import { PlanDayDetails } from "../Management/PlanDay/PlanDayDetails";
 
 export function DataTableRowActions({
   componentToShow,
@@ -42,6 +44,12 @@ export function DataTableRowActions({
   const [detailsModal, setDetailsModal] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleDetails = (rowData) => {
+    setRowData(rowData);
+    setDetailsModal(true);
+    setMenuOpen(false);
+  };
 
   const handleClick = (rowData) => {
     setRowData(rowData);
@@ -176,6 +184,14 @@ export function DataTableRowActions({
         isEdit={true}
       />
     ),
+    veta: (
+      <VetaModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        dataCrud={rowData}
+        isEdit={true}
+      />
+    ),
   };
 
   return (
@@ -190,13 +206,22 @@ export function DataTableRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[150px]">
+          {componentToShow === "planDay" && (
+            <DropdownMenuItem onClick={() => handleDetails(row.original)}>
+              <ListCollapse className="h-5 w-5 stroke-black" />
+              Ver Detalles
+            </DropdownMenuItem>
+          )}
+
           {components[componentToShow] && (
             <DropdownMenuItem onClick={() => handleClick(row.original)}>
               <IconEdit className="h-5 w-5 stroke-black" />
               Editar detalles
             </DropdownMenuItem>
           )}
-          {components[componentToShow] && deleteModal && <DropdownMenuSeparator />}
+          {components[componentToShow] && deleteModal && (
+            <DropdownMenuSeparator />
+          )}
           {deleteModal && (
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
@@ -216,11 +241,13 @@ export function DataTableRowActions({
         itemId={rowData?._id}
         queryKeyToUpdate={componentToShow}
       />
-      <DetailsUser
-        isOpen={detailsModal}
-        onClose={() => setDetailsModal(false)}
-        dataCrud={rowData}
-      />
+      {componentToShow === "planDay" && (
+        <PlanDayDetails
+          isOpen={detailsModal}
+          onClose={() => setDetailsModal(false)}
+          dataCrud={rowData}
+        />
+      )}
     </>
   );
 }
