@@ -40,8 +40,8 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
     refetch: refetchLaborList,
     isLoading: loadingLaborList,
   } = useFetchData(
-    "frontLabor-General",
-    "frontLabor", 
+    "frontLabor-current",
+    "frontLabor/current", 
     {
       enabled: false,
     }

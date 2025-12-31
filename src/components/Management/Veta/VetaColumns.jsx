@@ -1,77 +1,58 @@
-import { formatFecha, roundAndFormat } from "@/lib/utilsGeneral";
+import { formatFecha } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../../Table/DataTableColumnHeader";
 import { DataTableRowActions } from "../../Table/DataTableRowActions";
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
-import dayjs from "dayjs";
 
 export const columns = [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "frontLabor",
+    accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
-      const formattedDate = row.original?.dateString
-        ? dayjs(row.original.dateString).format("dddd D MMMM")
-        : "";
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {formattedDate}
+            {row.getValue("name")}
           </h4>
-          <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-             {row.original?.total || ""} labor programados
+          <span className="text-[11px] leading-3 text-zinc-400 md:inline lowercase">
+            {row.original?.type}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "shift",
-    header: "Turno",
+    accessorKey: "isValidate",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("shift") === "dia" ? (
-            <IconDay className="h-5 w-5 fill-orange-400" />
+          {row.getValue("isValidate") === true ? (
+            <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
+              activo
+            </span>
           ) : (
-            <IconNight className="h-5 w-5 fill-sky-400" />
+            <span className="px-2 py-0.5 bg-red-50 rounded-[6px] text-[10px] text-red-500 leading-[10px]">
+              inactivo
+            </span>
           )}
         </>
       );
     },
   },
-  {
-    accessorKey: "tonnage",
-    header: "Tonelaje",
-    cell: ({ row }) => {
-      const total =
-        row.original?.data?.reduce(
-          (acc, item) => acc + (item?.tonnage || 0),
-          0
-        ) ?? 0;
-
-      return <span className="font-semibold">{roundAndFormat(total)} TN</span>;
-    },
-  },
-  // {
-  //   accessorKey: "nro_volquetes",
-  //   header: "#Volquete",
-  //   cell: ({ row }) => {
-  //     return <>{row.getValue("nro_volquetes")} und</>;
-  //   },
-  // },
+  
 
   {
     accessorKey: "updatedAt",
@@ -81,6 +62,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
+          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4">
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
@@ -101,6 +83,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
+          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
@@ -116,7 +99,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planDay"} row={row} />
+      <DataTableRowActions componentToShow={"veta"} row={row} />
     ),
     enableHiding: false,
   },

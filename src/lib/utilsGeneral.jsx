@@ -84,9 +84,6 @@ export function formatDurationMinutes(value) {
   return `${hours}h ${minutes}m ${seconds}s`;
 }
 
-
-
-
 export function formatThousands(value) {
   if (value === 0) return "";
   return value >= 1000 ? (value / 1000).toFixed(1) + "<small>k</small>" : value;
@@ -232,3 +229,28 @@ export function formatShortDay(dateStr) {
   const abbrCap = abbr.charAt(0).toUpperCase() + abbr.slice(1);
   return `${abbrCap} ${day.date()}`;
 }
+
+export const normalizarTajo = (texto) => {
+  if (!texto) return "";
+
+  return (
+    texto
+      .toUpperCase()
+      // eliminar puntos
+      .replace(/\./g, "")
+      // normalizar espacios
+      .replace(/\s+/g, " ")
+      .trim()
+      // asegurar formato NV-###
+      .replace(/^NV[-\s]*/, "NV-")
+      // prefijos con guion
+      .replace(/ TJ\s*/g, " TJ-")
+      .replace(/ CX\s*/g, " CX-")
+      .replace(/ SN\s*/g, " SN-")
+      .replace(/ AC\s*/g, " AC-")
+      // convertir espacios a _
+      .replace(/\s/g, "_")
+      // eliminar guiones duplicados (seguro final)
+      .replace(/--+/g, "-")
+  );
+};
