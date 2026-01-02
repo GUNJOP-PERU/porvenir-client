@@ -109,16 +109,10 @@ export const PlanContent = ({
 
     return [row1, row2];
   }, [dataHotTable, totalsRow, orderedKeys]);
+  
 
   return (
-    <div
-      className={clsx("h-[60vh] overflow-auto z-0", {
-        "pointer-events-none opacity-50 cursor-not-allowed": loadingGlobal,
-      })}
-      style={{
-        height: heightSize === "normal" ? "60vh" : "200px",
-      }}
-    >
+    <div >
       <HotTable
         data={dataHotTable}
         maxCols={Object.keys(dataHotTable[0] || {}).length}
@@ -126,7 +120,7 @@ export const PlanContent = ({
         language={esMX.languageCode}
         rowHeaders={true}
         nestedHeaders={generateNestedHeaders}
-        height="auto"
+        height="68vh"
         mergeCells={true}
         contextMenu={{
           items: {
@@ -139,7 +133,7 @@ export const PlanContent = ({
           },
         }}
         readOnly={false}
-        fixedColumnsStart={1}
+        fixedColumnsStart={0}
         autoWrapRow={true}
         autoWrapCol={true}
         autoColumnSize={true}
@@ -148,29 +142,29 @@ export const PlanContent = ({
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {
-                if (key === "labor") {
-                  return {
-                    type: "text",
-                    data: key,
-                    width: 200,
-                  };
-                } else if (key === "fase") {
-                  return {
-                    type: "dropdown",
-                    source: dataFase.map((item) => item.name),
-                    data: key,
-                    allowInvalid: false,
-                    className: "ht-fase-dropdown",
-                    width: 130,
-                  };
-                }
+              if (key === "labor") {
                 return {
-                  type: "numeric",
+                  type: "text",
                   data: key,
-                  numericFormat: { pattern: "0,000", culture: "en-US" },
-                  width: 100,
+                  width: 250,
                 };
-              })
+              } else if (key === "fase") {
+                return {
+                  type: "dropdown",
+                  source: dataFase.map((item) => item.name),
+                  data: key,
+                  allowInvalid: false,
+                  className: "ht-fase-dropdown",
+                  width: 130,
+                };
+              }
+              return {
+                type: "numeric",
+                data: key,
+                numericFormat: { pattern: "0,000", culture: "en-US" },
+                width: 130,
+              };
+            })
             : []
         }
         beforePaste={(data) => {

@@ -25,13 +25,6 @@ export const tableConfigs = {
   frontLabors: {
     searchColumns: ["name"],
   },
-  planDays: {
-    searchColumns: ["frontLabor"],
-    filters: [
-      { columnId: "shift", title: "Turno", options: turn },
-      { columnId: "phase", title: "Fase", options: dataPhase },
-    ],
-  },
   workerOrders: {
     searchColumns: ["frontLabor"],
     filters: [{ columnId: "shift", title: "Turno", options: turn }],

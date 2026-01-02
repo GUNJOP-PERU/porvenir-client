@@ -22,7 +22,7 @@ function PageLabor() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = useFetchInfinityScroll("frontLabor", "frontLabor/items");
+  } = useFetchInfinityScroll("frontLabor", "frontLabor/items",20, "month=12&year=2025");
   
   return (
     <>      

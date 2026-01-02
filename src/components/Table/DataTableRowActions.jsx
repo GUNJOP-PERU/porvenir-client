@@ -41,15 +41,8 @@ export function DataTableRowActions({
 }) {
   const [open, setOpen] = useState(false);
   const [deleModal, setDeleteModal] = useState(false);
-  const [detailsModal, setDetailsModal] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleDetails = (rowData) => {
-    setRowData(rowData);
-    setDetailsModal(true);
-    setMenuOpen(false);
-  };
 
   const handleClick = (rowData) => {
     setRowData(rowData);
@@ -206,13 +199,6 @@ export function DataTableRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[150px]">
-          {componentToShow === "planDay" && (
-            <DropdownMenuItem onClick={() => handleDetails(row.original)}>
-              <ListCollapse className="h-5 w-5 stroke-black" />
-              Ver Detalles
-            </DropdownMenuItem>
-          )}
-
           {components[componentToShow] && (
             <DropdownMenuItem onClick={() => handleClick(row.original)}>
               <IconEdit className="h-5 w-5 stroke-black" />
@@ -241,13 +227,6 @@ export function DataTableRowActions({
         itemId={rowData?._id}
         queryKeyToUpdate={componentToShow}
       />
-      {componentToShow === "planDay" && (
-        <PlanDayDetails
-          isOpen={detailsModal}
-          onClose={() => setDetailsModal(false)}
-          dataCrud={rowData}
-        />
-      )}
     </>
   );
 }
