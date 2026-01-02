@@ -92,7 +92,7 @@ export default function UpdateTruckPlanDay() {
     const unassigned = availableTrucks.filter((v) => !assignedIds.has(v._id));
 
     newColumns["disponibles"] = {
-      name: "Volquetes disponibles",
+      name: "Camiones disponibles",
       color: "bg-[#3C1C1E]",
       titleColor: "text-[#D1686D]",
       isValid: false,

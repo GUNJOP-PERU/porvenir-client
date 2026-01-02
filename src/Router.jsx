@@ -12,7 +12,7 @@ import Login from "./pages/login/Login";
 import HomeLabor from "./pages/management/Labor";
 import PageBeacon from "./pages/management/Beacon";
 import PageDestiny from "./pages/management/Destiny";
-import { NewPlanMonth } from "./pages/management/NewPlanMonth";
+import PlanNew from "./pages/management/PlanNew";
 import PlanDay from "./pages/management/PlanDay";
 import PlanMonth from "./pages/management/PlanMonth";
 import PlanWeek from "./pages/management/PlanWeek";
@@ -87,7 +87,7 @@ const protectedRoutes = [
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
-  { path: "newPlanMonth", element: <NewPlanMonth /> },
+  { path: "plan/:mode/new", element: <PlanNew /> },
   //Ubicaciones
   { path: "labor", element: <HomeLabor /> },
   { path: "destiny", element: <PageDestiny /> },

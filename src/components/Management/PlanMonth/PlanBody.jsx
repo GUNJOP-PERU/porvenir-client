@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { postDataRequest } from "@/api/api";
 import { useToast } from "@/hooks/useToaster";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 const FormSchema = z.object({
   dob: z
@@ -37,7 +38,13 @@ const FormSchema = z.object({
   selectedItems: z.array(z.string()).optional(),
 });
 
-export const NewPlanMonth = () => {
+export const PlanBody = ({
+  mode,
+  api,
+  dateSelector,
+  title = "",
+  refreshQueryKey,
+}) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -47,16 +54,16 @@ export const NewPlanMonth = () => {
   const [showLoader, setShowLoader] = useState(false);
   const fileInputRef = useRef(null);
 
-  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
-    "frontLabor-General",
+  const { data: dataLaborVerify, refetch: refetchLaborVerify } = useFetchData(
+    "frontLabor-general",
     "frontLabor",
     {
-      enabled: false,
+      enabled: true,
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: false,
     }
   );
-  useEffect(() => {
-    refetchLaborList();
-  }, [refetchLaborList]);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -71,7 +78,11 @@ export const NewPlanMonth = () => {
 
   const generarEstructura = (dob, selectedItems) => {
     if (!dob?.start || !dob?.end) {
-      alert("Debe seleccionar una fecha válida.");
+      addToast({
+        title: "Fecha no válida",
+        message: "Debe seleccionar una fecha válida.",
+        variant: "destructive",
+      });
       return { data: [] };
     }
 
@@ -86,16 +97,16 @@ export const NewPlanMonth = () => {
 
     const exampleData = items.map((labor, index) => {
       let row = {
-        labor, 
+        labor,
         fase: index % 2 === 0 ? "mineral" : "desmonte",
       };
 
       for (let i = 0; i < daysInMonth; i++) {
-        const currentDate = startDate
-          .add(i, "day")
-          .format("DD-MM")
-          .toUpperCase();
-        row[currentDate] = Math.floor(Math.random() * 100) * 100; 
+        const currentDate = startDate.add(i, "day").format("DD-MM");
+
+        // 🔹 Dos columnas por día
+        row[`${currentDate} - DIA`] = 0;
+        row[`${currentDate} - NOCHE`] = 0;
       }
 
       return row;
@@ -137,8 +148,8 @@ export const NewPlanMonth = () => {
 
     const laborFormatoIncorrecto = dataHotTable.some((row) => {
       const partes = row.labor.split("_");
-      if (partes.length < 3) return false; 
-      const terceraParte = partes[2]; 
+      if (partes.length < 3) return false;
+      const terceraParte = partes[2];
       if (/^T-/.test(terceraParte)) {
         return true;
       }
@@ -146,43 +157,58 @@ export const NewPlanMonth = () => {
     });
 
     if (laborFormatoIncorrecto) {
-      alert(
-        "Error: Una labor contiene un formato inválido.\n" +
-          "Si después del segundo subguión inicia con 'T-', debe ser 'TJ-'."
-      );
+      addToast({
+        title: "Error de formato de labor",
+        message:
+          "Una labor contiene un formato inválido. Si después del segundo subguión inicia con 'T-', debe ser 'TJ-'.",
+        variant: "destructive",
+      });
       setLoadingGlobal(false);
       return;
     }
 
     if (tieneCamposVacios) {
-      alert("Error: Hay filas con 'Labor' o 'Fase' vacías en la tabla.");
+      addToast({
+        title: "Campos vacíos",
+        message: "Hay filas con 'Labor' o 'Fase' vacías en la tabla.",
+        variant: "destructive",
+      });
       setLoadingGlobal(false);
       return;
     }
 
     if (tieneRepetidos) {
-      alert("Error: Existen labores repetidas. Corrige antes de continuar.");
+      addToast({
+        title: "Labores repetidas",
+        message: "Existen labores repetidas. Corrige antes de continuar.",
+        variant: "destructive",
+      });
       setLoadingGlobal(false);
       return;
     }
 
     const datosFinales = dataHotTable.flatMap((row) => {
-      const fechas = Object.keys(row).filter(
-        (key) => key.match(/^\d{2}-\d{2}$/) 
-      );
+      const year = form.getValues("dob").end.getFullYear();
+      return Object.entries(row)
+        .filter(([key]) => key.includes("- DIA") || key.includes("- NOCHE"))
+        .map(([key, value]) => {
+          const [dayMonth, turnoText] = key.split(" - ");
+          const [day, monthStr] = dayMonth.split("-");
+          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(
+            2,
+            "0"
+          )}`;
+          const turno = turnoText.toLowerCase();
 
-      return fechas.map((fecha) => {
-        const [day, month] = fecha.split("-"); 
-        const year = new Date().getFullYear(); 
-
-        return {
-          frontLabor: row.labor,
-          phase: row.fase,
-          date: `${year}-${month}-${day}`, 
-          tonnage: row[fecha],
-          month: parseInt(month, 10), 
-        };
-      });
+          return {
+            frontLabor: row.labor,
+            phase: row.fase,
+            date: date,
+            tonnage: value,
+            month: parseInt(monthStr, 10),
+            turno: turno,
+          };
+        });
     });
 
     const totalTonnage = datosFinales.reduce(
@@ -191,66 +217,76 @@ export const NewPlanMonth = () => {
     );
 
     const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
-      name: labor, 
-      status: true, 
+      name: labor,
+      status: true,
     }));
     console.log("Labors en rojo:", invalidLaborsWithStatus);
     console.log("Datos Finales:", datosFinales);
 
     const fecha = dayjs(dob.end);
-    const mes = fecha.month() + 1; 
+    const mes = fecha.month() + 1;
     const año = fecha.year();
 
     const dataFinal = {
+      year: año,
+      month: mes,
+      week: 1,
+      totalTonnage: totalTonnage,
       dataGenerate: datosFinales,
       dataEdit: dataHotTable,
+      dataCalculate: [],
+      startDate: form.getValues("dob").start,
+      endDate: form.getValues("dob").end,
+      items: form.getValues("items"),
       status: "creado",
-      totalTonnage: totalTonnage,
-      month: mes, 
-      year: año, 
     };
     console.log("Datos Finales:", dataFinal);
     try {
-      const response = await postDataRequest("planMonth/many", dataFinal);
+      const response = await postDataRequest(`${api.create}`, dataFinal);
       if (response.status >= 200 && response.status < 300) {
-        queryClient.invalidateQueries({ queryKey: ["crud", "planMonth"] });
-        queryClient.refetchQueries({ queryKey: ["crud", "planMonth"] });
+        if (refreshQueryKey) {
+          queryClient.invalidateQueries({ queryKey: refreshQueryKey });
+          queryClient.refetchQueries({ queryKey: refreshQueryKey });
+        }
         addToast({
           title: "Datos enviados con éxito",
           message: "Los datos se han enviado con éxito.",
-          variant: "success", // Si usas variantes de color en el addToaster
+          variant: "success",
         });
         const responseFront = await postDataRequest(
           "frontLabor/many",
           invalidLaborsWithStatus
         );
-  
+
         form.reset();
         navigate("/planMonth");
       } else {
         addToast({
           title: "Error al enviar los datos",
-          message: error.response.data.message || "Ocurrió un error al enviar los datos.",
+          message:
+            error.response.data.message ||
+            "Ocurrió un error al enviar los datos.",
           variant: "destructive",
         });
       }
-
     } catch (error) {
       console.error("Error al enviar los datos:", error);
       addToast({
         title: "Error al enviar los datos",
-        message: error.response.data.message || "Ocurrió un error al enviar los datos.",
+        message:
+          error.response.data.message ||
+          "Ocurrió un error al enviar los datos.",
         variant: "destructive",
       });
     } finally {
-      setLoadingGlobal(false); 
+      setLoadingGlobal(false);
     }
   };
 
   const handleCancel = () => {
-    form.reset(); 
-    setDataHotTable([]); 
-    setLoadingGlobal(false); 
+    form.reset();
+    setDataHotTable([]);
+    setLoadingGlobal(false);
     navigate("/planMonth");
   };
 
@@ -259,7 +295,11 @@ export const NewPlanMonth = () => {
     if (!file) return;
 
     if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")) {
-      alert("Solo se permiten archivos .xlsx y .xls");
+      addToast({
+        title: "Error de archivo",
+        message: "Solo se permiten archivos .xlsx y .xls",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -267,32 +307,46 @@ export const NewPlanMonth = () => {
     setShowLoader(true);
     try {
       const data = await readXlsxFile(file);
-      
+
       if (data.length === 0) {
-        alert("El archivo Excel está vacío.");
+        addToast({
+          title: "Archivo vacío",
+          message: "El archivo Excel está vacío.",
+          variant: "destructive",
+        });
         setLoadingGlobal(false);
         setShowLoader(false);
         return;
       }
 
       const headers = data[0].map((h) => (h ? String(h).trim() : ""));
-      
+
       const laborIndex = headers.findIndex(
         (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo"
       );
-      const faseIndex = headers.findIndex(
-        (h) => h.toLowerCase() === "fase"
-      );
+      const faseIndex = headers.findIndex((h) => h.toLowerCase() === "fase");
 
       if (laborIndex === -1) {
-        alert("Error: No se encontró la columna 'Labor' o 'Tajo' en el archivo Excel.\n\nEncabezados encontrados: " + headers.filter(h => h).join(", "));
+        addToast({
+          title: "Columna Labor/Tajo no encontrada",
+          message:
+            "No se encontró la columna 'Labor' o 'Tajo' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
         setLoadingGlobal(false);
         setShowLoader(false);
         return;
       }
 
       if (faseIndex === -1) {
-        alert("Error: No se encontró la columna 'Fase' en el archivo Excel.\n\nEncabezados encontrados: " + headers.filter(h => h).join(", "));
+        addToast({
+          title: "Columna Fase no encontrada",
+          message:
+            "No se encontró la columna 'Fase' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
         setLoadingGlobal(false);
         setShowLoader(false);
         return;
@@ -300,7 +354,11 @@ export const NewPlanMonth = () => {
 
       const { dob } = form.getValues();
       if (!dob?.start || !dob?.end) {
-        alert("Error: Debe seleccionar un rango de fechas antes de importar.");
+        addToast({
+          title: "Rango de fechas no seleccionado",
+          message: "Debe seleccionar un rango de fechas antes de importar.",
+          variant: "destructive",
+        });
         setLoadingGlobal(false);
         setShowLoader(false);
         return;
@@ -308,102 +366,158 @@ export const NewPlanMonth = () => {
 
       const startDate = dayjs(dob.start);
       const endDate = dayjs(dob.end);
-      const daysInMonth = endDate.diff(startDate, "day") + 1;
+      const daysInWeek = endDate.diff(startDate, "day") + 1;
 
-      const expectedDates = [];
-      for (let i = 0; i < daysInMonth; i++) {
-        expectedDates.push(startDate.add(i, "day").format("DD-MM").toUpperCase());
+      const expectedHeaders = [];
+      const turnos = ["DIA", "NOCHE"];
+
+      for (let i = 0; i < daysInWeek; i++) {
+        const currentDate = startDate
+          .add(i, "day")
+          .format("DD-MM")
+          .toUpperCase();
+        turnos.forEach((turno) => {
+          expectedHeaders.push(`${currentDate} - ${turno}`);
+        });
       }
 
-      const parseDate = (header) => {
+      const parseExcelHeader = (header) => {
         if (!header && header !== 0) return null;
-        
+
         let parsedDate = null;
-        const headerStr = String(header).trim();
-        
+        let parsedShift = null;
+        const headerStr = String(header).trim().toUpperCase();
+
+        const matchSimple = headerStr.match(/^(\d{1,2})\s(D|N)$/);
+        if (matchSimple) {
+          const day = matchSimple[1].padStart(2, "0");
+          const year = dayjs(dob.start).year();
+          const month = String(dayjs(dob.start).month() + 1).padStart(2, "0");
+          parsedDate = dayjs(`${year}-${month}-${day}`);
+          parsedShift = matchSimple[2] === "D" ? "DIA" : "NOCHE";
+          if (parsedDate.isValid()) {
+            return {
+              formattedDate: parsedDate.format("DD-MM"),
+              shift: parsedShift,
+            };
+          }
+        }
+
+        const matchFull = headerStr.match(/^(\d{2}-\d{2}) - (DIA|NOCHE)$/);
+        if (matchFull) {
+          const dayMonth = matchFull[1];
+          const [day, month] = dayMonth.split("-");
+          const year = dayjs(dob.start).year();
+          parsedDate = dayjs(`${year}-${month}-${day}`);
+          parsedShift = matchFull[2];
+          if (parsedDate.isValid()) {
+            return {
+              formattedDate: parsedDate.format("DD-MM"),
+              shift: parsedShift,
+            };
+          }
+        }
+
         if (typeof header === "number") {
           parsedDate = dayjs("1899-12-30").add(header, "days");
-          if (!parsedDate.isValid()) return null;
-        }
-        else {
-          const match = headerStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-          if (match) {
-            const [, day, month, year] = match;
-            parsedDate = dayjs(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
-          }
-          else if (headerStr.match(/^\d{1,2}[\/\-]\d{1,2}$/)) {
+          if (!parsedDate.isValid()) parsedDate = null;
+        } else {
+          const matchDateFull = headerStr.match(
+            /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
+          );
+          if (matchDateFull) {
+            const [, day, month, year] = matchDateFull;
+            parsedDate = dayjs(
+              `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
+            );
+          } else if (headerStr.match(/^\d{1,2}[\/\-]\d{1,2}$/)) {
             const [day, month] = headerStr.split(/[\/\-]/);
             const year = dayjs(dob.start).year();
-            parsedDate = dayjs(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
-          }
-          else if (headerStr.match(/^\d{2}-\d{2}$/)) {
+            parsedDate = dayjs(
+              `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
+            );
+          } else if (headerStr.match(/^\d{2}-\d{2}$/)) {
             const [day, month] = headerStr.split("-");
             const year = dayjs(dob.start).year();
-            parsedDate = dayjs(`${year}-${month}-${day}`);
+            parsedDate = dayjs(
+              `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
+            );
           }
         }
-        
-        return parsedDate && parsedDate.isValid() ? parsedDate : null;
+
+        return parsedDate && parsedDate.isValid()
+          ? { formattedDate: parsedDate.format("DD-MM"), shift: null }
+          : null;
       };
 
-      const dateColumns = [];
+      const dateColumnMap = {};
+      const dateShiftCount = {};
+
+      const orderedDateColumnsInExcel = [];
       headers.forEach((header, index) => {
-        if (index !== laborIndex && index !== faseIndex) {
-          dateColumns.push({ index, header });
+        if (index === laborIndex || index === faseIndex) {
+          return;
         }
+        orderedDateColumnsInExcel.push({ index, header });
       });
 
-      const dateColumnMap = {};
-      dateColumns.forEach(({ index, header }) => {
-        const parsedDate = parseDate(header);
-        if (parsedDate) {
-          const formattedDate = parsedDate.format("DD-MM").toUpperCase();
-          if (expectedDates.includes(formattedDate)) {
-            dateColumnMap[formattedDate] = index;
+      orderedDateColumnsInExcel.forEach(({ index, header }) => {
+        const parsed = parseExcelHeader(header);
+        if (parsed) {
+          const { formattedDate, shift } = parsed;
+          let finalShift = shift;
+
+          if (!finalShift) {
+            dateShiftCount[formattedDate] =
+              (dateShiftCount[formattedDate] || 0) + 1;
+            finalShift = dateShiftCount[formattedDate] === 1 ? "DIA" : "NOCHE";
+          }
+
+          const expectedKey = `${formattedDate} - ${finalShift}`;
+
+          if (expectedHeaders.includes(expectedKey)) {
+            dateColumnMap[expectedKey] = index;
+          } else {
+            console.warn(
+              `Advertencia: Clave esperada '${expectedKey}' no encontrada en la lista de headers esperados.`
+            );
           }
         }
       });
 
-      const unmappedColumns = dateColumns
+      const unmappedExcelColumns = orderedDateColumnsInExcel
         .filter(({ index }) => !Object.values(dateColumnMap).includes(index))
         .sort((a, b) => a.index - b.index);
-      
-      const unmappedDates = expectedDates.filter(date => !dateColumnMap[date]);
-      
-      unmappedColumns.forEach(({ index }, i) => {
-        if (i < unmappedDates.length) {
-          dateColumnMap[unmappedDates[i]] = index;
+
+      let unmappedExcelColIndex = 0;
+      expectedHeaders.forEach((expectedKey) => {
+        if (dateColumnMap[expectedKey] === undefined) {
+          if (unmappedExcelColIndex < unmappedExcelColumns.length) {
+            dateColumnMap[expectedKey] =
+              unmappedExcelColumns[unmappedExcelColIndex].index;
+            unmappedExcelColIndex++;
+          }
         }
       });
 
       const parseNumericValue = (value) => {
         if (value === null || value === undefined) return 0;
-        
-        // Si ya es un número, retornarlo
+
         if (typeof value === "number") {
           return isNaN(value) ? 0 : value;
         }
 
-        // Si es string, procesarlo
         if (typeof value === "string") {
           let cleanValue = value.trim();
           if (!cleanValue) return 0;
 
-          // Formato miles US: 1,234.56 → 1234.56
           if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(cleanValue)) {
             cleanValue = cleanValue.replace(/,/g, "");
-          }
-          // Formato miles EU: 1.234,56 → 1234.56
-          else if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(cleanValue)) {
+          } else if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(cleanValue)) {
             cleanValue = cleanValue.replace(/\./g, "").replace(",", ".");
-          }
-          // Formato decimal EU simple: 12,5 → 12.5
-          else if (/^\d+,\d+$/.test(cleanValue)) {
+          } else if (/^\d+,\d+$/.test(cleanValue)) {
             cleanValue = cleanValue.replace(",", ".");
-          }
-          // Si tiene solo comas, pueden ser separadores de miles o decimales
-          else if (cleanValue.includes(",") && !cleanValue.includes(".")) {
-            // Si tiene más de 3 dígitos después de la coma, probablemente es decimal
+          } else if (cleanValue.includes(",") && !cleanValue.includes(".")) {
             const parts = cleanValue.split(",");
             if (parts[1] && parts[1].length <= 2) {
               cleanValue = cleanValue.replace(",", ".");
@@ -432,12 +546,12 @@ export const NewPlanMonth = () => {
           fase: fase || "",
         };
 
-        expectedDates.forEach((dateKey) => {
-          const colIndex = dateColumnMap[dateKey];
+        expectedHeaders.forEach((headerKey) => {
+          const colIndex = dateColumnMap[headerKey];
           if (colIndex !== undefined && colIndex < row.length) {
-            rowData[dateKey] = parseNumericValue(row[colIndex]);
+            rowData[headerKey] = parseNumericValue(row[colIndex]);
           } else {
-            rowData[dateKey] = 0;
+            rowData[headerKey] = 0;
           }
         });
 
@@ -445,25 +559,38 @@ export const NewPlanMonth = () => {
       }
 
       if (processedData.length === 0) {
-        alert("No se encontraron datos válidos en el archivo Excel.");
+        addToast({
+          title: "Sin datos válidos",
+          message: "No se encontraron datos válidos en el archivo Excel.",
+          variant: "destructive",
+        });
         setLoadingGlobal(false);
         setShowLoader(false);
         return;
       }
 
-      // Mantener el loader visible mientras se procesan y renderizan los datos
       setTimeout(() => {
         setDataHotTable(processedData);
         setShowLoader(false);
         setLoadingGlobal(false);
-        alert(`Se importaron ${processedData.length} fila(s) correctamente.`);
+        addToast({
+          title: "Importación exitosa",
+          message: `Se importaron ${processedData.length} fila(s) correctamente.`,
+          variant: "success",
+        });
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
       }, 500);
     } catch (error) {
       console.error("Error al leer el archivo Excel:", error);
-      alert(`Error al leer el archivo Excel: ${error.message || "Por favor, verifique el formato del archivo."}`);
+      addToast({
+        title: "Error de lectura de Excel",
+        message: `Error al leer el archivo Excel: ${
+          error.message || "Por favor, verifique el formato del archivo."
+        }`,
+        variant: "destructive",
+      });
       setShowLoader(false);
       setLoadingGlobal(false);
       if (fileInputRef.current) {
@@ -479,36 +606,50 @@ export const NewPlanMonth = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <div className="flex gap-2 items-center">
         <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
         <div>
           <h1 className="text-[15px] font-semibold leading-none">
-            Crear plan del mes
+            Crear {title}
           </h1>
           <h4 className="text-[12px] text-muted-foreground">
             Ingresar los datos necesarios para la creación y enviar
           </h4>
         </div>
       </div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
         <PlanHeader
           form={form}
           onSubmit={onSubmit}
-          dataLaborList={dataLaborList}
           hasData={dataHotTable.length > 0}
           loadingGlobal={loadingGlobal}
+          mode={mode}
         />
         <div className="flex flex-col gap-3 z-0">
           <div className="flex justify-between items-center">
             <h1 className="text-base font-extrabold leading-5">
-              Planificador Mensual /{" "}
-              <b className="text-primary capitalize font-extrabold">
-                {form.getValues().dob?.start
-                  ? dayjs(form.getValues().dob.start).format("MMMM YYYY")
-                  : "Seleccione fecha"}
-              </b>
+              Planificador /{" "}
+              <strong className="font-extrabold capitalize text-primary">
+                {(() => {
+                  const dob = form.watch("dob");
+
+                  if (!dob?.start) return "Seleccione fecha";
+
+                  if (mode === "weekly") {
+                    const start = dayjs(dob.start).format("DD MMMM");
+                    const end = dob.end
+                      ? dayjs(dob.end).format("DD MMMM")
+                      : null;
+
+                    return end ? `${start} - ${end}` : start;
+                  }
+
+                  return dayjs(dob.start).format("MMMM YYYY");
+                })()}
+              </strong>
             </h1>
+
             {form.getValues().dob?.start && form.getValues().dob?.end && (
               <>
                 <input
@@ -520,13 +661,12 @@ export const NewPlanMonth = () => {
                   disabled={loadingGlobal}
                 />
                 <Button
-                  type="button"
-                  variant="outline"
+                  type="button"                 
                   disabled={loadingGlobal}
                   onClick={handleImportButtonClick}
-                  className="flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 px-3"
                 >
-                  <Upload className="w-4 h-4" />
+                   <RiFileExcel2Line className="size-3 text-white" />
                   Importar Excel
                 </Button>
               </>
@@ -545,7 +685,7 @@ export const NewPlanMonth = () => {
           ) : (
             <PlanContent
               dataHotTable={dataHotTable}
-              dataLaborList={dataLaborList}
+              dataLaborList={dataLaborVerify}
               setDataHotTable={setDataHotTable}
               loadingGlobal={loadingGlobal}
               setInvalidLabors={setInvalidLabors}
@@ -554,7 +694,7 @@ export const NewPlanMonth = () => {
         </div>
       </div>
       <div className="flex flex-wrap gap-3 justify-between items-end">
-        <div className="bg-sky-100/50 w-full md:w-fit rounded-xl px-6 py-2.5 flex gap-1 text-zinc-600 text-[11px] leading-4 mt-4 border-t border-blue-500">
+        <div className="bg-sky-100/50 w-full md:w-fit rounded-xl px-6 py-2.5 flex gap-1 text-zinc-600 text-[11px] leading-4 border-t border-blue-500">
           <IconWarning className="text-blue-500  w-5 h-5 mr-1.5" />
           <div className="flex items-center">
             <ul className="list-disc ml-3 gap-x-6 ">
