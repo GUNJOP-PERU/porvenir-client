@@ -1,5 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-rotate";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,
@@ -89,7 +90,7 @@ const TruckTracking = () => {
     () => ({
       centerLat: -10.6078,
       centerLng: -76.2103,
-      zoom: 17,
+      zoom: 15,
     }),
     []
   );
@@ -693,6 +694,13 @@ const TruckTracking = () => {
           attributionControl={false}
           zoomSnap={0.1}
           zoomDelta={0.1}
+          rotate={true}
+          touchRotate={true}
+          rotateControl={{
+            closeOnZeroBearing: false,
+            position: "bottomleft"
+          }}
+          bearing={45}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
