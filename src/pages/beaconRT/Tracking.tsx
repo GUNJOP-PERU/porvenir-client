@@ -33,6 +33,19 @@ import Rute from "@/components/Dashboard/Tracking/Rute";
 import dayjs from "dayjs";
 import { formatFecha } from "@/lib/utilsGeneral";
 
+// Extender tipos para leaflet-rotate
+declare module "react-leaflet" {
+  interface MapContainerProps {
+    rotate?: boolean;
+    touchRotate?: boolean;
+    rotateControl?: {
+      closeOnZeroBearing?: boolean;
+      position?: string;
+    };
+    bearing?: number;
+  }
+}
+
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
