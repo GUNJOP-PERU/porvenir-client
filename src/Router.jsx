@@ -70,6 +70,7 @@ import PageTrips from "./pages/beacon/Trips";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import ChangeHistory from "./pages/beaconRT/ChangeHistory";
 import Vehicles from "./pages/management/Vehicles";
+import PageVeta from "./pages/management/Veta";
 
 const protectedRoutes = [
   //General
@@ -91,6 +92,7 @@ const protectedRoutes = [
   { path: "labor", element: <HomeLabor /> },
   { path: "destiny", element: <PageDestiny /> },
   { path: "ubications", element: <PageUbications /> },
+  { path: "veta", element: <PageVeta/> },
   //Conectividad
   { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },

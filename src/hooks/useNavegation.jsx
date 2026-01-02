@@ -263,6 +263,11 @@ export const useNavigation = () => {
               icon: <MapPin />,
               items: [
                 {
+                  name: "Veta",
+                  href: "/veta",
+                  active: pathname === "/veta",
+                },
+                {
                   name: "Origen / Labor",
                   href: "/labor",
                   active: pathname === "/labor",

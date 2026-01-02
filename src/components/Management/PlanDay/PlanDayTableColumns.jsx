@@ -4,13 +4,14 @@ import { DataTableRowActions } from "../../Table/DataTableRowActions";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
+import dayjs from "dayjs";
 
 export const columns = [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -21,13 +22,16 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
+      const formattedDate = row.original?.dateString
+        ? dayjs(row.original.dateString).format("dddd D MMMM")
+        : "";
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {row.getValue("frontLabor")}
+            {formattedDate}
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline ">
-            {row.original?.phase || ""} / {row.original?.dateString || ""}
+             {row.original?.total || ""} labor programados
           </span>
         </div>
       );
@@ -49,47 +53,26 @@ export const columns = [
     },
   },
   {
-    accessorKey: "state",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <>
-          {row.getValue("state") === "close" ? (
-            <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
-              activo
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 bg-red-50 rounded-[6px] text-[10px] text-red-500 leading-[10px]">
-              inactivo
-            </span>
-          )}
-        </>
-      );
-    },
-  },
-  {
-    accessorKey: "phase",
+    accessorKey: "tonnage",
     header: "Tonelaje",
     cell: ({ row }) => {
-      return <>{roundAndFormat(row.original.tonnage || 0)} TN</>;
+      const total =
+        row.original?.data?.reduce(
+          (acc, item) => acc + (item?.tonnage || 0),
+          0
+        ) ?? 0;
+
+      return <span className="font-semibold">{roundAndFormat(total)} TN</span>;
     },
   },
-  {
-    accessorKey: "nro_volquetes",
-    header: "#Volquete",
-    cell: ({ row }) => {
-      return <>{row.getValue("nro_volquetes")} und</>;
-    },
-  },
-  {
-    accessorKey: "type",
-    header: "Tipo",
-    cell: ({ row }) => {
-      return <>{row.getValue("type")}</>;
-    },
-  },
+  // {
+  //   accessorKey: "nro_volquetes",
+  //   header: "#Volquete",
+  //   cell: ({ row }) => {
+  //     return <>{row.getValue("nro_volquetes")} und</>;
+  //   },
+  // },
+
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (
