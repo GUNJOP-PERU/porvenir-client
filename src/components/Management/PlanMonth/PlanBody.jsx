@@ -287,7 +287,11 @@ export const PlanBody = ({
     form.reset();
     setDataHotTable([]);
     setLoadingGlobal(false);
-    navigate("/planMonth");
+    if(mode === 'weekly'){
+      navigate("/planWeek");
+    } else {
+      navigate("/planMonth");
+    }
   };
 
   const handleImportExcel = async (event) => {
