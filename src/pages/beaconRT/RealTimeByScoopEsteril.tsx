@@ -19,10 +19,7 @@ import { calculateTripPrediction } from "@/utils/predictionUtils";
 // Icons
 import IconTruck from "@/icons/IconTruck";
 
-import { useGlobalData } from "@/context/GlobalDataContext";
-
-const RealTimeByHourRT = () => {
-  const { data: globalData, refreshGlobalData } = useGlobalData();
+const RealTimeByScoopEsteril = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<
     [{ startDate: Date; endDate: Date; key: string }]
@@ -334,7 +331,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte de Extracción por Turno / Mineral"
+        title="Reporte de Palas / Estéril"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -646,4 +643,4 @@ const RealTimeByHourRT = () => {
   );
 };
 
-export default RealTimeByHourRT;
+export default RealTimeByScoopEsteril;

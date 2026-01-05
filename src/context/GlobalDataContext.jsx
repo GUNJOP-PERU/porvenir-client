@@ -13,7 +13,7 @@ export const GlobalDataProvider = ({ children }) => {
   useChecklistAlert();
   
   const isAuth = useAuthStore((state) => state.isAuth);
-  const { addToast, addToastTruckStatus } = useToast();
+  const { addToast } = useToast();
   const [data, setData] = useState({
     globalMineral: [
       { id: "683e2381b2f9cfb7b396170c", name: "Mineral", isActive: true, value:42 }
@@ -78,21 +78,21 @@ export const GlobalDataProvider = ({ children }) => {
               const truckNumber = truck.tag.slice(-2);
               switch(currentTruck.status) {
                 case "mantenimiento":
-                  addToastTruckStatus({
+                  addToast({
                     title: "Cambio de Estado de Camión",
                     message: `El Camion ${truckNumber} entro en mantenimiento`,
                     variant: "warning",
                   })
                   break;
                 case "operativo":
-                  addToastTruckStatus({
+                  addToast({
                     title: "Cambio de Estado de Camión",
                     message: `El Camion ${truckNumber} está operativo`,
                     variant: "success",
                   });
                   break;
                 default:
-                  addToastTruckStatus({
+                  addToast({
                     title: "Cambio de Estado de Camión",
                     message: `El Camion ${truckNumber} entro en mantenimiento correctivo`,
                     variant: "destructive",
@@ -136,7 +136,7 @@ export const GlobalDataProvider = ({ children }) => {
         }));
       throw error;
     }
-  }, [data?.truckStatus, addToast, addToastTruckStatus]);
+  }, [data?.truckStatus, addToast]);
 
   const refreshGlobalData = useCallback(async () => {
     fetchMineralData("mineral?isActive=active");

@@ -19,13 +19,10 @@ import { calculateTripPrediction } from "@/utils/predictionUtils";
 // Icons
 import IconTruck from "@/icons/IconTruck";
 
-import { useGlobalData } from "@/context/GlobalDataContext";
-
-const RealTimeByHourRT = () => {
-  const { data: globalData, refreshGlobalData } = useGlobalData();
+const RealTimeByTurnEsteril = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
   const [dateFilter, setDateFilter] = useState<
-    [{ startDate: Date; endDate: Date; key: string }]
+    [{ startDate: Date, endDate: Date; key: string }]
   >([
     {
       startDate: new Date(getCurrentDay().startDate),
@@ -46,9 +43,13 @@ const RealTimeByHourRT = () => {
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
-    refetchInterval: 10000,
-  });
+  const { data: mineralData } = useFetchData<Mineral[]>(
+    "mineral",
+    "mineral",
+
+    { refetchInterval: 10000, }
+  );
+  console.log("Mineral Data:", mineralData);
 
   const {
     data : beaconTruck = []
@@ -334,7 +335,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte de Extracción por Turno / Mineral"
+        title="Reporte de Extracción por Turno / Estéril"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -357,10 +358,10 @@ const RealTimeByHourRT = () => {
           color=""
           style={{}}
         />
-  
+
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Extracción de Estéril (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -412,11 +413,11 @@ const RealTimeByHourRT = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">  
-        {shiftFilter === "dia" ? (
+      <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
+        {shiftFilter === "día" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de extracción de estéril acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -426,7 +427,7 @@ const RealTimeByHourRT = () => {
                   <div className="flex flex-row items-center gap-1">
                     <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
-                      Mineral Extraído
+                      Estéril Extraído
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
@@ -454,7 +455,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de extracción de estéril por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -475,7 +476,7 @@ const RealTimeByHourRT = () => {
                   <div className="flex flex-row items-center gap-1">
                     <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
                     <p className="text-[11px] font-bold">
-                      Mineral Extraído
+                      Estéril Extraído
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
@@ -533,7 +534,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de extracción de estéril por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -643,7 +644,7 @@ const RealTimeByHourRT = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
-export default RealTimeByHourRT;
+export default RealTimeByTurnEsteril;

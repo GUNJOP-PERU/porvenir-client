@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { href, useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import IconPlan from "@/icons/Dashboard/IconPlan";
 import IconRadar from "@/icons/IconRadar";
@@ -43,11 +43,32 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/underground-tracking",
           },
           {
-            name: "Reporte por Turno Mineral",
+            name: "Reporte de Extracción por Turno Mineral",
             href: "/dashboard/beacon/detection-report-turn-mineral-rt",
             icon: <ChartArea />,
             active:
               pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
+          },
+          {
+            name: "Reporte de Extracción por Turno Estéril",
+            href: "/dashboard/beacon/detection-report-turn-esteril-rt",
+            icon: <ChartArea />,
+            active:
+              pathname === "/dashboard/beacon/detection-report-turn-esteril-rt",
+          },
+          {
+            name: "Reporte de Palas Mineral",
+            href: "/dashboard/beacon/detection-report-scoop-mineral-rt",
+            icon: <ChartArea />,
+            active:
+              pathname === "/dashboard/beacon/detection-report-scoop-mineral-rt",
+          },
+          {
+            name: "Reporte de Palas Estéril",
+            href: "/dashboard/beacon/detection-report-scoop-esteril-rt",
+            icon: <ChartArea />,
+            active:
+              pathname === "/dashboard/beacon/detection-report-scoop-esteril-rt",
           },
           {
             name: "Reporte por Semana",

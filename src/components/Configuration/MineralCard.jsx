@@ -21,6 +21,7 @@ const MineralConfiguration = () => {
     isError,
     refetch
   } = useFetchData("mineral", "mineral");
+  console.log("Mineral data:", data);
   
   useEffect(() => {
     if (data && !isLoading && !isFetching) {

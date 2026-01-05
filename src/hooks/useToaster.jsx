@@ -1,250 +1,263 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { cva } from "class-variance-authority";
-import IconWarning from "@/icons/IconWarning";
-import IconClose from "@/icons/IconClose";
-import IconCheckMark from "@/icons/IconCheckMark";
-import parse from 'html-react-parser';
-import clsx from "clsx";
-// Icons
-import { IoClose } from "react-icons/io5";
+// import { createContext, useContext, useState, useEffect } from "react";
+// import { cva } from "class-variance-authority";
+// import IconWarning from "@/icons/IconWarning";
+// import IconClose from "@/icons/IconClose";
+// import IconCheckMark from "@/icons/IconCheckMark";
+// import parse from 'html-react-parser';
+// import clsx from "clsx";
+// // Icons
+// import { IoClose } from "react-icons/io5";
 
-const ToastContext = createContext();
+// const ToastContext = createContext();
 
-const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center gap-2 overflow-hidden rounded-[15px] px-4 py-4 pr-5 shadow-lg transition-all text-white bg-[#232531]",
-  {
-    variants: {
-      variant: {
-        default: "bg-[#232531]", // Normal
-        destructive: "  -red-700", // Error
-        success: "  -green-700", // Éxito
-        warning: " -yellow-700", // Advertencia
-        info: " -blue-700", // Información
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+// const toastVariants = cva(
+//   "group pointer-events-auto relative flex w-full items-center gap-2 overflow-hidden rounded-[15px] px-4 py-4 pr-5 shadow-lg transition-all text-white bg-[#232531]",
+//   {
+//     variants: {
+//       variant: {
+//         default: "bg-[#232531]", // Normal
+//         destructive: "  -red-700", // Error
+//         success: "  -green-700", // Éxito
+//         warning: " -yellow-700", // Advertencia
+//         info: " -blue-700", // Información
+//       },
+//     },
+//     defaultVariants: {
+//       variant: "default",
+//     },
+//   }
+// );
 
-export function ToastProvider({ children }) {
-  const [toast, setToast] = useState(null);
-  const [toastFS, setToastFS] = useState(null);
-  const [toastTruckStatus, setToastTruckStatus] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [visibleFS, setVisibleFS] = useState(false);
-  const [visibleTruckStatus, setVisibleTruckStatus] = useState(false);
-  let toastTimer = null;
-  let toastFSTimer = null;
-  let toastTruckStatusTimer = null;
+// export function ToastProvider({ children }) {
+//   const [toast, setToast] = useState(null);
+//   const [toastFS, setToastFS] = useState(null);
+//   const [toastTruckStatus, setToastTruckStatus] = useState(null);
+//   const [visible, setVisible] = useState(false);
+//   const [visibleFS, setVisibleFS] = useState(false);
+//   const [visibleTruckStatus, setVisibleTruckStatus] = useState(false);
+//   let toastTimer = null;
+//   let toastFSTimer = null;
+//   let toastTruckStatusTimer = null;
 
-  const closeToast = () => {
-    setVisible(false);
-    setTimeout(() => setToast(null), 300);
-    if (toastTimer) clearTimeout(toastTimer);
-  };
+//   const closeToast = () => {
+//     setVisible(false);
+//     setTimeout(() => setToast(null), 300);
+//     if (toastTimer) clearTimeout(toastTimer);
+//   };
 
-  const closeToastTruckStatus = () => {
-    setVisibleTruckStatus(false);
-    setTimeout(() => setToastTruckStatus(null), 300);
-    if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
-  };
+//   const closeToastTruckStatus = () => {
+//     setVisibleTruckStatus(false);
+//     setTimeout(() => setToastTruckStatus(null), 300);
+//     if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
+//   };
 
-  const closeToastFS = () => {
-    setVisibleFS(false);
-    setTimeout(() => setToastFS(null), 300);
-    if (toastFSTimer) clearTimeout(toastFSTimer);
-  };
+//   const closeToastFS = () => {
+//     setVisibleFS(false);
+//     setTimeout(() => setToastFS(null), 300);
+//     if (toastFSTimer) clearTimeout(toastFSTimer);
+//   };
 
-  const addToast = ({ title, message, variant = "default" }) => {
-    setToast({ title, message, variant });
-    setVisible(true);
+//   const addToast = ({ title, message, variant = "default" }) => {
+//     setToast({ title, message, variant });
+//     setVisible(true);
 
-    if (toastTimer) clearTimeout(toastTimer);
+//     if (toastTimer) clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-      setVisible(false);
-      setTimeout(() => setToast(null), 300);
-    }, 30000);
-  };
+//     toastTimer = setTimeout(() => {
+//       setVisible(false);
+//       setTimeout(() => setToast(null), 300);
+//     }, 30000);
+//   };
 
-  const addToastTruckStatus = ({ title, message, variant = "default" }) => {
-    setToastTruckStatus({ title, message, variant });
-    setVisibleTruckStatus(true);
+//   const addToastTruckStatus = ({ title, message, variant = "default" }) => {
+//     setToastTruckStatus({ title, message, variant });
+//     setVisibleTruckStatus(true);
 
-    if (toastTimer) clearTimeout(toastTimer);
+//     if (toastTimer) clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-      setVisibleTruckStatus(false);
-      setTimeout(() => setToastTruckStatus(null), 300);
-    }, 30000);
-  };
+//     toastTimer = setTimeout(() => {
+//       setVisibleTruckStatus(false);
+//       setTimeout(() => setToastTruckStatus(null), 300);
+//     }, 30000);
+//   };
 
-  const addToastFS = ({
-    title,
-    subTitle,
-    date,
-    message,
-    list,
-    variant = "default"
-  }) => {
-    setToastFS({ title, subTitle, date, message, list, variant });
-    setVisibleFS(true);
+//   const addToastFS = ({
+//     title,
+//     subTitle,
+//     date,
+//     message,
+//     list,
+//     variant = "default"
+//   }) => {
+//     setToastFS({ title, subTitle, date, message, list, variant });
+//     setVisibleFS(true);
     
-    if (toastTimer) clearTimeout(toastTimer);
+//     if (toastTimer) clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-      setVisibleFS(false);
-      setTimeout(() => setToastFS(null), 300);
-    }, 30000);
-  };
+//     toastTimer = setTimeout(() => {
+//       setVisibleFS(false);
+//       setTimeout(() => setToastFS(null), 300);
+//     }, 30000);
+//   };
 
-  useEffect(() => {
-    return () => {
-      if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
-    };
-  }, []);
+//   useEffect(() => {
+//     return () => {
+//       if (toastTruckStatusTimer) clearTimeout(toastTruckStatusTimer);
+//     };
+//   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (toastFSTimer) clearTimeout(toastFSTimer);
-    };
-  }, []);
+//   useEffect(() => {
+//     return () => {
+//       if (toastFSTimer) clearTimeout(toastFSTimer);
+//     };
+//   }, []);
 
-  return (
-    <ToastContext.Provider value={{ addToast, addToastFS, addToastTruckStatus }}>
-      {children}
-      {toast && (
-        <div className="fixed bottom-5 right-5 z-[9999] max-w-[300px] min-w-[250px]">
-          <div
-            className={`${toastVariants({ variant: toast.variant })} ${
-              visible ? "error-visible" : "error-hidden"
-            } error-login`}
-          >
-            {/* 🔥 Aquí cambia el icono según el tipo de Toast */}
-            {toast.variant === "destructive" && (
-              <IconWarning className="text-red-500 w-6 h-6" />
-            )}
-            {toast.variant === "success" && (
-              <IconCheckMark className="text-green-500 w-6 h-6" />
-            )}
-            {toast.variant === "warning" && (
-              <IconWarning className="text-yellow-500 w-6 h-6" />
-            )}
-            <div className="grid gap-0.5 ">
-              <h4 className="text-xs font-medium">
-                {toast.title || "Notificación"}
-              </h4>
-              {toast.message && (
-                <p className="text-[11px] text-gray-400 leading-3 ">
-                  {toast.message}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={closeToast}
-              className="absolute top-2 right-2 text-white z-50"
-            >
-              <IoClose color="#FFFFFF" />
-            </button>
-          </div>
-        </div>
-      )}
-      {toastTruckStatus && (
-        <div className={clsx(`fixed ${toast ? "bottom-24":"bottom-5"} right-5 z-[9999] max-w-[300px] min-w-[250px]`)}>
-          <div
-            className={`${toastVariants({ variant: toastTruckStatus.variant })} ${
-              visibleTruckStatus ? "error-visible" : "error-hidden"
-            } error-login`}
-          >
-            {toastTruckStatus.variant === "destructive" && (
-              <IconWarning className="text-red-500 w-6 h-6" />
-            )}
-            {toastTruckStatus.variant === "success" && (
-              <IconCheckMark className="text-green-500 w-6 h-6" />
-            )}
-            {toastTruckStatus.variant === "warning" && (
-              <IconWarning className="text-yellow-500 w-6 h-6" />
-            )}
-            <div className="grid gap-0.5">
-              <h4 className="text-xs font-medium">
-                {toastTruckStatus.title || "Notificación"}
-              </h4>
-              {toastTruckStatus.message && (
-                <p className="text-[11px] text-gray-400 leading-3 ">
-                  {toastTruckStatus.message}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={closeToastTruckStatus}
-              className="absolute top-2 right-2 text-white z-50"
-            >
-              <IoClose color="#FFFFFF" />
-            </button>
-          </div>
-        </div>
-      )}
-      {toastFS && (
-        <div className={visibleFS ? "fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50" : "hidden"}>
-          <div
-            className={`${toastVariants({ variant: toastFS.variant })} max-w-[500px] ${
-              visibleFS ? "error-visible" : "error-hidden"
-            } error-login`}
-          >
-            {/* 🔥 Aquí cambia el icono según el tipo de Toast */}
+//   return (
+//     <ToastContext.Provider value={{ addToast, addToastFS, addToastTruckStatus }}>
+//       {children}
+//       {toast && (
+//         <div className="fixed bottom-5 right-5 z-[9999] max-w-[300px] min-w-[250px]">
+//           <div
+//             className={`${toastVariants({ variant: toast.variant })} ${
+//               visible ? "error-visible" : "error-hidden"
+//             } error-login`}
+//           >
+//             {/* 🔥 Aquí cambia el icono según el tipo de Toast */}
+//             {toast.variant === "destructive" && (
+//               <IconWarning className="text-red-500 w-6 h-6" />
+//             )}
+//             {toast.variant === "success" && (
+//               <IconCheckMark className="text-green-500 w-6 h-6" />
+//             )}
+//             {toast.variant === "warning" && (
+//               <IconWarning className="text-yellow-500 w-6 h-6" />
+//             )}
+//             <div className="grid gap-0.5 ">
+//               <h4 className="text-xs font-medium">
+//                 {toast.title || "Notificación"}
+//               </h4>
+//               {toast.message && (
+//                 <p className="text-[11px] text-gray-400 leading-3 ">
+//                   {toast.message}
+//                 </p>
+//               )}
+//             </div>
+//             <button
+//               onClick={closeToast}
+//               className="absolute top-2 right-2 text-white z-50"
+//             >
+//               <IoClose color="#FFFFFF" />
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//       {toastTruckStatus && (
+//         <div className={clsx(`fixed ${toast ? "bottom-24":"bottom-5"} right-5 z-[9999] max-w-[300px] min-w-[250px]`)}>
+//           <div
+//             className={`${toastVariants({ variant: toastTruckStatus.variant })} ${
+//               visibleTruckStatus ? "error-visible" : "error-hidden"
+//             } error-login`}
+//           >
+//             {toastTruckStatus.variant === "destructive" && (
+//               <IconWarning className="text-red-500 w-6 h-6" />
+//             )}
+//             {toastTruckStatus.variant === "success" && (
+//               <IconCheckMark className="text-green-500 w-6 h-6" />
+//             )}
+//             {toastTruckStatus.variant === "warning" && (
+//               <IconWarning className="text-yellow-500 w-6 h-6" />
+//             )}
+//             <div className="grid gap-0.5">
+//               <h4 className="text-xs font-medium">
+//                 {toastTruckStatus.title || "Notificación"}
+//               </h4>
+//               {toastTruckStatus.message && (
+//                 <p className="text-[11px] text-gray-400 leading-3 ">
+//                   {toastTruckStatus.message}
+//                 </p>
+//               )}
+//             </div>
+//             <button
+//               onClick={closeToastTruckStatus}
+//               className="absolute top-2 right-2 text-white z-50"
+//             >
+//               <IoClose color="#FFFFFF" />
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//       {toastFS && (
+//         <div className={visibleFS ? "fixed top-0 left-0 flex justify-center items-center z-[9999] w-[100vw] h-[100vh] bg-black/50" : "hidden"}>
+//           <div
+//             className={`${toastVariants({ variant: toastFS.variant })} max-w-[500px] ${
+//               visibleFS ? "error-visible" : "error-hidden"
+//             } error-login`}
+//           >
+//             {/* 🔥 Aquí cambia el icono según el tipo de Toast */}
             
-            <div className="flex flex-col gap-0.5 ">
-              <div className="flex flex-row items-center gap-2 justify-between">
-                <div className="flex flex-row items-center gap-2">
-                  {toastFS.variant === "destructive" && (
-                    <IconWarning className="text-red-500 w-6 h-6" />
-                  )}
-                  {toastFS.variant === "success" && (
-                    <IconCheckMark className="text-green-500 w-6 h-6" />
-                  )}
-                  {toastFS.variant === "warning" && (
-                    <IconWarning className="text-yellow-500 w-6 h-6" />
-                  )}
-                  <div>
-                    <h4 className="text-base font-medium">
-                      {toastFS.title || "Notificación"}
-                    </h4>
-                    <h5 className="text-xs font-medium pl-1">
-                      {toastFS.subTitle || "Notificación"}
-                    </h5>
-                  </div>
-                </div>
-                <button
-                  onClick={closeToastFS}
-                  className="absolute top-2 right-2 text-white z-50"
-                >
-                  <IoClose color="#FFFFFF" />
-                </button>
-              </div>
-              {toastFS.message && (
-                <p className="text-[12px] text-gray-400 leading-3 ">
-                  {parse(toastFS.message)}
-                </p>
-              )}
-              <ul className="list-disc pl-5 mt-1">
-                {toastFS.list && toastFS.list.length > 0 && (
-                  toastFS.list.map((item, index) => (
-                    <li key={index} className="text-[12px] text-gray-400">
-                      {parse(item)}
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-    </ToastContext.Provider>
-  );
-}
+//             <div className="flex flex-col gap-0.5 ">
+//               <div className="flex flex-row items-center gap-2 justify-between">
+//                 <div className="flex flex-row items-center gap-2">
+//                   {toastFS.variant === "destructive" && (
+//                     <IconWarning className="text-red-500 w-6 h-6" />
+//                   )}
+//                   {toastFS.variant === "success" && (
+//                     <IconCheckMark className="text-green-500 w-6 h-6" />
+//                   )}
+//                   {toastFS.variant === "warning" && (
+//                     <IconWarning className="text-yellow-500 w-6 h-6" />
+//                   )}
+//                   <div>
+//                     <h4 className="text-base font-medium">
+//                       {toastFS.title || "Notificación"}
+//                     </h4>
+//                     <h5 className="text-xs font-medium pl-1">
+//                       {toastFS.subTitle || "Notificación"}
+//                     </h5>
+//                   </div>
+//                 </div>
+//                 <button
+//                   onClick={closeToastFS}
+//                   className="absolute top-2 right-2 text-white z-50"
+//                 >
+//                   <IoClose color="#FFFFFF" />
+//                 </button>
+//               </div>
+//               {toastFS.message && (
+//                 <p className="text-[12px] text-gray-400 leading-3 ">
+//                   {parse(toastFS.message)}
+//                 </p>
+//               )}
+//               <ul className="list-disc pl-5 mt-1">
+//                 {toastFS.list && toastFS.list.length > 0 && (
+//                   toastFS.list.map((item, index) => (
+//                     <li key={index} className="text-[12px] text-gray-400">
+//                       {parse(item)}
+//                     </li>
+//                   ))
+//                 )}
+//               </ul>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </ToastContext.Provider>
+//   );
+// }
 
-export function useToast() {
-  return useContext(ToastContext);
-}
+// export function useToast() {
+//   return useContext(ToastContext);
+// }
+
+import { useContext } from "react";
+import { ToastContext } from "../context/ToastContext";
+// import { ToastContextType } from "../context/ToastContext";
+
+// Hook para acceder al contexto global de datos
+export const useToast = () => {
+  const context = useContext(ToastContext);
+  if (context === null || context === undefined) {
+    throw new Error('useToast must be used within a ToastProvider');
+  }
+  return context;
+};

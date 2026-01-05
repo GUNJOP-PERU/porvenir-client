@@ -10,7 +10,7 @@ import PageError from "./pages/404";
 import Layout from "./pages/Layout";
 import Login from "./pages/login/Login";
 import HomeLabor from "./pages/management/Labor";
-import PageBeacon from "./pages/management/Beacon";
+// import PageBeacon from "./pages/management/Beacon";
 import PageDestiny from "./pages/management/Destiny";
 import { NewPlanMonth } from "./pages/management/NewPlanMonth";
 import PlanDay from "./pages/management/PlanDay";
@@ -45,6 +45,9 @@ import WeekReport from "./pages/dashboard/WeekReport";
 // Beacon Real Time
 import RealTimeByDayRT from "./pages/beaconRT/RealTimeByWeekMineral";
 import RealTimeByHourMineralRT from "./pages/beaconRT/RealTimeByTurnMineral";
+import RealTimeByTurnEsteril from "./pages/beaconRT/RealTimeByTurnEsteril";
+import RealTimeByScoopMineral from "./pages/beaconRT/RealTimeByScoopMineral";
+import RealTimeByScoopEsteril from "./pages/beaconRT/RealTimeByScoopEsteril";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
 import TrackingRT from "./pages/beaconRT/Tracking";
 import UtilizacionDeFlota from "./pages/beaconRT/UtilizacionDeFlota";
@@ -92,13 +95,25 @@ const protectedRoutes = [
   { path: "destiny", element: <PageDestiny /> },
   { path: "ubications", element: <PageUbications /> },
   //Conectividad
-  { path: "beacon", element: <PageBeacon /> },
+  // { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
 
   // Beacon RT
   {
     path: "dashboard/beacon/detection-report-turn-mineral-rt",
     element: <RealTimeByHourMineralRT />,
+  },
+  {
+    path: "dashboard/beacon/detection-report-turn-esteril-rt",
+    element: <RealTimeByTurnEsteril />,
+  },
+  {
+    path: "dashboard/beacon/detection-report-scoop-mineral-rt",
+    element: <RealTimeByScoopMineral />,
+  },
+  {
+    path: "dashboard/beacon/detection-report-scoop-esteril-rt",
+    element: <RealTimeByScoopEsteril />,
   },
   {
     path: "dashboard/beacon/detection-report-week-rt",
