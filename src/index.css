@@ -299,22 +299,9 @@ number-flow-react::part(suffix) {
   --ht-cell-editor-border-color: #FF5000;
 }
 
-.ht-fase-dropdown {
-  position: relative;
-  padding-right: 16px !important; /* Espacio para la flecha */
+.htAutocompleteArrow{
+  color:#FF5000;
 }
-
-.ht-fase-dropdown::after {
-  content: "▼";
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10px;
-  color: #FF5000;
-  pointer-events: none;
-}
-
 
 .handsontable .columnSorting.sortAction {
   max-width: 100% !important;  
@@ -323,11 +310,6 @@ number-flow-react::part(suffix) {
 .htCore {
   z-index: 99;
 }
-
-.handsontable .ht-fase-dropdown {
-  background-color: #FF500020 !important;
-}
-
 
 .handsontable .ht-total-row.htDimmed {
   background-color: #3c3c3c !important;
@@ -340,10 +322,17 @@ number-flow-react::part(suffix) {
   color: white !important;
 }
 
+
 .ht-row-even {
   background-color: #FF500015 !important;
 }
 
+
+.handsontable .ht_clone_top thead tr:nth-child(2) th,
+.handsontable .ht_clone_top_left_corner thead tr:nth-child(2) th,
+.handsontable .ht_master thead tr:nth-child(2) th {
+  background-color: #3c3c3c !important;
+}
 
 
 /*----------------Zoom----------------*/
@@ -407,6 +396,7 @@ number-flow-react::part(suffix) {
   transform-origin: center center;
 }
 
+/* Estilos personalizados para Notyf */
 .notyf__toast {
   border-radius: 15px !important;
   max-width: 300px;
@@ -429,12 +419,16 @@ number-flow-react::part(suffix) {
   color: white !important;
   opacity: 0.8;
 }
+
 .notyf__dismiss:hover {
   opacity: 1;
 }
+
+/* Posicionamiento */
 .notyf {
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 9999;
 }
+

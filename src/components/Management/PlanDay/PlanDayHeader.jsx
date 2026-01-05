@@ -27,18 +27,32 @@ import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./PlanDayFilterItems";
 import IconEdit from "@/icons/IconEdit";
 import { ButtonRefresh } from "../../../components/ButtonRefresh";
+import { useFetchData } from "@/hooks/useGlobalQuery";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 export const PlanHeader = ({
   form,
   onSubmit,
-  dataLaborList,
-  refetchLaborList,
-  loadingLaborList,
   hasData,
   loadingGlobal,
   frontLaborSubHeader,
-  setShowFrontLaborSubHeader
+  setShowFrontLaborSubHeader,
+  handleImportButtonClick,
+  handleImportExcel,
+  fileInputRef,
 }) => {
+  const {
+    data: dataLaborList,
+    refetch: refetchLaborList,
+    isFetching: isLaborListFetching,
+    isLoading: loadingLaborList,
+  } = useFetchData("frontLabor-current", "frontLabor/current", {
+    enabled: true,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+  });
+
   return (
     <Form {...form}>
       <form
@@ -78,7 +92,7 @@ export const PlanHeader = ({
             name="dob"
             render={({ field }) => (
               <FormItem>
-                <Popover >
+                <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -128,20 +142,19 @@ export const PlanHeader = ({
                   options={dataLaborList}
                   field={field}
                   loadingGlobal={loadingGlobal}
+                  refetch={refetchLaborList}
+                  isFetching={isLaborListFetching}
                 />
                 <FormMessage />
               </FormItem>
             )}
           />
-          <ButtonRefresh
-            refetch={refetchLaborList}
-            isFetching={loadingLaborList}
-            showText={false}
-          />
+
           <Button
             type="button"
             variant="tertiary"
             onClick={() => setShowFrontLaborSubHeader(!frontLaborSubHeader)}
+            disabled={loadingGlobal}
           >
             {frontLaborSubHeader ? (
               <>
@@ -160,15 +173,36 @@ export const PlanHeader = ({
           {hasData ? (
             <>
               <IconEdit className="w-5 h-5 stroke-primary" />
-              Actualizar
+              Actualizar Plan
             </>
           ) : (
             <>
               <CircleFadingPlus className="text-primary w-4 h-4" />
-              Crear
+              Crear Plan
             </>
           )}
         </Button>
+        {form.getValues().dob && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleImportExcel}
+              className="hidden"
+              disabled={loadingGlobal}
+            />
+            <Button
+              className="bg-green-600 hover:bg-green-700 px-3"
+              onClick={handleImportButtonClick}
+              type="button"
+              disabled={loadingGlobal}
+            >
+              <RiFileExcel2Line className="size-3 text-white" />
+              Importar excel
+            </Button>
+          </>
+        )}
       </form>
     </Form>
   );

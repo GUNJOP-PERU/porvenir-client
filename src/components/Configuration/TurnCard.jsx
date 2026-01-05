@@ -19,7 +19,6 @@ const TurnConfiguration = () => {
     refetch
   } = useFetchData("shift", "shift");
   
-  console.log("shift", data)
 
   return (
     <>

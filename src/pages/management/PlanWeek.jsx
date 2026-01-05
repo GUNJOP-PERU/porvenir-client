@@ -1,17 +1,18 @@
 import PageHeader from "@/components/PageHeader";
-import { PlanWeekModal } from "@/components/Management/PlanWeek/PlanWeekModal";
 import { columns } from "@/components/Management/PlanWeek/columns";
 import { DataTable } from "@/components/Table/DataTable";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { CircleFadingPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function PlanWeek() {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const {
     data = [],
     isFetching,
     isError,
+    isLoading,
     refetch,
   } = useFetchData("planWeek", "planWeek");
 
@@ -23,18 +24,23 @@ function PlanWeek() {
         count={countItems(data)}
         refetch={refetch}
         isFetching={isFetching}
-        setDialogOpen={setDialogOpen}
+        actions={
+          <>
+            <Link to={`/plan/weekly/new`}>
+              <Button className="w-fit">
+                <CircleFadingPlus className="w-5 h-5 text-white" />
+                Añadir nuevo
+              </Button>
+            </Link>
+          </>
+        }
       />
       <DataTable
         data={data}
         columns={columns}
         isFetching={isFetching}
         isError={isError}
-      />
-      <PlanWeekModal
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        isEdit={false}
+        isLoading={isLoading}
       />
     </>
   );

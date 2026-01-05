@@ -12,7 +12,7 @@ import Login from "./pages/login/Login";
 import HomeLabor from "./pages/management/Labor";
 // import PageBeacon from "./pages/management/Beacon";
 import PageDestiny from "./pages/management/Destiny";
-import { NewPlanMonth } from "./pages/management/NewPlanMonth";
+import PlanNew from "./pages/management/PlanNew";
 import PlanDay from "./pages/management/PlanDay";
 import PlanMonth from "./pages/management/PlanMonth";
 import PlanWeek from "./pages/management/PlanWeek";
@@ -73,6 +73,7 @@ import PageTrips from "./pages/beacon/Trips";
 import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import ChangeHistory from "./pages/beaconRT/ChangeHistory";
 import Vehicles from "./pages/management/Vehicles";
+import PageVeta from "./pages/management/Veta";
 
 const protectedRoutes = [
   //General
@@ -89,11 +90,13 @@ const protectedRoutes = [
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
-  { path: "newPlanMonth", element: <NewPlanMonth /> },
+  { path: "plan/:mode/new", element: <PlanNew /> },
+{ path: "plan/:mode/:id", element: <PlanNew /> },
   //Ubicaciones
   { path: "labor", element: <HomeLabor /> },
   { path: "destiny", element: <PageDestiny /> },
   { path: "ubications", element: <PageUbications /> },
+  { path: "veta", element: <PageVeta/> },
   //Conectividad
   // { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },

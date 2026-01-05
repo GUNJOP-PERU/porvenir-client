@@ -154,7 +154,6 @@ const UnitTripTable = ({ data }: UnitTripsTableProps) => {
     applyFilters();
   }, [filters]);
 
-  console.log("filteredData", filteredData);
 
   const table = useReactTable({
     data: filteredData,

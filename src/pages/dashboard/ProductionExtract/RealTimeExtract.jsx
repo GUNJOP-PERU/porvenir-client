@@ -10,6 +10,10 @@ export default function RealTimeExtract() {
     "shift-variable",
     "production-extract-realtime",
   ]);
+  useSocketTopicValue("cycle-current-shift-list", [
+    "shift-variable",
+    "production-extract-realtime",
+  ]);
   useSocketTopicValue("planday/current", [
     "shift-variable",
     "plan-extract-realtime",

@@ -46,6 +46,7 @@
     "highcharts-react-official": "^3.2.2",
     "html-react-parser": "^5.2.5",
     "leaflet": "^1.9.4",
+    "leaflet-rotate": "^0.2.8",
     "lucide-react": "^0.464.0",
     "motion": "^12.4.2",
     "notyf": "^3.10.0",

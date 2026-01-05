@@ -29,7 +29,7 @@ function FilterGroup({ title, options, formKey, value, onChange, disabled }) {
                 : "opacity-50 [&_svg]:invisible"
             )}
           >
-            <Check className="size-3" />
+            <Check className="size-3 stroke-white" />
           </div>
           {option.label}
         </CommandItem>

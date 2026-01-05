@@ -30,7 +30,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
     mac: ["BC:57:29:06:02:33","BC:57:29:03:5C:6A"],
     name: "BC1910_01",
     location: "bocamina",
-    description: "BC - 80",
+    description: "BC +80",
     color: "#66d20e",
     position: {
       latitud: -10.60222,
@@ -44,7 +44,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
     mac: ["BC:57:29:06:02:3A","BC:57:29:03:5C:94"],
     name: "BC1875_01",
     location: "bocamina",
-    description: "BC - 100",
+    description: "BC +100",
     color: "#66d20e",
     position: {
       latitud: -10.60694,
@@ -55,10 +55,10 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 3,
-    mac: ["BC:57:29:06:02:38","BC:57:29:03:5C:77"],
+    mac: ["AF:20:24:00:01:C3","BC:57:29:03:5C:77"],
     name: "BC1820_01",
     location: "bocamina",
-    description: "BC - 20",
+    description: "BC -20",
     color: "#66d20e",
     position: {
       latitud: -10.61500,
@@ -88,7 +88,7 @@ export const superficieLocation: IBeaconUbication[] = [
 export const maintenanceLocation: IBeaconUbication[] = [
   {
     id: 6,
-    mac: ["BC:57:29:06:01:DF","BC:57:29:03:5C:7D","BC:57:29:03:5C:81"],
+    mac: ["A:20:24:00:01:B2","BC:57:29:03:5C:7D","BC:57:29:03:5C:81"],
     name: "TS_01",
     location: "mantenimiento",
     description: "MANTENIMIENTO",

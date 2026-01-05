@@ -21,7 +21,6 @@ const BarChartFrontLabor = ({
   const dataLabor = useMemo(() => {
     const grouped = trips.reduce((acc, trip) => {
       const frontLabor = trip.frontLabor || "Sin asignar";
-      console.log("frontLabor:", frontLabor);
       if (!acc[frontLabor]) {
         acc[frontLabor] = 0;
       }
@@ -35,7 +34,6 @@ const BarChartFrontLabor = ({
     }));
   }, [trips]);
 
-  console.log(dataLabor);
 
   const options: Highcharts.Options = {
     chart: {

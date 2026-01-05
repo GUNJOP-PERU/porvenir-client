@@ -244,7 +244,7 @@ export const useNavigation = () => {
                 {
                   name: "Plan Mensual",
                   href: "/planMonth",
-                  active: pathname === "/planMonth",
+                  active: pathname === "/planMonth" || pathname === "/newPlanMonth" || pathname === "/editPlanMonth",
                 },
               ],
             },
@@ -273,7 +273,7 @@ export const useNavigation = () => {
                   active: pathname === "/users",
                 },
                 {
-                  name: "Vehiculos",
+                  name: "Equipos",
                   href: "/vehicles",
                   active: pathname === "/vehicles",
                 },
@@ -283,6 +283,11 @@ export const useNavigation = () => {
               name: "Ubicaciones",
               icon: <MapPin />,
               items: [
+                {
+                  name: "Veta",
+                  href: "/veta",
+                  active: pathname === "/veta",
+                },
                 {
                   name: "Origen / Labor",
                   href: "/labor",
@@ -312,12 +317,12 @@ export const useNavigation = () => {
                 {
                   name: "Plan Semanal",
                   href: "/planWeek",
-                  active: pathname === "/planWeek",
+                  active: pathname === "/planWeek" ||  pathname.startsWith("/plan/weekly"),
                 },
                 {
                   name: "Plan Mensual",
                   href: "/planMonth",
-                  active: pathname === "/planMonth",
+                  active: pathname === "/planMonth" ||  pathname.startsWith("/plan/monthly"),
                 },
               ],
             },

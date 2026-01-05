@@ -26,7 +26,7 @@ function PlanMonth() {
         isFetching={isFetching}
         actions={
           <>
-          <Link to={`/newPlanMonth`}>
+          <Link to={`/plan/monthly/new`}>
             <Button className="w-fit">
               <CircleFadingPlus className="w-5 h-5 text-white" />
               Añadir nuevo
@@ -42,6 +42,7 @@ function PlanMonth() {
         isError={isError}
         isLoading={isLoading}
       />
+      
     </>
   );
 }

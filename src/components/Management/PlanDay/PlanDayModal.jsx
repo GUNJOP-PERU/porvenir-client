@@ -13,7 +13,7 @@ import { postDataRequest } from "@/api/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CircleFadingPlus, SendHorizontal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { PlanContent } from "./PlanDayContent";
@@ -21,7 +21,13 @@ import { PlanHeader } from "./PlanDayHeader";
 import { FrontLaborSubHeader } from "./FrontLaborSubHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useQueryClient } from "@tanstack/react-query";
-import { getDefaultShift, getDefaultDateObj } from "@/lib/utilsGeneral";
+import {
+  getDefaultShift,
+  getDefaultDateObj,
+  normalizarTajo,
+} from "@/lib/utilsGeneral";
+import { useToast } from "@/hooks/useToaster";
+import readXlsxFile from "read-excel-file";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
@@ -31,34 +37,35 @@ const FormSchema = z.object({
 
 export const ModalPlanDay = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const [dataHotTable, setDataHotTable] = useState([]);
+  const [invalidLabors, setInvalidLabors] = useState([]);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [showFrontLaborSubHeader, setShowFrontLaborSubHeader] = useState(false);
-  const {
-    data: dataLaborList,
-    refetch: refetchLaborList,
-    isLoading: loadingLaborList,
-  } = useFetchData(
-    "frontLabor-General",
-    "frontLabor", 
+  const fileInputRef = useRef(null);
+
+  const { data: dataLaborVerify, refetch: refetchLaborVerify } = useFetchData(
+    "frontLabor-general",
+    "frontLabor",
     {
-      enabled: false,
+      enabled: true,
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: false,
     }
   );
 
   useEffect(() => {
-    if (isOpen) {    
-      console.log(getDefaultDateObj());
+    if (isOpen) {
       form.reset({
         dob: getDefaultDateObj(),
         selectedItems: [],
         shift: getDefaultShift(),
       });
     }
-    refetchLaborList();
   }, [isOpen]);
-  
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -157,27 +164,50 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
         shift: shift,
       }));
     });
-    console.log("Datos Finales:", datosFinales);
 
     try {
       const response = await postDataRequest("planDay/many", [
-        ...datosFinales.map((e) => ({ ...e, type: "blending", startDate: new Date() })),
-        ...datosFinales.map((e) => ({ ...e, type: "modificado", startDate: new Date() })),
+        ...datosFinales.map((e) => ({
+          ...e,
+          type: "blending",
+          startDate: new Date(),
+        })),
+        ...datosFinales.map((e) => ({
+          ...e,
+          type: "modificado",
+          startDate: new Date(),
+        })),
       ]);
 
       if (response.status >= 200 && response.status < 300) {
-        alert("Datos enviados con éxito!");
+        addToast({
+          title: "Datos enviados con éxito",
+          message: "Los datos se han enviado con éxito.",
+          variant: "success",
+        });
         queryClient.invalidateQueries({ queryKey: ["crud", "planDay"] });
         setDataHotTable([]);
       } else {
-        alert("Error al enviar los datos.");
+        addToast({
+          title: "Error al enviar los datos",
+          message:
+            error.response.data.message ||
+            "Ocurrió un error al enviar los datos.",
+          variant: "destructive",
+        });
       }
 
       if (onClose) onClose();
       form.reset();
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      alert("Ocurrió un error al enviar los datos.");
+      addToast({
+        title: "Error al enviar los datos",
+        message:
+          error.response.data.message ||
+          "Ocurrió un error al enviar los datos.",
+        variant: "destructive",
+      });
     } finally {
       setLoadingGlobal(false); // Detener indicador de carga
     }
@@ -189,7 +219,262 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
     setDataHotTable([]); // Limpiar la tabla de datos
     setLoadingGlobal(false); // Detener cualquier indicador de carga
   };
-  
+
+  const handleImportExcel = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")) {
+      addToast({
+        title: "Error de archivo",
+        message: "Solo se permiten archivos .xlsx y .xls",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingGlobal(true);
+    setShowLoader(true);
+    try {
+      const data = await readXlsxFile(file);
+
+      if (data.length === 0) {
+        addToast({
+          title: "Archivo vacío",
+          message: "El archivo Excel está vacío.",
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
+
+      const headers = data[0].map((h) => (h ? String(h).trim() : ""));
+
+      const laborIndex = headers.findIndex(
+        (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo"
+      );
+      const faseIndex = headers.findIndex((h) => h.toLowerCase() === "fase");
+
+      if (laborIndex === -1) {
+        addToast({
+          title: "Columna Labor/Tajo no encontrada",
+          message:
+            "No se encontró la columna 'Labor' o 'Tajo' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
+
+      if (faseIndex === -1) {
+        addToast({
+          title: "Columna Fase no encontrada",
+          message:
+            "No se encontró la columna 'Fase' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
+
+      const { dob } = form.getValues();
+      if (!dob) {
+        addToast({
+          title: "Fecha no seleccionada",
+          message: "Debe seleccionar una fecha antes de importar.",
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
+
+      const formattedDate = dayjs(dob).format("YYYY-MM-DD");
+      const expectedHeaders = [formattedDate];
+
+      const parseExcelHeader = (header) => {
+        if (!header && header !== 0) return null;
+
+        let parsedDate = null;
+        const headerStr = String(header).trim().toUpperCase();
+
+        // Excel numérico
+        if (typeof header === "number") {
+          parsedDate = dayjs("1899-12-30").add(header, "days");
+        }
+        // DD/MM/YYYY o DD-MM-YYYY
+        else if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(headerStr)) {
+          const [day, month, year] = headerStr.split(/[\/\-]/);
+          parsedDate = dayjs(`${year}-${month}-${day}`);
+        }
+        // DD/MM o DD-MM
+        else if (/^\d{1,2}[\/\-]\d{1,2}$/.test(headerStr)) {
+          const [day, month] = headerStr.split(/[\/\-]/);
+          const year = dayjs(dob).year();
+          parsedDate = dayjs(`${year}-${month}-${day}`);
+        }
+        // DD-MM
+        else if (/^\d{2}-\d{2}$/.test(headerStr)) {
+          const [day, month] = headerStr.split("-");
+          const year = dayjs(dob).year();
+          parsedDate = dayjs(`${year}-${month}-${day}`);
+        }
+
+        return parsedDate?.isValid() ? parsedDate.format("YYYY-MM-DD") : null;
+      };
+
+      const dateColumnMap = {};
+
+      const orderedDateColumnsInExcel = [];
+      headers.forEach((header, index) => {
+        if (index === laborIndex || index === faseIndex) {
+          return;
+        }
+        orderedDateColumnsInExcel.push({ index, header });
+      });
+
+      orderedDateColumnsInExcel.forEach(({ index, header }) => {
+        const parsed = parseExcelHeader(header);
+        if (parsed) {
+          const formattedDate = parseExcelHeader(header);
+          if (formattedDate && expectedHeaders.includes(formattedDate)) {
+            dateColumnMap[formattedDate] = index;
+          }
+
+          if (expectedHeaders.includes(formattedDate)) {
+            dateColumnMap[formattedDate] = index;
+          } else {
+            console.warn(
+              `Advertencia: Fecha '${formattedDate}' no encontrada en la lista de headers esperados.`
+            );
+          }
+        }
+      });
+
+      const unmappedExcelColumns = orderedDateColumnsInExcel
+        .filter(({ index }) => !Object.values(dateColumnMap).includes(index))
+        .sort((a, b) => a.index - b.index);
+
+      let unmappedExcelColIndex = 0;
+      expectedHeaders.forEach((expectedKey) => {
+        if (dateColumnMap[expectedKey] === undefined) {
+          if (unmappedExcelColIndex < unmappedExcelColumns.length) {
+            dateColumnMap[expectedKey] =
+              unmappedExcelColumns[unmappedExcelColIndex].index;
+            unmappedExcelColIndex++;
+          }
+        }
+      });
+
+      const parseNumericValue = (value) => {
+        if (value === null || value === undefined) return 0;
+
+        if (typeof value === "number") {
+          return isNaN(value) ? 0 : value;
+        }
+
+        if (typeof value === "string") {
+          let cleanValue = value.trim();
+          if (!cleanValue) return 0;
+
+          if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(cleanValue)) {
+            cleanValue = cleanValue.replace(/,/g, "");
+          } else if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(cleanValue)) {
+            cleanValue = cleanValue.replace(/\./g, "").replace(",", ".");
+          } else if (/^\d+,\d+$/.test(cleanValue)) {
+            cleanValue = cleanValue.replace(",", ".");
+          } else if (cleanValue.includes(",") && !cleanValue.includes(".")) {
+            const parts = cleanValue.split(",");
+            if (parts[1] && parts[1].length <= 2) {
+              cleanValue = cleanValue.replace(",", ".");
+            } else {
+              cleanValue = cleanValue.replace(/,/g, "");
+            }
+          }
+
+          const parsed = Number(cleanValue);
+          return isNaN(parsed) ? 0 : parsed;
+        }
+
+        return 0;
+      };
+
+      const processedData = [];
+      for (let rowIndex = 1; rowIndex < data.length; rowIndex++) {
+        const row = data[rowIndex];
+        const labor = row[laborIndex] ? String(row[laborIndex]).trim() : "";
+        const fase = row[faseIndex] ? String(row[faseIndex]).trim() : "";
+
+        if (!labor && !fase) continue;
+
+        const rowData = {
+          labor: labor ? normalizarTajo(labor) : "",
+          fase: fase || "",
+        };
+
+        expectedHeaders.forEach((headerKey) => {
+          const colIndex = dateColumnMap[headerKey];
+          if (colIndex !== undefined && colIndex < row.length) {
+            rowData[headerKey] = parseNumericValue(row[colIndex]);
+          } else {
+            rowData[headerKey] = 0;
+          }
+        });
+
+        processedData.push(rowData);
+      }
+
+      if (processedData.length === 0) {
+        addToast({
+          title: "Sin datos válidos",
+          message: "No se encontraron datos válidos en el archivo Excel.",
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
+
+      setTimeout(() => {
+        setDataHotTable(processedData);
+        setShowLoader(false);
+        setLoadingGlobal(false);
+        addToast({
+          title: "Importación exitosa",
+          message: `Se importaron ${processedData.length} fila(s) correctamente.`,
+          variant: "success",
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }, 500);
+    } catch (error) {
+      console.error("Error al leer el archivo Excel:", error);
+      addToast({
+        title: "Error de lectura de Excel",
+        message: `Error al leer el archivo Excel: ${
+          error.message || "Por favor, verifique el formato del archivo."
+        }`,
+        variant: "destructive",
+      });
+      setShowLoader(false);
+      setLoadingGlobal(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleImportButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
   return (
     <Dialog
       open={isOpen}
@@ -198,7 +483,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[670px]">
+      <DialogContent className="w-[800px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
@@ -214,22 +499,20 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
           <PlanHeader
             form={form}
             onSubmit={onSubmit}
-            dataLaborList={dataLaborList}
-            refetchLaborList={refetchLaborList}
-            loadingLaborList={loadingLaborList}
             hasData={dataHotTable.length > 0}
             loadingGlobal={loadingGlobal}
             frontLaborSubHeader={showFrontLaborSubHeader}
             setShowFrontLaborSubHeader={setShowFrontLaborSubHeader}
+            handleImportButtonClick={handleImportButtonClick}
+            handleImportExcel={handleImportExcel}
+            fileInputRef={fileInputRef}
           />
-          <FrontLaborSubHeader
-            frontLaborSubHeader={showFrontLaborSubHeader}
-          />
+          <FrontLaborSubHeader frontLaborSubHeader={showFrontLaborSubHeader} />
           <div className="flex flex-col gap-3">
             <div>
               <h1 className="text-base font-extrabold leading-5">
                 Planificación /{" "}
-                <strong className="font-extrabold capitalize">
+                <strong className="font-extrabold capitalize text-primary">
                   {" "}
                   {dayjs(form.watch("dob")).format("DD MMMM")}
                 </strong>
@@ -251,9 +534,10 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
             ) : (
               <PlanContent
                 dataHotTable={dataHotTable}
-                dataLaborList={dataLaborList}
+                dataLaborList={dataLaborVerify}
                 setDataHotTable={setDataHotTable}
                 loadingGlobal={loadingGlobal}
+                setInvalidLabors={setInvalidLabors}
               />
             )}
             <div className="  bg-sky-100/50 border-t border-blue-500 w-full rounded-xl px-4 py-2.5 flex gap-1 text-zinc-600  text-[11px] leading-4">
@@ -269,6 +553,24 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                   <li>
                     Para <strong>eliminar</strong> una labor, quite la selección
                     y luego haga clic en <strong>Actualizar</strong>.
+                  </li>
+                  <li className="">
+                    <strong className="font-bold text-green-500">
+                      Verde:{" "}
+                    </strong>
+                    Labor ya existe en el sistema, por lo tanto no será creada
+                    nuevamente.
+                  </li>
+                  <li className="">
+                    <strong className="font-bold text-red-600">Rojo: </strong>
+                    Labor no existe en el sistema. Será creada automáticamente.
+                  </li>
+                  <li>
+                    <strong className="font-bold bg-yellow-300">
+                      Amarillo
+                    </strong>
+                    : Labor ya fue registrada previamente. No se puede continuar
+                    con el envío del plan hasta resolver esta duplicación.
                   </li>
                 </ul>
               </div>
@@ -286,11 +588,11 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
           </Button>
           <Button
             onClick={handleSendData}
-            disabled={dataHotTable.length === 0 || loadingGlobal} // 🔥 Deshabilitar el botón si no hay datos
+            disabled={dataHotTable.length === 0 || loadingGlobal}
           >
             {loadingGlobal ? (
               <>
-              
+                <IconLoader className="w-4 h-4" />
                 Cargando...
               </>
             ) : (
@@ -299,7 +601,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                 <SendHorizontal className="text-background w-4 h-4" />
               </>
             )}
-          </Button>          
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
