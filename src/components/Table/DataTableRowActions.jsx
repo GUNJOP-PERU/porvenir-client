@@ -33,12 +33,15 @@ import { ModalDelete } from "../ModalDelete";
 import { TripModal } from "../Dashboard/Trips/TripModal";
 import { VetaModal } from "../Management/Veta/VetaModal";
 import { PlanDayDetails } from "../Management/PlanDay/PlanDayDetails";
+import { useNavigate } from "react-router-dom";
 
 export function DataTableRowActions({
   componentToShow,
   row,
   deleteModal = true,
+  mode,
 }) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [deleModal, setDeleteModal] = useState(false);
   const [rowData, setRowData] = useState(null);
@@ -187,6 +190,10 @@ export function DataTableRowActions({
     ),
   };
 
+  const handleEditPlan = () => {
+    navigate(`/plan/${mode}/${row.original._id}`);
+  };
+
   return (
     <>
       <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
@@ -199,12 +206,18 @@ export function DataTableRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[150px]">
-          {components[componentToShow] && (
+          {componentToShow === "planMonth" || componentToShow === "planWeek" ? (
+            <DropdownMenuItem onClick={handleEditPlan}>
+             <IconEdit className="h-5 w-5 stroke-black" />
+               Editar detalles
+            </DropdownMenuItem>
+          ) : (
             <DropdownMenuItem onClick={() => handleClick(row.original)}>
-              <IconEdit className="h-5 w-5 stroke-black" />
+             <IconEdit className="h-5 w-5 stroke-black" />
               Editar detalles
             </DropdownMenuItem>
           )}
+
           {components[componentToShow] && deleteModal && (
             <DropdownMenuSeparator />
           )}

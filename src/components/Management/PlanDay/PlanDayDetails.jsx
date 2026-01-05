@@ -21,7 +21,6 @@ import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
 
 export const PlanDayDetails = ({ dataCrud = [] }) => {
-  console.log(dataCrud, "dataCrud");
   const planDay = dataCrud?.[0];
 
   const [deleModal, setDeleteModal] = useState(false);

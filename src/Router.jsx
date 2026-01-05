@@ -88,6 +88,7 @@ const protectedRoutes = [
   { path: "planMonth", element: <PlanMonth /> },
   { path: "planWeek", element: <PlanWeek /> },
   { path: "plan/:mode/new", element: <PlanNew /> },
+{ path: "plan/:mode/:id", element: <PlanNew /> },
   //Ubicaciones
   { path: "labor", element: <HomeLabor /> },
   { path: "destiny", element: <PageDestiny /> },

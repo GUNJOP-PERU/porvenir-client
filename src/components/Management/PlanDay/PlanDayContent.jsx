@@ -111,10 +111,11 @@ export const PlanContent = ({
   }, [dataHotTable, totalsRow, orderedKeys]);
 
   return (
-    <div className="-z-0">
+    <div className={`-z-0 ${loadingGlobal ? "pointer-events-none opacity-50 select-none" : ""}`}>
       <HotTable
         data={dataHotTable}
         maxCols={Object.keys(dataHotTable[0] || {}).length}
+        themeName="ht-theme-main"
         licenseKey="non-commercial-and-evaluation"
         language={esMX.languageCode}
         rowHeaders={true}
@@ -153,7 +154,7 @@ export const PlanContent = ({
                     source: dataFase.map((item) => item.name),
                     data: key,
                     allowInvalid: false,
-                    className: "ht-fase-dropdown",
+                  
                     width: 130,
                   };
                 }

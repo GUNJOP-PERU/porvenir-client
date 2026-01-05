@@ -58,7 +58,6 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
-      console.log(getDefaultDateObj());
       form.reset({
         dob: getDefaultDateObj(),
         selectedItems: [],
@@ -165,7 +164,6 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
         shift: shift,
       }));
     });
-    console.log("Datos Finales:", datosFinales);
 
     try {
       const response = await postDataRequest("planDay/many", [
@@ -556,6 +554,24 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                     Para <strong>eliminar</strong> una labor, quite la selección
                     y luego haga clic en <strong>Actualizar</strong>.
                   </li>
+                  <li className="">
+                    <strong className="font-bold text-green-500">
+                      Verde:{" "}
+                    </strong>
+                    Labor ya existe en el sistema, por lo tanto no será creada
+                    nuevamente.
+                  </li>
+                  <li className="">
+                    <strong className="font-bold text-red-600">Rojo: </strong>
+                    Labor no existe en el sistema. Será creada automáticamente.
+                  </li>
+                  <li>
+                    <strong className="font-bold bg-yellow-300">
+                      Amarillo
+                    </strong>
+                    : Labor ya fue registrada previamente. No se puede continuar
+                    con el envío del plan hasta resolver esta duplicación.
+                  </li>
                 </ul>
               </div>
             </div>
@@ -572,10 +588,13 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
           </Button>
           <Button
             onClick={handleSendData}
-            disabled={dataHotTable.length === 0 || loadingGlobal} // 🔥 Deshabilitar el botón si no hay datos
+            disabled={dataHotTable.length === 0 || loadingGlobal}
           >
             {loadingGlobal ? (
-              <>Cargando...</>
+              <>
+                <IconLoader className="w-4 h-4" />
+                Cargando...
+              </>
             ) : (
               <>
                 Enviar Plan

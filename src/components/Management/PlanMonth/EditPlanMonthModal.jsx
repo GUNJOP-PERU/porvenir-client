@@ -57,7 +57,6 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     refetchLaborList();
   }, [refetchLaborList]);
   
-  console.log(dataCrud)
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -179,8 +178,6 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       name: labor, // El nombre del labor
       status: true, // El status que le quieres asignar
     }));
-    console.log("Labors en rojo:", invalidLaborsWithStatus);
-    console.log("Datos Finales:", datosFinales);
 
     const fecha = dayjs(dob.end);
     const mes = fecha.month() + 1; // Convertir a 1-12
@@ -194,7 +191,6 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       month: mes, // Mes en formato entero (1-12)
       year: año, // Año en formato YYYY
     };
-    console.log("Datos Finales:", dataFinal);
     try {
       const response = await putDataRequest(`planMonth/${dataCrud?._id}`, dataFinal);
       if (response.status >= 200 && response.status < 300) {
@@ -210,7 +206,6 @@ export const EditPlanMonthModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         invalidLaborsWithStatus
       );
 
-      console.log(responseFront);
 
       form.reset();
       navigate("/planMonth");

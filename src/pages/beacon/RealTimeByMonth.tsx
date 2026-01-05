@@ -147,7 +147,7 @@ const RealTimeByMonth = () => {
     };
   }, [data, baseData]);
 
-  console.log("baseStats", baseStats);
+
 
 const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
     if (!data || data.length === 0) return [];

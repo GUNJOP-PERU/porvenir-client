@@ -93,7 +93,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
-    console.log("data", data);
+
     await handleFormSubmit({
       isEdit,
       endpoint: "user",

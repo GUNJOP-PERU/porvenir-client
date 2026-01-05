@@ -39,7 +39,7 @@ export const PlanHeader = ({
   setShowFrontLaborSubHeader,
   handleImportButtonClick,
   handleImportExcel,
-  fileInputRef
+  fileInputRef,
 }) => {
   const {
     data: dataLaborList,
@@ -154,6 +154,7 @@ export const PlanHeader = ({
             type="button"
             variant="tertiary"
             onClick={() => setShowFrontLaborSubHeader(!frontLaborSubHeader)}
+            disabled={loadingGlobal}
           >
             {frontLaborSubHeader ? (
               <>
@@ -183,21 +184,26 @@ export const PlanHeader = ({
         </Button>
         {form.getValues().dob && (
           <>
-           <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".xlsx,.xls"
-                  onChange={handleImportExcel}
-                  className="hidden"
-                  disabled={loadingGlobal}
-                />
-        <Button  className="bg-green-600 hover:bg-green-700 px-3"  onClick={handleImportButtonClick} type="button">
-          <RiFileExcel2Line className="size-3 text-white" />
-          Importar excel
-        </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleImportExcel}
+              className="hidden"
+              disabled={loadingGlobal}
+            />
+            <Button
+              className="bg-green-600 hover:bg-green-700 px-3"
+              onClick={handleImportButtonClick}
+              type="button"
+              disabled={loadingGlobal}
+            >
+              <RiFileExcel2Line className="size-3 text-white" />
+              Importar excel
+            </Button>
           </>
         )}
-        </form>
+      </form>
     </Form>
   );
 };

@@ -47,7 +47,6 @@ export const ModalFloat = ({ onClose, data, isOpen }) => {
   };
 
   const handleChange = async (id, value) => {
-    console.log("Cambio de estado:", id, value);
     setLoadingItems((prev) => ({ ...prev, [id]: true }));
 
     try {

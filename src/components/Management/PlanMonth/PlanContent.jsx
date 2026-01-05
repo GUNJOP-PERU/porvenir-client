@@ -109,18 +109,18 @@ export const PlanContent = ({
 
     return [row1, row2];
   }, [dataHotTable, totalsRow, orderedKeys]);
-  
 
   return (
-    <div >
+    <div className={`${loadingGlobal ? "pointer-events-none opacity-50 select-none" : ""}`}>
       <HotTable
         data={dataHotTable}
         maxCols={Object.keys(dataHotTable[0] || {}).length}
+        themeName="ht-theme-main"
         licenseKey="non-commercial-and-evaluation"
         language={esMX.languageCode}
         rowHeaders={true}
         nestedHeaders={generateNestedHeaders}
-        height="68vh"
+        height="60vh"
         mergeCells={true}
         contextMenu={{
           items: {
@@ -142,29 +142,28 @@ export const PlanContent = ({
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {
-              if (key === "labor") {
+                if (key === "labor") {
+                  return {
+                    type: "text",
+                    data: key,
+                    width: 250,
+                  };
+                } else if (key === "fase") {
+                  return {
+                    type: "dropdown",
+                    source: dataFase.map((item) => item.name),
+                    data: key,
+                    allowInvalid: false,
+                    width: 130,
+                  };
+                }
                 return {
-                  type: "text",
+                  type: "numeric",
                   data: key,
-                  width: 250,
-                };
-              } else if (key === "fase") {
-                return {
-                  type: "dropdown",
-                  source: dataFase.map((item) => item.name),
-                  data: key,
-                  allowInvalid: false,
-                  className: "ht-fase-dropdown",
+                  numericFormat: { pattern: "0,000", culture: "en-US" },
                   width: 130,
                 };
-              }
-              return {
-                type: "numeric",
-                data: key,
-                numericFormat: { pattern: "0,000", culture: "en-US" },
-                width: 130,
-              };
-            })
+              })
             : []
         }
         beforePaste={(data) => {
