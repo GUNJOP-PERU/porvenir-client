@@ -106,7 +106,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planMonth"} row={row} />
+      <DataTableRowActions componentToShow={"planMonth"} row={row} mode="monthly" />
     ),
     enableHiding: false,
   },

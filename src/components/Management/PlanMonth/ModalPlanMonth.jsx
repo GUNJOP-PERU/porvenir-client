@@ -119,7 +119,6 @@ export const ModalPlanMonth = ({ isOpen, onClose, isEdit }) => {
         shift: shift, // Utilizar el valor del turno obtenido desde el formulario
       }));
     });
-    console.log("Datos Finales:", datosFinales);
 
     try {
       const response = await postDataRequest("planDay/many", datosFinales);

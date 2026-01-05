@@ -145,7 +145,6 @@ export const PlanContent = ({
                   source: dataFase.map((item) => item.name),
                   data: key,
                   allowInvalid: false,
-                  className: "ht-fase-dropdown",
                   width: 130,
                 };
               }

@@ -41,7 +41,7 @@ export const IncidenceEditModal = ({ isOpen, onClose, dataCrud, isEdit }) => {
   const { reset } = form;
 
   async function onSubmit() {
-    console.log(  "dataCrud", dataCrud._id);
+   
     await handleFormSubmit({
       isEdit: false,
       postId: true,

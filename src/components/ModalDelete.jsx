@@ -29,7 +29,6 @@ export const ModalDelete = ({
     try {
       setLoadingGlobal(true);
       const response = await deleteDataRequest(urlDelete);
-      console.log("delete",response);
       if (response?.status === 200) {
          queryClient.invalidateQueries({ queryKey: ["crud", queryKeyToUpdate] });
         addToast({

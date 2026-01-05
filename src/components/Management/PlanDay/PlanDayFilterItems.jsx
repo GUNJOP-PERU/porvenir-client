@@ -65,11 +65,11 @@ export function FilterItems({
         >
           <Layers className="w-4 h-4 text-zinc-400" />
           {title}
-          {selectedValues.length > 0 && (
+          {selectedValues.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-1 h-4" />
               <div className="rounded-sm px-1 font-normal text-zinc-400">
-                {selectedValues.length}
+                {selectedValues.size}
               </div>
             </>
           )}

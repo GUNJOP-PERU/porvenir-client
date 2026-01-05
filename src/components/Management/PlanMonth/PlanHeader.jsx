@@ -4,6 +4,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -29,6 +30,8 @@ import { FilterItems } from "../PlanDay/PlanDayFilterItems";
 import { Calendar } from "@/components/ui/calendar";
 import { startOfWeek } from "date-fns";
 import { useFetchData } from "@/hooks/useGlobalQuery";
+import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
+import dayjs from "dayjs";
 
 export const PlanHeader = ({
   form,
@@ -36,6 +39,7 @@ export const PlanHeader = ({
   hasData,
   loadingGlobal,
   mode,
+  isEdit,
 }) => {
   const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
     "frontLabor-current",
@@ -47,6 +51,8 @@ export const PlanHeader = ({
       refetchOnWindowFocus: false,
     }
   );
+
+  const { allWeeks, currentWeek } = generateNormalWeeks();
 
   const inicioSemanaActual = startOfWeek(new Date(), { weekStartsOn: 1 });
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -71,11 +77,19 @@ export const PlanHeader = ({
   );
 
   const updateDate = (month, year, field) => {
-    const startOfMonth = new Date(year, month, 1);
-    const endOfMonth = new Date(year, month, getDaysInMonth(startOfMonth));
+    const startOfMonth = dayjs()
+      .year(year)
+      .month(month)
+      .startOf("month")
+      .toDate();
+
+    const endOfMonth = dayjs().year(year).month(month).endOf("month").toDate();
 
     setSelectedDate(startOfMonth);
-    field.onChange({ start: startOfMonth, end: endOfMonth });
+    field.onChange({
+      start: startOfMonth,
+      end: endOfMonth,
+    });
   };
 
   return (
@@ -85,153 +99,137 @@ export const PlanHeader = ({
         className="flex flex-wrap gap-2 justify-between"
       >
         <div className="flex gap-2">
-          {/* Selección de Mes y Año */}
-          <FormField
-            control={form.control}
-            name="dob"
-            render={({ field }) => (
-              <FormItem>
-                {mode === "weekly" ? (
-                  <>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="date"
-                          className="w-40 justify-between font-normal capitalize"
+          {!isEdit && mode === "weekly" && (
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <Select
+                    value={field.value?.weekNumber?.toString() || ""}
+                    onValueChange={(value) => {
+                      const selectedWeek = allWeeks.find(
+                        (w) => w.weekNumber.toString() === value
+                      );
+
+                      if (selectedWeek) {
+                        field.onChange({
+                          start: selectedWeek.start,
+                          end: selectedWeek.end,
+                          weekNumber: selectedWeek.weekNumber,
+                        });
+                      }
+                    }}
+                    disabled={loadingGlobal}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder="Seleccione Semana"
+                          className="capitalize"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {allWeeks?.map((i) => (
+                        <SelectItem
+                          key={i.weekNumber}
+                          value={i.weekNumber.toString()}
+                          className="capitalize"
                         >
-                          {field.value?.start ? (
-                            field.value?.end ? (
-                              <>
-                                {format(field.value.start, "dd MMM", {
-                                  locale: es,
-                                })}{" "}
-                                -{" "}
-                                {format(field.value.end, "dd MMM", {
-                                  locale: es,
-                                })}
-                              </>
-                            ) : (
-                              format(field.value.start, "dd MMM", {
-                                locale: es,
-                              })
-                            )
+                          {i.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {!isEdit && mode === "monthly" && (
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem>
+                  <Popover modal={true}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          disabled={loadingGlobal}
+                          className={cn(
+                            "w-[180px] capitalize",
+                            !selectedDate && "text-muted-foreground"
+                          )}
+                        >
+                          {selectedDate ? (
+                            format(selectedDate, "MMMM yyyy", { locale: es })
                           ) : (
-                            <span>Seleccionar Rango</span>
+                            <span>Seleccionar Mes y Año</span>
                           )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-2 z-[99999]"
-                        align="start"
-                      >
-                        <Calendar
-                          mode="range"
-                          disabled={{
-                            before: inicioSemanaActual,
-                          }}
-                          defaultMonth={field.value?.start}
-                          selected={{
-                            from: field.value?.start,
-                            to: field.value?.end,
-                          }}
-                          captionLayout="dropdown"
-                          locale={es}
-                          onSelect={(date) => {
-                            field.onChange({
-                              start: date?.from,
-                              end: date?.to,
-                            });
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </>
-                ) : (
-                  <>
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            disabled={loadingGlobal}
-                            className={cn(
-                              "w-[180px] capitalize",
-                              !selectedDate && "text-muted-foreground"
-                            )}
-                          >
-                            {selectedDate ? (
-                              format(selectedDate, "MMMM yyyy", { locale: es })
-                            ) : (
-                              <span>Seleccionar Mes y Año</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-2 z-[99999]"
-                        align="start"
-                      >
-                        <div className="flex gap-2">
-                          <Select
-                            onValueChange={(value) =>
-                              updateDate(
-                                parseInt(value),
-                                getYear(selectedDate),
-                                field
-                              )
-                            }
-                            value={getMonth(selectedDate).toString()}
-                          >
-                            <SelectTrigger className="w-[100px]">
-                              <SelectValue placeholder="Mes" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {months.map((month, index) => (
-                                <SelectItem
-                                  key={index}
-                                  value={index.toString()}
-                                >
-                                  {month}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Select
-                            onValueChange={(value) =>
-                              updateDate(
-                                getMonth(selectedDate),
-                                parseInt(value),
-                                field
-                              )
-                            }
-                            value={getYear(selectedDate).toString()}
-                          >
-                            <SelectTrigger className="w-[100px]">
-                              <SelectValue placeholder="Año" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {years.map((year) => (
-                                <SelectItem key={year} value={year.toString()}>
-                                  {year}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </>
-                )}
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-2 z-[99999]"
+                      align="start"
+                    >
+                      <div className="flex gap-2">
+                        <Select
+                          onValueChange={(value) =>
+                            updateDate(
+                              parseInt(value),
+                              getYear(selectedDate),
+                              field
+                            )
+                          }
+                          value={getMonth(selectedDate).toString()}
+                        >
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Mes" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map((month, index) => (
+                              <SelectItem key={index} value={index.toString()}>
+                                {month}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          onValueChange={(value) =>
+                            updateDate(
+                              getMonth(selectedDate),
+                              parseInt(value),
+                              field
+                            )
+                          }
+                          value={getYear(selectedDate).toString()}
+                        >
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Año" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Selección de Labor */}
           <FormField
             control={form.control}
             name="selectedItems"
@@ -255,12 +253,12 @@ export const PlanHeader = ({
           {hasData ? (
             <>
               <IconEdit className="w-5 h-5 stroke-primary" />
-              Actualizar
+              Actualizar Plan
             </>
           ) : (
             <>
               <CircleFadingPlus className="text-primary w-4 h-4" />
-              Crear
+              Crear Nuevo Plan
             </>
           )}
         </Button>

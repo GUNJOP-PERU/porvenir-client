@@ -138,7 +138,7 @@ const RealTimeByWeek = () => {
     };
   }, [planData, planDayData]);
 
-  console.log(planWeek)
+
 
   const baseData = useMemo(() => {
     const mineral =

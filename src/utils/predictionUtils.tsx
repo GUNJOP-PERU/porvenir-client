@@ -32,7 +32,7 @@ export const calculateTripPrediction = (
 
   const now = new Date();
   const shiftStartDate = new Date(getCurrentDay().startDate);
-  console.log("shiftStartDate", shiftStartDate);
+
   const elapsedHours = Math.max(0, (now.getHours() - shiftStartDate.getHours()));
   const remainingHours = Math.max(0, 12 - elapsedHours);
   

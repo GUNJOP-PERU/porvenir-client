@@ -81,7 +81,6 @@ export const TripModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
-    console.log("data", data);
     await handleFormSubmit({
       isEdit,
       endpoint: "trip/single",

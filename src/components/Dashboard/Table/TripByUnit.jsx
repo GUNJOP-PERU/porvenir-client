@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 const TripsByUnitTable = ({ data }) => {
   const [expandedGroups, setExpandedGroups] = useState(new Set());
-  console.log(data, "TripsByUnitTable")
 
   const formatUnit = (unit) => {
     if (unit && unit.startsWith('truck_')) {

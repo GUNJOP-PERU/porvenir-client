@@ -1,7 +1,7 @@
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { CircleFadingPlus, SendHorizontal, Upload } from "lucide-react";
+import { CircleFadingPlus, SendHorizontal, Server, Upload } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,9 +17,10 @@ import { PlanHeader } from "@/components/Management/PlanMonth/PlanHeader";
 import IconWarning from "@/icons/IconWarning";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { postDataRequest } from "@/api/api";
+import { postDataRequest, putDataRequest } from "@/api/api";
 import { useToast } from "@/hooks/useToaster";
 import { RiFileExcel2Line } from "react-icons/ri";
+import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 
 const FormSchema = z.object({
   dob: z
@@ -30,6 +31,7 @@ const FormSchema = z.object({
       end: z.date().refine((val) => !isNaN(val.getTime()), {
         message: "*Fecha de fin inválida.",
       }),
+      weekNumber: z.number().optional(),
     })
     .refine((data) => data.start <= data.end, {
       message: "*La fecha de inicio no puede ser posterior a la fecha de fin.",
@@ -40,10 +42,13 @@ const FormSchema = z.object({
 
 export const PlanBody = ({
   mode,
+  isEdit,
+  initialData,
   api,
   dateSelector,
   title = "",
   refreshQueryKey,
+  ruteReturn,
 }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -53,6 +58,8 @@ export const PlanBody = ({
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const fileInputRef = useRef(null);
+
+  const { allWeeks, currentWeek } = generateNormalWeeks();
 
   const { data: dataLaborVerify, refetch: refetchLaborVerify } = useFetchData(
     "frontLabor-general",
@@ -68,10 +75,18 @@ export const PlanBody = ({
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      dob: {
-        start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-        end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
-      },
+      dob:
+        mode === "weekly" && currentWeek
+          ? {
+              start: currentWeek.start,
+              end: currentWeek.end,
+              weekNumber: currentWeek.weekNumber,
+            }
+          : {
+              start: dayjs().startOf("month").toDate(),
+              end: dayjs().endOf("month").toDate(),
+            },
+
       selectedItems: [],
     },
   });
@@ -128,170 +143,6 @@ export const PlanBody = ({
       }
       setLoadingGlobal(false);
     }, 1500);
-  };
-
-  const handleSendData = async () => {
-    setLoadingGlobal(true);
-    const { dob } = form.getValues();
-
-    const tieneCamposVacios = dataHotTable.some(
-      (row) => !row.labor || !row.fase
-    );
-
-    const laborCounts = dataHotTable.reduce((acc, row) => {
-      acc[row.labor] = (acc[row.labor] || 0) + 1;
-      return acc;
-    }, {});
-    const tieneRepetidos = Object.values(laborCounts).some(
-      (count) => count > 1
-    );
-
-    const laborFormatoIncorrecto = dataHotTable.some((row) => {
-      const partes = row.labor.split("_");
-      if (partes.length < 3) return false;
-      const terceraParte = partes[2];
-      if (/^T-/.test(terceraParte)) {
-        return true;
-      }
-      return false;
-    });
-
-    if (laborFormatoIncorrecto) {
-      addToast({
-        title: "Error de formato de labor",
-        message:
-          "Una labor contiene un formato inválido. Si después del segundo subguión inicia con 'T-', debe ser 'TJ-'.",
-        variant: "destructive",
-      });
-      setLoadingGlobal(false);
-      return;
-    }
-
-    if (tieneCamposVacios) {
-      addToast({
-        title: "Campos vacíos",
-        message: "Hay filas con 'Labor' o 'Fase' vacías en la tabla.",
-        variant: "destructive",
-      });
-      setLoadingGlobal(false);
-      return;
-    }
-
-    if (tieneRepetidos) {
-      addToast({
-        title: "Labores repetidas",
-        message: "Existen labores repetidas. Corrige antes de continuar.",
-        variant: "destructive",
-      });
-      setLoadingGlobal(false);
-      return;
-    }
-
-    const datosFinales = dataHotTable.flatMap((row) => {
-      const year = form.getValues("dob").end.getFullYear();
-      return Object.entries(row)
-        .filter(([key]) => key.includes("- DIA") || key.includes("- NOCHE"))
-        .map(([key, value]) => {
-          const [dayMonth, turnoText] = key.split(" - ");
-          const [day, monthStr] = dayMonth.split("-");
-          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(
-            2,
-            "0"
-          )}`;
-          const turno = turnoText.toLowerCase();
-
-          return {
-            frontLabor: row.labor,
-            phase: row.fase,
-            date: date,
-            tonnage: value,
-            month: parseInt(monthStr, 10),
-            turno: turno,
-          };
-        });
-    });
-
-    const totalTonnage = datosFinales.reduce(
-      (sum, item) => sum + (Number(item.tonnage) || 0),
-      0
-    );
-
-    const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
-      name: labor,
-      status: true,
-    }));
-    console.log("Labors en rojo:", invalidLaborsWithStatus);
-    console.log("Datos Finales:", datosFinales);
-
-    const fecha = dayjs(dob.end);
-    const mes = fecha.month() + 1;
-    const año = fecha.year();
-
-    const dataFinal = {
-      year: año,
-      month: mes,
-      week: 1,
-      totalTonnage: totalTonnage,
-      dataGenerate: datosFinales,
-      dataEdit: dataHotTable,
-      dataCalculate: [],
-      startDate: form.getValues("dob").start,
-      endDate: form.getValues("dob").end,
-      items: form.getValues("items"),
-      status: "creado",
-    };
-    console.log("Datos Finales:", dataFinal);
-    try {
-      const response = await postDataRequest(`${api.create}`, dataFinal);
-      if (response.status >= 200 && response.status < 300) {
-        if (refreshQueryKey) {
-          queryClient.invalidateQueries({ queryKey: refreshQueryKey });
-          queryClient.refetchQueries({ queryKey: refreshQueryKey });
-        }
-        addToast({
-          title: "Datos enviados con éxito",
-          message: "Los datos se han enviado con éxito.",
-          variant: "success",
-        });
-        const responseFront = await postDataRequest(
-          "frontLabor/many",
-          invalidLaborsWithStatus
-        );
-
-        form.reset();
-        navigate("/planMonth");
-      } else {
-        addToast({
-          title: "Error al enviar los datos",
-          message:
-            error.response.data.message ||
-            "Ocurrió un error al enviar los datos.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-      addToast({
-        title: "Error al enviar los datos",
-        message:
-          error.response.data.message ||
-          "Ocurrió un error al enviar los datos.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoadingGlobal(false);
-    }
-  };
-
-  const handleCancel = () => {
-    form.reset();
-    setDataHotTable([]);
-    setLoadingGlobal(false);
-    if(mode === 'weekly'){
-      navigate("/planWeek");
-    } else {
-      navigate("/planMonth");
-    }
   };
 
   const handleImportExcel = async (event) => {
@@ -370,12 +221,12 @@ export const PlanBody = ({
 
       const startDate = dayjs(dob.start);
       const endDate = dayjs(dob.end);
-      const daysInWeek = endDate.diff(startDate, "day") + 1;
+      const totalDays = endDate.diff(startDate, "day") + 1;
 
       const expectedHeaders = [];
       const turnos = ["DIA", "NOCHE"];
 
-      for (let i = 0; i < daysInWeek; i++) {
+      for (let i = 0; i < totalDays; i++) {
         const currentDate = startDate
           .add(i, "day")
           .format("DD-MM")
@@ -504,6 +355,18 @@ export const PlanBody = ({
         }
       });
 
+      const mappedDays = new Set(
+        Object.keys(dateColumnMap).map((k) => k.split(" - ")[0])
+      );
+
+      if (mappedDays.size !== totalDays) {
+        addToast({
+          title: "Advertencia",
+          message: `El Excel tiene ${mappedDays.size} días mapeados, pero el rango seleccionado tiene ${totalDays}. Revise que las fechas del archivo coincidan con el rango.`,
+          variant: "warning",
+        });
+      }
+
       const parseNumericValue = (value) => {
         if (value === null || value === undefined) return 0;
 
@@ -575,6 +438,14 @@ export const PlanBody = ({
 
       setTimeout(() => {
         setDataHotTable(processedData);
+        const importedItems = Array.from(
+          new Set(processedData.map((row) => row.labor).filter(Boolean))
+        );
+
+        form.setValue("selectedItems", importedItems, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
         setShowLoader(false);
         setLoadingGlobal(false);
         addToast({
@@ -609,16 +480,205 @@ export const PlanBody = ({
     }
   };
 
+  const handleSendData = async () => {
+    setLoadingGlobal(true);
+    const { dob } = form.getValues();
+
+    const tieneCamposVacios = dataHotTable.some(
+      (row) => !row.labor || !row.fase
+    );
+
+    const laborCounts = dataHotTable.reduce((acc, row) => {
+      acc[row.labor] = (acc[row.labor] || 0) + 1;
+      return acc;
+    }, {});
+    const tieneRepetidos = Object.values(laborCounts).some(
+      (count) => count > 1
+    );
+
+    const laborFormatoIncorrecto = dataHotTable.some((row) => {
+      const partes = row.labor.split("_");
+      if (partes.length < 3) return false;
+      const terceraParte = partes[2];
+      if (/^T-/.test(terceraParte)) {
+        return true;
+      }
+      return false;
+    });
+
+    if (laborFormatoIncorrecto) {
+      addToast({
+        title: "Error de formato de labor",
+        message:
+          "Una labor contiene un formato inválido. Si después del segundo subguión inicia con 'T-', debe ser 'TJ-'.",
+        variant: "destructive",
+      });
+      setLoadingGlobal(false);
+      return;
+    }
+
+    if (tieneCamposVacios) {
+      addToast({
+        title: "Campos vacíos",
+        message: "Hay filas con 'Labor' o 'Fase' vacías en la tabla.",
+        variant: "destructive",
+      });
+      setLoadingGlobal(false);
+      return;
+    }
+
+    if (tieneRepetidos) {
+      addToast({
+        title: "Labores repetidas",
+        message: "Existen labores repetidas. Corrige antes de continuar.",
+        variant: "destructive",
+      });
+      setLoadingGlobal(false);
+      return;
+    }
+
+    const datosFinales = dataHotTable.flatMap((row) => {
+      const year = form.getValues("dob").end.getFullYear();
+      return Object.entries(row)
+        .filter(([key]) => key.includes("- DIA") || key.includes("- NOCHE"))
+        .map(([key, value]) => {
+          const [dayMonth, turnoText] = key.split(" - ");
+          const [day, monthStr] = dayMonth.split("-");
+          const date = `${year}-${monthStr.padStart(2, "0")}-${day.padStart(
+            2,
+            "0"
+          )}`;
+          const turno = turnoText.toLowerCase();
+
+          return {
+            frontLabor: row.labor,
+            phase: row.fase,
+            date: date,
+            tonnage: value,
+            month: parseInt(monthStr, 10),
+            turno: turno,
+          };
+        });
+    });
+
+    const totalTonnage = datosFinales.reduce(
+      (sum, item) => sum + (Number(item.tonnage) || 0),
+      0
+    );
+
+    const invalidLaborsWithStatus = invalidLabors.map((labor) => ({
+      name: labor,
+      status: true,
+    }));
+
+    const fecha = dayjs(dob.end);
+    const mes = fecha.month() + 1;
+    const año = fecha.year();
+
+    const dataFinal = {
+      year: año,
+      month: mes,
+      week: mode === "weekly" ? dob.weekNumber : null,
+      totalTonnage: totalTonnage,
+      dataGenerate: datosFinales,
+      dataEdit: dataHotTable,
+      dataCalculate: [],
+      startDate: form.getValues("dob").start,
+      endDate: form.getValues("dob").end,
+      items: form.getValues("selectedItems") ?? [],
+      status: "creado",
+    };
+
+    try {
+      const response = isEdit
+        ? await putDataRequest(
+            api.update.replace(":id", initialData._id),
+            dataFinal
+          )
+        : await postDataRequest(api.create, dataFinal);
+
+      if (response.status >= 200 && response.status < 300) {
+        if (refreshQueryKey) {
+          queryClient.invalidateQueries({ queryKey: refreshQueryKey });
+          queryClient.refetchQueries({ queryKey: refreshQueryKey });
+        }
+        addToast({
+          title: "Datos enviados con éxito",
+          message: "Los datos se han enviado con éxito.",
+          variant: "success",
+        });
+        const responseFront = await postDataRequest(
+          "frontLabor/many",
+          invalidLaborsWithStatus
+        );
+
+        form.reset();
+        navigate(ruteReturn);
+      } else {
+        addToast({
+          title: "Error al enviar los datos",
+          message:
+            response.data.message || "Ocurrió un error al enviar los datos.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+      addToast({
+        title: "Error al enviar los datos",
+        message:
+          error.response.data.message ||
+          "Ocurrió un error al enviar los datos.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingGlobal(false);
+    }
+  };
+
+  const handleCancel = () => {
+    form.reset();
+    setDataHotTable([]);
+    setLoadingGlobal(false);
+    navigate(ruteReturn);
+  };
+
+  useEffect(() => {
+    setLoadingGlobal(true);
+    if (!isEdit || !initialData) {
+      setLoadingGlobal(false);
+      return;
+    }
+
+    if (Array.isArray(initialData.dataEdit)) {
+      setDataHotTable(initialData.dataEdit);
+    }
+
+    if (initialData.startDate && initialData.endDate) {
+      form.setValue("dob", {
+        start: new Date(initialData.startDate),
+        end: new Date(initialData.endDate),
+      });
+    }
+
+    if (Array.isArray(initialData.items)) {
+      form.setValue("selectedItems", initialData.items);
+    }
+
+    setLoadingGlobal(false);
+  }, [isEdit, initialData]);
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-2 items-center">
         <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
         <div>
           <h1 className="text-[15px] font-semibold leading-none">
-            Crear {title}
+            {isEdit ? "Editar" : "Crear"} {title}
           </h1>
           <h4 className="text-[12px] text-muted-foreground">
-            Ingresar los datos necesarios para la creación y enviar
+            {isEdit ? "Editar" : "Crear"} el plan mensual y enviarlo para
+            aprobación.
           </h4>
         </div>
       </div>
@@ -629,6 +689,7 @@ export const PlanBody = ({
           hasData={dataHotTable.length > 0}
           loadingGlobal={loadingGlobal}
           mode={mode}
+          isEdit={isEdit}
         />
         <div className="flex flex-col gap-3 z-0">
           <div className="flex justify-between items-center">
@@ -665,12 +726,12 @@ export const PlanBody = ({
                   disabled={loadingGlobal}
                 />
                 <Button
-                  type="button"                 
+                  type="button"
                   disabled={loadingGlobal}
                   onClick={handleImportButtonClick}
                   className="bg-green-600 hover:bg-green-700 px-3"
                 >
-                   <RiFileExcel2Line className="size-3 text-white" />
+                  <RiFileExcel2Line className="size-3 text-white" />
                   Importar Excel
                 </Button>
               </>
@@ -684,7 +745,17 @@ export const PlanBody = ({
             </div>
           ) : dataHotTable.length === 0 ? (
             <div className="text-center text-zinc-400 h-[60vh] flex items-center justify-center ">
-              <span className="text-xs">Datos no creados</span>
+              <div className="flex flex-col items-center gap-0.5 max-w-[200px] w-full text-center">
+                <Server className="size-5 text-zinc-400" />
+                <b className="text-[10px] text-zinc-400">
+                  No hay registros aún
+                </b>
+                <span className="text-[10px] font-semibold leading-3 text-zinc-300 mt-1">
+                  Aún no se han creado registros para este período. Puede
+                  importar un archivo Excel o crear registros manualmente desde
+                  el botón "Crear" o "Importar Excel".
+                </span>
+              </div>
             </div>
           ) : (
             <PlanContent
@@ -702,6 +773,16 @@ export const PlanBody = ({
           <IconWarning className="text-blue-500  w-5 h-5 mr-1.5" />
           <div className="flex items-center">
             <ul className="list-disc ml-3 gap-x-6 ">
+              <li>
+                Para <strong>añadir</strong> una labor, seleccione un ítem en el
+                botón
+                <span className="font-semibold"> "Labor"</span> y haga clic en{" "}
+                <strong>Actualizar</strong>.
+              </li>
+              <li>
+                Para <strong>eliminar</strong> una labor, quite la selección y
+                luego haga clic en <strong>Actualizar</strong>.
+              </li>
               <li className="">
                 <strong className="font-bold text-green-500">Verde: </strong>
                 Labor ya existe en el sistema, por lo tanto no será creada
@@ -741,7 +822,7 @@ export const PlanBody = ({
               </>
             ) : (
               <>
-                Enviar Plan
+                {isEdit ? "Actualizar Plan" : "Enviar Plan"}
                 <SendHorizontal className="text-background w-4 h-4" />
               </>
             )}

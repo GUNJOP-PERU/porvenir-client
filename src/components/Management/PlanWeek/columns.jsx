@@ -106,7 +106,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planWeek"} row={row} />
+      <DataTableRowActions componentToShow={"planWeek"} row={row} mode="weekly" />
     ),
     enableHiding: false,
   },
