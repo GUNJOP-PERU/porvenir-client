@@ -38,6 +38,7 @@ export function DataTable({
   tableType,
   hideToolbar = false,
   toolbarContent,
+  meta,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -59,6 +60,7 @@ export function DataTable({
       columnFilters,
     },
     enableRowSelection: true,
+    enableMultiRowSelection: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -71,6 +73,20 @@ export function DataTable({
   });
 
   const rows = isLoading ? [] : table.getRowModel().rows;
+
+  useEffect(() => {
+    setRowSelection({});
+  }, [data]);
+
+  useEffect(() => {
+    const rows = table.getRowModel().rows;
+
+    if (rows.length > 0 && Object.keys(rowSelection).length === 0) {
+      const firstRow = rows[0];
+      firstRow.toggleSelected(true);
+      meta?.onSelect?.(firstRow.original);
+    }
+  }, [data, table, rowSelection, meta]);
 
   const virtualizer = useVirtualizer({
     count: rows.length,
@@ -99,6 +115,7 @@ export function DataTable({
       </div>
     );
   }
+
   return (
     <>
       {!hideToolbar && (

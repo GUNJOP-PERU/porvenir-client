@@ -2,16 +2,45 @@ import { formatDay, formatFecha, getMonthName } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../../Table/DataTableColumnHeader";
 import { DataTableRowActions } from "../../Table/DataTableRowActions";
 import TimeAgo from "timeago-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
-export const columns = [
+export const columns = (onSelect) => [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    id: "view-details",
+    meta: {
+      onSelect,
+    },
+    cell: ({ row, column }) => (
+      <div
+        className="flex items-center px-2 py-1.5 cursor-pointer hover:bg-zinc-100 rounded-lg select-none"
+        onClick={() => {
+          row.toggleSelected();
+          column.columnDef.meta.onSelect(row.original);
+        }}
+      >
+        <div
+          className={cn(
+            "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+            row.getIsSelected()
+              ? "bg-primary text-white"
+              : "opacity-50 [&_svg]:invisible text-xs"
+          )}
+        >
+          <Check className="size-3" />
+        </div>
+      </div>
+    ),
   },
   {
     accessorKey: "month",
@@ -22,10 +51,14 @@ export const columns = [
       return (
         <div className="flex flex-col justify-center gap-0.5">
           <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
-            {getMonthName(row.getValue("month"))} / {" "} <span className="text-zinc-500 pl-1">#Sem {row.original?.week}</span>
+            {getMonthName(row.getValue("month"))} /{" "}
+            <span className="text-zinc-500 pl-1">
+              #Sem {row.original?.week}
+            </span>
           </h4>
           <span className="text-[11px] leading-3 text-zinc-400 md:inline capitalize ">
-            {formatDay(row.original?.startDate)} - {formatDay(row.original?.endDate)}
+            {formatDay(row.original?.startDate)} -{" "}
+            {formatDay(row.original?.endDate)}
           </span>
         </div>
       );
@@ -106,8 +139,13 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planWeek"} row={row} mode="weekly" />
+      <DataTableRowActions
+        componentToShow={"planWeek"}
+        row={row}
+        mode="weekly"
+      />
     ),
     enableHiding: false,
   },
+  
 ];

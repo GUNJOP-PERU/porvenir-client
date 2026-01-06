@@ -1,12 +1,18 @@
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { CircleFadingPlus, SendHorizontal, Server, Upload } from "lucide-react";
+import {
+  ArrowDownToLine,
+  CircleFadingPlus,
+  SendHorizontal,
+  Server,
+  Upload,
+} from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import readXlsxFile from "read-excel-file";
-import { normalizarTajo } from "@/lib/utilsGeneral";
+import { normalizarTajo, normalizarFase } from "@/lib/utilsGeneral";
 
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
@@ -49,6 +55,7 @@ export const PlanBody = ({
   title = "",
   refreshQueryKey,
   ruteReturn,
+  downloadTemplate,
 }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -129,6 +136,20 @@ export const PlanBody = ({
 
     return { data: exampleData };
   };
+
+  const calculateTotal = () => {
+    if (!dataHotTable || dataHotTable.length === 0) return 0;
+
+    return dataHotTable.reduce((total, row) => {
+      const values = Object.entries(row)
+        .filter(([key]) => key.endsWith(" - DIA") || key.endsWith(" - NOCHE"))
+        .map(([, value]) => Number(value) || 0);
+
+      return total + values.reduce((sum, v) => sum + v, 0);
+    }, 0);
+  };
+
+  const totalTonnage = calculateTotal();
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
@@ -410,7 +431,7 @@ export const PlanBody = ({
 
         const rowData = {
           labor: labor ? normalizarTajo(labor) : "",
-          fase: fase || "",
+          fase: fase ? normalizarFase(fase) : "",
         };
 
         expectedHeaders.forEach((headerKey) => {
@@ -693,30 +714,35 @@ export const PlanBody = ({
         />
         <div className="flex flex-col gap-3 z-0">
           <div className="flex justify-between items-center">
-            <h1 className="text-base font-extrabold leading-5">
-              Planificador /{" "}
-              <strong className="font-extrabold capitalize text-primary">
-                {(() => {
-                  const dob = form.watch("dob");
+            <div>
+              <h1 className="text-base font-extrabold leading-5">
+                Planificador /{" "}
+                <strong className="font-extrabold capitalize text-primary">
+                  {(() => {
+                    const dob = form.watch("dob");
 
-                  if (!dob?.start) return "Seleccione fecha";
+                    if (!dob?.start) return "Seleccione fecha";
 
-                  if (mode === "weekly") {
-                    const start = dayjs(dob.start).format("DD MMMM");
-                    const end = dob.end
-                      ? dayjs(dob.end).format("DD MMMM")
-                      : null;
+                    if (mode === "weekly") {
+                      const start = dayjs(dob.start).format("DD MMMM");
+                      const end = dob.end
+                        ? dayjs(dob.end).format("DD MMMM")
+                        : null;
 
-                    return end ? `${start} - ${end}` : start;
-                  }
+                      return end ? `${start} - ${end}` : start;
+                    }
 
-                  return dayjs(dob.start).format("MMMM YYYY");
-                })()}
-              </strong>
-            </h1>
+                    return dayjs(dob.start).format("MMMM YYYY");
+                  })()}
+                </strong>
+              </h1>
+              <span className="text-2xl font-extrabold">
+                {totalTonnage.toLocaleString("es-MX")} tn
+              </span>
+            </div>
 
             {form.getValues().dob?.start && form.getValues().dob?.end && (
-              <>
+              <div className="flex">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -729,12 +755,20 @@ export const PlanBody = ({
                   type="button"
                   disabled={loadingGlobal}
                   onClick={handleImportButtonClick}
-                  className="bg-green-600 hover:bg-green-700 px-3"
+                  className="bg-green-600 hover:bg-green-500 px-3 rounded-e-none"
                 >
                   <RiFileExcel2Line className="size-3 text-white" />
                   Importar Excel
                 </Button>
-              </>
+                <a
+                  href={`${import.meta.env.VITE_URL}api/v1/${downloadTemplate}`}
+                  download
+                  className="bg-green-700 hover:bg-green-800 px-3 flex items-center gap-1 text-xs text-white rounded-s-none rounded-lg h-8"
+                >
+                  <ArrowDownToLine className="size-3 text-white" />
+                  Descargar Modelo
+                </a>
+              </div>
             )}
           </div>
           {showLoader ? (
