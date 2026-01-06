@@ -1,47 +1,134 @@
-import PageHeader from "@/components/PageHeader";
+import PlanDetails from "@/components/Management/PlanMonth/PlanDetails";
 import { columns } from "@/components/Management/PlanWeek/columns";
+import PageHeader from "@/components/PageHeader";
 import { DataTable } from "@/components/Table/DataTable";
-import { useFetchData } from "@/hooks/useGlobalQuery";
-import { countItems } from "@/lib/utilsGeneral";
-import { Link } from "react-router-dom";
-import { CircleFadingPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useFetchData } from "@/hooks/useGlobalQueryV2";
+import IconDay from "@/icons/IconDay";
+import IconNight from "@/icons/IconNight";
+import { countItems } from "@/lib/utilsGeneral";
+import dayjs from "dayjs";
+import { CircleFadingPlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function PlanWeek() {
+  const [selectedDate, setSelectedDate] = useState(dayjs().startOf("month"));
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
   const {
     data = [],
     isFetching,
     isError,
     isLoading,
     refetch,
-  } = useFetchData("planWeek", "planWeek");
+  } = useFetchData(
+    "planWeek",
+    `planWeek?date=${dayjs(selectedDate).format("YYYY-MM")}`
+  );
+
+  const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const currentYear = dayjs().year();
+  const years = Array.from({ length: 3 }, (_, i) => currentYear - 2 + i);
+
+  const updateDate = (month, year) => {
+    setSelectedDate(dayjs().year(year).month(month).startOf("month"));
+  };
+
+  useEffect(() => {
+  if (!data?.length) {
+    setSelectedPlan(null);
+  }
+}, [data]);
+
 
   return (
     <>
       <PageHeader
         title="Gestión de Plan Semanal"
-        description="Administre los planes y sus caractestisticas."
+        description="Administre los planes y sus características."
         count={countItems(data)}
         refetch={refetch}
         isFetching={isFetching}
         actions={
-          <>
-            <Link to={`/plan/weekly/new`}>
-              <Button className="w-fit">
-                <CircleFadingPlus className="w-5 h-5 text-white" />
-                Añadir nuevo
-              </Button>
-            </Link>
-          </>
+          <Link to="/plan/weekly/new">
+            <Button className="w-fit">
+              <CircleFadingPlus className="w-5 h-5 text-white" />
+              Añadir nuevo
+            </Button>
+          </Link>
         }
       />
+
       <DataTable
         data={data}
-        columns={columns}
+        columns={columns(setSelectedPlan)}
+        meta={{ onSelect: setSelectedPlan }}
         isFetching={isFetching}
         isError={isError}
         isLoading={isLoading}
+        toolbarContent={
+          <div className="border border-zinc-200 rounded-lg flex">
+            <Select
+              value={selectedDate.month().toString()}
+              onValueChange={(value) =>
+                setSelectedDate(selectedDate.month(parseInt(value)))
+              }
+            >
+              <SelectTrigger className="w-28 border-none shadow-none bg-transparent rounded-e-none">
+                <SelectValue placeholder="Mes" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month, index) => (
+                  <SelectItem key={index} value={index.toString()}>
+                    {month}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={selectedDate.year().toString()}
+              onValueChange={(value) =>
+                setSelectedDate(selectedDate.year(parseInt(value)))
+              }
+            >
+              <SelectTrigger className="w-20 border-none shadow-none bg-transparent rounded-s-none">
+                <SelectValue placeholder="Año" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        }
       />
+      <PlanDetails plan={selectedPlan} />
     </>
   );
 }

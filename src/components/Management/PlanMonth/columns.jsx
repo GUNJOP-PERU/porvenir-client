@@ -2,16 +2,45 @@ import { formatFecha, getMonthName } from "@/lib/utilsGeneral";
 import { DataTableColumnHeader } from "../../Table/DataTableColumnHeader";
 import { DataTableRowActions } from "../../Table/DataTableRowActions";
 import TimeAgo from "timeago-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
-export const columns = [
+export const columns = (onSelect) => [
   {
     accessorKey: "id",
     header: "#",
     cell: ({ row }) => (
-      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div> 
+      <div className="text-zinc-400 text-[10px]">#{row.index + 1}</div>
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    id: "view-details",
+    meta: {
+      onSelect,
+    },
+    cell: ({ row, column }) => (
+      <div
+        className="flex items-center px-2 py-1.5 cursor-pointer hover:bg-zinc-100 rounded-lg select-none"
+        onClick={() => {
+          row.toggleSelected();
+          column.columnDef.meta.onSelect(row.original);
+        }}
+      >
+        <div
+          className={cn(
+            "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+            row.getIsSelected()
+              ? "bg-primary text-white"
+              : "opacity-50 [&_svg]:invisible text-xs"
+          )}
+        >
+          <Check className="size-3" />
+        </div>
+      </div>
+    ),
   },
   {
     accessorKey: "month",
@@ -69,7 +98,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4">
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
@@ -90,7 +118,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}
@@ -106,7 +133,11 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"planMonth"} row={row} mode="monthly" />
+      <DataTableRowActions
+        componentToShow={"planMonth"}
+        row={row}
+        mode="monthly"
+      />
     ),
     enableHiding: false,
   },

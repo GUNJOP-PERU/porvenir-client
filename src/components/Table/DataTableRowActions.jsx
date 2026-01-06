@@ -19,12 +19,10 @@ import { DetailsUser } from "../Management/Users/DetailsUser";
 import { LaborModal } from "../Management/Labor/LaborModal";
 import { DestinyModal } from "../Management/Destiny/DestinyModal";
 
-import { EditPlanMonthModal } from "../Management/PlanMonth/EditPlanMonthModal";
 import { IncidenceEditModal } from "../Monitoring/Incidence/IncidenceEditModal";
 import { BeaconModal } from "../Management/Beacon/BeaconModal";
 import { ModalWap } from "../Management/Wap/WapModal";
 import { CycleTruckModal } from "../Monitoring/CycleTruck/CycleTruckModal";
-import { PlanWeekModal } from "../Management/PlanWeek/PlanWeekModal";
 
 import { MineralChargeModal } from "@/components/Configuration/Modal/MineralChargeModal";
 import { ActivityAverageModal } from "@/components/Configuration/Modal/ActivityAverageModal";
@@ -116,14 +114,6 @@ export function DataTableRowActions({
         isEdit={true}
       />
     ),
-    planMonth: (
-      <EditPlanMonthModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
     shift: (
       <TurnCardModal
         isOpen={open}
@@ -158,14 +148,6 @@ export function DataTableRowActions({
     ),
     cycleTruck: (
       <CycleTruckModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        dataCrud={rowData}
-        isEdit={true}
-      />
-    ),
-    planWeek: (
-      <PlanWeekModal
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}

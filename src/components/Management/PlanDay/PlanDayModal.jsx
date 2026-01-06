@@ -12,7 +12,11 @@ import IconLoader from "@/icons/IconLoader";
 import { postDataRequest } from "@/api/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { CircleFadingPlus, SendHorizontal } from "lucide-react";
+import {
+  ArrowDownToLine,
+  CircleFadingPlus,
+  SendHorizontal,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -25,9 +29,11 @@ import {
   getDefaultShift,
   getDefaultDateObj,
   normalizarTajo,
+  normalizarFase
 } from "@/lib/utilsGeneral";
 import { useToast } from "@/hooks/useToaster";
 import readXlsxFile from "read-excel-file";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
@@ -414,7 +420,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
 
         const rowData = {
           labor: labor ? normalizarTajo(labor) : "",
-          fase: fase || "",
+          fase: fase ? normalizarFase(fase) : "",
         };
 
         expectedHeaders.forEach((headerKey) => {
@@ -483,7 +489,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[800px]">
+      <DialogContent className="w-[680px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
@@ -503,32 +509,62 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
             loadingGlobal={loadingGlobal}
             frontLaborSubHeader={showFrontLaborSubHeader}
             setShowFrontLaborSubHeader={setShowFrontLaborSubHeader}
-            handleImportButtonClick={handleImportButtonClick}
-            handleImportExcel={handleImportExcel}
-            fileInputRef={fileInputRef}
           />
           <FrontLaborSubHeader frontLaborSubHeader={showFrontLaborSubHeader} />
           <div className="flex flex-col gap-3">
-            <div>
-              <h1 className="text-base font-extrabold leading-5">
-                Planificación /{" "}
-                <strong className="font-extrabold capitalize text-primary">
-                  {" "}
-                  {dayjs(form.watch("dob")).format("DD MMMM")}
-                </strong>
-              </h1>
-              <span className="text-2xl font-extrabold">
-                {totalTonnage.toLocaleString("es-MX")} tn
-              </span>
+             <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-base font-extrabold leading-5">
+                  Planificación /{" "}
+                  <strong className="font-extrabold capitalize text-primary">
+                    {" "}
+                    {dayjs(form.watch("dob")).format("DD MMMM")}
+                  </strong>
+                </h1>
+                <span className="text-2xl font-extrabold">
+                  {totalTonnage.toLocaleString("es-MX")} tn
+                </span>
+              </div>
+              {form.getValues().dob && (
+                <div className="flex">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleImportExcel}
+                    className="hidden"
+                    disabled={loadingGlobal}
+                  />
+                  <Button
+                    className="bg-green-600 hover:bg-green-500 px-3 rounded-e-none"
+                    onClick={handleImportButtonClick}
+                    type="button"
+                    disabled={loadingGlobal}
+                  >
+                    <RiFileExcel2Line className="size-3 text-white" />
+                    Importar excel
+                  </Button>
+                  <a
+                    href={`${
+                      import.meta.env.VITE_URL
+                    }api/v1/planDay/download/modelo-turno`}
+                    download
+                    className="bg-green-700 hover:bg-green-800 px-3 flex items-center gap-1 text-xs text-white rounded-s-none rounded-lg h-8"
+                  >
+                    <ArrowDownToLine className="size-3 text-white" />
+                    Descargar Modelo
+                  </a>
+                </div>
+              )}
             </div>
             {showLoader ? (
-              <div className="text-center py-4 text-zinc-500 h-[27.5vh] flex items-center justify-center ">
+              <div className="text-center py-4 text-zinc-500 h-[30vh] flex items-center justify-center ">
                 <span className="flex flex-col gap-2 items-center">
                   <IconLoader className="w-8 h-8" />
                 </span>
               </div>
             ) : dataHotTable.length === 0 ? (
-              <div className="text-center text-zinc-400 h-[27.5vh] flex items-center justify-center ">
+              <div className="text-center text-zinc-400 h-[30vh] flex items-center justify-center ">
                 <span className="text-xs">Datos no creados</span>
               </div>
             ) : (
