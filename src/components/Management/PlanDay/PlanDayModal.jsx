@@ -381,7 +381,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
         }
       });
 
-      const unmappedExcelColumns = orderedDateColumnsInExfcel
+      const unmappedExcelColumns = orderedDateColumnsInExcel
         .filter(({ index }) => !Object.values(dateColumnMap).includes(index))
         .sort((a, b) => a.index - b.index);
 
