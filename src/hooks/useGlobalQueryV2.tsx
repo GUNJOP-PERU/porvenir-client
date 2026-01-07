@@ -11,7 +11,8 @@ export function useFetchData<T = any>(
   return useQuery<T>({
     queryKey: ["crud", queryKey, endpoint, filters],
     queryFn: async () => {
-      const response = await getDataRequest(`${endpoint}&${filters}`);
+      const url = filters ? `${endpoint}&${filters}` : endpoint;
+      const response = await getDataRequest(url);
       return response.data as T;
     },
     staleTime: Infinity,

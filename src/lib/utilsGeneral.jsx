@@ -254,3 +254,15 @@ export const normalizarTajo = (texto) => {
       .replace(/--+/g, "-")
   );
 };
+
+
+export const normalizarFase = (fase) => {
+  if (!fase) return "";
+
+  const value = String(fase).trim().toLowerCase();
+
+  if (value.startsWith("min")) return "mineral";
+  if (value.startsWith("des")) return "desmonte";
+
+  return value;
+};

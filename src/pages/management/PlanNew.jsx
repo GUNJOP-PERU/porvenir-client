@@ -10,17 +10,21 @@ export default function PlanNewEdit() {
   const configByMode = {
     weekly: {
       apiBase: "planWeek",
+      apiCreate: "planWeek",
       title: "Plan Semanal",
       dateSelector: "week",
       refreshQueryKey: ["crud", "planWeek"],
       ruteReturn: "/planWeek",
+      downloadTemplate: "planWeek/download/modelo-semanal",
     },
     monthly: {
       apiBase: "planMonth",
+      apiCreate: "planMonth/many",
       title: "Plan Mensual",
       dateSelector: "month",
       refreshQueryKey: ["crud", "planMonth"],
       ruteReturn: "/planMonth",
+      downloadTemplate: "planMonth/download/modelo-mensual",
     },
   };
 
@@ -36,7 +40,7 @@ export default function PlanNewEdit() {
     return (
       <div className="flex flex-col items-center gap-1 justify-center h-full p-4">
         <IconLoader className="size-8" />
-       <span className="text-[8px] text-zinc-300"> Cargando...</span>
+        <span className="text-[8px] text-zinc-300"> Cargando...</span>
       </div>
     );
 
@@ -46,13 +50,14 @@ export default function PlanNewEdit() {
       isEdit={isEdit}
       initialData={data}
       api={{
-        create: config.apiBase,
+        create: config.apiCreate,
         update: `${config.apiBase}/:id`,
       }}
       dateSelector={config.dateSelector}
       title={config.title}
       refreshQueryKey={config.refreshQueryKey}
       ruteReturn={config.ruteReturn}
+      downloadTemplate={config.downloadTemplate}
     />
   );
 }

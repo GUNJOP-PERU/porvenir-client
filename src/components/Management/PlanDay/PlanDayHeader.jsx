@@ -23,7 +23,7 @@ import { dataTurn } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, CircleFadingPlus } from "lucide-react";
+import { ArrowDownToLine, CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./PlanDayFilterItems";
 import IconEdit from "@/icons/IconEdit";
 import { ButtonRefresh } from "../../../components/ButtonRefresh";
@@ -37,9 +37,6 @@ export const PlanHeader = ({
   loadingGlobal,
   frontLaborSubHeader,
   setShowFrontLaborSubHeader,
-  handleImportButtonClick,
-  handleImportExcel,
-  fileInputRef,
 }) => {
   const {
     data: dataLaborList,
@@ -71,7 +68,7 @@ export const PlanHeader = ({
                     onValueChange={field.onChange}
                     disabled={loadingGlobal}
                   >
-                    <SelectTrigger className="w-[90px]">
+                    <SelectTrigger className="w-[80px]">
                       <SelectValue placeholder="Turno" />
                     </SelectTrigger>
                     <SelectContent>
@@ -182,27 +179,7 @@ export const PlanHeader = ({
             </>
           )}
         </Button>
-        {form.getValues().dob && (
-          <>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xls"
-              onChange={handleImportExcel}
-              className="hidden"
-              disabled={loadingGlobal}
-            />
-            <Button
-              className="bg-green-600 hover:bg-green-700 px-3"
-              onClick={handleImportButtonClick}
-              type="button"
-              disabled={loadingGlobal}
-            >
-              <RiFileExcel2Line className="size-3 text-white" />
-              Importar excel
-            </Button>
-          </>
-        )}
+        
       </form>
     </Form>
   );
