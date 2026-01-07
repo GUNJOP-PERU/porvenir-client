@@ -54,10 +54,11 @@ const ReportByWeekScoop = () => {
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
     `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
@@ -67,6 +68,7 @@ const ReportByWeekScoop = () => {
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     {
       refetchInterval: 10000,
     }
@@ -78,6 +80,7 @@ const ReportByWeekScoop = () => {
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     {
       refetchInterval: 10000,
     }
@@ -418,6 +421,7 @@ const ReportByWeekScoop = () => {
         <IconTruck
           className="fill-yellow-500 h-30 w-40"
           color=""
+          style={{}}
         />
         <div className="flex flex-col gap-8">
           <DonutChart

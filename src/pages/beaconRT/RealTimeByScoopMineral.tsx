@@ -40,16 +40,17 @@ const RealTimeByScoopMineral = () => {
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-mineral-rt",
     `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, 'yyyy-MM-dd')}&endDate=${format(dateFilter[0].endDate, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
+    "",
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
   const {
     data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
 
 
   const { data: planData = [] } = useFetchData<PlanDay[]>(
@@ -58,6 +59,7 @@ const RealTimeByScoopMineral = () => {
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     {
       refetchInterval: 10000,
     }

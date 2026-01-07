@@ -52,16 +52,18 @@ const RealTimeByMonthScoop = () => {
   } = useFetchData<MonthlyTrips[]>(
     "trip-report-month",
     `trip/header-by-months?year=${dayjs().year()}&material=Mineral`,
+    "",
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
   const { data: planMonthData = [] } = useFetchData<PlanMonth[]>(
     "plan-month",
     `planMonth?year=${dayjs().year()}&phase=mineral`,
+    "",
     {
       refetchInterval: 10000,
     }
@@ -217,7 +219,7 @@ const RealTimeByMonthScoop = () => {
           actionsRight={<div className="relative flex flex-row gap-2"></div>}
         />
         <div className="flex flex-col items-center justify-around gap-0">
-          <IconTruck className="fill-yellow-500 h-30 w-40" color="" />
+          <IconTruck className="fill-yellow-500 h-30 w-40" color="" style={{}} />
           <div className="flex flex-col gap-8">
             <DonutChart
               title="Extracción de Mineral (TM)"

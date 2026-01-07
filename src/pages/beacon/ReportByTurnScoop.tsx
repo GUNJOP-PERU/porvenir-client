@@ -315,6 +315,7 @@ const ReportByTurnScoop = () => {
         <IconTruck
           className="fill-yellow-500 h-30 w-40"
           color=""
+          style={{}}
         />
         <div className="flex flex-col gap-8">
           <DonutChart
