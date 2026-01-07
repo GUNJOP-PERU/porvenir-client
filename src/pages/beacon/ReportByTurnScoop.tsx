@@ -19,7 +19,7 @@ import { planDayDateParser } from "@/utils/dateUtils";
 // Icons
 import IconTruck from "@/icons/IconTruck";
 
-const RealTimeByHourRT = () => {
+const ReportByTurnScoop = () => {
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const [dateFilter, setDateFilter] = useState<Date>(subDays(new Date(), 1));
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -267,7 +267,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno / Camión"
+        title="Reporte por Turno / Palas"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -565,14 +565,14 @@ const RealTimeByHourRT = () => {
                 total: 100,
                 subData: [
                   {
-                    title: "Tiempo de Carga de Camión",
+                    title: "Tiempo de Carga de Pala",
                     currentValue: baseStats.avgLoadTime
                       ? Number(baseStats.avgLoadTime.toFixed(2))
                       : 0,
                     total: 10,
                   },
                   {
-                    title: "Tiempo de Descarga de Camión",
+                    title: "Tiempo de Descarga de Pala",
                     currentValue: baseStats.avgUnloadTime
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
@@ -606,4 +606,4 @@ const RealTimeByHourRT = () => {
   );
 };
 
-export default RealTimeByHourRT;
+export default ReportByTurnScoop;

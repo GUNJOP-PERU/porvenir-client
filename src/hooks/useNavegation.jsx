@@ -130,16 +130,34 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/real-time-by-hour-truck",
           },
           {
-            name: "Reporte por Semana",
+            name: "Reporte por Semana Camion",
             href: "/dashboard/real-time-by-day",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
           {
-            name: "Reporte por Mes",
+            name: "Reporte por Mes Camion",
             href: "/dashboard/real-time-by-month",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-month",
+          },
+          {
+            name: "Reporte por Dia Pala",
+            href: "dashboard/time-by-hour-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/time-by-hour-scoop",
+          },
+          {
+            name: "Reporte por Semana Pala",
+            href: "/dashboard/real-time-by-day-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-day-scoop",
+          },
+          {
+            name: "Reporte por Mes Pala",
+            href: "/dashboard/real-time-by-month-scoop",
+            icon: <ChartArea />,
+            active: pathname === "/dashboard/real-time-by-month-scoop",
           },
           {
             name: "Detección de Viajes",

@@ -33,7 +33,7 @@ import Utilization from "./pages/dashboard/Utilization";
 import RealTimeExtract from "./pages/dashboard/ProductionExtract/RealTimeExtract";
 import TimeDistribution from "./pages/dashboard/TimeDistribution/TimeDistribution";
 import TimeDistributionHistorical from "./pages/dashboard/TimeDistribution/TimeDistributionHistorical";
-import HomeVehicles from "./pages/management/Vehicles";
+// import HomeVehicles from "./pages/management/Vehicles";
 import PageCompany from "./pages/management/Company";
 import PageActivity from "./pages/monitoring/ActivityTruck";
 import Checklist from "./pages/monitoring/Checklist";
@@ -63,6 +63,9 @@ import RealTimeTripsCount from "./pages/beacon/DetectionTrip";
 import FleetStatus from "./pages/beaconRT/FleetStatus";
 import TripsDescriptionRT from "./pages/beaconRT/TripsDescriptions";
 import TripsDescription from "./pages/beacon/TripsDescriptions";
+import ReportByTurnScoop from "./pages/beacon/ReportByTurnScoop";
+import ReportByWeekScoop from "./pages/beacon/ReportByWeekScoop";
+import RealTimeByMonthScoop from "./pages/beacon/RealTimeByMonthScoop";
 // Development
 import TimelineDetectionReport from "./pages/development/TimelineDetectionReport";
 import TrackingDevelopment from "./pages/development/Tracking";
@@ -158,6 +161,9 @@ const protectedRoutes = [
   },
   { path: "dashboard/real-time-by-day", element: <RealTimeByDay /> },
   { path: "dashboard/real-time-by-month", element: <RealTimeByMonth /> },
+  { path: "dashboard/time-by-hour-scoop", element: <ReportByTurnScoop />},
+  { path: "dashboard/real-time-by-day-scoop", element: <ReportByWeekScoop /> },
+  { path: "dashboard/real-time-by-month-scoop", element: <RealTimeByMonthScoop /> },
   { path: "dashboard/beacon/trips-description", element: <TripsDescription /> },
   { path: "dashboard/beacon/trips", element: <PageTrips /> },
   { path: "dashboard/trip-count", element: <RealTimeTripsCount /> },
