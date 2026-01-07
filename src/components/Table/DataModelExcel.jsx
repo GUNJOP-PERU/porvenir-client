@@ -1,27 +1,30 @@
 import { ArrowDownToLine } from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { Button } from "../ui/button";
-import { getDataRequest } from "@/api/api";
+import { getDownloadRequest } from "@/api/api";
 
 export const DataModelExcel = ({
   loadingGlobal = false,
   handleImportButtonClick,
   downloadTemplate,
-  title
+  title="Plantilla",
 }) => {
   const handleDownload = async () => {
+    if (!downloadTemplate) return;
     try {
-      const response = await getDataRequest(downloadTemplate);
+      const response = await getDownloadRequest(downloadTemplate);
 
       const blob =
         response.data instanceof Blob
           ? response.data
           : new Blob([response.data]);
 
+      const safeTitle = title.replace(/[^\w\d-_]/g, "_");
       const url = window.URL.createObjectURL(blob);
+
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Modelo ${title}.xlsx`;
+      a.download = `Modelo_${safeTitle}.xlsx`;
       document.body.appendChild(a);
       a.click();
 
