@@ -10,7 +10,7 @@ import PageError from "./pages/404";
 import Layout from "./pages/Layout";
 import Login from "./pages/login/Login";
 import HomeLabor from "./pages/management/Labor";
-// import PageBeacon from "./pages/management/Beacon";
+import PageBeacon from "./pages/management/Beacon";
 import PageDestiny from "./pages/management/Destiny";
 import PlanNew from "./pages/management/PlanNew";
 import PlanDay from "./pages/management/PlanDay";
@@ -101,7 +101,7 @@ const protectedRoutes = [
   { path: "ubications", element: <PageUbications /> },
   { path: "veta", element: <PageVeta/> },
   //Conectividad
-  // { path: "beacon", element: <PageBeacon /> },
+  { path: "beacon", element: <PageBeacon /> },
   { path: "wap", element: <PageWap /> },
 
   // Beacon RT
