@@ -29,11 +29,13 @@ import {
   getDefaultShift,
   getDefaultDateObj,
   normalizarTajo,
-  normalizarFase
+  normalizarFase,
+  normalizarZona,
 } from "@/lib/utilsGeneral";
 import { useToast } from "@/hooks/useToaster";
 import readXlsxFile from "read-excel-file";
 import { RiFileExcel2Line } from "react-icons/ri";
+import { DataModelExcel } from "@/components/Table/DataModelExcel";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
@@ -108,8 +110,9 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       const newLabors = newItems
         .filter((item) => !existingLabors.includes(item))
         .map((labor) => ({
+          zona:"ALTA",
           labor,
-          fase: "mineral",
+          fase: "MINERAL",
           [formattedDate]: Math.floor(Math.random() * 100) * 100,
         }));
 
@@ -163,6 +166,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       );
 
       return fechas.map((fecha) => ({
+        zone: row.zona,
         frontLabor: row.labor,
         phase: row.fase,
         date: fecha,
@@ -256,12 +260,23 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       }
 
       const headers = data[0].map((h) => (h ? String(h).trim() : ""));
-
+      const zonaIndex = headers.findIndex((h) => h.toLowerCase() === "zona");
       const laborIndex = headers.findIndex(
         (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo"
       );
       const faseIndex = headers.findIndex((h) => h.toLowerCase() === "fase");
-
+      if (zonaIndex === -1) {
+        addToast({
+          title: "Columna Zona no encontrada",
+          message:
+            "No se encontró la columna 'Zona' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
       if (laborIndex === -1) {
         addToast({
           title: "Columna Labor/Tajo no encontrada",
@@ -338,7 +353,11 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
 
       const orderedDateColumnsInExcel = [];
       headers.forEach((header, index) => {
-        if (index === laborIndex || index === faseIndex) {
+        if (
+          index === zonaIndex ||
+          index === laborIndex ||
+          index === faseIndex
+        ) {
           return;
         }
         orderedDateColumnsInExcel.push({ index, header });
@@ -362,7 +381,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
         }
       });
 
-      const unmappedExcelColumns = orderedDateColumnsInExcel
+      const unmappedExcelColumns = orderedDateColumnsInExfcel
         .filter(({ index }) => !Object.values(dateColumnMap).includes(index))
         .sort((a, b) => a.index - b.index);
 
@@ -413,12 +432,14 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       const processedData = [];
       for (let rowIndex = 1; rowIndex < data.length; rowIndex++) {
         const row = data[rowIndex];
+        const zona = row[zonaIndex] ? String(row[zonaIndex]).trim() : "";
         const labor = row[laborIndex] ? String(row[laborIndex]).trim() : "";
         const fase = row[faseIndex] ? String(row[faseIndex]).trim() : "";
 
-        if (!labor && !fase) continue;
+        if (!zona && !labor && !fase) continue;
 
         const rowData = {
+          zona: zona ? normalizarZona(zona) : "",
           labor: labor ? normalizarTajo(labor) : "",
           fase: fase ? normalizarFase(fase) : "",
         };
@@ -489,7 +510,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[680px]">
+      <DialogContent className="w-[750px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
@@ -512,7 +533,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
           />
           <FrontLaborSubHeader frontLaborSubHeader={showFrontLaborSubHeader} />
           <div className="flex flex-col gap-3">
-             <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-base font-extrabold leading-5">
                   Planificación /{" "}
@@ -544,16 +565,11 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                     <RiFileExcel2Line className="size-3 text-white" />
                     Importar excel
                   </Button>
-                  <a
-                    href={`${
-                      import.meta.env.VITE_URL
-                    }api/v1/planDay/download/modelo-turno`}
-                    download
-                    className="bg-green-700 hover:bg-green-800 px-3 flex items-center gap-1 text-xs text-white rounded-s-none rounded-lg h-8"
-                  >
-                    <ArrowDownToLine className="size-3 text-white" />
-                    Descargar Modelo
-                  </a>
+                  <DataModelExcel
+                    loadingGlobal={loadingGlobal}
+                    downloadTemplate={"planDay/download/modelo-turno"}
+                    title={"Plan Turno"}
+                  />                  
                 </div>
               )}
             </div>

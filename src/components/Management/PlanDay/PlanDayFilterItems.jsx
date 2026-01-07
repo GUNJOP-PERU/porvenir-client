@@ -21,8 +21,12 @@ export function FilterItems({
   const dropdownRef = useRef(null);
 
   // Filtro
+  const normalizedOptions = (options ?? []).map((opt) =>
+  typeof opt === "string" ? opt : opt.frontLabor
+);
+
   const query = searchQuery?.toLowerCase() ?? "";
-  const filteredOptions = (options ?? []).filter((option) =>
+  const filteredOptions = normalizedOptions.filter((option) =>
     String(option).toLowerCase().includes(query)
   );
 

@@ -1,11 +1,11 @@
-import { dataFase } from "@/lib/data";
+import { dataFase, dataZona } from "@/lib/data";
 import Handsontable from "handsontable/base";
 import { HotTable } from "@handsontable/react-wrapper";
 import clsx from "clsx";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
 import { useEffect, useMemo, useState } from "react";
-import { normalizarTajo } from "@/lib/utilsGeneral";
+import { normalizarTajo, normalizarZona, normalizarFase } from "@/lib/utilsGeneral";
 
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -22,7 +22,6 @@ export const PlanContent = ({
     return dataLaborList?.some((item) => item.name === laborName);
   };
 
-  // 2️⃣ normaliza SOLO la columna labor cuando pegan o editan
   const handleAfterChange = (changes, _source) => {
     if (!changes) return;
 
@@ -39,14 +38,18 @@ export const PlanContent = ({
 
         if (!key) return;
 
-        // 🔴 NORMALIZAR TAJO PEGADO
         if (key === "labor" && typeof newValue === "string") {
           newData[row][key] = normalizarTajo(newValue);
           return;
         }
 
+        if (key === "zona" && typeof newValue === "string") {
+          newData[row][key] = normalizarZona(newValue);
+          return;
+        }
+
         if (key === "fase") {
-          newData[row][key] = newValue;
+          newData[row][key] = normalizarFase(newValue);
           return;
         }
 
@@ -72,9 +75,11 @@ export const PlanContent = ({
   const orderedKeys = useMemo(() => {
     if (!dataHotTable || dataHotTable.length === 0) return [];
     const keys = Object.keys(dataHotTable[0]).filter((k) => k !== "type");
-    return keys.includes("labor")
-      ? ["labor", ...keys.filter((k) => k !== "labor")]
-      : keys;
+    return [
+      "zona",
+      "labor",
+      ...keys.filter((k) => !["zona", "labor"].includes(k)),
+    ];
   }, [dataHotTable]);
 
   const totalsRow = useMemo(() => {
@@ -111,7 +116,11 @@ export const PlanContent = ({
   }, [dataHotTable, totalsRow, orderedKeys]);
 
   return (
-    <div className={`${loadingGlobal ? "pointer-events-none opacity-50 select-none" : ""}`}>
+    <div
+      className={`${
+        loadingGlobal ? "pointer-events-none opacity-50 select-none" : ""
+      }`}
+    >
       <HotTable
         data={dataHotTable}
         maxCols={Object.keys(dataHotTable[0] || {}).length}
@@ -142,7 +151,15 @@ export const PlanContent = ({
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {
-                if (key === "labor") {
+                if (key === "zona") {
+                  return {
+                    type: "dropdown",
+                    source: dataZona.map((z) => z.name),
+                    data: key,
+                    allowInvalid: false,
+                    width: 130,
+                  };
+                } else if (key === "labor") {
                   return {
                     type: "text",
                     data: key,
@@ -151,7 +168,7 @@ export const PlanContent = ({
                 } else if (key === "fase") {
                   return {
                     type: "dropdown",
-                    source: dataFase.map((item) => item.name),
+                    source: dataFase.map((f) => f.name),
                     data: key,
                     allowInvalid: false,
                     width: 130,
@@ -177,6 +194,10 @@ export const PlanContent = ({
 
               if (orderedKeys[c] === "labor") {
                 data[r][c] = normalizarTajo(value);
+                continue;
+              }
+              if (orderedKeys[c] === "zona") {
+                data[r][c] = normalizarZona(value);
                 continue;
               }
 

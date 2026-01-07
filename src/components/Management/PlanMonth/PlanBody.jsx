@@ -12,7 +12,7 @@ import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import readXlsxFile from "read-excel-file";
-import { normalizarTajo, normalizarFase } from "@/lib/utilsGeneral";
+import { normalizarTajo, normalizarFase, normalizarZona } from "@/lib/utilsGeneral";
 
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
@@ -27,6 +27,7 @@ import { postDataRequest, putDataRequest } from "@/api/api";
 import { useToast } from "@/hooks/useToaster";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
+import { DataModelExcel } from "@/components/Table/DataModelExcel";
 
 const FormSchema = z.object({
   dob: z
@@ -119,6 +120,7 @@ export const PlanBody = ({
 
     const exampleData = items.map((labor, index) => {
       let row = {
+        zona: index % 2 === 0 ? "alta" : "intermedia",
         labor,
         fase: index % 2 === 0 ? "mineral" : "desmonte",
       };
@@ -196,11 +198,25 @@ export const PlanBody = ({
       }
 
       const headers = data[0].map((h) => (h ? String(h).trim() : ""));
+      const zonaIndex = headers.findIndex((h) => h.toLowerCase() === "zona");
 
       const laborIndex = headers.findIndex(
         (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo"
       );
       const faseIndex = headers.findIndex((h) => h.toLowerCase() === "fase");
+
+      if (zonaIndex === -1) {
+        addToast({
+          title: "Columna Zona no encontrada",
+          message:
+            "No se encontró la columna 'Zona' en el archivo Excel.\n\nEncabezados encontrados: " +
+            headers.filter((h) => h).join(", "),
+          variant: "destructive",
+        });
+        setLoadingGlobal(false);
+        setShowLoader(false);
+        return;
+      }
 
       if (laborIndex === -1) {
         addToast({
@@ -331,7 +347,11 @@ export const PlanBody = ({
 
       const orderedDateColumnsInExcel = [];
       headers.forEach((header, index) => {
-        if (index === laborIndex || index === faseIndex) {
+        if (
+          index === zonaIndex ||
+          index === laborIndex ||
+          index === faseIndex
+        ) {
           return;
         }
         orderedDateColumnsInExcel.push({ index, header });
@@ -424,12 +444,14 @@ export const PlanBody = ({
       const processedData = [];
       for (let rowIndex = 1; rowIndex < data.length; rowIndex++) {
         const row = data[rowIndex];
+        const zona = row[zonaIndex] ? String(row[zonaIndex]).trim() : "";
         const labor = row[laborIndex] ? String(row[laborIndex]).trim() : "";
         const fase = row[faseIndex] ? String(row[faseIndex]).trim() : "";
 
-        if (!labor && !fase) continue;
+        if (!zona && !labor && !fase) continue;
 
         const rowData = {
+          zona: zona ? normalizarZona(zona) : "",
           labor: labor ? normalizarTajo(labor) : "",
           fase: fase ? normalizarFase(fase) : "",
         };
@@ -506,7 +528,7 @@ export const PlanBody = ({
     const { dob } = form.getValues();
 
     const tieneCamposVacios = dataHotTable.some(
-      (row) => !row.labor || !row.fase
+      (row) => !row.zona || !row.labor || !row.fase
     );
 
     const laborCounts = dataHotTable.reduce((acc, row) => {
@@ -541,7 +563,7 @@ export const PlanBody = ({
     if (tieneCamposVacios) {
       addToast({
         title: "Campos vacíos",
-        message: "Hay filas con 'Labor' o 'Fase' vacías en la tabla.",
+        message: "Hay filas con 'Zona', 'Labor' o 'Fase' vacías en la tabla.",
         variant: "destructive",
       });
       setLoadingGlobal(false);
@@ -572,6 +594,7 @@ export const PlanBody = ({
           const turno = turnoText.toLowerCase();
 
           return {
+            zone: row.zona,
             frontLabor: row.labor,
             phase: row.fase,
             date: date,
@@ -760,14 +783,11 @@ export const PlanBody = ({
                   <RiFileExcel2Line className="size-3 text-white" />
                   Importar Excel
                 </Button>
-                <a
-                  href={`${import.meta.env.VITE_URL}api/v1/${downloadTemplate}`}
-                  download
-                  className="bg-green-700 hover:bg-green-800 px-3 flex items-center gap-1 text-xs text-white rounded-s-none rounded-lg h-8"
-                >
-                  <ArrowDownToLine className="size-3 text-white" />
-                  Descargar Modelo
-                </a>
+                <DataModelExcel
+                  loadingGlobal={loadingGlobal}
+                  downloadTemplate={downloadTemplate}
+                  title={title}
+                />
               </div>
             )}
           </div>

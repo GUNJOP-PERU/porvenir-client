@@ -25,7 +25,7 @@ export default function PlanDetails({ plan }) {
   }
 
   const dynamicColumns = Object.keys(rows[0]).filter(
-    (key) => key !== "labor" && key !== "fase"
+    (key) => !["zona", "labor", "fase"].includes(key)
   );
 
   const columnTotals = dynamicColumns.reduce((acc, col) => {
@@ -56,6 +56,7 @@ export default function PlanDetails({ plan }) {
           <thead className="sticky top-0 z-1">
             <tr>
               <th className="w-10 bg-[#959493] text-white" />
+              <th className="bg-[#FF5000] text-white px-3 py-1.5">ZONA</th>
               <th className="bg-[#FF5000] text-white px-3 py-1.5">LABOR</th>
               <th className="bg-[#FF5000] text-white px-3 py-1.5">FASE</th>
 
@@ -68,9 +69,9 @@ export default function PlanDetails({ plan }) {
               ))}
             </tr>
             <tr>
-              <th className="w-10 bg-[#3c3c3c] text-white" />
-              <th className="bg-[#3c3c3c] text-white px-3 py-1.5">TOTAL</th>
-              <th className="w-10 bg-[#3c3c3c] text-white" />
+              <th className="bg-[#3c3c3c] text-white px-3 py-1.5" colSpan={4}>
+                TOTAL
+              </th>
 
               {dynamicColumns.map((col) => (
                 <th
@@ -90,11 +91,14 @@ export default function PlanDetails({ plan }) {
                   {index + 1}
                 </td>
 
-                <td className="px-3 py-1 border border-[#FF500030] font-semibold text-green-600 w-[250px]">
+                <td className="px-3 py-1 border border-[#FF500030] uppercase ">
+                  {row.zona}
+                </td>
+                <td className="px-3 py-1 border border-[#FF500030] font-semibold text-green-600 w-[250px] uppercase">
                   {row.labor}
                 </td>
 
-                <td className="px-3 py-1 border border-[#FF500030] w-[100px]">
+                <td className="px-3 py-1 border border-[#FF500030] w-[100px] uppercase">
                   {row.fase}
                 </td>
 
