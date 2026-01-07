@@ -6,8 +6,13 @@ export const dataRole = [
 ];
 
 export const dataFase = [
-  { value: "mineral", name: "mineral" },
-  { value: "desmonte", name: "desmonte" },
+  { value: "mineral", name: "MINERAL" },
+  { value: "desmonte", name: "DESMONTE" },
+];
+export const dataZona = [
+  { value: "alta", name: "ALTA" },
+  { value: "intermedia", name: "INTERMEDIA" },
+  { value: "baja", name: "BAJA" },
 ];
 
 export const dataCargo = [

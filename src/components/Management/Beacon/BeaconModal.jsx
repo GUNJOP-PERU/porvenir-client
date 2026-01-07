@@ -30,6 +30,7 @@ import {
 import { Input } from "../../ui/input";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { Switch } from "@/components/ui/switch";
+import { ListItems } from "./ListItems";
 
 const FormSchema = z.object({
   mac: z
@@ -55,6 +56,16 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const { data: dataUbicationType } = useFetchData(
     "ubications",
     "beacon/ubications"
+  );
+  const { data: dataLaborList, refetch: refetchLaborList, isFetching: isLaborListFetching } = useFetchData(
+    "frontLabor-current",
+    "frontLabor/current",
+    {
+      enabled: true,
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: false,
+    }
   );
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
@@ -176,7 +187,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="ubicationType"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col col-span-2">
                     <FormLabel>Tipo de ubicación</FormLabel>
                     <Input
                       type="text"
@@ -193,14 +204,25 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="ubication"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Ubicación</FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
-                      {...field}
-                    />
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel>Ubicación / Labor</FormLabel>
+                    <div className="flex ">
+                      <Input
+                        type="text"
+                        disabled={loadingGlobal}
+                        placeholder="Ej. Mantenimiento"
+                        {...field}
+                      />
+                      <ListItems
+                         column={""}
+                  title="Labor"
+                  options={dataLaborList}
+                  field={field}
+                  loadingGlobal={loadingGlobal}
+                  refetch={refetchLaborList}
+                  isFetching={isLaborListFetching}
+                      />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

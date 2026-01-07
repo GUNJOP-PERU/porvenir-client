@@ -256,13 +256,21 @@ export const normalizarTajo = (texto) => {
 };
 
 
+export const normalizarZona = (value) => {
+  if (!value) return "";
+  return value.toString().trim().toUpperCase();
+};
+
 export const normalizarFase = (fase) => {
   if (!fase) return "";
 
-  const value = String(fase).trim().toLowerCase();
+  const value = String(fase).trim().toUpperCase();
 
-  if (value.startsWith("min")) return "mineral";
-  if (value.startsWith("des")) return "desmonte";
+  if (value.startsWith("MIN")) return "MINERAL";
+  if (value.startsWith("DES")) return "DESMONTE";
 
   return value;
 };
+
+
+
