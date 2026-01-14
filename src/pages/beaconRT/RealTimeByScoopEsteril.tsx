@@ -17,7 +17,7 @@ import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
 import { calculateTripPrediction } from "@/utils/predictionUtils";
 // Icons
-import IconTruck from "@/icons/IconTruck";
+import IconScoop from "@/icons/IconScoop";
 
 const RealTimeByScoopEsteril = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
@@ -349,10 +349,8 @@ const RealTimeByScoopEsteril = () => {
         ]}
       />
       <div className="flex flex-col items-center justify-around gap-0">
-        <IconTruck
+        <IconScoop
           className="fill-yellow-500 h-30 w-40"
-          color=""
-          style={{}}
         />
   
         <div className="flex flex-col gap-8">
@@ -595,47 +593,7 @@ const RealTimeByScoopEsteril = () => {
                 currentValueColor: "#ff5000",
               },
             ]}
-            tableData={[
-              {
-                title: "Plan",
-                currentValue: 60,
-                total: 100,
-                subData: [
-                  {
-                    title: "Tiempo de Carga por Camión",
-                    currentValue: baseStats.avgLoadTime
-                      ? Number(baseStats.avgLoadTime.toFixed(2))
-                      : 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Tiempo de Descarga de Camión",
-                    currentValue: baseStats.avgUnloadTime
-                      ? Number(baseStats.avgUnloadTime.toFixed(2))
-                      : 0,
-                    total: 10,
-                  }
-                ],
-              },
-              {
-                title: "Duración del Ciclo Subterraneo",
-                currentValue:
-                  shiftFilter === "dia"
-                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
-                total: 100,
-                subData: [],
-              },
-              {
-                title: "Duración del Ciclo Superficie",
-                currentValue:
-                  shiftFilter === "dia"
-                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
-                total: 100,
-                subData: [],
-              },
-            ]}
+            tableData={[]}
           />
         </div>
       </div>
