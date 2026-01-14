@@ -267,7 +267,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno"
+        title="Reporte por Turno / Camión"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -315,6 +315,7 @@ const RealTimeByHourRT = () => {
         <IconTruck
           className="fill-yellow-500 h-30 w-40"
           color=""
+          style={{}}
         />
         <div className="flex flex-col gap-8">
           <DonutChart

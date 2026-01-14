@@ -24,3 +24,7 @@ export const getDataGraphicRequest = async (endpoint) => {
   return response.data; 
 };
 
+export const getDownloadRequest = (endpoint) => 
+  authApi.get(`api/v1/${endpoint}`, {
+    responseType: 'blob' // <--- ESTO ES LA CLAVE
+  });

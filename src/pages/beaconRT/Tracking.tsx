@@ -1,6 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-rotate";
+// import "leaflet-rotate";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,

@@ -78,7 +78,6 @@ function PlanMonth() {
         }
       />
 
-      <div className="flex items-center justify-end gap-2"></div>
       <DataTable
         data={data}
         columns={columns(setSelectedPlan)}

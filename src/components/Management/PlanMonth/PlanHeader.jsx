@@ -41,7 +41,7 @@ export const PlanHeader = ({
   mode,
   isEdit,
 }) => {
-  const { data: dataLaborList, refetch: refetchLaborList } = useFetchData(
+  const { data: dataLaborList, refetch: refetchLaborList, isFetching: isLaborListFetching } = useFetchData(
     "frontLabor-current",
     "frontLabor/current",
     {
@@ -241,6 +241,8 @@ export const PlanHeader = ({
                   options={dataLaborList}
                   field={field}
                   loadingGlobal={loadingGlobal}
+                  refetch={refetchLaborList}
+                  isFetching={isLaborListFetching}
                 />
                 <FormMessage />
               </FormItem>
