@@ -12,10 +12,12 @@ import {
   ChartColumnStacked,
   ChartNoAxesCombined,
   CopyCheck,
+  Eye,
   FileChartPie,
   LandPlot,
   MapPin,
   Pickaxe,
+  Settings,
   Waypoints,
 } from "lucide-react";
 import IconVehicle from "@/icons/Dashboard/IconVehicle";
@@ -28,7 +30,8 @@ export const useNavigation = () => {
   const paths = useMemo(() => {
     const basePaths = [
       {
-        title: "Beacon Tiempo Real",
+        name: "Producción en Tiempo Real",
+        icon: <IconRadar />,
         items: [
           {
             name: "Tracking Superficie",
@@ -43,35 +46,37 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/underground-tracking",
           },
           {
-            name: "Reporte de Extracción por Turno Mineral",
+            name: "Carguío y Transporte de Mineral por Turno",
             href: "/dashboard/beacon/detection-report-turn-mineral-rt",
             icon: <ChartArea />,
             active:
               pathname === "/dashboard/beacon/detection-report-turn-mineral-rt",
           },
           {
-            name: "Reporte de Extracción por Turno Estéril",
+            name: "Carguío y Transporte de Estéril por Turno",
             href: "/dashboard/beacon/detection-report-turn-esteril-rt",
             icon: <ChartArea />,
             active:
               pathname === "/dashboard/beacon/detection-report-turn-esteril-rt",
           },
           {
-            name: "Reporte de Palas Mineral",
+            name: "Carguío Mineral",
             href: "/dashboard/beacon/detection-report-scoop-mineral-rt",
             icon: <ChartArea />,
             active:
-              pathname === "/dashboard/beacon/detection-report-scoop-mineral-rt",
+              pathname ===
+              "/dashboard/beacon/detection-report-scoop-mineral-rt",
           },
           {
-            name: "Reporte de Palas Estéril",
+            name: "Carguío Estéril",
             href: "/dashboard/beacon/detection-report-scoop-esteril-rt",
             icon: <ChartArea />,
             active:
-              pathname === "/dashboard/beacon/detection-report-scoop-esteril-rt",
+              pathname ===
+              "/dashboard/beacon/detection-report-scoop-esteril-rt",
           },
           {
-            name: "Reporte por Semana",
+            name: "Carguío Semanal Mineral",
             href: "/dashboard/beacon/detection-report-week-rt",
             icon: <ChartArea />,
             active: pathname === "/dashboard/beacon/detection-report-week-rt",
@@ -95,7 +100,7 @@ export const useNavigation = () => {
             active: pathname === "/dashboard/beacon/utilizacion-de-flota",
           },
           {
-            name: "Seguimiento de Extracción",
+            name: "Seguimiento de Transporte",
             href: "/dashboard/beacon/seguimiento-de-extraccion",
             icon: <TbReportAnalytics />,
             active: pathname === "/dashboard/beacon/seguimiento-de-extraccion",
@@ -115,46 +120,47 @@ export const useNavigation = () => {
         ],
       },
       {
-        title: "Beacon Histórico",
+        name: "Producción Histórico",
+        icon: <TbReportAnalytics />,
         items: [
           {
-            name: "Reporte de detección",
+            name: "Detección de Bocaminas y Destinos",
             href: "dashboard/detection-report",
             icon: <TbReportAnalytics />,
             active: pathname === "/dashboard/detection-report",
           },
           {
-            name: "Reporte por Dia Camion",
+            name: "Carguío Mineral por Turno",
             href: "dashboard/real-time-by-hour-truck",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-hour-truck",
           },
           {
-            name: "Reporte por Semana Camion",
+            name: "Carguío Semanal Mineral",
             href: "/dashboard/real-time-by-day",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day",
           },
           {
-            name: "Reporte por Mes Camion",
+            name: "Carguío Mensual Mineral",
             href: "/dashboard/real-time-by-month",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-month",
           },
           {
-            name: "Reporte por Dia Pala",
+            name: "Carguío por Turno Esteril",
             href: "dashboard/time-by-hour-scoop",
             icon: <ChartArea />,
             active: pathname === "/dashboard/time-by-hour-scoop",
           },
           {
-            name: "Reporte por Semana Pala",
+            name: "Carguío por Semana Esteril",
             href: "/dashboard/real-time-by-day-scoop",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-day-scoop",
           },
           {
-            name: "Reporte por Mes Pala",
+            name: "Carguío Mensual Esteril",
             href: "/dashboard/real-time-by-month-scoop",
             icon: <ChartArea />,
             active: pathname === "/dashboard/real-time-by-month-scoop",
@@ -173,7 +179,7 @@ export const useNavigation = () => {
           },
 
           {
-            name: "Linea de Tiempo",
+            name: "Linea de Tiempo por Turno / Histórico",
             href: "/dashboard/beacon/trips-description",
             icon: <FaTimeline />,
             active: pathname === "/dashboard/beacon/trips-description",
@@ -194,10 +200,11 @@ export const useNavigation = () => {
         ],
       },
       {
-        title: "Tablet / Análisis",
+        name: "Tablet / Análisis",
+        icon: <TbReportAnalytics />,
         items: [
           {
-            name: "Reporte de extracción",
+            name: "Carguío y Transporte",
             href: "/tablet/productionExtract/realtime",
             icon: <ChartColumnStacked />,
             active:
@@ -213,13 +220,13 @@ export const useNavigation = () => {
               pathname === "/tablet/timeDistribution/historical",
           },
           {
-            name: "Reporte Semanal",
+            name: "Carguío Semanal",
             href: "/tablet/week-report",
             icon: <FileChartPie />,
             active: pathname === "/tablet/week-report",
           },
           {
-            name: "Reporte de Improductivos",
+            name: "Carguío de Improductivos",
             href: "/tablet/unproductive-report",
             icon: <ChartNoAxesCombined />,
             active: pathname === "/tablet/unproductive-report",
@@ -243,7 +250,8 @@ export const useNavigation = () => {
     if (userType === "plan-editor") {
       return [
         {
-          title: "Gestión",
+          name: "Gestión General Undis",
+          icon: <Settings />,
           items: [
             {
               name: "Planes",
@@ -262,7 +270,10 @@ export const useNavigation = () => {
                 {
                   name: "Plan Mensual",
                   href: "/planMonth",
-                  active: pathname === "/planMonth" || pathname === "/newPlanMonth" || pathname === "/editPlanMonth",
+                  active:
+                    pathname === "/planMonth" ||
+                    pathname === "/newPlanMonth" ||
+                    pathname === "/editPlanMonth",
                 },
               ],
             },
@@ -274,7 +285,8 @@ export const useNavigation = () => {
     if (userType === "admin" || userType === "edit") {
       return [
         {
-          title: "Gestión",
+          name: "Gestión General Undis",
+          icon: <Settings />,
           items: [
             {
               name: "General",
@@ -335,12 +347,16 @@ export const useNavigation = () => {
                 {
                   name: "Plan Semanal",
                   href: "/planWeek",
-                  active: pathname === "/planWeek" ||  pathname.startsWith("/plan/weekly"),
+                  active:
+                    pathname === "/planWeek" ||
+                    pathname.startsWith("/plan/weekly"),
                 },
                 {
                   name: "Plan Mensual",
                   href: "/planMonth",
-                  active: pathname === "/planMonth" ||  pathname.startsWith("/plan/monthly"),
+                  active:
+                    pathname === "/planMonth" ||
+                    pathname.startsWith("/plan/monthly"),
                 },
               ],
             },
@@ -363,7 +379,8 @@ export const useNavigation = () => {
           ],
         },
         {
-          title: "Monitoreo",
+          name: "Monitoreo de Equipos",
+          icon: <Eye />,
           items: [
             {
               name: "Trabajos planificados",

@@ -8,7 +8,7 @@ import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import IconToggle from "@/icons/IconToggle";
 import { dataLabor } from "@/lib/data";
-import { CircleFadingPlus, InfoIcon, Plus } from "lucide-react";
+import { CircleFadingPlus, InfoIcon, Plus, RefreshCw } from "lucide-react";
 import { Button } from "../../ui/button";
 import {
   Dialog,
@@ -170,7 +170,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[550px]">
+      <DialogContent className="w-[750px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <div>
@@ -233,20 +233,31 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                       </FormItem>
                     )}
                   />
-                  <div className="col-span-1 flex gap-1 items-center">
+                  <div className="col-span-1 flex items-center">
+                   <div className="h-8 mt-auto">
+                     <button
+                      className="h-8 w-8 border border-zinc-200 rounded-lg rounded-e-none flex items-center justify-center mt-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => refetchVeta()}
+                      type="button"
+                      disabled={loadingVeta}
+                    >
+                      <RefreshCw className="w-4 h-4 text-blue-500" />
+                    </button>
+                   </div>
                     <FormField
                       control={control}
                       name="secondPart"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex flex-col w-20 ">
                           <FormLabel>VETA</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
-                            disabled={loadingGlobal}
+                            disabled={loadingGlobal || loadingVeta}
+                           
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="!rounded-s-none">
                                 <SelectValue placeholder="Seleccione" />
                               </SelectTrigger>
                             </FormControl>
@@ -262,13 +273,6 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         </FormItem>
                       )}
                     />
-                    <button
-                      className="w-fit"
-                      onClick={() => refetchVeta()}
-                      type="button"
-                    >
-                      <Plus />
-                    </button>
                   </div>
                   <FormField
                     control={control}
@@ -326,7 +330,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         <FormLabel>Número</FormLabel>
                         <Input
                           type="text"
-                          placeholder="Ej. 370"
+                          placeholder="Ej. A2"
                           maxLength={6}
                           disabled={loadingGlobal}
                           {...field}
@@ -346,7 +350,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         <FormLabel>Número</FormLabel>
                         <Input
                           type="text"
-                          placeholder="Ej. 370"
+                          placeholder="Ej. C1"
                           maxLength={6}
                           disabled={loadingGlobal}
                           {...field}

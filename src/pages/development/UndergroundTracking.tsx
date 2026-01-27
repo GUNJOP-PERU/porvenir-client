@@ -175,7 +175,7 @@ const UndergroundTracking = () => {
           flex-direction: column;
           align-items: center;
         ">
-          <!-- Icono del camión -->
+          <!-- Icono -->
           <div class="${
             isSelected ? "truck-inner marker-highlight" : "truck-inner"
           }" style="

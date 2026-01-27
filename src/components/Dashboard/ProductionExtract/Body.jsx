@@ -30,7 +30,7 @@ export default function Body({
       />
       <div className="flex-1 grid gap-2 grid-cols-1 xl:grid-cols-2">
         <CardTitle
-          title="Extracción de Mineral"
+          title="Transporte de Mineral"
           subtitle="Tonelaje proyectado vs transportado."
           icon={IconMineral}
           classIcon="text-[#14B8A6]"
@@ -47,7 +47,7 @@ export default function Body({
           />
         </CardTitle>
         <CardTitle
-          title="Extracción de Desmonte"
+          title="Transporte de Desmonte"
           subtitle="Tonelaje proyectado vs transportado."
           icon={IconClearance}
           classIcon="fill-[#F59E0B]"

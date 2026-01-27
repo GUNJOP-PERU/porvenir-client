@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useFetchInfinityScrollTruck } from "@/hooks/useGlobalQuery";
+import { useSocketRefetch } from "@/hooks/useSocketValue";
 import { countItems, getDefaultDate, getDefaultShift } from "@/lib/utilsGeneral";
 import { es } from "date-fns/locale";
 import dayjs from "dayjs";
@@ -41,6 +42,8 @@ function PageActivity() {
     endpoint: "activity/truck/items",
     filters: `date=${form.date}&shift=${form.shift}&vehicle=${debouncedSearch}&activityType=${form.productive}&material=${form.material}&isValid=${form.isValid}`,
   });
+
+  useSocketRefetch("activity-created", refetch);
 
   const groups = [
     {

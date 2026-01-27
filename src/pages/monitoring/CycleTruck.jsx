@@ -23,6 +23,7 @@ import { useDebounce } from "use-debounce";
 import { Button } from "../../components/ui/button";
 import { useFetchInfinityScrollTruck } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
+import { useSocketRefetch } from "../../hooks/useSocketValue";
 
 function PageCycleTruck() {
   const [form, setForm] = useState({
@@ -47,6 +48,8 @@ function PageCycleTruck() {
     endpoint: "cycle/truck/items",
     filters: `vehicle=${debouncedSearch}&shift=${form.shift}&date=${form.date}&isValid=${form.isValid}&material=${form.material}`,
   });
+
+  useSocketRefetch(["truck-cycle", "truck-cycle-updated"], refetch);
 
   const groups = [
     {

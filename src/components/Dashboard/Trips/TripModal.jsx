@@ -126,7 +126,7 @@ export const TripModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Parrilla"
                       {...field}
                     />
                     <FormMessage />
@@ -142,7 +142,7 @@ export const TripModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. pablo1234"
+                      placeholder="Ej. Bocamina"
                       {...field}
                     />
                     <FormMessage />

@@ -2,7 +2,7 @@ import { useGraphicData } from "@/hooks/useGraphicData";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, { Suspense, useMemo } from "react";
+import React, { useMemo } from "react";
 
 const CardPie = React.memo(({ symbol, endpoint }) => {
   useSocketTopicValue(symbol, ["shift-variable", symbol]);

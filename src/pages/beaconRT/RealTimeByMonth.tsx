@@ -319,8 +319,8 @@ const RealTimeByMonth = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte Semanal"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
+        title="Carguío por Semana / Esteril"
+        description={`Información en tiempo real de los viajes realizados por los equipos del ${format(
           dateFilter[0].startDate,
           "dd-MM-yyyy"
         )}.`}
@@ -362,7 +362,7 @@ const RealTimeByMonth = () => {
         </div>
         <div>
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="medium"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -381,7 +381,7 @@ const RealTimeByMonth = () => {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Disponibilidad de LHD y Camiones
+            Disponibilidad de LHD y Equipos
           </h3>
           <DonutChart
             title=""
@@ -409,7 +409,7 @@ const RealTimeByMonth = () => {
             }}
           />
           <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Usabilidad de LHD y Camiones
+            Usabilidad de LHD y Equipos
           </h3>
           <DonutChart
             title=""
@@ -441,7 +441,7 @@ const RealTimeByMonth = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
         <CardTitle
-          title={`Ejecución de extracción de mineral ${active.title} (TM)`}
+          title={`Ejecución de Transporte de mineral ${active.title} (TM)`}
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           icon={IconTruck}
           classIcon="fill-yellow-500 h-7 w-16"
@@ -531,7 +531,7 @@ const RealTimeByMonth = () => {
                     total: 10,
                   },
                   {
-                    title: "Falta de Camiones para cargar",
+                    title: "Falta de Equipos para cargar",
                     currentValue: 0,
                     total: 10,
                   },

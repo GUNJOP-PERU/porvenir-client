@@ -53,7 +53,11 @@ export default function UpdateTruckPlanDay() {
   );
   const { data: planData = [], refetch } = useFetchData<Plan[]>(
     "plan-extract-realtime",
-    `planDay/by-date-range?startDate=${getCurrentDay().startDateString}&endDate=${getCurrentDay().endDateString}&type=executed&shift=${getCurrentDay().shift}`,
+    `planDay/by-date-range?startDate=${
+      getCurrentDay().startDateString
+    }&endDate=${getCurrentDay().endDateString}&type=executed&shift=${
+      getCurrentDay().shift
+    }`,
     {}
   );
 
@@ -92,12 +96,12 @@ export default function UpdateTruckPlanDay() {
     const unassigned = availableTrucks.filter((v) => !assignedIds.has(v._id));
 
     newColumns["disponibles"] = {
-      name: "Camiones disponibles",
+      name: "Equipos disponibles",
       color: "bg-[#3C1C1E]",
       titleColor: "text-[#D1686D]",
       isValid: false,
       items: unassigned
-        .slice() 
+        .slice()
         .sort((a, b) => extractNumber(a.tag) - extractNumber(b.tag))
         .map((v) => ({
           id: v._id,
@@ -117,12 +121,12 @@ export default function UpdateTruckPlanDay() {
         color: "bg-zinc-800",
         titleColor: "text-[#ff5000]",
         tonnage: plan.tonnage,
-         phase: plan.phase,
+        phase: plan.phase,
         tonnageExecuted: tripInfo?.tonnage || 0,
         trips: tripInfo?.trips || 0,
         isValid: true,
         items: (plan.volquetes || [])
-          .slice() 
+          .slice()
           .sort((a, b) => extractNumber(a.tag) - extractNumber(b.tag))
           .map((v) => ({
             id: v._id,
@@ -137,9 +141,13 @@ export default function UpdateTruckPlanDay() {
   }, [planData, availableTrucks, mineralTrips]);
 
   useEffect(() => {
-    if (!planData) return;
-    setColumns(columnsData);
-  }, [columnsData, planData]);
+    setColumns((prev) => {
+      if (JSON.stringify(prev) === JSON.stringify(columnsData)) {
+        return prev;
+      }
+      return columnsData;
+    });
+  }, [columnsData]);
 
   const onDragEnd = useCallback(
     async (result: any) => {
@@ -230,146 +238,146 @@ export default function UpdateTruckPlanDay() {
         </p>
       </div>
 
-     <div className="h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
-       <div
-        className={clsx(
-          "grid gap-2 flex-1 min-h-0",
-          Object.keys(columns).length <= 5
-            ? "grid-cols-5 grid-rows-1"
-            : "grid-cols-5 grid-rows-2"
-        )}
-      >
-        <DragDropContext onDragEnd={onDragEnd}>
-          {Object.entries(columns).map(([columnId, column]) => (
-            <div
-              key={columnId}
-              className={`w-full flex flex-col items-center select-none p-2 rounded-xl relative ${column.color}`}
-            >
-              <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-b-[7px] bg-white/10 flex items-center justify-center absolute top-0 right-0">
-                {column.items.length}
-              </div>
-              <div className="w-full h-20 flex flex-col justify-center gap-1 px-2">
-                {column.phase && (
-                  <div className="flex items-center gap-1">
-                    <div
-                      className={clsx(
-                        "size-6 flex items-center justify-center rounded-[8px] border",
-                        column.phase === "mineral"
-                          ? "bg-[#134E4A] border-[#14B8A6]"
-                          : column.phase === "desmonte"
-                          ? "bg-[#78350F] border-[#f59e0b]"
-                          : "bg-zinc-700 border-zinc-600"
-                      )}
-                    >
-                      {column.phase === "mineral" ? (
-                        <IconMineral className="w-4 h-4 text-blue-400" />
-                      ) : column.phase === "desmonte" ? (
-                        <IconClearance className="w-4 h-4 fill-[#f59e0b]" />
-                      ) : null}
-                    </div>
-                    <span
-                      className={clsx(
-                        "text-xs font-bold uppercase",
-                        column.phase === "mineral"
-                          ? "text-[#14B8A6]"
-                          : column.phase === "desmonte"
-                          ? "text-[#f59e0b]"
-                          : "text-zinc-600"
-                      )}
-                    >
-                      {column.phase}
-                    </span>
-                  </div>
-                )}
-                <h4
-                  className={`${column.titleColor} text-sm uppercase font-bold select-none truncate leading-none`}
-                >
-                  {column.name}
-                </h4>
-                {column.isValid ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#FF9464] text-[12px] font-bold leading-none border border-[#FF9464]/50 rounded-xl py-[2px] px-[8px]">
-                      {roundAndFormat(column.tonnageExecuted ?? 0)} TM •{" "}
-                      <small className="text-[#FF9464] text-[8px] font-bold leading-none ">
-                        REAL
-                      </small>
-                    </span>
-                    <span className="text-[10px] text-zinc-400 font-bold leading-none border border-zinc-400/50 rounded-xl py-[2px] px-[8px]">
-                      {roundAndFormat(column.tonnage ?? 0)} TM •{" "}
-                      <small className="text-zinc-400 text-[8px] font-bold leading-none">
-                        P.CAMPO
-                      </small>
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-white/50 text-[10px] font-medium leading-none ">
-                    Para agregar un vehiculo solo arrastrar
-                  </span>
-                )}
-              </div>
-
-              <Droppable
-                droppableId={columnId}
-                isDropDisabled={userType !== "admin" && userType !== "edit"}
+      <div className="h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+        <div
+          className={clsx(
+            "grid gap-2 flex-1 min-h-0",
+            Object.keys(columns).length <= 5
+              ? "grid-cols-5 grid-rows-1"
+              : "grid-cols-5 grid-rows-2"
+          )}
+        >
+          <DragDropContext onDragEnd={onDragEnd}>
+            {Object.entries(columns).map(([columnId, column]) => (
+              <div
+                key={columnId}
+                className={`w-full flex flex-col items-center select-none p-2 rounded-xl relative ${column.color}`}
               >
-                {(provided, snapshot) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={clsx(
-                      "p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-1.5",
-                      snapshot.isDraggingOver ? "bg-black/20" : ""
-                    )}
-                  >
-                    {column.items.map((item: any, index: number) => (
-                      <Draggable
-                        key={item.id}
-                        draggableId={item.id}
-                        index={index}
+                <div className="text-xs font-semibold text-zinc-200 select-none size-6 rounded-b-[7px] bg-white/10 flex items-center justify-center absolute top-0 right-0">
+                  {column.items.length}
+                </div>
+                <div className="w-full h-20 flex flex-col justify-center gap-1 px-2">
+                  {column.phase && (
+                    <div className="flex items-center gap-1">
+                      <div
+                        className={clsx(
+                          "size-6 flex items-center justify-center rounded-[8px] border",
+                          column.phase === "mineral"
+                            ? "bg-[#134E4A] border-[#14B8A6]"
+                            : column.phase === "desmonte"
+                            ? "bg-[#78350F] border-[#f59e0b]"
+                            : "bg-zinc-700 border-zinc-600"
+                        )}
                       >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
+                        {column.phase === "mineral" ? (
+                          <IconMineral className="w-4 h-4 text-blue-400" />
+                        ) : column.phase === "desmonte" ? (
+                          <IconClearance className="w-4 h-4 fill-[#f59e0b]" />
+                        ) : null}
+                      </div>
+                      <span
+                        className={clsx(
+                          "text-xs font-bold uppercase",
+                          column.phase === "mineral"
+                            ? "text-[#14B8A6]"
+                            : column.phase === "desmonte"
+                            ? "text-[#f59e0b]"
+                            : "text-zinc-600"
+                        )}
+                      >
+                        {column.phase}
+                      </span>
+                    </div>
+                  )}
+                  <h4
+                    className={`${column.titleColor} text-sm uppercase font-bold select-none truncate leading-none`}
+                  >
+                    {column.name}
+                  </h4>
+                  {column.isValid ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#FF9464] text-[12px] font-bold leading-none border border-[#FF9464]/50 rounded-xl py-[2px] px-[8px]">
+                        {roundAndFormat(column.tonnageExecuted ?? 0)} TM •{" "}
+                        <small className="text-[#FF9464] text-[8px] font-bold leading-none ">
+                          REAL
+                        </small>
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-bold leading-none border border-zinc-400/50 rounded-xl py-[2px] px-[8px]">
+                        {roundAndFormat(column.tonnage ?? 0)} TM •{" "}
+                        <small className="text-zinc-400 text-[8px] font-bold leading-none">
+                          P.CAMPO
+                        </small>
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-white/50 text-[10px] font-medium leading-none ">
+                      Para agregar un vehiculo solo arrastrar
+                    </span>
+                  )}
+                </div>
+
+                <Droppable
+                  droppableId={columnId}
+                  isDropDisabled={userType !== "admin" && userType !== "edit"}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={clsx(
+                        "p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-1.5",
+                        snapshot.isDraggingOver ? "bg-black/20" : ""
+                      )}
+                    >
+                      {column.items.map((item: any, index: number) => (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
                             <div
-                              className={clsx(
-                                "rounded-lg py-1 px-1 flex items-center gap-2 cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300",
-                                item.bgColor,
-                                snapshot.isDragging
-                                  ? "opacity-70 rotate-[10deg]"
-                                  : ""
-                              )}
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
                             >
-                              <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px] ">
-                                <span className="text-[7px] font-medium text-zinc-50/80">
-                                  CAM
-                                </span>
-                                <span>
-                                  {item.tag?.split("-").pop() || "?"}
-                                </span>
-                              </div>
-                              <div className="flex flex-col gap-0.5 min-w-0">
-                                <IconTruck
-                                  className="h-7 w-11"
-                                  color={item.color}
-                                />
+                              <div
+                                className={clsx(
+                                  "rounded-lg py-1 px-1 flex items-center gap-2 cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300",
+                                  item.bgColor,
+                                  snapshot.isDragging
+                                    ? "opacity-70 rotate-[10deg]"
+                                    : ""
+                                )}
+                              >
+                                <div className="w-8 h-8 overflow-hidden bg-black/20 rounded-lg flex flex-col items-center justify-center font-extrabold text-white leading-none gap-[1px] ">
+                                  <span className="text-[7px] font-medium text-zinc-50/80">
+                                    CAM
+                                  </span>
+                                  <span>
+                                    {item.tag?.split("-").pop() || "?"}
+                                  </span>
+                                </div>
+                                <div className="flex flex-col gap-0.5 min-w-0">
+                                  <IconTruck
+                                    className="h-7 w-11"
+                                    color={item.color}
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-          ))}
-        </DragDropContext>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </div>
+            ))}
+          </DragDropContext>
+        </div>
       </div>
-     </div>
     </div>
   );
 }

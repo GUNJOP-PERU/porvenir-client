@@ -1,6 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-// import "leaflet-rotate";
+import "leaflet-rotate";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,
@@ -102,7 +102,7 @@ const TruckTracking = () => {
   const mapConfig = useMemo(
     () => ({
       centerLat: -10.6078,
-      centerLng: -76.2103,
+      centerLng: -76.2085,
       zoom: 15,
     }),
     []
@@ -113,7 +113,7 @@ const TruckTracking = () => {
     isLoading,
     error,
     refetch,
-  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
+  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", undefined,{
     refetchInterval: 3000,
   });
 
@@ -713,7 +713,7 @@ const TruckTracking = () => {
             closeOnZeroBearing: false,
             position: "bottomleft"
           }}
-          bearing={45}
+          bearing={35}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'

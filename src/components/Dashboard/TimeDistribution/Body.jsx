@@ -64,8 +64,8 @@ export default function Body({
           />
         </CardTitle>
         <CardTitle
-          title="Tiempos por hora de Trabajo de Camiones"
-          subtitle="Horario de operacion del camión."
+          title="Tiempos por hora de Trabajo de Equipos"
+          subtitle="Horario de operacion de los equipos."
           icon={ChartNoAxesGantt}
           classIcon="text-[#F43F5E]"
           className="xl:col-span-2"

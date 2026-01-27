@@ -71,8 +71,8 @@ export default function ProductionMonth() {
           <CardColum />
         </CardTitle>
         <CardTitle
-          title=" Rango de horario de trabajo Camiones"
-          subtitle="Horario de operación del Camión."
+          title=" Rango de horario de trabajo "
+          subtitle="Horario de operación del Equipo."
           icon={ChartArea}
         >
           <CardRange

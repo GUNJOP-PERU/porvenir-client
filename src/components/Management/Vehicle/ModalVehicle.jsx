@@ -155,7 +155,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. CAM-04"
                       {...field}
                     />
 
@@ -173,7 +173,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. EGE-421"
                       {...field}
                     />
 
@@ -191,7 +191,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. Caterpillar 797F"
                       {...field}
                     />
 
@@ -244,7 +244,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="number"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. 1800"
                       {...field}
                       onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />
@@ -259,11 +259,10 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Horómetro</FormLabel>
-
                     <Input
                       type="number"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. 1500"
                       {...field}
                       onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />
@@ -313,7 +312,7 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12345678"
+                      placeholder="Ej. Camión de acarreo de alta capacidad"
                       {...field}
                     />
 

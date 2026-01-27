@@ -68,8 +68,6 @@ export function DataTable({
   });
 
 
-
-
   const rows = isLoading ? [] : table.getRowModel().rows;
 
   const virtualizer = useVirtualizer({

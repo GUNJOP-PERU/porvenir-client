@@ -18,9 +18,11 @@ import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { planDayDateParser } from "@/utils/dateUtils";
 // Icons
 import IconTruck from "@/icons/IconTruck";
+import { MultiSelect } from "@/components/Configuration/MultiSelect";
 
 const RealTimeByHourRT = () => {
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
+  const [routeFilter, setRouterFilter] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState<Date>(subDays(new Date(), 1));
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -31,8 +33,9 @@ const RealTimeByHourRT = () => {
     isLoading: tripsLoading,
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
-    `trip-group-by-current-day-truck-${format(dateFilter, 'yyyy-MM-dd')}`,
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
+    `trip-group-by-current-day-truck-${format(dateFilter, "yyyy-MM-dd")}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+  );
 
   const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral");
 
@@ -40,8 +43,9 @@ const RealTimeByHourRT = () => {
     "planday",
     `planDay/by-date-range?startDate=${format(
       dateFilter,
-      "yyyy-MM-dd"
-    )}&endDate=${format(dateFilter, "yyyy-MM-dd")}`);
+      "yyyy-MM-dd",
+    )}&endDate=${format(dateFilter, "yyyy-MM-dd")}`,
+  );
 
   const baseData = useMemo(() => {
     const mineral =
@@ -51,19 +55,36 @@ const RealTimeByHourRT = () => {
     return { mineral, desmonte };
   }, [mineralData]);
 
+  const routeOptions = useMemo(() => {
+    const trips = (data || []).flatMap((u) => u.trips || []);
+    const routes = trips.map((t) => `${t.startUbication} → ${t.endUbication}`);
+    return Array.from(new Set(routes)).sort();
+  }, [data]);
+
   const planDay = useMemo(() => {
     const currentDate = format(dateFilter, "yyyy-MM-dd");
-    const filteredPlanData  = planData.filter(
+    const filteredPlanData = planData.filter(
       (day) =>
-        day.shift === shiftFilter && planDayDateParser(day.date) === currentDate
+        day.shift === shiftFilter &&
+        planDayDateParser(day.date) === currentDate,
     );
-    const planDataBlending = filteredPlanData.filter(day => day.type === "blending");
-    const planDataModificado = filteredPlanData.filter(day => day.type === "modificado");
+    const planDataBlending = filteredPlanData.filter(
+      (day) => day.type === "blending",
+    );
+    const planDataModificado = filteredPlanData.filter(
+      (day) => day.type === "modificado",
+    );
 
     return {
       totalTonnage: filteredPlanData.reduce((acc, day) => acc + day.tonnage, 0),
-      totalTonnageBlending: planDataBlending.reduce((acc, day) => acc + day.tonnage, 0),
-      totalTonnageModificado: planDataModificado.reduce((acc, day) => acc + day.tonnage, 0),
+      totalTonnageBlending: planDataBlending.reduce(
+        (acc, day) => acc + day.tonnage,
+        0,
+      ),
+      totalTonnageModificado: planDataModificado.reduce(
+        (acc, day) => acc + day.tonnage,
+        0,
+      ),
       planDayShift: filteredPlanData,
       planDataBlending,
       planDataModificado,
@@ -71,8 +92,25 @@ const RealTimeByHourRT = () => {
     };
   }, [planData, shiftFilter]);
 
+  const filteredData = useMemo(() => {
+    if (!routeFilter?.length) return data;
+
+    return data
+      .map((unit) => {
+        const trips = unit.trips.filter((t) =>
+          routeFilter.some((route) => {
+            const [startR, endR] = route.split(" → ");
+            return t.startUbication === startR && t.endUbication === endR;
+          }),
+        );
+
+        return { ...unit, trips, totalTrips: trips.length };
+      })
+      .filter((unit) => unit.trips.length > 0);
+  }, [data, routeFilter]);
+
   const baseStats = useMemo(() => {
-    if (!data || !mineralData) {
+    if (!filteredData || !mineralData) {
       return {
         totalUnits: 0,
         totalUnitsDay: 0,
@@ -101,101 +139,138 @@ const RealTimeByHourRT = () => {
       };
     }
 
-    const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
-    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
-    const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
-    const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
-    const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
-    const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
+    const totalTrips = filteredData.reduce(
+      (acc, day) => acc + day.totalTrips,
+      0,
+    );
+    const allTrips = filteredData.map((unitGroup) => unitGroup.trips).flat();
+    const avgDurationSuperficieTripsDay =
+      allTrips
+        .filter(
+          (trip) => trip.location === "Superficie" && trip.shift === "dia",
+        )
+        .reduce((avg, trip) => avg + trip.tripDurationMin, 0) /
+      allTrips.filter(
+        (trip) => trip.location === "Superficie" && trip.shift === "dia",
+      ).length;
+    const avgDurationSubterraneoTripsDay =
+      allTrips
+        .filter(
+          (trip) => trip.location === "Subterraneo" && trip.shift === "dia",
+        )
+        .reduce((avg, trip) => avg + trip.tripDurationMin, 0) /
+      allTrips.filter(
+        (trip) => trip.location === "Subterraneo" && trip.shift === "dia",
+      ).length;
+    const avgDurationSuperficieTripsNight =
+      allTrips
+        .filter(
+          (trip) => trip.location === "Superficie" && trip.shift === "noche",
+        )
+        .reduce((avg, trip) => avg + trip.tripDurationMin, 0) /
+      allTrips.filter(
+        (trip) => trip.location === "Superficie" && trip.shift === "noche",
+      ).length;
+    const avgDurationSubterraneoTripsNight =
+      allTrips
+        .filter(
+          (trip) => trip.location === "Subterraneo" && trip.shift === "noche",
+        )
+        .reduce((avg, trip) => avg + trip.tripDurationMin, 0) /
+      allTrips.filter(
+        (trip) => trip.location === "Subterraneo" && trip.shift === "noche",
+      ).length;
 
-    const dayTrips = data.reduce(
+    const dayTrips = filteredData.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
-      0
+      0,
     );
-    const nightTrips = data.reduce(
+    const nightTrips = filteredData.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "noche").length,
-      0
+      0,
     );
 
-    const totalDuration = data.reduce(
+    const totalDuration = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips.reduce(
           (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-          0
+          0,
         ),
-      0
+      0,
     );
 
-    const totalDurationDay = data.reduce(
+    const totalDurationDay = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips
           .filter((trip) => trip.shift === "dia")
           .reduce(
             (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
+            0,
           ),
-      0
+      0,
     );
 
-    const totalDurationNight = data.reduce(
+    const totalDurationNight = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips
           .filter((trip) => trip.shift === "noche")
           .reduce(
             (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
+            0,
           ),
-      0
+      0,
     );
 
-    const totalMaintenanceTimeMin = data.reduce(
+    const totalMaintenanceTimeMin = filteredData.reduce(
       (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
-      0
+      0,
     );
 
-    const totalMaintenanceTimeMinDay = data.reduce(
+    const totalMaintenanceTimeMinDay = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.maintance
           .filter((mant) => mant.shift === "dia")
           .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) /
           60,
-      0
+      0,
     );
 
-    const totalMaintenanceTimeMinNight = data.reduce(
+    const totalMaintenanceTimeMinNight = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.maintance
           .filter((mant) => mant.shift === "noche")
           .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) /
           60,
-      0
+      0,
     );
 
     const avgUnloadTime =
-      data.reduce((acc, truck) => {
+      filteredData.reduce((acc, truck) => {
         return acc + truck.avgUnloadTime / 60;
-      }, 0) / data.length;
-    
+      }, 0) / filteredData.length;
+
     const avgLoadTime =
-      data.reduce((acc, truck) => {
+      filteredData.reduce((acc, truck) => {
         return acc + truck.avgFrontLaborDuration / 60;
-      }, 0) / data.length;
+      }, 0) / filteredData.length;
 
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
 
     return {
-      totalUnits: data.length,
-      totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
-      totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnits: filteredData.length,
+      totalUnitsDay: filteredData.filter((unit) => unit.trips.length > 0)
+        .length,
+      totalUnitsNight: filteredData.filter((unit) => unit.trips.length > 0)
+        .length,
       totalTrips,
       totalTM,
       totalDuration,
@@ -220,15 +295,15 @@ const RealTimeByHourRT = () => {
       avgDurationSuperficieTripsNight,
       avgDurationSubterraneoTripsNight,
     };
-  }, [data, baseData]);
+  }, [filteredData, baseData]);
 
   const tripsByShift = useMemo(() => {
-    if (!data) return { dia: [], noche: [] };
+    if (!filteredData) return { dia: [], noche: [] };
 
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
+    const trips = filteredData.map((g) => g.trips).flat();
     const hours = Array.from(
       { length: 24 },
-      (_, i) => `${i < 10 ? `0${i}` : i}:00`
+      (_, i) => `${i < 10 ? `0${i}` : i}:00`,
     );
 
     const grouped: {
@@ -249,7 +324,8 @@ const RealTimeByHourRT = () => {
           ? `0${tripDate.getHours()}`
           : tripDate.getHours()
       }:00`;
-      const shift = tripDate.getHours() >= 7 && tripDate.getHours() < 19 ? "dia" : "noche";
+      const shift =
+        tripDate.getHours() >= 7 && tripDate.getHours() < 19 ? "dia" : "noche";
 
       const hourGroup = grouped[shift].find((group) => group.hour === hour);
       if (hourGroup) {
@@ -258,7 +334,7 @@ const RealTimeByHourRT = () => {
     });
 
     return grouped;
-  }, [data]);
+  }, [filteredData]);
 
   useEffect(() => {
     refetch();
@@ -267,13 +343,24 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte por Turno / Camión"
+        title="Carguío Mineral por Turno"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
         actionsRight={
           <div className="relative flex flex-row gap-2">
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Ruta :
+              <div>
+                <MultiSelect
+                  placeholder={"Selecciona ruta..."}
+                  options={routeOptions.map((r) => ({ value: r, label: r }))}
+                  value={routeFilter}
+                  onChange={setRouterFilter}
+                />
+              </div>
+            </label>
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
               Turno:
               <select
@@ -291,9 +378,7 @@ const RealTimeByHourRT = () => {
                 onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                {dateFilter && (
-                  `${format(dateFilter, "dd/MM/yyyy")}`
-                )}
+                {dateFilter && `${format(dateFilter, "dd/MM/yyyy")}`}
               </button>
             </label>
             {isTooltipOpen && (
@@ -312,14 +397,10 @@ const RealTimeByHourRT = () => {
         }
       />
       <div className="flex flex-col items-center justify-around gap-0">
-        <IconTruck
-          className="fill-yellow-500 h-30 w-40"
-          color=""
-          style={{}}
-        />
+        <IconTruck className="fill-yellow-500 h-30 w-40" color="" style={{}} />
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -373,23 +454,19 @@ const RealTimeByHourRT = () => {
         {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               classIcon="fill-yellow-500 h-7 w-14"
               className="custom-class"
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Mineral Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -408,34 +485,26 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#68c970] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia positiva
-                    </p>
+                    <span className="flex bg-[#68c970] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Diferencia positiva</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia negativa
-                    </p>
+                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Diferencia negativa</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Mineral Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -451,22 +520,18 @@ const RealTimeByHourRT = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Mineral Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -486,34 +551,26 @@ const RealTimeByHourRT = () => {
             </CardTitle>
 
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               classIcon="fill-yellow-500 h-7 w-14"
               actions={
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#68c970] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia positiva
-                    </p>
+                    <span className="flex bg-[#68c970] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Diferencia positiva</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Diferencia negativa
-                    </p>
+                    <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Diferencia negativa</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Mineral Extraído
-                    </p>
+                    <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Mineral Extraído</p>
                   </div>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
-                    <p className="text-[11px] font-bold">
-                      Planificado
-                    </p>
+                    <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full" />
+                    <p className="text-[11px] font-bold">Planificado</p>
                   </div>
                 </div>
               }
@@ -578,15 +635,19 @@ const RealTimeByHourRT = () => {
                       ? Number(baseStats.avgUnloadTime.toFixed(2))
                       : 0,
                     total: 10,
-                  }
+                  },
                 ],
               },
               {
                 title: "Duración del Ciclo Subterraneo",
                 currentValue:
                   shiftFilter === "dia"
-                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
+                    ? Number(
+                        baseStats.avgDurationSubterraneoTripsDay.toFixed(2),
+                      )
+                    : Number(
+                        baseStats.avgDurationSubterraneoTripsNight.toFixed(2),
+                      ),
                 total: 100,
                 subData: [],
               },
@@ -595,7 +656,9 @@ const RealTimeByHourRT = () => {
                 currentValue:
                   shiftFilter === "dia"
                     ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
+                    : Number(
+                        baseStats.avgDurationSuperficieTripsNight.toFixed(2),
+                      ),
                 total: 100,
                 subData: [],
               },

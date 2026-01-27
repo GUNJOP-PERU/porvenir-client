@@ -141,7 +141,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Alberto Pérez Quispe"
                       {...field}
                     />
                     <FormMessage />
@@ -157,7 +157,7 @@ export const ModalUser = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. pablo1234"
+                      placeholder="Ej. OP-45871236"
                       {...field}
                     />
                     <FormMessage />

@@ -1,7 +1,5 @@
 import { useShiftIcon } from "@/hooks/useShiftIcon";
 import CardClock from "./CardClock";
-import { NavMenu } from "./nav-menu";
-import GlobalSearch from "./nav-global-search";
 import { NavUser } from "./nav-user";
 import { useAuthStore } from "@/store/AuthStore";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
@@ -20,7 +18,7 @@ export function AppSidebar() {
         </button>
         <CardClock />
       </div>
-      <NavMenu />
+
       <div className="flex items-center gap-2">
         {useShiftIcon()}
         <NavUser />

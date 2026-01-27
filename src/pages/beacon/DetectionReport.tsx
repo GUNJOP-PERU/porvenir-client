@@ -13,7 +13,7 @@ import Loader from "@/components/Loader";
 import type {
   BeaconCycle,
   BeaconDetection,
-  BocaminaByUnits
+  BocaminaByUnits,
 } from "../../types/Beacon";
 import type { Mineral } from "@/types/Mineral";
 // Utils
@@ -25,54 +25,60 @@ type UnitChartProps = "trips" | "tonnage" | "totalHours" | "maintenanceHours";
 
 const DetectionReport = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [currentUnitChart, setCurrentUnitChart] = useState<UnitChartProps>("trips");
-  const [currentDetectionPlace, setCurrentDetectionPlace] = useState<string>("bocaminas");
+  const [currentUnitChart, setCurrentUnitChart] =
+    useState<UnitChartProps>("trips");
+  const [currentDetectionPlace, setCurrentDetectionPlace] =
+    useState<string>("bocaminas");
   const [bocaminaStats, setBocaminaStats] = useState<Record<string, number>>(
-    {}
+    {},
   );
   const [unitTrips, setUnitTrips] = useState<BeaconDetection[]>([]);
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
   const [dateFilter, setDateFilter] = useState<Date>(new Date());
 
-  const {
-    data,
-    refetch,
-    isFetching,
-    isLoading,
-    isError,
-  } = useFetchData<BeaconCycle[]>(
+  const { data, refetch, isFetching, isLoading, isError } = useFetchData<
+    BeaconCycle[]
+  >(
     "trip-group-by-days",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter,"yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
-    { refetchInterval: 10000 }
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    undefined,
+    { refetchInterval: 10000 },
   );
 
   const {
     data: bocaminaData = [],
-    refetch : bocaminaRefetch,
-    isFetching : bocaminaIsFetching,
+    refetch: bocaminaRefetch,
+    isFetching: bocaminaIsFetching,
     isLoading: bocaminaLoading,
     isError: bocaminaError,
   } = useFetchData<BocaminaByUnits[]>(
     "trip-group-by-days-bc",
-    `beacon-track/trip/bc?startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
-    { refetchInterval: 10000 }
+    `beacon-track/trip/bc?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    undefined,
+    { refetchInterval: 10000 },
   );
 
   const {
-    data : tripsDesmonte = [],
-    refetch : tripsDesmonteRefetch,
+    data: tripsDesmonte = [],
+    refetch: tripsDesmonteRefetch,
     isFetching: tripsDesmonteIsFetching,
     isLoading: tripsDesmonteLoading,
     isError: tripsDesmonteError,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days-rt-desmonte",
-    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
-    { refetchInterval: 10000 }
+    `beacon-track/trip?material=desmonte&startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    undefined,
+    { refetchInterval: 10000 },
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
-    refetchInterval: 10000,
-  });
+  const { data: mineralData } = useFetchData<Mineral[]>(
+    "mineral",
+    "mineral",
+    undefined,
+    {
+      refetchInterval: 10000,
+    },
+  );
 
   const baseData = useMemo(() => {
     const mineral =
@@ -105,12 +111,12 @@ const DetectionReport = () => {
     const dayTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
-      0
+      0,
     );
     const nightTrips = data.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "noche").length,
-      0
+      0,
     );
 
     const totalDuration = data.reduce(
@@ -118,9 +124,9 @@ const DetectionReport = () => {
         acc +
         tripsTruck.trips.reduce(
           (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-          0
+          0,
         ),
-      0
+      0,
     );
 
     const totalDurationDay = data.reduce(
@@ -130,9 +136,9 @@ const DetectionReport = () => {
           .filter((trip) => trip.shift === "dia")
           .reduce(
             (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
+            0,
           ),
-      0
+      0,
     );
 
     const totalDurationNight = data.reduce(
@@ -142,29 +148,32 @@ const DetectionReport = () => {
           .filter((trip) => trip.shift === "noche")
           .reduce(
             (innerAcc, trip) => innerAcc + parseFloat(trip.totalDuration),
-            0
+            0,
           ),
-      0
+      0,
     );
 
     const totalMantanceTimeMin = data.reduce(
       (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
-      0
+      0,
     );
 
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
     setUnitTrips(
-      data.map((unit) => unit.trips.flatMap((trip) => trip.trip)).flat()
+      data.map((unit) => unit.trips.flatMap((trip) => trip.trip)).flat(),
     );
     setBocaminaStats(
-      data.reduce((acc, curr) => {
-        curr.bocaminaStats.forEach(({ name, count }) => {
-          acc[name] = (acc[name] || 0) + count;
-        });
-        return acc;
-      }, {} as Record<string, number>)
+      data.reduce(
+        (acc, curr) => {
+          curr.bocaminaStats.forEach(({ name, count }) => {
+            acc[name] = (acc[name] || 0) + count;
+          });
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     );
 
     return {
@@ -191,7 +200,10 @@ const DetectionReport = () => {
         totalTMDesmonte: 0,
       };
     }
-    const totalTripsDesmonte = tripsDesmonte.reduce((acc, day) => acc + day.totalTrips, 0);
+    const totalTripsDesmonte = tripsDesmonte.reduce(
+      (acc, day) => acc + day.totalTrips,
+      0,
+    );
     const totalTMDesmonte = totalTripsDesmonte * baseData.desmonte;
 
     return {
@@ -207,8 +219,8 @@ const DetectionReport = () => {
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <PageHeader
-        title="Reporte de Detección de Bocaminas y Destinos "
-        description="Reporte de puntos de acceso y seguimiento de rutas logísticas."
+        title="Detección de Bocaminas y Destinos"
+        description="puntos de acceso y seguimiento de rutas logísticas."
         refetch={refetch}
         isFetching={isFetching}
         count={data ? data.length : 0}
@@ -232,9 +244,7 @@ const DetectionReport = () => {
                 onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                {dateFilter && (
-                  `${format(dateFilter, "dd/MM/yyyy")}`
-                )}
+                {dateFilter && `${format(dateFilter, "dd/MM/yyyy")}`}
               </button>
             </label>
             {isTooltipOpen && (
@@ -252,18 +262,18 @@ const DetectionReport = () => {
           </div>
         }
       />
-      { isLoading && tripsDesmonteLoading && bocaminaLoading ? (
+      {isLoading && tripsDesmonteLoading && bocaminaLoading ? (
         <div className="h-full w-full flex items-center justify-center">
           <Loader />
         </div>
-        ) : (
+      ) : (
         <div className="grid grid-cols-1 flex-1 w-full gap-2">
           <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
             <CardItem
               value={baseStats.totalUnits}
-              title="Total de Camiones"
+              title="Total de Equipos"
               valueColor="text-[#000000]"
-              unid="camiones"
+              unid="equipos"
             />
             <CardItem
               value={baseStats.totalMantanceTimeMin / 60}
@@ -372,9 +382,7 @@ const DetectionReport = () => {
               icon={TableProperties}
               classIcon="text-sky-500"
             >
-              <BocaminaDetectionTable
-                data={bocaminaData}
-              />
+              <BocaminaDetectionTable data={bocaminaData} />
             </CardTitle>
           </div>
         </div>

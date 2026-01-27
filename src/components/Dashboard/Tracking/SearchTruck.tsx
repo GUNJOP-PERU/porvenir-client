@@ -103,7 +103,7 @@ export default function SearchTruck({
         <div className="relative">
           <input
             type="text"
-            placeholder="Buscar por camion..."
+            placeholder="Buscar por equipo..."
             className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300 pl-6"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -168,7 +168,7 @@ export default function SearchTruck({
             | {trucksPerArea.length} | ÁREAS
           </p>
           <p className="text-[10px] text-zinc-400 font-bold">
-            CAMIONES | {totalTrucksInAreas} |
+            | {totalTrucksInAreas} | EQUIPOS
           </p>
         </div>
 

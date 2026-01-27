@@ -31,13 +31,13 @@ export default function UnproductiveReport() {
   } = useFetchGraphicData({
     queryKey: "report-unproductive",
     endpoint: "activity",
-    filters: `startDate=${selectedRange.startDate}&endDate=${selectedRange.endDate}&activityType=no productive`,
+    filters: `startDate=${selectedRange.start.getTime()}&endDate=${selectedRange.end.getTime()}&activityType=no productive`,
   });
 
   return (
     <>
       <PageHeader
-        title="Reporte de Improductivos Semanal"
+        title="Evolucion de Improductivos Semanal"
         description="Viajes de remanejo no considerados"
         refetch={refetch}
         isFetching={isFetching}

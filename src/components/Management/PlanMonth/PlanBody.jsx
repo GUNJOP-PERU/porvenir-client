@@ -67,9 +67,9 @@ export const PlanBody = ({
   const [showLoader, setShowLoader] = useState(false);
   const fileInputRef = useRef(null);
 
-  const { allWeeks, currentWeek } = generateNormalWeeks();
+  const { currentWeek } = generateNormalWeeks();
 
-  const { data: dataLaborVerify, refetch: refetchLaborVerify } = useFetchData(
+  const { data: dataLaborVerify} = useFetchData(
     "frontLabor-general",
     "frontLabor",
     {

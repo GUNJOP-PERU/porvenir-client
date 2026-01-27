@@ -23,7 +23,6 @@ import IconWarning from "@/icons/IconWarning";
 import IconLoader from "@/icons/IconLoader";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { tableConfigs } from "./DataTableConfig";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 import SkeletonWrapper from "@/components/Table/SkeletonWrapper";
 

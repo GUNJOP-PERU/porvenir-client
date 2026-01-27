@@ -18,13 +18,12 @@ const ActivityAverageTimeConfiguration = () => {
     isError,
     refetch
   } = useFetchData("activity-config", "activity-config");
-  console.log("Activity Config data:", data);
 
   useEffect(() => {
     if (data && !isLoading && !isFetching) {
       refreshGlobalData();
     }
-  }, [data, isLoading, isFetching]);
+  }, [data, isLoading, isFetching, refreshGlobalData]);
 
   return (
     <>

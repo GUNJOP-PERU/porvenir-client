@@ -48,7 +48,7 @@ function ExcelExportButton<T = Record<string, unknown>>({
 
   return (
     <button
-      className="h-7 mt-auto bg-green-600 text-white inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 ease-in-out duration-300 active:scale-90 disabled:cursor-not-allowed disabled:select-none px-3 py-2 select-none"
+      className="h-8 mt-auto bg-green-600 text-white inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 ease-in-out duration-300 active:scale-90 disabled:cursor-not-allowed disabled:select-none px-3 py-2 select-none"
       onClick={exportToExcel}
       disabled={isLoading || disabled || !data || data.length === 0}
     >

@@ -1,5 +1,6 @@
 import { columns } from "@/components/Management/PlanMonth/columns";
 import PlanDetails from "@/components/Management/PlanMonth/PlanDetails";
+import PlanItems from "@/components/Management/PlanMonth/PlanItems";
 import PageHeader from "@/components/PageHeader";
 import { DataTable } from "@/components/Table/DataTable";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ function PlanMonth() {
     refetch,
   } = useFetchData(
     "planMonth",
-    `planMonth?date=${dayjs(selectedDate).format("YYYY-MM")}`
+    `planMonth?date=${dayjs(selectedDate).format("YYYY-MM")}`,
   );
 
   const months = [
@@ -54,11 +55,13 @@ function PlanMonth() {
     setSelectedDate(dayjs().year(year).month(month).startOf("month"));
   };
 
-  useEffect(() => {
-    if (!data?.length) {
-      setSelectedPlan(null);
-    }
-  }, [data]);
+useEffect(() => {
+  if (data?.length > 0) {
+    setSelectedPlan(data[0]); 
+  } else {
+    setSelectedPlan(null);
+  }
+}, [data]);
 
   return (
     <>
@@ -78,54 +81,53 @@ function PlanMonth() {
         }
       />
 
-      <DataTable
-        data={data}
-        columns={columns(setSelectedPlan)}
-        meta={{ onSelect: setSelectedPlan }}
-        isFetching={isFetching}
-        isError={isError}
-        isLoading={isLoading}
-        toolbarContent={
-          <div className="border border-zinc-200 rounded-lg flex">
-            <Select
-              value={selectedDate.month().toString()}
-              onValueChange={(value) =>
-                setSelectedDate(selectedDate.month(parseInt(value)))
-              }
-            >
-              <SelectTrigger className="w-28 border-none shadow-none bg-transparent rounded-e-none">
-                <SelectValue placeholder="Mes" />
-              </SelectTrigger>
-              <SelectContent>
-                {months.map((month, index) => (
-                  <SelectItem key={index} value={index.toString()}>
-                    {month}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <div className="flex">
+        <div className="border border-zinc-200 rounded-lg flex">
+          <Select
+            value={selectedDate.month().toString()}
+            onValueChange={(value) =>
+              setSelectedDate(selectedDate.month(parseInt(value)))
+            }
+          >
+            <SelectTrigger className="w-28 border-none shadow-none bg-transparent rounded-e-none">
+              <SelectValue placeholder="Mes" />
+            </SelectTrigger>
+            <SelectContent>
+              {months.map((month, index) => (
+                <SelectItem key={index} value={index.toString()}>
+                  {month}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            <Select
-              value={selectedDate.year().toString()}
-              onValueChange={(value) =>
-                setSelectedDate(selectedDate.year(parseInt(value)))
-              }
-            >
-              <SelectTrigger className="w-20 border-none shadow-none bg-transparent rounded-s-none">
-                <SelectValue placeholder="Año" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        }
-      />
-      <PlanDetails plan={selectedPlan} />
+          <Select
+            value={selectedDate.year().toString()}
+            onValueChange={(value) =>
+              setSelectedDate(selectedDate.year(parseInt(value)))
+            }
+          >
+            <SelectTrigger className="w-20 border-none shadow-none bg-transparent rounded-s-none">
+              <SelectValue placeholder="Año" />
+            </SelectTrigger>
+            <SelectContent>
+              {years.map((year) => (
+                <SelectItem key={year} value={year.toString()}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="flex gap-4 w-full">
+        <PlanItems
+          data={data}
+          setSelectedPlan={setSelectedPlan}
+          selectedPlan={selectedPlan}
+        />
+        <PlanDetails plan={selectedPlan} />
+      </div>
     </>
   );
 }

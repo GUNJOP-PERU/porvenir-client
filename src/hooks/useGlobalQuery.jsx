@@ -3,7 +3,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useFetchData(queryKey, endpoint, options = {}) {
   return useQuery({
-    queryKey: ["crud",queryKey],
+    queryKey: ["crud", queryKey],
     queryFn: () => getDataRequest(endpoint),
     cacheTime: Infinity,
     staleTime: Infinity,
@@ -19,15 +19,27 @@ export function useFetchData(queryKey, endpoint, options = {}) {
   });
 }
 
-export function useFetchInfinityScroll(queryKey, endpoint, limit = 20, filters = "") {
+export function useFetchInfinityScroll(
+  queryKey,
+  endpoint,
+  limit = 20,
+  filters = ""
+) {
   return useInfiniteQuery({
-    queryKey: ["crud",queryKey],
+    queryKey: ["crud", queryKey, { filters }],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await getDataRequest(`${endpoint}?page=${pageParam}&limit=${limit}&${filters}`);
+      const query = filters
+        ? `${endpoint}?page=${pageParam}&limit=${limit}&${filters}`
+        : `${endpoint}?page=${pageParam}&limit=${limit}`;
+
+      const response = await getDataRequest(query);
       return response;
     },
+
     getNextPageParam: (lastPage) => {
-      return lastPage.data.page < lastPage.data.total_pages ? lastPage.data.page + 1 : undefined;
+      return lastPage.data.page < lastPage.data.total_pages
+        ? lastPage.data.page + 1
+        : undefined;
     },
     cacheTime: Infinity,
     staleTime: Infinity,
@@ -38,13 +50,12 @@ export function useFetchInfinityScroll(queryKey, endpoint, limit = 20, filters =
     retryDelay: 2000,
     select: (data) => {
       // Aquí aplanamos los datos correctamente con el doble `.data`
-      return data.pages.map(page => page.data.data).flat() || [];
+      return data.pages.map((page) => page.data.data).flat() || [];
     },
   });
 }
 
-export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
-
+export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters }) {
   return useInfiniteQuery({
     queryKey: ["crud", queryKey, { filters }],
     queryFn: async ({ pageParam = 1 }) => {
@@ -54,7 +65,9 @@ export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
       return response;
     },
     getNextPageParam: (lastPage) => {
-      return lastPage.data.page < lastPage.data.total_pages ? lastPage.data.page + 1 : undefined;
+      return lastPage.data.page < lastPage.data.total_pages
+        ? lastPage.data.page + 1
+        : undefined;
     },
     cacheTime: Infinity,
     staleTime: 0,
@@ -64,10 +77,12 @@ export function useFetchInfinityScrollTruck({ queryKey, endpoint, filters}) {
     retry: 1,
     retryDelay: 2000,
     select: (data) => {
-      return data.pages
-        .map(page => page.data.data)
-        .flat()
-        .sort((a, b) => new Date(b.start) - new Date(a.start)) || [];
+      return (
+        data.pages
+          .map((page) => page.data.data)
+          .flat()
+          .sort((a, b) => new Date(b.start) - new Date(a.start)) || []
+      );
     },
   });
 }
@@ -76,7 +91,9 @@ export function useFetchTrucks({ queryKey, endpoint, filters }) {
   return useQuery({
     queryKey: ["crud", queryKey, { filters }],
     queryFn: async () => {
-      const response = await getDataRequest(`${endpoint}?limit=1000&${filters}`);
+      const response = await getDataRequest(
+        `${endpoint}?limit=1000&${filters}`
+      );
       return response;
     },
     cacheTime: Infinity,
@@ -88,8 +105,9 @@ export function useFetchTrucks({ queryKey, endpoint, filters }) {
     retryDelay: 2000,
     select: (data) => {
       if (!data?.data) return [];
-      return data.data
-        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+      return data.data.sort(
+        (a, b) => new Date(b.startDate) - new Date(a.startDate)
+      );
     },
   });
 }
@@ -109,8 +127,9 @@ export function useFetchGeneral({ queryKey, endpoint, filters }) {
     retryDelay: 2000,
     select: (data) => {
       if (!data?.data) return [];
-      return data.data
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      return data.data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
     },
   });
 }

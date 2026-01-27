@@ -38,7 +38,7 @@ export default function RealTimeExtract() {
       dataPlanRealtime.reduce(
         (acc, item) => {
           const tonnage = item.tonnage || 0;
-          if (item.phase?.toLowerCase() === "mineral" || item.phase?.toLowerCase() === "extracción / producción")
+          if (item.phase?.toLowerCase() === "mineral" || item.phase?.toLowerCase() === "Transporte / producción")
             acc.programmedTonnageMineral += tonnage;
           if (item.phase?.toLowerCase() === "desmonte" || item.phase?.toLowerCase() === "avance")
             acc.programmedTonnageDesmonte += tonnage;
@@ -58,7 +58,7 @@ export default function RealTimeExtract() {
   return (
     <>
       <PageHeader
-        title="Reporte de Extracción / Tiempo Real"
+        title="Carguío y Transporte / Tiempo Real"
         description="Viajes de remanejo no considerados"
       />
 

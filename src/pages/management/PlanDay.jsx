@@ -1,7 +1,6 @@
 import { PlanDayDetails } from "@/components/Management/PlanDay/PlanDayDetails";
 import { ModalPlanDay } from "@/components/Management/PlanDay/PlanDayModal";
 import { DataExport } from "@/components/Table/DataExport";
-import { Filters } from "@/components/Table/DataFilter";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -23,18 +22,6 @@ function PlanDay() {
     date: dayjs().format("YYYY-MM-DD"),
     shift: "dia",
   });
-
-  const groups = [
-    {
-      title: "Turno",
-      formKey: "shift",
-      options: [
-        { value: "dia", label: "Día" },
-        { value: "noche", label: "Noche" },
-      ],
-    },
-  ];
-
   const {
     data = [],
     isFetching,
@@ -100,6 +87,7 @@ function PlanDay() {
             variant={form.shift === "dia" ? "default" : "ghost"}
             className="rounded-none"
             onClick={() => setForm({ ...form, shift: "dia" })}
+            disabled={isFetching}
           >
             Día
           </Button>
@@ -108,7 +96,8 @@ function PlanDay() {
             variant={form.shift === "noche" ? "default" : "ghost"}
             className="rounded-none"
             onClick={() => setForm({ ...form, shift: "noche" })}
-          >
+            disabled={isFetching}
+            >
             Noche
           </Button>
         </div>
@@ -118,7 +107,7 @@ function PlanDay() {
           disabled={data.length === 0 || isFetching}
         />
       </div>
-      <PlanDayDetails dataCrud={data} />
+      <PlanDayDetails dataCrud={data} isLoading={isLoading || isFetching} isError={isError} />
       <ModalPlanDay isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
     </>
   );

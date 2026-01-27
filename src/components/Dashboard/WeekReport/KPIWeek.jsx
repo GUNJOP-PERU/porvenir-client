@@ -68,7 +68,7 @@ export default function KPIWeek({
     },
     {
       value: metrics.travelsExtract,
-      title: "Viajes Extracción",
+      title: "Viajes de Transporte",
       valueColor: "text-[#04C286]",
       unid: "viajes",
       subtitle: metrics.tonnageExtract,

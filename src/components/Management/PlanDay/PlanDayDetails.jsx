@@ -1,26 +1,15 @@
-import { deleteDataRequest } from "@/api/api";
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
-import { useQueryClient } from "@tanstack/react-query";
-import IconLoader from "@/icons/IconLoader";
+import { useState } from "react";
 import { IconDelete } from "@/icons/IconDelete";
-import { useToast } from "@/hooks/useToaster";
-import { ReceiptText } from "lucide-react";
 import { ModalDelete } from "@/components/ModalDelete";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import IconDay from "@/icons/IconDay";
 import IconNight from "@/icons/IconNight";
 import TimeAgo from "timeago-react";
+import IconLoader from "@/icons/IconLoader";
+import IconWarning from "@/icons/IconWarning";
 
-export const PlanDayDetails = ({ dataCrud = [] }) => {
+export const PlanDayDetails = ({ dataCrud = [], isLoading, isError }) => {
   const planDay = dataCrud?.[0];
 
   const [deleModal, setDeleteModal] = useState(false);
@@ -91,54 +80,95 @@ export const PlanDayDetails = ({ dataCrud = [] }) => {
                   <th className="bg-[#FF5000]"></th>
                 </tr>
               </thead>
-
               <tbody>
-                {planDay?.data?.map((item, index) => (
-                  <tr key={item._id} className="">
-                    <td className="text-center border border-[#FF500030] bg-[#959493] text-white">
-                      {index + 1}
+                {isError ? (
+                  <tr>
+                    <td colSpan={5} className="text-center">
+                      <div className="space-y-4 flex-1 flex flex-col">
+                        <div className="max-w-[150px] leading-3 mx-auto flex-1 flex flex-col items-center justify-center gap-1">
+                          <IconWarning className="size-8 text-[#D32F2F]" />
+                          <p className="text-center text-[#B71C1C] text-[11px] font-medium">
+                            Hubo un error al cargar los datos. Por favor,
+                            intente nuevamente más tarde.
+                          </p>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-3 py-1.5 border border-[#FF500030] ">
-                      <div className="flex flex-col gap-1">
-                        <h4 className="font-semibold leading-none">
-                          {item.frontLabor}
-                        </h4>
-                        <span className="text-[10px] text-zinc-400 leading-[8px]">
-                          Creado{" "}
-                          <TimeAgo datetime={item.updatedAt} locale="es" />
+                  </tr>
+                ) : isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center">
+                      <div className="max-w-xs m-auto py-24 flex flex-col items-center gap-0.5">
+                        <IconLoader className="size-7" />
+                        <span className="text-zinc-400 text-[8px]">
+                          Cargando
                         </span>
                       </div>
                     </td>
-                    <td className="px-3 py-1.5 border border-[#FF500030] bg-[#FF500015] relative capitalize">
-                      {item.phase}
-                    </td>
-                    <td className="px-3 py-1.5 border border-[#FF500030] text-right">
-                      {item.tonnage?.toLocaleString()}
-                    </td>
-                    <td className="px-1 border border-[#FF500030] text-right">
-                      <Button
-                        onClick={() => handleDeleteModal(item)}
-                        variant="ghost"
-                        className="flex h-8 w-8 p-0 hover:bg-red-100 mx-auto"
-                      >
-                        <IconDelete className="size-4 text-red-500" />
-                      </Button>
+                  </tr>
+                ) : dataCrud.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center">
+                      <div className="max-w-xs m-auto py-24">
+                        <p className="text-center text-zinc-400 leading-4 mb-4 text-[11px]">
+                          <strong className="text-zinc-500 font-semibold">
+                            Sin datos disponibles
+                          </strong>
+                          <br />
+                          Lo sentimos, no hay datos para mostrar en este
+                          momento. Por favor, verifica tu selección e intente de
+                          nuevo más tarde.
+                        </p>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  <>
+                    {planDay?.data?.map((item, index) => (
+                      <tr key={item._id} className="">
+                        <td className="text-center border border-[#FF500030] bg-[#959493] text-white">
+                          {index + 1}
+                        </td>
+                        <td className="px-3 py-1.5 border border-[#FF500030] ">
+                          <div className="flex flex-col gap-1">
+                            <h4 className="font-semibold leading-none">
+                              {item.frontLabor}
+                            </h4>
+                            <span className="text-[10px] text-zinc-400 leading-[8px]">
+                              Creado{" "}
+                              <TimeAgo datetime={item.updatedAt} locale="es" />
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-1.5 border border-[#FF500030] bg-[#FF500015] relative capitalize">
+                          {item.phase}
+                        </td>
+                        <td className="px-3 py-1.5 border border-[#FF500030] text-right">
+                          {item.tonnage?.toLocaleString()}
+                        </td>
+                        <td className="px-1 border border-[#FF500030] text-right">
+                          <Button
+                            onClick={() => handleDeleteModal(item)}
+                            variant="ghost"
+                            className="flex h-8 w-8 p-0 hover:bg-red-100 mx-auto"
+                          >
+                            <IconDelete className="size-4 text-red-500" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
 
-                {/* TOTAL */}
-                <tr className="bg-gray-800 text-white font-bold">
-                  <td className="border border-[#FF500030]"></td>
-                  <td className="px-3 py-1.5 border border-[#FF500030]">
-                    TOTAL
-                  </td>
-                  <td className="border border-[#FF500030]"></td>
-                  <td className="px-3 py-1.5 border border-[#FF500030] text-right text-lg">
-                    {totalTonnage?.toLocaleString()} TM
-                  </td>
-                  <td className="border border-[#FF500030]"></td>
-                </tr>
+                    <tr className="bg-gray-800 text-white font-bold">
+                      <td></td>
+                      <td className="px-3 py-1.5">TOTAL</td>
+                      <td></td>
+                      <td className="px-3 py-1.5 text-right text-lg">
+                        {totalTonnage.toLocaleString()} TM
+                      </td>
+                      <td></td>
+                    </tr>
+                  </>
+                )}
               </tbody>
             </table>
           </div>

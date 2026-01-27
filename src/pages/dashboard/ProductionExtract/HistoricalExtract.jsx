@@ -63,7 +63,7 @@ export default function HistoricalExtract() {
       filteredPlanByShift.reduce(
         (acc, item) => {
           const tonnage = item.tonnage || 0;
-          if (item.phase?.toLowerCase() === "mineral" || item.phase?.toLowerCase() === "extracción / producción")
+          if (item.phase?.toLowerCase() === "mineral" || item.phase?.toLowerCase() === "Transporte / producción")
             acc.programmedTonnageMineral += tonnage;
           if (item.phase?.toLowerCase() === "desmonte" || item.phase?.toLowerCase() === "avance")
             acc.programmedTonnageDesmonte += tonnage;
@@ -79,7 +79,7 @@ export default function HistoricalExtract() {
   return (
     <>
       <PageHeader
-        title="Reporte de Extracción / Histórico"
+        title="Evolucion de Transporte / Histórico"
         description="Viajes de remanejo no considerados"
         refetch={refetch}
         isFetching={isFetching}
