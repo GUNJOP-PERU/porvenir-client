@@ -27,7 +27,7 @@ interface IWifiLocation {
 export const ubicationBocamina: IBeaconUbication[] = [
   {
     id: 1,
-    mac: ["BC:57:29:06:02:33","BC:57:29:03:5C:6A"],
+    mac: ["AF:20:24:00:01:C0"],
     name: "BC1910_01",
     location: "bocamina",
     description: "BC +80",
@@ -41,7 +41,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 2,
-    mac: ["BC:57:29:06:02:3A","BC:57:29:03:5C:94"],
+    mac: ["AF:20:24:00:01:A7"],
     name: "BC1875_01",
     location: "bocamina",
     description: "BC +100",
@@ -55,7 +55,7 @@ export const ubicationBocamina: IBeaconUbication[] = [
   },
   {
     id: 3,
-    mac: ["AF:20:24:00:01:C3","BC:57:29:03:5C:77"],
+    mac: ["AF:20:24:00:01:9E"],
     name: "BC1820_01",
     location: "bocamina",
     description: "BC -20",
