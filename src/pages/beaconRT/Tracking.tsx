@@ -113,7 +113,7 @@ const TruckTracking = () => {
     isLoading,
     error,
     refetch,
-  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
+  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", "", {
     refetchInterval: 3000,
   });
 
@@ -186,9 +186,8 @@ const TruckTracking = () => {
       return L.divIcon({
         html: `
           <div style="display:flex; flex-direction:column; align-items:center;">
-            <div class="${
-              isSelected ? "truck-inner marker-highlight" : "truck-inner"
-            }" style="
+            <div class="${isSelected ? "truck-inner marker-highlight" : "truck-inner"
+          }" style="
               background-color: ${color};
               width: 1.8rem;
               height: 1.8rem;
@@ -307,27 +306,26 @@ const TruckTracking = () => {
                   </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${
-                        truck.status.toLowerCase().includes("operativo")
+                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
-                              .toLowerCase()
-                              .includes("mantenimiento") ||
+                            .toLowerCase()
+                            .includes("mantenimiento") ||
                             truck.status
                               .toLowerCase()
                               .includes("inoperativo") ||
                             truck.status.toLowerCase().includes("demora")
-                          ? "bg-[#ff758f] text-white"
-                          : "bg-red-100 text-red-800"
-                      }`}
+                            ? "bg-[#ff758f] text-white"
+                            : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {truck.status === "operativo"
                         ? "Operativo"
                         : truck.status === "inoperativo"
-                        ? "Mantenimiento Correctivo"
-                        : truck.status === "mantenimiento"
-                        ? "Mantenimiento Preventivo"
-                        : truck.status}
+                          ? "Mantenimiento Correctivo"
+                          : truck.status === "mantenimiento"
+                            ? "Mantenimiento Preventivo"
+                            : truck.status}
                     </span>
                     <span
                       className={clsx(
@@ -339,7 +337,7 @@ const TruckTracking = () => {
                     >
                       {truck.connectivity}{" "}
                       {truck.lastDate &&
-                      !isNaN(new Date(truck.lastDate).getTime()) ? (
+                        !isNaN(new Date(truck.lastDate).getTime()) ? (
                         <TimeAgo datetime={truck.lastDate} locale="es" />
                       ) : (
                         "----"
@@ -445,16 +443,15 @@ const TruckTracking = () => {
                 font-weight: bold;
                 line-height: 0.8rem;                            
               ">
-                ${
-                  filteredData.filter(
-                    (truck) =>
-                      truck.lastUbicationMac &&
-                      Array.isArray(ubication.mac) &&
-                      ubication.mac
-                        .map((m) => m.toLowerCase())
-                        .includes(truck.lastUbicationMac.toLowerCase())
-                  ).length
-                }
+                ${filteredData.filter(
+              (truck) =>
+                truck.lastUbicationMac &&
+                Array.isArray(ubication.mac) &&
+                ubication.mac
+                  .map((m) => m.toLowerCase())
+                  .includes(truck.lastUbicationMac.toLowerCase())
+            ).length
+              }
               </span>
               ${ubication.description}
               </div>
@@ -582,18 +579,17 @@ const TruckTracking = () => {
                   font-weight: bold;
                   line-height: 0.8rem;                            
                 ">
-                  ${
-                    filteredData.filter(
-                      (truck) =>
-                        truck.lastUbicationMac &&
-                        bocamina.mac &&
-                        bocamina.mac.some(
-                          (mac) =>
-                            mac.toLowerCase() ===
-                            truck.lastUbicationMac.toLowerCase()
-                        )
-                    ).length
-                  }
+                  ${filteredData.filter(
+              (truck) =>
+                truck.lastUbicationMac &&
+                bocamina.mac &&
+                bocamina.mac.some(
+                  (mac) =>
+                    mac.toLowerCase() ===
+                    truck.lastUbicationMac.toLowerCase()
+                )
+            ).length
+              }
                 </span>
               ${bocamina.description}
               </div>

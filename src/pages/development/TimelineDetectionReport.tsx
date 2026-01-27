@@ -34,8 +34,8 @@ const TimelineDetectionReport = () => {
   );
 
   const {
-    data : tripsDesmonte = [],
-    refetch : tripsDesmonteRefetch,
+    data: tripsDesmonte = [],
+    refetch: tripsDesmonteRefetch,
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-days-rt-desmonte",
     `beacon-track/trip?material=desmonte&startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
@@ -43,21 +43,21 @@ const TimelineDetectionReport = () => {
   );
 
   const {
-    data : beaconDetectionData,
-    refetch : beaconDetectionRefetch,
+    data: beaconDetectionData,
+    refetch: beaconDetectionRefetch,
   } = useFetchData<UnitTripDetections[]>(
     "trip-group-by-days-rt",
     `beacon-track/group-by-unit?date=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
   const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+    data: beaconTruck = []
+  } = useFetchData<{ status: string }[]>("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
 
   const baseData = useMemo(() => {
     const mineral =
@@ -177,15 +177,15 @@ const TimelineDetectionReport = () => {
   // Procesar datos para la tabla de bocaminas y parqueo
   const tableData = useMemo(() => {
     if (!beaconDetectionData) return [];
-    
+
     return beaconDetectionData.map(unit => {
       const tracks = unit.tracks || [];
-      
-      const firstBocamina = tracks.find(track => 
+
+      const firstBocamina = tracks.find(track =>
         track.ubication?.toLowerCase().includes('bocamina') ||
         track.ubicationType?.toLowerCase().includes('bocamina')
       );
-      
+
       // Calcular tiempo total en parqueo (agrupar parqueos consecutivos)
       let totalParkingTime = 0;
       for (let i = 0; i < tracks.length; i++) {
@@ -197,7 +197,7 @@ const TimelineDetectionReport = () => {
           totalParkingTime += duration;
         }
       }
-      
+
       // Verificar si la bocamina es tardía según el turno
       let isLateBocamina = false;
       if (firstBocamina) {
@@ -205,11 +205,11 @@ const TimelineDetectionReport = () => {
         const hours = bocaminaStartTime.getHours();
         const minutes = bocaminaStartTime.getMinutes();
         const totalMinutes = hours * 60 + minutes;
-        
+
         // Convertir 8:30 AM y 8:30 PM a minutos
         const dayShiftLimit = 8 * 60 + 30; // 8:30 AM = 510 minutos
         const nightShiftLimit = 20 * 60 + 30; // 8:30 PM = 1230 minutos
-        
+
         // Determinar el turno basado en la hora actual o del shift filter
         if (shiftFilter === 'dia') {
           // Turno día: tardío si es después de 8:30 AM
@@ -247,7 +247,7 @@ const TimelineDetectionReport = () => {
       <PageHeader
         title="Linea de tiempo de Detección"
         description=""
-        refetch={ () => { refetch(); beaconDetectionRefetch() }}
+        refetch={() => { refetch(); beaconDetectionRefetch() }}
         isFetching={isFetching}
         setDialogOpen={false}
         actionsRight={
@@ -338,21 +338,19 @@ const TimelineDetectionReport = () => {
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab('chart')}
-            className={`px-6 py-3 text-sm font-medium ${
-              activeTab === 'chart'
+            className={`px-6 py-3 text-sm font-medium ${activeTab === 'chart'
                 ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
+              }`}
           >
             📊 Gráfico de Detecciones
           </button>
           <button
             onClick={() => setActiveTab('table')}
-            className={`px-6 py-3 text-sm font-medium ${
-              activeTab === 'table'
+            className={`px-6 py-3 text-sm font-medium ${activeTab === 'table'
                 ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
+              }`}
           >
             📋 Tabla Bocaminas y Parqueo
           </button>
@@ -390,11 +388,11 @@ const TimelineDetectionReport = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {tableData.map((row, index) => (
-                    <tr 
-                      key={row.unit} 
+                    <tr
+                      key={row.unit}
                       className={`
-                        ${row.isLateBocamina 
-                          ? 'bg-red-300 bg-opacity-60' 
+                        ${row.isLateBocamina
+                          ? 'bg-red-300 bg-opacity-60'
                           : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                         }
                       `}
@@ -421,7 +419,7 @@ const TimelineDetectionReport = () => {
                   ))}
                 </tbody>
               </table>
-              
+
               {tableData.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   No hay datos disponibles

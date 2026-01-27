@@ -24,21 +24,21 @@ const TripsDescriptionRT = () => {
   } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-historico",
     `beacon-track/trip?startDate=${format(dateFilter, 'yyyy-MM-dd')}&endDate=${format(dateFilter, 'yyyy-MM-dd')}${shiftFilter ? `&shift=${shiftFilter}` : ''}`,
-    {  }
+    {}
   );
 
   const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+    data: beaconTruck = []
+  } = useFetchData<{ status: string }[]>("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
 
   const formatData = useMemo(() => {
-    return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
+    return data.sort((a, b) => a.unit.localeCompare(b.unit)).map((unit) => {
       return ({
         ...unit,
         allTrips: [
           ...unit.trips,
-          ...unit.beforeInitialTrips.map((trip) => ({...trip,endUbication: ""})),
-          ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))
+          ...unit.beforeInitialTrips.map((trip) => ({ ...trip, endUbication: "" })),
+          ...unit.uncompletedTrips.map((trip) => ({ ...trip, endUbication: "" }))
         ].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
       })
     })
@@ -97,19 +97,19 @@ const TripsDescriptionRT = () => {
               </p>
             </div> */}
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Viajes
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Bocamina
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Otros
               </p>
@@ -147,7 +147,7 @@ const TripsDescriptionRT = () => {
                   onChange={(item) => {
                     setDateFilter(item);
                     setIsTooltipOpen(false);
-                  }}                  
+                  }}
                   date={dateFilter}
                 />
               </div>
@@ -156,7 +156,7 @@ const TripsDescriptionRT = () => {
         }
       />
       <div className="col-span-2 border border-zinc-100 shadow-sm rounded-xl p-3">
-        <XRangeTripsChartHistorico data={formatData}  isLoading={isFetching || tripsLoading} isError={tripsError} />
+        <XRangeTripsChartHistorico data={formatData} isLoading={isFetching || tripsLoading} isError={tripsError} />
       </div>
     </div>
   );

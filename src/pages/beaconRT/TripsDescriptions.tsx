@@ -33,22 +33,22 @@ const TripsDescriptionRT = () => {
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
   const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+    data: beaconTruck = []
+  } = useFetchData<{ status: string }[]>("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
 
   const formatData = useMemo(() => {
-    return data.sort((a,b) => a.unit.localeCompare(b.unit)).map((unit) => {
+    return data.sort((a, b) => a.unit.localeCompare(b.unit)).map((unit) => {
       return ({
         ...unit,
         allTrips: [
-          ...unit.beforeInitialTrips.map((trip) => ({...trip,endUbication: ""})),
+          ...unit.beforeInitialTrips.map((trip) => ({ ...trip, endUbication: "" })),
           ...unit.trips,
-          ...unit.uncompletedTrips.map((trip) => ({...trip,endUbication: ""}))
+          ...unit.uncompletedTrips.map((trip) => ({ ...trip, endUbication: "" }))
         ].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
       })
     })
@@ -80,13 +80,16 @@ const TripsDescriptionRT = () => {
         className="col-span-2 mb-2"
         directionTitle="column"
         status={[
-          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
             color: "#10aa18",
           },
-          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
             color: "#d1be16",
           },
-          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
             color: "#ca1616",
           },
         ]}
@@ -129,19 +132,19 @@ const TripsDescriptionRT = () => {
               </p>
             </div> */}
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Viajes
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#66d20e] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Bocamina
               </p>
             </div>
             <div className="flex flex-row items-center gap-1">
-              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full"/>
+              <span className="flex bg-[#dbdbdb] w-2 h-2 rounded-full" />
               <p className="text-[11px] font-bold">
                 Otros
               </p>

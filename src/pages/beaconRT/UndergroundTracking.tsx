@@ -97,7 +97,7 @@ const UndergroundTracking = () => {
     isLoading,
     error,
     refetch,
-  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
+  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", "", {
     refetchInterval: 2000,
   });
 
@@ -180,8 +180,7 @@ const UndergroundTracking = () => {
           align-items: center;
         ">
           <!-- Icono del camión -->
-          <div class="${
-            isSelected ? "truck-inner marker-highlight" : "truck-inner"
+          <div class="${isSelected ? "truck-inner marker-highlight" : "truck-inner"
           }" style="
             background-color: ${color};
             width: 1.8rem;
@@ -250,7 +249,7 @@ const UndergroundTracking = () => {
       const lng = !isNaN(lngRaw || 0) ? lngRaw : 0;
       const count = trucks.length;
       const perRow = 4;
-       const offsetX = 0.00020;
+      const offsetX = 0.00020;
       const offsetY = 0.00020;
 
       trucks.forEach((truck, i) => {
@@ -286,27 +285,26 @@ const UndergroundTracking = () => {
                   </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${
-                        truck.status.toLowerCase().includes("operativo")
+                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
-                              .toLowerCase()
-                              .includes("mantenimiento") ||
+                            .toLowerCase()
+                            .includes("mantenimiento") ||
                             truck.status
                               .toLowerCase()
                               .includes("inoperativo") ||
                             truck.status.toLowerCase().includes("demora")
-                          ? "bg-[#ff758f] text-white"
-                          : "bg-red-100 text-red-800"
-                      }`}
+                            ? "bg-[#ff758f] text-white"
+                            : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {truck.status === "operativo"
                         ? "Operativo"
                         : truck.status === "inoperativo"
-                        ? "Mantenimiento Correctivo"
-                        : truck.status === "mantenimiento"
-                        ? "Mantenimiento Preventivo"
-                        : truck.status}
+                          ? "Mantenimiento Correctivo"
+                          : truck.status === "mantenimiento"
+                            ? "Mantenimiento Preventivo"
+                            : truck.status}
                     </span>
                     <span
                       className={clsx(
@@ -318,7 +316,7 @@ const UndergroundTracking = () => {
                     >
                       {truck.connectivity}{" "}
                       {truck.lastDate &&
-                      !isNaN(new Date(truck.lastDate).getTime()) ? (
+                        !isNaN(new Date(truck.lastDate).getTime()) ? (
                         <TimeAgo datetime={truck.lastDate} locale="es" />
                       ) : (
                         "----"
@@ -405,17 +403,16 @@ const UndergroundTracking = () => {
               font-weight: bold;
               line-height: 0.8rem;                            
               ">
-                ${
-                  filteredData.filter(
-                    (truck) =>
-                      truck.lastUbicationMac &&
-                      ubication.mac.some(
-                        (mac) =>
-                          mac.toLowerCase() ===
-                          truck.lastUbicationMac.toLowerCase()
-                      )
-                  ).length
-                }
+                ${filteredData.filter(
+              (truck) =>
+                truck.lastUbicationMac &&
+                ubication.mac.some(
+                  (mac) =>
+                    mac.toLowerCase() ===
+                    truck.lastUbicationMac.toLowerCase()
+                )
+            ).length
+              }
               </span>
               ${ubication.description}
               </div>
@@ -537,7 +534,7 @@ const UndergroundTracking = () => {
       />
       <Legend data={data} />
       <div className="absolute bottom-2 right-2 bg-black/75 rounded-xl p-2 z-10 w-40 border border-zinc-800 space-y-1 flex flex-col select-none">
-         <div className="text-green-500 font-extrabold text-[10px] flex items-center gap-1">
+        <div className="text-green-500 font-extrabold text-[10px] flex items-center gap-1">
           <div className="bg-green-900 p-[2px] rounded-[5px] w-[18px] h-[18px] font-bold text-green-400 flex items-center justify-center">
             {filteredDataRute.length}
           </div>{" "}
@@ -572,7 +569,7 @@ const UndergroundTracking = () => {
                 className="bg-black text-[11px] px-3 py-2.5 rounded-xl max-w-[200px] shadow-none flex flex-col gap-1 leading-none font-semibold border border-zinc-600"
               >
                 <span className="text-zinc-300">
-                | {truck.name.split("-").pop()} | Ubicación: {truck.lastUbication}
+                  | {truck.name.split("-").pop()} | Ubicación: {truck.lastUbication}
                 </span>
                 <div className=" flex flex-col text-sm pt-1">
                   <span className="text-green-300 font-bold leading-none">

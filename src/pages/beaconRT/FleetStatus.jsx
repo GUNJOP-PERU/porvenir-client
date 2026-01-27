@@ -28,7 +28,7 @@ export default function FleetStatus() {
     isFetching,
     isLoading: tripsLoading,
     isError: tripsError,
-  } = useFetchData("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+  } = useFetchData("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTruck, setSelectedTruck] = useState(null);
   const userType = useAuthStore((state) => state.type);
