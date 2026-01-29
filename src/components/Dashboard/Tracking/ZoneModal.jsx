@@ -20,6 +20,7 @@ import {
 } from "../../ui/dialog";
 import {
   Form,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,7 +36,7 @@ const FormSchema = z.object({
   location: z
     .string()
     .min(1, { message: "*Ubicación requerida" })
-    .transform((val) => val.trim()),
+    .transform((val) => val.replace(/\s+/g, "")),
   description: z
     .string()
     .min(1, { message: "*Descripcion requerida" })
@@ -161,44 +162,11 @@ export const ZoneModal = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col ">
-                    <FormLabel>nombre</FormLabel>
+                    <FormLabel>Nombre</FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Localización</FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col ">
-                    <FormLabel>Descripción</FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
+                      placeholder="Ej. Parqueo"
                       {...field}
                     />
                     <FormMessage />
@@ -215,7 +183,74 @@ export const ZoneModal = ({
                       type="color"
                       disabled={loadingGlobal}
                       placeholder="Ej. #000000"
+                      className="p-0 rounded-none border-none m-0"
                       {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel className="font-bold text-blue-600">
+                      *Localización
+                    </FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. Parqueo"
+                       value={field.value}
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toLowerCase())
+                      }
+                    />
+                    {isEdit ? (
+                      <FormDescription className="text-[10px] leading-3 text-amber-600 font-semibold pl-2">
+                        ⚠️ Cambiar esto reasignará los beacons automáticamente
+                      </FormDescription>
+                    ) : (
+                      <FormDescription className="text-[11px] leading-3 text-blue-600 font-medium pl-2">
+                        ✓ Los beacons con esta misma localización se asignarán
+                        automáticamente a esta zona
+                      </FormDescription>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col ">
+                    <FormLabel>Descripción</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. Equipo de trabajo"
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="radius"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Radio</FormLabel>
+                    <Input
+                      type="number"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. 500"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />
                     <FormMessage />
                   </FormItem>
@@ -229,8 +264,8 @@ export const ZoneModal = ({
                     <FormLabel>Latitud</FormLabel>
                     <Input
                       type="number"
-                      disabled={loadingGlobal}
                       placeholder="Ej. -12.0464"
+                      disabled
                       {...field}
                       onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />
@@ -246,25 +281,8 @@ export const ZoneModal = ({
                     <FormLabel>Longitud</FormLabel>
                     <Input
                       type="number"
-                      disabled={loadingGlobal}
+                      disabled
                       placeholder="Ej. -12.0464"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="radius"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Radio</FormLabel>
-                    <Input
-                      type="number"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. 500"
                       {...field}
                       onChange={(e) => field.onChange(e.target.valueAsNumber)}
                     />

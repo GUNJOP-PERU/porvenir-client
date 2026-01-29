@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import IconPlan from "@/icons/Dashboard/IconPlan";
-import IconRadar from "@/icons/IconRadar";
 import { GiMineWagon } from "react-icons/gi";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FaTimeline } from "react-icons/fa6";
@@ -17,6 +16,7 @@ import {
   LandPlot,
   MapPin,
   Pickaxe,
+  Radar,
   Settings,
   Waypoints,
 } from "lucide-react";
@@ -31,12 +31,12 @@ export const useNavigation = () => {
     const basePaths = [
       {
         name: "Producción en Tiempo Real",
-        icon: <IconRadar />,
+        icon: <Radar />,
         items: [
           {
             name: "Tracking Superficie",
             href: "/",
-            icon: <IconRadar />,
+            icon: <Radar />,
             active: pathname === "/",
           },
           {
@@ -174,7 +174,7 @@ export const useNavigation = () => {
           {
             name: "Tabla de Detección",
             href: "dashboard/beacon-detection-table",
-            icon: <IconRadar />,
+            icon: <Radar />,
             active: pathname === "/dashboard/beacon-detection-table",
           },
 

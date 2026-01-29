@@ -10,14 +10,9 @@ type Props = {
   onSelect: (lat: number, lng: number) => void;
 };
 
-export const MapLocationPicker = ({
-  enabled,
-  position,
-  onSelect,
-}: Props) => {
+export const MapLocationPicker = ({ enabled, position, onSelect }: Props) => {
   const map = useMap();
 
-  // Cursor visual
   useEffect(() => {
     map.getContainer().style.cursor = enabled ? "crosshair" : "";
     return () => {
@@ -25,7 +20,6 @@ export const MapLocationPicker = ({
     };
   }, [enabled, map]);
 
-  // Click handler
   useMapEvents({
     click(e) {
       if (!enabled) return;

@@ -36,6 +36,8 @@ import { BeaconModal } from "@/components/Management/Beacon/BeaconModal";
 import { deleteDataRequest } from "@/api/api";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import { ZoneModal } from "@/components/Dashboard/Tracking/ZoneModal";
+import IconArrow from "@/icons/IconArrow";
+import { ArrowLeft, Crosshair, Plus } from "lucide-react";
 
 // Extender tipos para leaflet-rotate
 declare module "react-leaflet" {
@@ -97,6 +99,7 @@ const TruckTracking = () => {
   const [editingBeacon, setEditingBeacon] = useState<Beacon | null>(null);
   const [mapMode, setMapMode] = useState<MapMode>("idle");
   const [beaconMenuOpen, setBeaconMenuOpen] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const [selectedTruck, setSelectedTruck] = useState<{
     truck: BeaconTruckStatus;
@@ -435,6 +438,30 @@ const TruckTracking = () => {
     ));
   }, []);
 
+  const handleDeleteBeacon = useCallback(
+    async (beacon: Beacon) => {
+      if (!window.confirm(`¿Eliminar el beacon "${beacon.description}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await deleteDataRequest(`zone/${beacon._id}`);
+
+        if (response?.status === 200) {
+          console.log("Zona eliminada correctamente");
+          refetchBeacons();
+        } else {
+          throw new Error("Error al eliminar");
+        }
+      } catch (error) {
+        console.error("Error al eliminar zona:", error);
+      } finally {
+        setBeaconMenuOpen(null);
+      }
+    },
+    [refetchBeacons],
+  );
+
   const renderBeacons = useCallback(() => {
     return dataZones.map((beacon: Beacon) => {
       const count = trucksByBeacon.get(beacon._id) || 0;
@@ -452,6 +479,13 @@ const TruckTracking = () => {
       return (
         <Fragment key={beacon._id}>
           <Circle
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
             center={[beacon.position.latitud, beacon.position.longitud]}
             radius={radius}
             pathOptions={{
@@ -462,17 +496,15 @@ const TruckTracking = () => {
               fillOpacity: 0.5,
               dashArray: "16,4",
             }}
-            eventHandlers={
-              mapMode === "idle"
-                ? {
-                    click: () => {
-                      setBeaconMenuOpen(beacon._id);
-                    },
-                  }
-                : {}
-            }
           />
           <Marker
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
             position={labelPosition}
             icon={L.divIcon({
               html: `
@@ -493,8 +525,8 @@ const TruckTracking = () => {
                   font-weight: bold;
                   line-height: 0.8rem;
                   text-transform: uppercase;
-                  cursor: ${mapMode === "idle" ? "pointer" : "crosshair"};
-                  pointer-events: ${mapMode === "idle" ? "auto" : "none"};
+                  cursor: ${isEditMode && mapMode === "idle" ? "pointer" : "crosshair"};
+                  pointer-events: ${isEditMode && mapMode === "idle" ? "auto" : "none"};
                   ${isMenuOpen ? "box-shadow: 2px 2px 2px 4px black;" : ""}
                 ">
                   <span style="
@@ -515,18 +547,9 @@ const TruckTracking = () => {
               iconSize: [0, 0],
               iconAnchor: [0, 0],
             })}
-            eventHandlers={
-              mapMode === "idle"
-                ? {
-                    click: () => {
-                      setBeaconMenuOpen(beacon._id);
-                    },
-                  }
-                : {}
-            }
           />
 
-          {isMenuOpen && mapMode === "idle" && (
+          {isEditMode && isMenuOpen && mapMode === "idle" && (
             <Marker
               position={[
                 beacon.position.latitud + radiusInDegrees * 1.5,
@@ -641,33 +664,15 @@ const TruckTracking = () => {
         </Fragment>
       );
     });
-  }, [dataZones, trucksByBeacon, mapMode, beaconMenuOpen]);
+  }, [
+    dataZones,
+    trucksByBeacon,
+    mapMode,
+    beaconMenuOpen,
+    isEditMode,
+    handleDeleteBeacon,
+  ]);
 
-  const handleDeleteBeacon = useCallback(
-    async (beacon: Beacon) => {
-      if (!window.confirm(`¿Eliminar el beacon "${beacon.description}"?`)) {
-        return;
-      }
-
-      try {
-        const response = await deleteDataRequest(`zone/${beacon._id}`);
-
-        if (response?.status === 200) {
-          console.log("Zona eliminada correctamente");
-          refetchBeacons();
-        } else {
-          throw new Error("Error al eliminar");
-        }
-      } catch (error) {
-        console.error("Error al eliminar zona:", error);
-      } finally {
-        setBeaconMenuOpen(null);
-      }
-    },
-    [refetchBeacons],
-  );
-
-  // 3️⃣manejar clicks en el menú
   useEffect(() => {
     const handleMenuClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -734,6 +739,7 @@ const TruckTracking = () => {
     <div className="h-full w-full bg-black relative">
       <div className="h-full w-full">
         <MapContainer
+          className="z-0"
           center={[mapConfig.centerLat, mapConfig.centerLng]}
           zoom={15}
           minZoom={16.5}
@@ -741,7 +747,6 @@ const TruckTracking = () => {
           zoomControl={false}
           doubleClickZoom={false}
           style={{ height: "100%", width: "100%" }}
-          className="z-0"
           attributionControl={false}
           zoomSnap={0.1}
           zoomDelta={0.1}
@@ -817,37 +822,60 @@ const TruckTracking = () => {
 
       <button
         onClick={() => {
-          if (mapMode === "create") {
-            setMapMode("idle");
-            setNewBeaconPosition(null);
-          } else {
-            setMapMode("create");
-            setEditingBeacon(null);
-          }
+          setIsEditMode(true); // solo muestra UI
+          setMapMode("idle"); // NO crea nada
+          setEditingBeacon(null);
         }}
-        className={clsx(
-          "absolute bottom-3 left-2 z-50 px-4 py-2 rounded-lg shadow font-bold text-xs h-8 transition-colors",
-          mapMode === "create"
-            ? "bg-green-600 text-white hover:bg-green-700"
-            : "bg-blue-600 text-white hover:bg-blue-700",
-        )}
+        className="absolute bottom-12 left-2.5 z-50 size-[34px] rounded-lg shadow bg-primary text-white hover:bg-primary/80 flex items-center justify-center"
       >
-        {mapMode === "create" ? "Click en el mapa…" : "+ Agregar Beacon"}
+        <Crosshair className="size-5" />
       </button>
-      {mapMode === "move" && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex gap-2">
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
-            Haz click en el mapa para mover este punto
+
+      {isEditMode && (
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div className="bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold text-center pointer-events-none">
+            {mapMode === "idle" && "Click en una zona para ver opciones"}
+            {mapMode === "create" && "Haz click en el mapa para crear un punto"}
+            {mapMode === "move" && "Haz click en el mapa para mover este punto"}
           </div>
-          <button
-            onClick={() => {
-              setMapMode("idle");
-              setEditingBeacon(null);
-            }}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-600"
-          >
-            Cancelar
-          </button>
+          <div className="flex gap-2">
+            {mapMode === "idle" && (
+              <button
+                onClick={() => {
+                  setBeaconMenuOpen(null);
+                  setMapMode("create");
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <Plus className="size-3" />
+                Crear Nuevo
+              </button>
+            )}
+            {mapMode !== "idle" && (
+              <button
+                onClick={() => {
+                  setMapMode("idle");
+                  setEditingBeacon(null);
+                  setNewBeaconPosition(null);
+                }}
+                className="bg-zinc-600 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <ArrowLeft className="size-3" />
+                Volver Anterior
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditMode(false);
+                setMapMode("idle");
+                setEditingBeacon(null);
+                setNewBeaconPosition(null);
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-all ease-in duration-300"
+            >
+              Salir
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -856,7 +884,7 @@ const TruckTracking = () => {
 
 // ⭐ Estilos CSS para los tooltips de rutas
 const routeTooltipStyles = `
-  .route-tooltip, .geofence-tooltip, .geofence-label {
+  .route-tooltip, .geofence-tooltip {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;

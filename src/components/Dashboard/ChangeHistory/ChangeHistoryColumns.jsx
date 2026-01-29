@@ -1,18 +1,10 @@
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
 import {
-  formatDurationMinutes,
-  formatFecha,
-  formatHour,
+  formatFecha
 } from "@/lib/utilsGeneral";
 import clsx from "clsx";
 import TimeAgo from "timeago-react";
 
-import { CircleCheckBig, CircleOff } from "lucide-react";
 import { DataTableColumnHeader } from "../../Table/DataTableColumnHeader";
-import IconMineral from "@/icons/IconMineral";
-import IconClearance from "@/icons/IconClearance";
-import { DataTableRowActions } from "@/components/Table/DataTableRowActions";
 
 export const columns = [
   {

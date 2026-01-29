@@ -52,8 +52,8 @@ const FormSchema = z.object({
     .transform((val) => val.trim()),
   location: z
     .string()
-    .min(1, { message: "*Ubicación requerida" })
-    .transform((val) => val.trim()),
+    .min(1, { message: "*Ubicación requerida (sin espacios)" })
+    .transform((val) => val.replace(/\s+/g, "")),
   isActive: z.boolean().default(true),
 });
 
@@ -206,13 +206,28 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 name="location"
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Location</FormLabel>
+                    <FormLabel className="font-bold text-blue-600">
+                      *Localización
+                    </FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
                       placeholder="Ej. beacon"
-                      {...field}
+                      value={field.value}
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toLowerCase())
+                      }
                     />
+                    {isEdit ? (
+                      <FormDescription className="text-[10px] leading-3 text-amber-600 font-semibold pl-2">
+                        ⚠️ Cambiar esto podría reasignar el beacon a otra zona
+                      </FormDescription>
+                    ) : (
+                      <FormDescription className="text-[11px] leading-3 text-blue-600 font-medium pl-2">
+                        ✓ Este beacon se asignará automáticamente a zonas con la
+                        misma localización
+                      </FormDescription>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
