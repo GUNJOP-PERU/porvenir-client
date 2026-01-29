@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useFetchData } from "../../hooks/useGlobalQueryV2";
 // Components
 import CardTitle from "@/components/Dashboard/CardTitleV2";
@@ -16,7 +16,6 @@ import DonutAndSplineChartByMonth from "@/components/Dashboard/Charts/DonutAndSp
 import LineAndBarChartByMonth from "@/components/Dashboard/Charts/LineAndBarChartByMonth";
 import IconTruck from "@/icons/IconTruck";
 import dayjs from "dayjs";
-import { MultiSelect } from "@/components/Configuration/MultiSelect";
 
 interface MonthlyTrips {
   month: string;
@@ -44,9 +43,8 @@ interface TripsByMonthItem {
   tonelajeNoche: number;
 }
 
+
 const RealTimeByMonth = () => {
-    const [routeFilter, setRouterFilter] = useState<string[]>([]);
-  
   const {
     data = [],
     refetch,
@@ -55,17 +53,12 @@ const RealTimeByMonth = () => {
     "trip-report-month",
     `trip/header-by-months?year=${dayjs().year()}&material=Mineral`,
     "",
-    { refetchInterval: 10000 },
+    { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>(
-    "mineral",
-    "mineral",
-    "",
-    {
-      refetchInterval: 10000,
-    },
-  );
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
+    refetchInterval: 10000,
+  });
 
   const { data: planMonthData = [] } = useFetchData<PlanMonth[]>(
     "plan-month",
@@ -73,14 +66,8 @@ const RealTimeByMonth = () => {
     "",
     {
       refetchInterval: 10000,
-    },
+    }
   );
-
-    const routeOptions = useMemo(() => {
-      const trips = (data || []).flatMap((u) => u.trips || []);
-      const routes = trips.map((t) => `${t.startUbication} → ${t.endUbication}`);
-      return Array.from(new Set(routes)).sort();
-    }, [data]);
 
   const baseData = useMemo(() => {
     const mineral =
@@ -162,7 +149,9 @@ const RealTimeByMonth = () => {
     };
   }, [data, baseData]);
 
-  const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
+
+
+const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
     if (!data || data.length === 0) return [];
 
     const year = data[0]!.year;
@@ -171,7 +160,7 @@ const RealTimeByMonth = () => {
       const d = dayjs().year(year).month(i);
       return {
         monthNumber: i + 1,
-        monthName: d.format("MMMM"),
+        monthName: d.format("MMMM"), 
       };
     });
 
@@ -221,27 +210,13 @@ const RealTimeByMonth = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Carguío Mensual Mineral / Marzo a Diciembre"
+        title="Carguío Mensual / Marzo a Diciembre"
         description={`Información en tiempo real de los viajes realizados por los equipos del año ${new Date().getFullYear()}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        actionsRight={
-          <div className="relative flex flex-row gap-2">
-            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Ruta :
-              <div>
-                <MultiSelect
-                  placeholder={"Selecciona ruta..."}
-                  options={routeOptions.map((r) => ({ value: r, label: r }))}
-                  value={routeFilter}
-                  onChange={setRouterFilter}
-                />
-              </div>
-            </label>
-          </div>
-        }
+        actionsRight={<></>}
       />
       <div className="flex flex-col items-center justify-around gap-0">
         <IconTruck className="fill-yellow-500 h-30 w-40" color="" style={{}} />
@@ -397,7 +372,7 @@ const RealTimeByMonth = () => {
               {
                 title: "Duración del Ciclo Subterraneo",
                 currentValue: Number(
-                  baseStats.avgDurationSubterraneoTrips.toFixed(2),
+                  baseStats.avgDurationSubterraneoTrips.toFixed(2)
                 ),
                 total: 100,
                 subData: [],
@@ -405,7 +380,7 @@ const RealTimeByMonth = () => {
               {
                 title: "Duración del Ciclo Superficie",
                 currentValue: Number(
-                  baseStats.avgDurationSuperficieTrips.toFixed(2),
+                  baseStats.avgDurationSuperficieTrips.toFixed(2)
                 ),
                 total: 100,
                 subData: [],

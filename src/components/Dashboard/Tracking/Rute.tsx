@@ -4,7 +4,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import TimeAgo from "timeago-react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
 import { formatFecha } from "@/lib/utilsGeneral";
@@ -33,8 +32,8 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
         );
       })
       .sort((a, b) => {
-        const numA = parseInt(a.name.split("-")[2]);
-        const numB = parseInt(b.name.split("-")[2]);
+        const numA = parseInt(a.name.split("-")[2] || "");
+        const numB = parseInt(b.name.split("-")[2] || "");
         return numA - numB;
       });
   }, [data]);
@@ -59,15 +58,15 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
         );
       })
       .sort((a, b) => {
-        const numA = parseInt(a.name.split("-")[2]);
-        const numB = parseInt(b.name.split("-")[2]);
+        const numA = parseInt(a.name.split("-")[2] || "");
+        const numB = parseInt(b.name.split("-")[2] || "");
         return numA - numB;
       });
   }, [data]);
 
   return (
-    <div className="absolute bottom-28 right-2 space-y-1">
-      <div className=" bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
+    <div className="absolute bottom-2 right-2 space-y-1">
+      <div className=" bg-black/75 rounded-xl p-2 z-10 w-40 border border-zinc-800 space-y-1 flex flex-col">
         <div className="text-green-500 font-extrabold text-[10px] flex items-center gap-1">
           <div className="bg-green-900 p-[2px] rounded-[5px] w-[18px] h-[18px] font-bold text-green-400 flex items-center justify-center">
             {filteredData.length}
@@ -79,7 +78,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
             <Tooltip key={index}>
               <TooltipTrigger asChild>
                 <div
-                  className="flex items-center justify-center px-1 py-0.5  rounded-lg select-none cursor-pointer bg-[#16a34a] outline outline-1 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300"
+                  className="flex items-center justify-center min-w-7 px-1 py-0.5  rounded-lg select-none cursor-pointer bg-[#16a34a] outline outline-1 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300"
                   style={{
                     border: "2px solid #00000050",
                     boxShadow: "0 2px 4px rgba(0,0,0,0.4)",
@@ -114,7 +113,7 @@ export default function Rute({ data }: { data: BeaconTruckStatus[] }) {
           ))}
         </div>
       </div>
-      <div className=" bg-black/75 rounded-xl p-2 z-10 w-36 border border-zinc-800 space-y-1 flex flex-col">
+      <div className=" bg-black/75 rounded-xl p-2 z-10 w-40 border border-zinc-800 space-y-1 flex flex-col">
         <div className="text-red-400 font-extrabold text-[10px] flex items-center gap-1">
           <div className="bg-red-900 p-[2px] rounded-[5px] w-[18px] h-[18px] font-bold text-red-300 flex items-center justify-center">
             {filteredDataInoperativo.length}

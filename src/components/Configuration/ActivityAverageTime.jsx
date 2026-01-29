@@ -30,7 +30,7 @@ const ActivityAverageTimeConfiguration = () => {
       <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">
+            <h1 className="text-lg font-bold leading-6">
               Tiempo promedio de actividades
             </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-fit  h-5 flex items-center justify-center px-1 font-bold ">

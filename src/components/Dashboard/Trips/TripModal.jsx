@@ -1,28 +1,30 @@
+/* eslint-disable react/prop-types */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useHandleFormSubmit } from "@/hooks/useMutation";
-import { dataCargo, dataRole } from "@/lib/data";
+import IconClose from "@/icons/IconClose";
+import IconLoader from "@/icons/IconLoader";
+import IconToggle from "@/icons/IconToggle";
+import { Separator } from "@ariakit/react";
 import { CircleFadingPlus } from "lucide-react";
 import { Button } from "../../ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "../../ui/dialog";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import {
@@ -32,11 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import IconToggle from "@/icons/IconToggle";
-import IconClose from "@/icons/IconClose";
-import IconLoader from "@/icons/IconLoader";
-import { Separator } from "@ariakit/react";
-import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
   location: z.string().min(1, { message: "*Nombre requerido" }),

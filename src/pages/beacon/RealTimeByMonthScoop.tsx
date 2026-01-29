@@ -216,7 +216,7 @@ const RealTimeByMonthScoop = () => {
           isFetching={isFetching}
           setDialogOpen={false}
           className="col-span-2"
-          actionsRight={<div className="relative flex flex-row gap-2"></div>}
+          actionsRight={<></>}
         />
         <div className="flex flex-col items-center justify-around gap-0">
           <IconTruck className="fill-yellow-500 h-30 w-40" color="" style={{}} />

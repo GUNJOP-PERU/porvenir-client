@@ -29,7 +29,7 @@ const WeeklyBoundaryConfig = () => {
     isFetching,
     refetch,
   } = useFetchData(
-    "config-group-week",
+    "config-group-week-week",
     "config-group-week?type=week&isActive=true",
   );
 
@@ -49,9 +49,7 @@ const WeeklyBoundaryConfig = () => {
   const startNum = parseInt(currentStart || "1");
   const endNum = startNum === 1 ? 0 : startNum - 1;
 
-  const Reload = () => {
-    console.log("prueba de envio ,");
-  };
+
   const onSubmit = async (values) => {
     const startDay = parseInt(values.start || initialStart);
     const endDay = startDay === 1 ? 0 : startDay - 1;
@@ -67,9 +65,6 @@ const WeeklyBoundaryConfig = () => {
       valueType: "number",
     };
 
-    console.log("Actualizando registros:", { startUpdate, endUpdate });
-
-    // Actualiza START
     await handleFormSubmit({
       isEdit: true,
       endpoint: "config-group-week",
@@ -80,7 +75,6 @@ const WeeklyBoundaryConfig = () => {
       onSuccess: undefined,
     });
 
-    // Actualiza END
     await handleFormSubmit({
       isEdit: true,
       endpoint: "config-group-week",
@@ -88,7 +82,7 @@ const WeeklyBoundaryConfig = () => {
       data: endUpdate,
       setLoadingGlobal,
       refetch,
-      onSuccess: Reload,
+      onSuccess: undefined,
     });
   };
 
@@ -98,8 +92,8 @@ const WeeklyBoundaryConfig = () => {
     <div className="bg-white border rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="font-bold text-zinc-800">Configuración de Gráficos</h3>
-          <p className="text-xs text-zinc-500">
+          <h1 className="text-lg font-bold text-zinc-800">Configuración de Gráficos</h1>
+          <p className="text-xs text-zinc-400">
             Define el ciclo de 7 días para tus reportes.
           </p>
         </div>
@@ -122,7 +116,7 @@ const WeeklyBoundaryConfig = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-1">
         <label className="text-xs font-medium text-zinc-600">
           Día de inicio de semana
         </label>

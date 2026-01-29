@@ -21,9 +21,9 @@ export function MultiSelect({ placeholder, options, value, onChange }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="h-8 rounded-lg border  border-zinc-600 flex items-center px-3 pr-2 w-[200px] relative"
+          className="h-8 rounded-lg border  border-zinc-600 flex items-center px-3 pr-2 w-[200px] relative text-[12px] font-bold"
         >
-          <span className="font-semibold  truncate">{placeholder}</span>
+          <span className="font-semibold  truncate ">{placeholder}</span>
           <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
           <Separator orientation="vertical" className="mx-1 h-4" />
           <div className="rounded-sm px-1 font-normal lg:hidden text-zinc-400">

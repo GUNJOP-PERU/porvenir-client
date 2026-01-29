@@ -89,8 +89,7 @@ export default function PageTrips() {
         tableType={"trips"}
         toolbarContent={
           <>
-            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-              Ruta :
+            
               <div>
                 <MultiSelect
                   placeholder={"Selecciona ruta..."}
@@ -99,7 +98,7 @@ export default function PageTrips() {
                   onChange={setRouteFilter}
                 />
               </div>
-            </label>
+            
             <ExcelExportButton
               data={data}
               filename="viajes_realizados"

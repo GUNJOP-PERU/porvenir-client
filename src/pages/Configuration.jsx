@@ -2,6 +2,7 @@ import MineralConfiguration from "@/components/Configuration/MineralCard";
 import TurnConfiguration from "@/components/Configuration/TurnCard";
 import ActivityAverageTimeConfiguration from "@/components/Configuration/ActivityAverageTime";
 import WeekStarConfig from "@/components/Configuration/WeekStartConfig";
+import PrefixTeam from "@/components/Configuration/PrefixTeam";
 
 const ConfigurationPage = () => {
   return (
@@ -16,6 +17,7 @@ const ConfigurationPage = () => {
         <TurnConfiguration />
       </div>
       <WeekStarConfig />
+      <PrefixTeam/>
     </div>
   );
 };  

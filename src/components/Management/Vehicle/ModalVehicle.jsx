@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { useHandleFormSubmit } from "@/hooks/useMutation";
 import IconClose from "@/icons/IconClose";
