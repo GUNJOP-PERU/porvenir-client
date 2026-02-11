@@ -358,17 +358,17 @@ const TruckTracking = () => {
                   <div className="flex flex-col items-start gap-1">
                     <span
                       className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
-                          ? "bg-green-100 text-green-800"
-                          : truck.status
-                                .toLowerCase()
-                                .includes("mantenimiento") ||
-                              truck.status
-                                .toLowerCase()
-                                .includes("inoperativo") ||
-                              truck.status.toLowerCase().includes("demora")
-                            ? "bg-[#ff758f] text-white"
-                            : "bg-red-100 text-red-800"
-                      }`}
+                        ? "bg-green-100 text-green-800"
+                        : truck.status
+                          .toLowerCase()
+                          .includes("mantenimiento") ||
+                          truck.status
+                            .toLowerCase()
+                            .includes("inoperativo") ||
+                          truck.status.toLowerCase().includes("demora")
+                          ? "bg-[#ff758f] text-white"
+                          : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {truck.status === "operativo"
                         ? "Operativo"
@@ -733,15 +733,29 @@ const TruckTracking = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [beaconMenuOpen]);
 
+  const [isMapOffline, setIsMapOffline] = useState(true);
+
   return (
     <div className="h-full w-full bg-black relative">
+      <div className="absolute top-4 right-16 z-[1000] bg-white/90 p-2 rounded-md shadow-md backdrop-blur-sm border border-zinc-200">
+        <label className="flex items-center gap-2 text-xs font-bold text-zinc-700 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={isMapOffline}
+            onChange={(e) => setIsMapOffline(e.target.checked)}
+            className="accent-blue-600 w-4 h-4 cursor-pointer"
+          />
+          Modo Offline
+        </label>
+      </div>
+
       <div className="h-full w-full">
         <MapContainer
           className="z-0"
           center={[mapConfig.centerLat, mapConfig.centerLng]}
           zoom={15}
-          minZoom={16.5}
-          maxZoom={17.4}
+          minZoom={15}
+          maxZoom={18}
           zoomControl={false}
           doubleClickZoom={false}
           style={{ height: "100%", width: "100%" }}
@@ -757,8 +771,11 @@ const TruckTracking = () => {
           bearing={35}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution={isMapOffline ? 'Offline Mode' : '&copy; <a href="https://www.esri.com/">Esri</a>'}
+            url={isMapOffline
+              ? "/maps/tiles/{z}/{x}/{y}.png"
+              : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            }
           />
           {/* <ZoomControl position="bottomleft" /> */}
           {markers}
