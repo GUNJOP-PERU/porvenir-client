@@ -1,8 +1,6 @@
 import PlanDetails from "@/components/Management/PlanMonth/PlanDetails";
 import PlanItems from "@/components/Management/PlanMonth/PlanItems";
-import { columns } from "@/components/Management/PlanWeek/columns";
 import PageHeader from "@/components/PageHeader";
-import { DataTable } from "@/components/Table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -12,8 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
-import IconDay from "@/icons/IconDay";
-import IconNight from "@/icons/IconNight";
 import { countItems } from "@/lib/utilsGeneral";
 import dayjs from "dayjs";
 import { CircleFadingPlus } from "lucide-react";
@@ -27,8 +23,8 @@ function PlanWeek() {
   const {
     data = [],
     isFetching,
-    isError,
-    isLoading,
+    // isError,
+    // isLoading,
     refetch,
   } = useFetchData(
     "planWeek",
@@ -53,17 +49,13 @@ function PlanWeek() {
   const currentYear = dayjs().year();
   const years = Array.from({ length: 3 }, (_, i) => currentYear - 2 + i);
 
-  const updateDate = (month, year) => {
-    setSelectedDate(dayjs().year(year).month(month).startOf("month"));
-  };
-
-useEffect(() => {
-  if (data?.length > 0) {
-    setSelectedPlan(data[0]); 
-  } else {
-    setSelectedPlan(null);
-  }
-}, [data]);
+  useEffect(() => {
+    if (data?.length > 0) {
+      setSelectedPlan(data[0]);
+    } else {
+      setSelectedPlan(null);
+    }
+  }, [data]);
 
   return (
     <>

@@ -1,11 +1,10 @@
+/* eslint-disable react/prop-types */
 import { dataFase, dataZona } from "@/lib/data";
-import Handsontable from "handsontable/base";
+import { normalizarFase, normalizarTajo, normalizarZona } from "@/lib/utilsGeneral";
 import { HotTable } from "@handsontable/react-wrapper";
-import clsx from "clsx";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
-import { useEffect, useMemo, useState } from "react";
-import { normalizarTajo, normalizarZona, normalizarFase } from "@/lib/utilsGeneral";
+import { useEffect, useMemo } from "react";
 
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -16,7 +15,7 @@ export const PlanContent = ({
   dataLaborList,
   loadingGlobal,
   setInvalidLabors,
-  heightSize = "normal",
+  // heightSize = "normal",
 }) => {
   const isLaborInList = (laborName) => {
     return dataLaborList?.some((item) => item.name === laborName);
@@ -147,7 +146,6 @@ export const PlanContent = ({
         autoWrapCol={true}
         autoColumnSize={true}
         columnSorting={false}
-        maxCols={Object.keys(dataHotTable[0] || {}).length}
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {

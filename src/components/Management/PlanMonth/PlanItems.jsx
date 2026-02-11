@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { formatDay, formatFecha, getMonthName } from "@/lib/utilsGeneral";

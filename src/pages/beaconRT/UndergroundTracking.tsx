@@ -33,6 +33,7 @@ import Rute from "@/components/Dashboard/Tracking/Rute";
 import { MapLocationPicker } from "@/components/Dashboard/Tracking/MapLocationPicker";
 import { deleteDataRequest } from "@/api/api";
 import { ZoneModal } from "@/components/Dashboard/Tracking/ZoneModal";
+import { ArrowLeft, Crosshair, Plus } from "lucide-react";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -82,6 +83,7 @@ const UndergroundTracking = () => {
   const [editingBeacon, setEditingBeacon] = useState<Beacon | null>(null);
   const [mapMode, setMapMode] = useState<MapMode>("idle");
   const [beaconMenuOpen, setBeaconMenuOpen] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const [selectedTruck, setSelectedTruck] = useState<{
     truck: BeaconTruckStatus;
@@ -426,48 +428,75 @@ const UndergroundTracking = () => {
     return result;
   }, [filteredData, createCustomIcon, selectedTruck, beaconByMac]);
 
+  const handleDeleteBeacon = useCallback(
+    async (beacon: Beacon) => {
+      if (!window.confirm(`¿Eliminar el beacon "${beacon.description}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await deleteDataRequest(`zone/${beacon._id}`);
+
+        if (response?.status === 200) {
+          console.log("Zona eliminado correctamente");
+          refetchBeacons();
+        } else {
+          throw new Error("Error al eliminar");
+        }
+      } catch (error) {
+        console.error("Error al eliminar zona:", error);
+      } finally {
+        setBeaconMenuOpen(null);
+      }
+    },
+    [refetchBeacons],
+  );
   const renderBeacons = useCallback(() => {
-    return dataZones
-      .map((beacon: Beacon) => {
-         const count = trucksByBeacon.get(beacon._id) || 0;
-        const color = beacon.color || "#999";
-        const radius = beacon.radius || 60;
-        const radiusInDegrees = radius / 111320;
+    return dataZones.map((beacon: Beacon) => {
+      const count = trucksByBeacon.get(beacon._id) || 0;
+      const color = beacon.color || "#999";
+      const radius = beacon.radius || 60;
+      const radiusInDegrees = radius / 111320;
 
-        const labelPosition: [number, number] = [
-          beacon.position.latitud + radiusInDegrees,
-          beacon.position.longitud,
-        ];
+      const labelPosition: [number, number] = [
+        beacon.position.latitud + radiusInDegrees,
+        beacon.position.longitud,
+      ];
 
-        const isMenuOpen = beaconMenuOpen === beacon._id;
+      const isMenuOpen = beaconMenuOpen === beacon._id;
 
-        return (
-          <Fragment key={beacon._id}>
-            <Circle
-              center={[beacon.position.latitud, beacon.position.longitud]}
-              radius={radius}
-              pathOptions={{
-                color,
-                fillColor: "black",
-                weight: 2,
-                opacity: 0.9,
-                fillOpacity: 0.5,
-                dashArray: "16,4",
-              }}
-              eventHandlers={
-                mapMode === "idle"
-                  ? {
-                      click: () => {
-                        setBeaconMenuOpen(beacon._id);
-                      },
-                    }
-                  : {}
-              }
-            />
-            <Marker
-              position={labelPosition}
-              icon={L.divIcon({
-                html: `
+      return (
+        <Fragment key={beacon._id}>
+          <Circle
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
+            center={[beacon.position.latitud, beacon.position.longitud]}
+            radius={radius}
+            pathOptions={{
+              color,
+              fillColor: "black",
+              weight: 2,
+              opacity: 0.9,
+              fillOpacity: 0.5,
+              dashArray: "16,4",
+            }}
+          />
+          <Marker
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
+            position={labelPosition}
+            icon={L.divIcon({
+              html: `
                 <div style="
                   white-space: nowrap;
                   display: flex;
@@ -485,8 +514,8 @@ const UndergroundTracking = () => {
                   font-weight: bold;
                   line-height: 0.8rem;
                   text-transform: uppercase;
-                  cursor: ${mapMode === "idle" ? "pointer" : "crosshair"};
-                  pointer-events: ${mapMode === "idle" ? "auto" : "none"};
+                  cursor: ${isEditMode && mapMode === "idle" ? "pointer" : "crosshair"};
+                  pointer-events: ${isEditMode && mapMode === "idle" ? "auto" : "none"};
                   ${isMenuOpen ? "box-shadow: 2px 2px 2px 4px black;" : ""}
                 ">
                   <span style="
@@ -503,30 +532,21 @@ const UndergroundTracking = () => {
                   ${beacon.description}
                 </div>
               `,
-                className: "geofence-label",
-                iconSize: [0, 0],
-                iconAnchor: [0, 0],
-              })}
-              eventHandlers={
-                mapMode === "idle"
-                  ? {
-                      click: () => {
-                        setBeaconMenuOpen(beacon._id);
-                      },
-                    }
-                  : {}
-              }
-            />
+              className: "geofence-label",
+              iconSize: [0, 0],
+              iconAnchor: [0, 0],
+            })}
+          />
 
-            {isMenuOpen && mapMode === "idle" && (
-              <Marker
-                position={[
-                  beacon.position.latitud + radiusInDegrees * 1.5,
-                  beacon.position.longitud,
-                ]}
-                zIndexOffset={99}
-                icon={L.divIcon({
-                  html: `
+          {isMenuOpen && mapMode === "idle" && (
+            <Marker
+              position={[
+                beacon.position.latitud + radiusInDegrees * 1.5,
+                beacon.position.longitud,
+              ]}
+              zIndexOffset={99}
+              icon={L.divIcon({
+                html: `
                   <div style="
                     display: flex;
                     flex-direction: column;
@@ -626,40 +646,23 @@ const UndergroundTracking = () => {
                     </button>
                   </div>
                 `,
-                  className: "beacon-context-menu",
-                  iconSize: [0, 0],
-                  iconAnchor: [0, 0],
-                })}
-              />
-            )}
-          </Fragment>
-        );
-      });
-  }, [dataZones, trucksByBeacon, mapMode, beaconMenuOpen]);
-
-  const handleDeleteBeacon = useCallback(
-    async (beacon: Beacon) => {
-      if (!window.confirm(`¿Eliminar el beacon "${beacon.description}"?`)) {
-        return;
-      }
-
-      try {
-        const response = await deleteDataRequest(`zone/${beacon._id}`);
-
-        if (response?.status === 200) {
-          console.log("Zona eliminado correctamente");
-          refetchBeacons();
-        } else {
-          throw new Error("Error al eliminar");
-        }
-      } catch (error) {
-        console.error("Error al eliminar zona:", error);
-      } finally {
-        setBeaconMenuOpen(null);
-      }
-    },
-    [refetchBeacons],
-  );
+                className: "beacon-context-menu",
+                iconSize: [0, 0],
+                iconAnchor: [0, 0],
+              })}
+            />
+          )}
+        </Fragment>
+      );
+    });
+  }, [
+    dataZones,
+    trucksByBeacon,
+    mapMode,
+    beaconMenuOpen,
+    isEditMode,
+    handleDeleteBeacon,
+  ]);
 
   // 3️⃣manejar clicks en el menú
   useEffect(() => {
@@ -723,7 +726,6 @@ const UndergroundTracking = () => {
 
     return () => document.removeEventListener("click", handleClickOutside);
   }, [beaconMenuOpen]);
-
 
   const filteredDataRute = useMemo(() => {
     if (!Array.isArray(data)) return [];
@@ -810,7 +812,7 @@ const UndergroundTracking = () => {
             onSelect={(lat, lng) => {
               if (mapMode === "create") {
                 setNewBeaconPosition({
-                  position: { latitud: lat, longitud: lng }
+                  position: { latitud: lat, longitud: lng },
                 });
                 setMapMode("idle");
                 setOpenCreateBeacon(true);
@@ -853,37 +855,60 @@ const UndergroundTracking = () => {
 
       <button
         onClick={() => {
-          if (mapMode === "create") {
-            setMapMode("idle");
-            setNewBeaconPosition(null);
-          } else {
-            setMapMode("create");
-            setEditingBeacon(null);
-          }
+          setIsEditMode(true); // solo muestra UI
+          setMapMode("idle"); // NO crea nada
+          setEditingBeacon(null);
         }}
-        className={clsx(
-          "absolute bottom-3 left-2 z-50 px-4 py-2 rounded-lg shadow font-bold text-xs h-8 transition-colors",
-          mapMode === "create"
-            ? "bg-green-600 text-white hover:bg-green-700"
-            : "bg-blue-600 text-white hover:bg-blue-700",
-        )}
+        className="absolute bottom-12 left-2.5 z-50 size-[34px] rounded-lg shadow bg-primary text-white hover:bg-primary/80 flex items-center justify-center"
       >
-        {mapMode === "create" ? "Click en el mapa…" : "+ Agregar Beacon"}
+        <Crosshair className="size-5" />
       </button>
-      {mapMode === "move" && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex gap-2">
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
-            Haz click en el mapa para mover este punto
+
+      {isEditMode && (
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div className="bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold text-center pointer-events-none">
+            {mapMode === "idle" && "Click en una zona para ver opciones"}
+            {mapMode === "create" && "Haz click en el mapa para crear un punto"}
+            {mapMode === "move" && "Haz click en el mapa para mover este punto"}
           </div>
-          <button
-            onClick={() => {
-              setMapMode("idle");
-              setEditingBeacon(null);
-            }}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-600"
-          >
-            Cancelar
-          </button>
+          <div className="flex gap-2">
+            {mapMode === "idle" && (
+              <button
+                onClick={() => {
+                  setBeaconMenuOpen(null);
+                  setMapMode("create");
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <Plus className="size-3" />
+                Crear Nuevo
+              </button>
+            )}
+            {mapMode !== "idle" && (
+              <button
+                onClick={() => {
+                  setMapMode("idle");
+                  setEditingBeacon(null);
+                  setNewBeaconPosition(null);
+                }}
+                className="bg-zinc-600 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <ArrowLeft className="size-3" />
+                Volver Anterior
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditMode(false);
+                setMapMode("idle");
+                setEditingBeacon(null);
+                setNewBeaconPosition(null);
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-all ease-in duration-300"
+            >
+              Salir
+            </button>
+          </div>
         </div>
       )}
     </div>

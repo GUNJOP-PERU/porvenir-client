@@ -309,14 +309,12 @@ export const ModalVehicle = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col col-span-2">
                     <FormLabel>Descripción</FormLabel>
-
                     <Input
                       type="text"
                       disabled={loadingGlobal}
                       placeholder="Ej. Camión de acarreo de alta capacidad"
                       {...field}
                     />
-
                     <FormMessage />
                   </FormItem>
                 )}

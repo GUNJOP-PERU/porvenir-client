@@ -1,8 +1,6 @@
-import { columns } from "@/components/Management/PlanMonth/columns";
 import PlanDetails from "@/components/Management/PlanMonth/PlanDetails";
 import PlanItems from "@/components/Management/PlanMonth/PlanItems";
 import PageHeader from "@/components/PageHeader";
-import { DataTable } from "@/components/Table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   Select,

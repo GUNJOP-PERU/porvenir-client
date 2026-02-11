@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
+import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import {
   Popover,
@@ -19,19 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useFetchData } from "@/hooks/useGlobalQuery";
 import IconEdit from "@/icons/IconEdit";
-import { dataTurn } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { format, getDaysInMonth, getMonth, getYear } from "date-fns";
+import { format, getMonth, getYear, startOfWeek } from "date-fns";
 import { es } from "date-fns/locale";
+import dayjs from "dayjs";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { useState } from "react";
 import { FilterItems } from "../PlanDay/PlanDayFilterItems";
-import { Calendar } from "@/components/ui/calendar";
-import { startOfWeek } from "date-fns";
-import { useFetchData } from "@/hooks/useGlobalQuery";
-import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
-import dayjs from "dayjs";
 
 export const PlanHeader = ({
   form,
@@ -52,9 +49,8 @@ export const PlanHeader = ({
     }
   );
 
-  const { allWeeks, currentWeek } = generateNormalWeeks();
+  const { allWeeks } = generateNormalWeeks();
 
-  const inicioSemanaActual = startOfWeek(new Date(), { weekStartsOn: 1 });
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const months = [

@@ -1,33 +1,32 @@
+/* eslint-disable react/prop-types */
 import { useFetchData } from "@/hooks/useGlobalQuery";
+import { normalizarFase, normalizarTajo, normalizarZona } from "@/lib/utilsGeneral";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import {
-  ArrowDownToLine,
   CircleFadingPlus,
   SendHorizontal,
-  Server,
-  Upload,
+  Server
 } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import readXlsxFile from "read-excel-file";
-import { normalizarTajo, normalizarFase, normalizarZona } from "@/lib/utilsGeneral";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 
+import { postDataRequest, putDataRequest } from "@/api/api";
+import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 import { PlanContent } from "@/components/Management/PlanMonth/PlanContent";
 import { PlanHeader } from "@/components/Management/PlanMonth/PlanHeader";
-import IconWarning from "@/icons/IconWarning";
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import { postDataRequest, putDataRequest } from "@/api/api";
-import { useToast } from "@/hooks/useToaster";
-import { RiFileExcel2Line } from "react-icons/ri";
-import { generateNormalWeeks } from "@/components/Dashboard/WeekReport/MiningWeeksSelect";
 import { DataModelExcel } from "@/components/Table/DataModelExcel";
+import { useToast } from "@/hooks/useToaster";
+import IconWarning from "@/icons/IconWarning";
+import { useQueryClient } from "@tanstack/react-query";
+import { RiFileExcel2Line } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   dob: z

@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+import { postDataRequest } from "@/api/api";
+import { DataModelExcel } from "@/components/Table/DataModelExcel";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,40 +10,34 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useFetchData } from "@/hooks/useGlobalQuery";
+import { useToast } from "@/hooks/useToaster";
 import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
-import { postDataRequest } from "@/api/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import dayjs from "dayjs";
-import {
-  ArrowDownToLine,
-  CircleFadingPlus,
-  SendHorizontal,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { PlanContent } from "./PlanDayContent";
-import { PlanHeader } from "./PlanDayHeader";
-import { FrontLaborSubHeader } from "./FrontLaborSubHeader";
 import IconWarning from "@/icons/IconWarning";
-import { useQueryClient } from "@tanstack/react-query";
 import {
-  getDefaultShift,
   getDefaultDateObj,
-  normalizarTajo,
+  getDefaultShift,
   normalizarFase,
+  normalizarTajo,
   normalizarZona,
 } from "@/lib/utilsGeneral";
-import { useToast } from "@/hooks/useToaster";
-import readXlsxFile from "read-excel-file";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { CircleFadingPlus, SendHorizontal } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { RiFileExcel2Line } from "react-icons/ri";
-import { DataModelExcel } from "@/components/Table/DataModelExcel";
+import readXlsxFile from "read-excel-file";
+import { z } from "zod";
+import { FrontLaborSubHeader } from "./FrontLaborSubHeader";
+import { PlanContent } from "./PlanDayContent";
+import { PlanHeader } from "./PlanDayHeader";
 
 const FormSchema = z.object({
   dob: z.date({ required_error: "*Se requiere una fecha." }),
   shift: z.string().min(2, { message: "*Turno." }),
-  selectedItems: z.array(z.string()).nonempty({ message: "*Labor." }),
+  selectedItems: z.array(z.string()).optional(),
 });
 
 export const ModalPlanDay = ({ isOpen, onClose }) => {
@@ -61,7 +58,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       staleTime: 0,
       refetchOnMount: "always",
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   useEffect(() => {
@@ -88,14 +85,14 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
     setDataHotTable((prevData) =>
       prevData.map((row) => {
         const oldDateKey = Object.keys(row).find((key) =>
-          key.match(/^\d{4}-\d{2}-\d{2}$/)
+          key.match(/^\d{4}-\d{2}-\d{2}$/),
         );
 
         if (!oldDateKey) return row;
 
         const { [oldDateKey]: oldValue, ...rest } = row;
         return { ...rest, [formattedDate]: oldValue };
-      })
+      }),
     );
   };
 
@@ -110,7 +107,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       const newLabors = newItems
         .filter((item) => !existingLabors.includes(item))
         .map((labor) => ({
-          zona:"ALTA",
+          zona: "ALTA",
           labor,
           fase: "MINERAL",
           [formattedDate]: Math.floor(Math.random() * 100) * 100,
@@ -123,7 +120,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
   // Eliminar labores que ya no estén seleccionadas
   const handleRemoveLabor = (selectedItems) => {
     setDataHotTable((prevData) =>
-      prevData.filter((row) => selectedItems.includes(row.labor))
+      prevData.filter((row) => selectedItems.includes(row.labor)),
     );
   };
 
@@ -144,14 +141,17 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
 
   const onSubmit = (data) => {
     setLoadingGlobal(true);
-
     setShowLoader(true);
 
     setTimeout(() => {
       setShowLoader(false);
       handleDateChange(data.dob);
-      handleAddLabor(data.selectedItems);
-      handleRemoveLabor(data.selectedItems);
+
+      // 🔑 Si no hay items seleccionados, usar array con string vacío
+      const items = data.selectedItems.length > 0 ? data.selectedItems : [""];
+
+      handleAddLabor(items);
+      handleRemoveLabor(items);
       setLoadingGlobal(false);
     }, 1500);
   };
@@ -162,7 +162,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
 
     const datosFinales = dataHotTable.flatMap((row) => {
       const fechas = Object.keys(row).filter((key) =>
-        key.match(/^\d{4}-\d{2}-\d{2}$/)
+        key.match(/^\d{4}-\d{2}-\d{2}$/),
       );
 
       return fechas.map((fecha) => ({
@@ -201,7 +201,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
         addToast({
           title: "Error al enviar los datos",
           message:
-            error.response.data.message ||
+            response.data.message ||
             "Ocurrió un error al enviar los datos.",
           variant: "destructive",
         });
@@ -262,7 +262,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
       const headers = data[0].map((h) => (h ? String(h).trim() : ""));
       const zonaIndex = headers.findIndex((h) => h.toLowerCase() === "zona");
       const laborIndex = headers.findIndex(
-        (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo"
+        (h) => h.toLowerCase() === "labor" || h.toLowerCase() === "tajo",
       );
       const faseIndex = headers.findIndex((h) => h.toLowerCase() === "fase");
       if (zonaIndex === -1) {
@@ -375,7 +375,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
             dateColumnMap[formattedDate] = index;
           } else {
             console.warn(
-              `Advertencia: Fecha '${formattedDate}' no encontrada en la lista de headers esperados.`
+              `Advertencia: Fecha '${formattedDate}' no encontrada en la lista de headers esperados.`,
             );
           }
         }
@@ -505,11 +505,12 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) => {
-        if (!loadingGlobal) onClose(open);
-      }}
-      modal={true}
+      // onOpenChange={(open) => {
+      //   if (!loadingGlobal) onClose(open);
+      // }}
+      modal={false}
     >
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-40" />}
       <DialogContent className="w-[750px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
@@ -569,7 +570,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                     loadingGlobal={loadingGlobal}
                     downloadTemplate={"planDay/download/modelo-turno"}
                     title={"Plan Turno"}
-                  />                  
+                  />
                 </div>
               )}
             </div>
@@ -599,7 +600,7 @@ export const ModalPlanDay = ({ isOpen, onClose }) => {
                   <li>
                     Para <strong>añadir</strong> una labor, seleccione un ítem
                     en el botón
-                    <span className="font-semibold"> "Labor"</span> y haga clic
+                    <span className="font-semibold">&quot;Labor&quot;</span> y haga clic
                     en <strong>Actualizar</strong>.
                   </li>
                   <li>

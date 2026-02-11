@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,16 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useFetchData } from "@/hooks/useGlobalQuery";
+import IconEdit from "@/icons/IconEdit";
 import { dataTurn } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowDownToLine, CalendarIcon, CircleFadingPlus } from "lucide-react";
+import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./PlanDayFilterItems";
-import IconEdit from "@/icons/IconEdit";
-import { ButtonRefresh } from "../../../components/ButtonRefresh";
-import { useFetchData } from "@/hooks/useGlobalQuery";
-import { RiFileExcel2Line } from "react-icons/ri";
 
 export const PlanHeader = ({
   form,
@@ -42,7 +41,7 @@ export const PlanHeader = ({
     data: dataLaborList,
     refetch: refetchLaborList,
     isFetching: isLaborListFetching,
-    isLoading: loadingLaborList,
+    // isLoading: loadingLaborList,
   } = useFetchData("frontLabor-current", "frontLabor/current", {
     enabled: true,
     staleTime: 0,
