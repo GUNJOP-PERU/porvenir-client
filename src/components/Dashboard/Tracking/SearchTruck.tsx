@@ -1,22 +1,10 @@
-import {
-  ubicationBocamina,
-  maintenanceLocation,
-  superficieLocation,
-} from "@/pages/beaconRT/UbicationLocation";
-import type { BeaconTruckStatus } from "@/types/Beacon";
+import type { Beacon, BeaconTruckStatus } from "@/types/Beacon";
 import clsx from "clsx";
-import { Search, X } from "lucide-react";
+import { RefreshCcw, Search, X } from "lucide-react";
 import { useState, useMemo } from "react";
 
-export default function SearchTruck({
-  data,
-  onTruckSelect,
-  selectedTruck,
-  isLoading,
-  ubicationData = [],
-  includeExtraLocations = false,
-}: {
-  data: BeaconTruckStatus[];
+interface Props {
+  data: Beacon[];
   onTruckSelect: (truck: BeaconTruckStatus) => void;
   selectedTruck: {
     truck: BeaconTruckStatus;
@@ -24,32 +12,34 @@ export default function SearchTruck({
     position: [number, number];
   } | null;
   isLoading: boolean;
-  ubicationData: any[];
   includeExtraLocations?: boolean;
-}) {
+  reload: () => void;
+}
+
+export default function SearchTruck({
+  data,
+  onTruckSelect,
+  selectedTruck,
+  isLoading,
+  includeExtraLocations = false,
+  reload,
+}: Props) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
   const VISIBLE_COUNT = 3;
 
-  const activeLocations = [
-    ...ubicationData,
-    ...(includeExtraLocations
-      ? [...ubicationBocamina, ...maintenanceLocation, ...superficieLocation]
-      : []),
-  ];
-
-  const trucksPerArea = activeLocations.map((ubication) => {
+  const trucksPerArea = data.map((ubication) => {
     const trucksInArea = data.filter((truck) => {
       if (!truck.lastUbicationMac || !ubication.mac) return false;
 
       // Si la ubicación tiene múltiples MACs
       if (Array.isArray(ubication.mac)) {
         return ubication.mac.some(
-          (mac: string) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
+          (mac: string) =>
+            mac.toLowerCase() === truck.lastUbicationMac.toLowerCase(),
         );
       }
 
-      // Si solo tiene una MAC (string)
       return (
         ubication.mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
       );
@@ -59,14 +49,13 @@ export default function SearchTruck({
       area: ubication.description,
       color: ubication.color || "#0EB1D2",
       count: trucksInArea.length,
-     
     };
   });
 
   const filtered = useMemo(() => {
     if (!query) return [];
     return data.filter((truck) =>
-      truck.name.toLowerCase().includes(query.toLowerCase())
+      truck.name.toLowerCase().includes(query.toLowerCase()),
     );
   }, [data, query]);
 
@@ -76,34 +65,43 @@ export default function SearchTruck({
 
   const totalTrucksInAreas = trucksPerArea.reduce((acc, a) => acc + a.count, 0);
 
-  
   return (
     <div className="absolute top-2 left-2 bg-black/75 rounded-xl p-4 z-10 flex flex-col gap-3 w-60 border border-zinc-800 transition-all duration-300 ease-in-out">
-      <div className="flex flex-col">
-        <div className="flex items-center space-x-1">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              isLoading ? "bg-red-600" : "bg-green-600 animate-pulse"
-            }`}
-          ></div>
-          <span
-            className={`text-xs font-bold leading-none ${
-              isLoading ? "text-red-500" : "text-green-500"
-            }`}
-          >
-            {isLoading ? "DESCONECTADO" : "CONECTADO"}
-          </span>
+      <div className="flex justify-between gap-1">
+        <div className="flex flex-col">
+          <div className="flex items-center space-x-1">
+            <div
+              className={`w-2 h-2 rounded-full ${
+                isLoading ? "bg-red-600" : "bg-green-600 animate-pulse"
+              }`}
+            ></div>
+            <span
+              className={`text-xs font-bold leading-none ${
+                isLoading ? "text-red-500" : "text-green-500"
+              }`}
+            >
+              {isLoading ? "DESCONECTADO" : "CONECTADO"}
+            </span>
+          </div>
+          <p className="text-[10px] text-green-600 mt-1 leading-none ml-3">
+            Tracking {includeExtraLocations ? "Superficie" : "Subterráneo"}
+          </p>
         </div>
-        <p className="text-[10px] text-green-600 mt-1 leading-none ml-3">
-          Tracking {includeExtraLocations ? "Superficie" : "Subterráneo"}
-        </p>
+        <div>
+          <button
+            className="bg-zinc-700 size-7 rounded-md flex items-center justify-center"
+            onClick={reload}
+          >
+            <RefreshCcw className="h-3.5 w-3.5 text-zinc-50" />
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1 relative">
         <div className="relative">
           <input
             type="text"
-            placeholder="Buscar por camion..."
+            placeholder="Buscar por equipo..."
             className="w-full h-7 rounded-lg border border-zinc-500 bg-transparent text-white placeholder:text-zinc-400 text-xs px-2 outline-none focus:border-primary transition-all ease-in-out duration-300 pl-6"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -152,7 +150,7 @@ export default function SearchTruck({
                 "text-xs",
                 selectedTruck.truck.status === "operativo"
                   ? "text-green-500"
-                  : "text-red-500"
+                  : "text-red-500",
               )}
             >
               Estado: {selectedTruck.truck.status}
@@ -168,17 +166,15 @@ export default function SearchTruck({
             | {trucksPerArea.length} | ÁREAS
           </p>
           <p className="text-[10px] text-zinc-400 font-bold">
-            CAMIONES | {totalTrucksInAreas} |
+            | {totalTrucksInAreas} | EQUIPOS
           </p>
         </div>
 
-        <div        
-          className="flex flex-col gap-1 bg-black/70 rounded-lg pt-2.5 px-2"
-        >
+        <div className="flex flex-col gap-1 bg-black/70 rounded-lg pt-2.5 px-2">
           {visibleAreas.map((area, i) => (
             <div
               key={i}
-              className="flex items-center justify-between gap-1 hover:bg-white/20 cursor-pointer select-none"
+              className="flex items-center justify-between gap-1 hover:bg-white/20 cursor-pointer select-none uppercase truncate"
             >
               <div className="flex items-center gap-1">
                 <span
@@ -198,13 +194,12 @@ export default function SearchTruck({
                 <p
                   className={clsx(
                     "text-[11px] leading-none",
-                    area.count === 0 && "opacity-50"
+                    area.count === 0 && "opacity-50",
                   )}
                   style={{ color: area.color }}
                 >
                   {area.count}
                 </p>
-                
               </div>
             </div>
           ))}

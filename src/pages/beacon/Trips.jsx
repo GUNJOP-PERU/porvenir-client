@@ -1,3 +1,4 @@
+import { MultiSelect } from "@/components/Configuration/MultiSelect";
 import { columns } from "@/components/Dashboard/Trips/TripsColumns";
 import ExcelExportButton from "@/components/ExcelExportButton";
 import PageHeader from "@/components/PageHeader";
@@ -26,6 +27,7 @@ import { useState, useMemo } from "react";
 export default function PageTrips() {
   const [date, setDate] = useState(getDefaultDate());
   const [selectedUnit, setSelectedUnit] = useState("all");
+  const [routeFilter, setRouteFilter] = useState([]);
 
   const {
     data = [],
@@ -41,15 +43,30 @@ export default function PageTrips() {
     filters: `startDate=${date}&endDate=${date}`,
   });
 
+  const routeOptions = useMemo(() => {
+    const routes = (data || []).map(
+      (t) => `${t.startUbication} → ${t.endUbication}`,
+    );
+    return Array.from(new Set(routes)).sort();
+  }, [data]);
+
   const uniqueUnits = useMemo(() => {
     const units = data.map((trip) => trip.unit).filter(Boolean);
     return [...new Set(units)].sort((a, b) => a.localeCompare(b));
   }, [data]);
 
   const filteredData = useMemo(() => {
-    if (selectedUnit === "all") return data;
-    return data.filter((trip) => trip.unit === selectedUnit);
-  }, [data, selectedUnit]);
+    let result = data;
+    if (selectedUnit !== "all") {
+      result = result.filter((trip) => trip.unit === selectedUnit);
+    }
+    if (routeFilter.length > 0) {
+      result = result.filter((trip) =>
+        routeFilter.includes(`${trip.startUbication} → ${trip.endUbication}`),
+      );
+    }
+    return result;
+  }, [data, selectedUnit, routeFilter]);
 
   return (
     <>
@@ -72,7 +89,17 @@ export default function PageTrips() {
         tableType={"trips"}
         toolbarContent={
           <>
-           <ExcelExportButton
+            
+              <div>
+                <MultiSelect
+                  placeholder={"Selecciona ruta..."}
+                  options={routeOptions.map((r) => ({ value: r, label: r }))}
+                  value={routeFilter}
+                  onChange={setRouteFilter}
+                />
+              </div>
+            
+            <ExcelExportButton
               data={data}
               filename="viajes_realizados"
               sheetName="Resumen Viajes Realizados"

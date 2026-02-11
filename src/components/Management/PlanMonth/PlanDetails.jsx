@@ -37,7 +37,7 @@ export default function PlanDetails({ plan }) {
   }, {});
 
   return (
-    <div className="mt-4 ">
+    <div className="w-[85%]">
       <div className="mb-3">
         <h1 className="text-base font-extrabold">
           Planificación /{" "}
@@ -51,7 +51,7 @@ export default function PlanDetails({ plan }) {
           {planDay.totalTonnage.toLocaleString("es-MX")} TM
         </span>
       </div>
-      <div className="overflow-x-auto h-[50vh] w-full overflow-auto">
+      <div className="overflow-x-auto w-full overflow-auto">
         <table className="min-w-max border border-[#FF500030] text-sm select-none">
           <thead className="sticky top-0 z-1">
             <tr>

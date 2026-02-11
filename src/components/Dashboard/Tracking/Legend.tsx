@@ -16,7 +16,8 @@ type Plan = {
 export default function Legend({ data = [] }: { data: BeaconTruckStatus[] }) {
   const { data: planData = [] } = useFetchData<Plan[]>(
     "plan-extract-realtime",
-    "planDay/byDay?type=modificado",
+    "planDay/byDay?type=modificado", 
+    undefined,
     { refetchInterval: 10000 }
   );
 

@@ -73,7 +73,7 @@ const TripsDescriptionRT = () => {
   return (
     <div className="flex flex-col flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte especifico de viajes en tiempo real"
+        title="Linea de Tiempo por Turno en tiempo real"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}

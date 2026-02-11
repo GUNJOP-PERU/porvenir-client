@@ -113,7 +113,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Cancha_100"
                       {...field}
                     />
                     <FormMessage />
@@ -129,7 +129,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Cancha_100"
                       {...field}
                     />
                     <FormMessage />
@@ -162,7 +162,7 @@ export const ModalWap = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. destino"
                       {...field}
                     />
                     <FormMessage />

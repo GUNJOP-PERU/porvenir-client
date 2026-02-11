@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { columns } from "./Columns/TurnColumns";
 import { DataTable } from "./Table/TurnDataTable";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,10 @@ import {
 } from "@/hooks/useGlobalQuery";
 import { countItems } from "@/lib/utilsGeneral";
 import { RefreshCcw } from "lucide-react";
-import { useGlobalData } from "@/context/GlobalDataContext";
+// import { useGlobalData } from "@/context/GlobalDataContext";
 
 const TurnConfiguration = () => {
-  const { refreshGlobalData } = useGlobalData()
+  // const { refreshGlobalData } = useGlobalData()
   const {
     data = [],
     isFetching,
@@ -18,14 +17,13 @@ const TurnConfiguration = () => {
     isError,
     refetch
   } = useFetchData("shift", "shift");
-  console.log("Turn data:", data);
 
   return (
     <>
       <div className="flex flex-wrap gap-2 justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold leading-6">
+            <h1 className="text-lg font-bold leading-6">
               Gestión de turnos de trabajo
             </h1>
             <span className="text-[10px] text-zinc-500 bg-zinc-100 rounded-[6px] w-fit  h-5 flex items-center justify-center px-1 font-bold ">

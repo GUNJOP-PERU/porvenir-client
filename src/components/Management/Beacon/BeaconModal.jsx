@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -49,24 +50,24 @@ const FormSchema = z.object({
     .string()
     .min(1, { message: "*Ubicación requerida" })
     .transform((val) => val.trim()),
+  location: z
+    .string()
+    .min(1, { message: "*Ubicación requerida (sin espacios)" })
+    .transform((val) => val.replace(/\s+/g, "")),
   isActive: z.boolean().default(true),
 });
 
 export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
-  const { data: dataUbicationType } = useFetchData(
-    "ubications",
-    "beacon/ubications"
-  );
-  const { data: dataLaborList, refetch: refetchLaborList, isFetching: isLaborListFetching } = useFetchData(
-    "frontLabor-current",
-    "frontLabor/current",
-    {
-      enabled: true,
-      staleTime: 0,
-      refetchOnMount: "always",
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: dataLaborList,
+    refetch: refetchLaborList,
+    isFetching: isLaborListFetching,
+  } = useFetchData("frontLabor-current", "frontLabor/current", {
+    enabled: true,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+  });
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
   const handleFormSubmit = useHandleFormSubmit();
@@ -78,6 +79,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       type: dataCrud?.type || "",
       ubicationType: dataCrud?.ubicationType || "",
       ubication: dataCrud?.ubication || "",
+      location: dataCrud?.location || "",
       isActive: dataCrud?.isActive ?? true,
     },
   });
@@ -91,6 +93,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         type: dataCrud.type || "",
         ubicationType: dataCrud.ubicationType || "",
         ubication: dataCrud.ubication || "",
+        location: dataCrud.location || "",
         isActive: dataCrud.isActive ?? true,
       });
     } else {
@@ -99,6 +102,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
         type: "",
         ubicationType: "",
         ubication: "",
+        location: "",
         isActive: true,
       });
     }
@@ -116,13 +120,11 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     });
   }
 
-  const categories = Object.keys(dataUbicationType || {});
-
   useEffect(() => {
     if (!isEdit) {
       form.setValue("ubication", "");
     }
-  }, [form.watch("ubicationType")]);
+  }, [isEdit, form]);
 
   return (
     <Dialog
@@ -199,6 +201,37 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel className="font-bold text-blue-600">
+                      *Localización
+                    </FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. beacon"
+                      value={field.value}
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toLowerCase())
+                      }
+                    />
+                    {isEdit ? (
+                      <FormDescription className="text-[10px] leading-3 text-amber-600 font-semibold pl-2">
+                        ⚠️ Cambiar esto podría reasignar el beacon a otra zona
+                      </FormDescription>
+                    ) : (
+                      <FormDescription className="text-[11px] leading-3 text-blue-600 font-medium pl-2">
+                        ✓ Este beacon se asignará automáticamente a zonas con la
+                        misma localización
+                      </FormDescription>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={control}
@@ -214,13 +247,13 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                         {...field}
                       />
                       <ListItems
-                         column={""}
-                  title="Labor"
-                  options={dataLaborList}
-                  field={field}
-                  loadingGlobal={loadingGlobal}
-                  refetch={refetchLaborList}
-                  isFetching={isLaborListFetching}
+                        column={""}
+                        title="Labor"
+                        options={dataLaborList}
+                        field={field}
+                        loadingGlobal={loadingGlobal}
+                        refetch={refetchLaborList}
+                        isFetching={isLaborListFetching}
                       />
                     </div>
                     <FormMessage />

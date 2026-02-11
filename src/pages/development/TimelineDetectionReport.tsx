@@ -292,9 +292,9 @@ const TimelineDetectionReport = () => {
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
         <CardItem
           value={baseStats.totalUnits}
-          title="Total de Camiones"
+          title="Total de Equipos"
           valueColor="text-[#000000]"
-          unid="camiones"
+          unid="equipos"
         />
         <CardItem
           value={baseStats.totalMantanceTimeMin / 60}

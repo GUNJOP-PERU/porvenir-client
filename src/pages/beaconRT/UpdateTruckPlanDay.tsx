@@ -52,8 +52,11 @@ export default function UpdateTruckPlanDay() {
   );
   const { data: planData = [], refetch } = useFetchData<Plan[]>(
     "plan-extract-realtime",
-    `planDay/by-date-range?startDate=${getCurrentDay().startDateString}&endDate=${getCurrentDay().endDateString}&type=executed&shift=${getCurrentDay().shift}`,
-    "",
+    `planDay/by-date-range?startDate=${
+      getCurrentDay().startDateString
+    }&endDate=${getCurrentDay().endDateString}&type=executed&shift=${
+      getCurrentDay().shift
+    }`,
     {}
   );
 
@@ -93,7 +96,7 @@ export default function UpdateTruckPlanDay() {
     const unassigned = availableTrucks.filter((v) => !assignedIds.has(v._id));
 
     newColumns["disponibles"] = {
-      name: "Camiones disponibles",
+      name: "Equipos disponibles",
       color: "bg-[#3C1C1E]",
       titleColor: "text-[#D1686D]",
       isValid: false,
@@ -138,9 +141,13 @@ export default function UpdateTruckPlanDay() {
   }, [planData, availableTrucks, mineralTrips]);
 
   useEffect(() => {
-    if (!planData) return;
-    setColumns(columnsData);
-  }, [columnsData, planData]);
+    setColumns((prev) => {
+      if (JSON.stringify(prev) === JSON.stringify(columnsData)) {
+        return prev;
+      }
+      return columnsData;
+    });
+  }, [columnsData]);
 
   const onDragEnd = useCallback(
     async (result: any) => {
@@ -258,8 +265,8 @@ export default function UpdateTruckPlanDay() {
                           column.phase === "mineral"
                             ? "bg-[#134E4A] border-[#14B8A6]"
                             : column.phase === "desmonte"
-                              ? "bg-[#78350F] border-[#f59e0b]"
-                              : "bg-zinc-700 border-zinc-600"
+                            ? "bg-[#78350F] border-[#f59e0b]"
+                            : "bg-zinc-700 border-zinc-600"
                         )}
                       >
                         {column.phase === "mineral" ? (
@@ -274,8 +281,8 @@ export default function UpdateTruckPlanDay() {
                           column.phase === "mineral"
                             ? "text-[#14B8A6]"
                             : column.phase === "desmonte"
-                              ? "text-[#f59e0b]"
-                              : "text-zinc-600"
+                            ? "text-[#f59e0b]"
+                            : "text-zinc-600"
                         )}
                       >
                         {column.phase}

@@ -8,12 +8,14 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   flexRender,
+  type ColumnDef,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
 // Components
 import { Calendar } from "react-date-range";
 import PageHeader from "@/components/PageHeaderV2";
 import ExcelExportButton from "@/components/ExcelExportButton";
+import { MultiSelect } from "@/components/Configuration/MultiSelect";
 
 const BeaconDetectionTable = () => {
   const [shiftFilter, setShiftFilter] = useState<string>("dia");
@@ -27,6 +29,7 @@ const BeaconDetectionTable = () => {
     pageIndex: 0,
     pageSize: 20,
   });
+  const [routeFilter, setRouteFilter] = useState<string[]>([]);
 
   const {
     data = [],
@@ -34,149 +37,168 @@ const BeaconDetectionTable = () => {
     isError,
     isFetching,
     refetch,
-  } = useFetchData("beacon-detection", `beacon-track?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ''}`);
+  } = useFetchData(
+    "beacon-detection",
+    `beacon-track?startDate=${format(dateFilter, "yyyy-MM-dd")}&endDate=${format(dateFilter, "yyyy-MM-dd")}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+  );
 
-  const uniqueUnits = [...new Set(data.map(item => item.unit).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const routeOptions = useMemo(() => {
+    const routes = (data || []).map((t) => t.ubication);
+    return Array.from(new Set(routes)).sort();
+  }, [data]);
+
+  const uniqueUnits = [
+    ...new Set(data.map((item) => item.unit).filter(Boolean)),
+  ].sort((a, b) => a.localeCompare(b));
 
   const filteredData = useMemo(() => {
     let filtered = [...data];
 
     if (unitFilter) {
-      filtered = filtered.filter(item => 
-        item.unit && item.unit.toLowerCase().includes(unitFilter.toLowerCase())
+      filtered = filtered.filter(
+        (item) =>
+          item.unit &&
+          item.unit.toLowerCase().includes(unitFilter.toLowerCase()),
+      );
+    }
+
+    if (routeFilter.length > 0) {
+      filtered = filtered.filter((trip) =>
+        routeFilter.includes(trip.ubication),
       );
     }
 
     return filtered;
-  }, [data, unitFilter]);
+  }, [data, unitFilter,routeFilter]);
 
   // Definición de columnas
-  const columns = useMemo(() => [
-    {
-      id: "index",
-      header: "#",
-      cell: ({ row }) => (
-        <div className="text-zinc-400 text-[10px] font-mono">
-          #{row.index + 1}
-        </div>
-      ),
-      enableSorting: false,
-      enableColumnFilter: false,
-      size: 60,
-    },
-    {
-      accessorKey: "unit",
-      header: "Unidad",
-      cell: ({ row }) => (
-        <div className="font-medium text-blue-600">
-          CAM {row.original.unit.split("-").pop()}
-        </div>
-      ),
-      size: 150,
-    },
-    {
-      accessorKey: "ubicationType",
-      header: "Ubicación Beacon",
-      cell: ({ getValue }) => {
-        return (
-          <div className="font-mono text-sm text-gray-700">
-            {getValue()}
+  const columns = useMemo<ColumnDef<any>[]>(
+    () => [
+      {
+        id: "index",
+        header: "#",
+        cell: ({ row }) => (
+          <div className="text-zinc-400 text-[10px] font-mono">
+            #{row.index + 1}
           </div>
-        )
+        ),
+        enableSorting: false,
+        enableColumnFilter: false,
+        size: 60,
       },
-      size: 180,
-    },
-    {
-      accessorKey: "ubication",
-      header: "Nombre del Beacon",
-      cell: ({ getValue }) => {
-        return (
-          <div className="font-mono text-sm text-gray-700">
-            {getValue()}
+      {
+        accessorKey: "unit",
+        header: "Unidad",
+        cell: ({ row }) => (
+          <div className="font-medium text-blue-600">
+            CAM {row.original.unit.split("-").pop()}
           </div>
-        )
+        ),
+        size: 150,
       },
-      size: 180,
-    },
-    {
-      accessorKey: "duration",
-      header: "Duración (s)",
-      cell: ({ getValue }) => {
-        const timeInHours = Math.floor(getValue() / 3600);
-        const timeInMin = Math.floor(getValue() / 60);
-        const timeInSec = getValue() % 60;
+      {
+        accessorKey: "ubicationType",
+        header: "Ubicación Beacon",
+        cell: ({ getValue }) => {
+          return (
+            <div className="font-mono text-sm text-gray-700">{getValue()}</div>
+          );
+        },
+        size: 180,
+      },
+      {
+        accessorKey: "ubication",
+        header: "Nombre del Beacon",
+        cell: ({ getValue }) => {
+          return (
+            <div className="font-mono text-sm text-gray-700">{getValue()}</div>
+          );
+        },
+        size: 180,
+      },
+      {
+        accessorKey: "duration",
+        header: "Duración (s)",
+        cell: ({ getValue }) => {
+          const timeInHours = Math.floor(getValue() / 3600);
+          const timeInMin = Math.floor(getValue() / 60);
+          const timeInSec = getValue() % 60;
 
-        return(
-          <div className="text-center font-mono">
-            {timeInHours > 0 ? `${timeInHours}hr ${timeInMin < 60 ? timeInMin : 0 }m ${timeInSec}s` : timeInMin > 0 ? `${timeInMin}min, ${timeInSec}s` : `${timeInSec}s`}
-          </div>
-        )
+          return (
+            <div className="text-center font-mono">
+              {timeInHours > 0
+                ? `${timeInHours}hr ${timeInMin < 60 ? timeInMin : 0}m ${timeInSec}s`
+                : timeInMin > 0
+                  ? `${timeInMin}min, ${timeInSec}s`
+                  : `${timeInSec}s`}
+            </div>
+          );
+        },
+        size: 120,
       },
-      size: 120,
-    },
-    {
-      accessorKey: "wap",
-      header: "WAP",
-      cell: ({ getValue }) => (
-        <div className="text-center font-mono">
-          {getValue()}
-        </div>
-      ),
-      size: 130,
-    },
-    {
-      accessorKey: "f_inicio",
-      header: "Fecha Inicio",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
+      {
+        accessorKey: "wap",
+        header: "WAP",
+        cell: ({ getValue }) => (
+          <div className="text-center font-mono">{getValue()}</div>
+        ),
+        size: 130,
       },
-      size: 160,
-    },
-    {
-      accessorKey: "f_final",
-      header: "Fecha Final",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
+      {
+        accessorKey: "f_inicio",
+        header: "Fecha Inicio",
+        cell: ({ getValue }) => {
+          const timestamp = getValue();
+          return (
+            <div className="text-sm">
+              {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+            </div>
+          );
+        },
+        size: 160,
       },
-      size: 160,
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Hora de creación",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
+      {
+        accessorKey: "f_final",
+        header: "Fecha Final",
+        cell: ({ getValue }) => {
+          const timestamp = getValue();
+          return (
+            <div className="text-sm">
+              {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+            </div>
+          );
+        },
+        size: 160,
       },
-      size: 160,
-    },
-    {
-      accessorKey: "updatedAt",
-      header: "Hora de Update",
-      cell: ({ getValue }) => {
-        const timestamp = getValue();
-        return (
-          <div className="text-sm">
-            {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
-          </div>
-        );
+      {
+        accessorKey: "createdAt",
+        header: "Hora de creación",
+        cell: ({ getValue }) => {
+          const timestamp = getValue();
+          return (
+            <div className="text-sm">
+              {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+            </div>
+          );
+        },
+        size: 160,
       },
-      size: 160,
-    },
-  ], []);
+      {
+        accessorKey: "updatedAt",
+        header: "Hora de Update",
+        cell: ({ getValue }) => {
+          const timestamp = getValue();
+          return (
+            <div className="text-sm">
+              {format(new Date(timestamp), "dd/MM/yyyy HH:mm:ss")}
+            </div>
+          );
+        },
+        size: 160,
+      },
+    ],
+    [],
+  );
 
   // Configuración de la tabla
   const table = useReactTable({
@@ -202,9 +224,14 @@ const BeaconDetectionTable = () => {
 
   const lastDetections = useMemo(() => {
     const map = new Map();
-    data.forEach(item => {
-      const mac = beaconsData.find(b => b.mac.toLowerCase() === item.mac.toLowerCase());
-      if (!map.has(item.unit) || new Date(item.f_final) > new Date(map.get(item.unit).f_final)) {
+    data.forEach((item) => {
+      const mac = beaconsData.find(
+        (b) => b.mac.toLowerCase() === item.mac.toLowerCase(),
+      );
+      if (
+        !map.has(item.unit) ||
+        new Date(item.f_final) > new Date(map.get(item.unit).f_final)
+      ) {
         map.set(item.unit, { ...item, mac });
       }
     });
@@ -212,7 +239,7 @@ const BeaconDetectionTable = () => {
   }, [data]);
 
   useEffect(() => {
-    refetch()
+    refetch();
   }, [dateFilter, shiftFilter]);
 
   return (
@@ -221,7 +248,7 @@ const BeaconDetectionTable = () => {
         title="Tabla de detección de beacons"
         description={`Registro de detección de beacons el dia ${format(
           dateFilter,
-          "dd-MM-yyyy"
+          "dd-MM-yyyy",
         )}.`}
         refetch={refetch}
         isFetching={isFetching}
@@ -231,7 +258,18 @@ const BeaconDetectionTable = () => {
         actionsRight={
           <div className="relative flex flex-row gap-2">
             <label className="flex flex-col gap-0.5 text-[12px] font-bold">
-                Unidad
+              Ruta :
+              <div>
+                <MultiSelect
+                  placeholder={"Selecciona ruta..."}
+                  options={routeOptions.map((r) => ({ value: r, label: r }))}
+                  value={routeFilter}
+                  onChange={setRouteFilter}
+                />
+              </div>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[12px] font-bold">
+              Unidad
               <select
                 value={unitFilter}
                 onChange={(e) => setUnitFilter(e.target.value)}
@@ -262,9 +300,7 @@ const BeaconDetectionTable = () => {
                 onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                 className="text-[12px] font-bold px-2 py-1 bg-white text-black rounded-md hover:bg-gray-100 border border-gray-600"
               >
-                {dateFilter && (
-                  `${format(dateFilter, "dd/MM/yyyy")}`
-                )}
+                {dateFilter && `${format(dateFilter, "dd/MM/yyyy")}`}
               </button>
             </label>
             {isTooltipOpen && (
@@ -288,7 +324,7 @@ const BeaconDetectionTable = () => {
                 Ultima por unidad
               </button>
             </label>
-             <ExcelExportButton
+            <ExcelExportButton
               data={data}
               filename="deteccion_beacons"
               sheetName="Resumen Deteccion Beacons"
@@ -308,7 +344,9 @@ const BeaconDetectionTable = () => {
                 >
                   ×
                 </button>
-                <h2 className="text-lg font-bold mb-4">Última detección por unidad</h2>
+                <h2 className="text-lg font-bold mb-4">
+                  Última detección por unidad
+                </h2>
                 <table className="w-full text-sm">
                   <thead>
                     <tr>
@@ -319,23 +357,39 @@ const BeaconDetectionTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {lastDetections.sort((a,b) => a.unit.localeCompare(b.unit)).map((item, idx) => {
-                      const isOld = (new Date() - new Date(item.f_final)) > 24 * 60 * 60 * 1000;
-                      return (
-                        <tr key={idx} className={`border-b ${isOld ? 'bg-red-100' : ''}`}>
-                          <td className="px-2 py-1 font-bold">{idx + 1}</td>
-                          <td className="px-2 py-1 font-bold">CAM {item.unit.split("-").pop()}</td>
-                          <td className="px-2 py-1">{item.mac?.location || (typeof item.mac === 'string' ? item.mac : '')}</td>
-                          <td className="px-2 py-1">{format(new Date(item.f_final), "dd/MM/yyyy, HH:mm:ss")}</td>
-                        </tr>
-                      );
-                    })}
+                    {lastDetections
+                      .sort((a, b) => a.unit.localeCompare(b.unit))
+                      .map((item, idx) => {
+                        const isOld =
+                          new Date() - new Date(item.f_final) >
+                          24 * 60 * 60 * 1000;
+                        return (
+                          <tr
+                            key={idx}
+                            className={`border-b ${isOld ? "bg-red-100" : ""}`}
+                          >
+                            <td className="px-2 py-1 font-bold">{idx + 1}</td>
+                            <td className="px-2 py-1 font-bold">
+                              CAM {item.unit.split("-").pop()}
+                            </td>
+                            <td className="px-2 py-1">
+                              {item.mac?.location ||
+                                (typeof item.mac === "string" ? item.mac : "")}
+                            </td>
+                            <td className="px-2 py-1">
+                              {format(
+                                new Date(item.f_final),
+                                "dd/MM/yyyy, HH:mm:ss",
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
-
         </div>
       </div>
 
@@ -353,7 +407,9 @@ const BeaconDetectionTable = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <p className="text-red-600 text-lg font-medium">Error al cargar los datos</p>
+            <p className="text-red-600 text-lg font-medium">
+              Error al cargar los datos
+            </p>
             <button
               onClick={() => refetch()}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
@@ -372,7 +428,7 @@ const BeaconDetectionTable = () => {
               <thead className="bg-gray-50 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup, index) => (
                   <tr key={`${headerGroup.id}-${index}`}>
-                    {headerGroup.headers.map((header,index) => (
+                    {headerGroup.headers.map((header, index) => (
                       <th
                         key={`${header.id}-${index}`}
                         className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200"
@@ -381,20 +437,22 @@ const BeaconDetectionTable = () => {
                         {header.isPlaceholder ? null : (
                           <div
                             className={`flex items-center gap-2 ${
-                              header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                              header.column.getCanSort()
+                                ? "cursor-pointer select-none"
+                                : ""
                             }`}
                             onClick={header.column.getToggleSortingHandler()}
                           >
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                             {header.column.getCanSort() && (
                               <span className="text-gray-400">
                                 {{
-                                  asc: ' ↑',
-                                  desc: ' ↓',
-                                }[header.column.getIsSorted()] ?? ' ↕️'}
+                                  asc: " ↑",
+                                  desc: " ↓",
+                                }[header.column.getIsSorted()] ?? " ↕️"}
                               </span>
                             )}
                           </div>
@@ -413,12 +471,12 @@ const BeaconDetectionTable = () => {
                     {row.getVisibleCells().map((cell, index) => (
                       <td
                         key={`${cell.id}-${index}`}
-                        className="px-4 py-3 whitespace-nowrap text-sm" 
+                        className="px-4 py-3 whitespace-nowrap text-sm"
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </td>
                     ))}
@@ -433,22 +491,27 @@ const BeaconDetectionTable = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-700">
-                  Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
+                  Mostrando{" "}
+                  {table.getState().pagination.pageIndex *
+                    table.getState().pagination.pageSize +
+                    1}{" "}
+                  a{" "}
                   {Math.min(
-                    (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                    table.getFilteredRowModel().rows.length
-                  )}{' '}
+                    (table.getState().pagination.pageIndex + 1) *
+                      table.getState().pagination.pageSize,
+                    table.getFilteredRowModel().rows.length,
+                  )}{" "}
                   de {table.getFilteredRowModel().rows.length} registros
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => table.setPageIndex(0)}
                   disabled={!table.getCanPreviousPage()}
                   className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
                 >
-                  {'<<'}
+                  {"<<"}
                 </button>
                 <button
                   onClick={() => table.previousPage()}
@@ -457,12 +520,12 @@ const BeaconDetectionTable = () => {
                 >
                   Anterior
                 </button>
-                
+
                 <span className="px-3 py-1 text-sm font-medium">
-                  Página {table.getState().pagination.pageIndex + 1} de{' '}
+                  Página {table.getState().pagination.pageIndex + 1} de{" "}
                   {table.getPageCount()}
                 </span>
-                
+
                 <button
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
@@ -475,7 +538,7 @@ const BeaconDetectionTable = () => {
                   disabled={!table.getCanNextPage()}
                   className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
                 >
-                  {'>>'}
+                  {">>"}
                 </button>
               </div>
             </div>

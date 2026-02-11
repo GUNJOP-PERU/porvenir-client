@@ -337,7 +337,7 @@ const RealTimeByTurnEsteril = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte de Extracción por Turno / Estéril"
+        title="Carguío y Transporte de Estéril por Turno"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -363,7 +363,7 @@ const RealTimeByTurnEsteril = () => {
 
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Estéril (TM)"
+            title="Transporte de Estéril (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -419,7 +419,7 @@ const RealTimeByTurnEsteril = () => {
         {shiftFilter === "día" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de estéril acumulado (TM)"
+              title="Ejecución de Transporte de estéril acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -457,7 +457,7 @@ const RealTimeByTurnEsteril = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de estéril por hora (TM)"
+              title="Ejecución de Transporte de estéril por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -501,7 +501,7 @@ const RealTimeByTurnEsteril = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -536,7 +536,7 @@ const RealTimeByTurnEsteril = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de estéril por hora (TM)"
+              title="Ejecución de Transporte de estéril por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"

@@ -3,12 +3,13 @@ import { useSocket } from "../context/SocketContext";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToaster";
 
+
 function subscribe(socket, topic, cb) {
-  socket.emit('subscribe-topic', topic);
+  socket.emit("subscribe-topic", topic);
   socket.on(topic, cb);
   return () => {
     socket.off(topic, cb);
-    socket.emit('unsubscribe-topic', topic);
+    socket.emit("unsubscribe-topic", topic);
   };
 }
 
@@ -21,8 +22,8 @@ export function useSocketValue(topic, queryKey) {
     if (!topic || !socket) return;
 
     console.log(`Conectando al tópico: ${topic}`);
-    const unsubscribe = subscribe(socket, topic, (data) => { 
-      console.log('Datos recibidos del socket:', data); 
+    const unsubscribe = subscribe(socket, topic, (data) => {
+      console.log("Datos recibidos del socket:", data);
       setPayload(data);
 
       if (queryKey) {
@@ -30,9 +31,7 @@ export function useSocketValue(topic, queryKey) {
       }
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [topic, socket, queryKey, queryClient]);
 
   return payload;
@@ -41,6 +40,25 @@ export function useSocketValue(topic, queryKey) {
 export function useSocketTopicValue(topic, queryKey) {
   const payload = useSocketValue(topic, queryKey);
   return useMemo(() => payload, [payload]);
+}
+
+export function useSocketRefetch(topics, refetch) {
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket || !topics) return;
+
+    const topicList = Array.isArray(topics) ? topics : [topics];
+
+    const unsubscribers = topicList.map((topic) =>
+      subscribe(socket, topic, () => {
+        console.log("Evento socket:", topic);
+        refetch();
+      })
+    );
+
+    return () => unsubscribers.forEach((u) => u());
+  }, [socket, topics, refetch]);
 }
 
 export function useJournalChanged() {
@@ -53,7 +71,7 @@ export function useJournalChanged() {
     // console.log(`Conectando al tópico: ${topic}`);
 
     const unsubscribe = subscribe(socket, topic, (data) => {
-      // console.log('Datos recibidos del socket:', data); 
+      // console.log('Datos recibidos del socket:', data);
       if (data?.status === true) {
         // console.log("🧹 La jornada ha cambiado. Limpiando 'shift-variable'...");
         const queries = queryClient.getQueriesData({
@@ -81,9 +99,11 @@ export function useChecklistAlert() {
   useEffect(() => {
     if (!socket) return;
 
-    const topic = "checklist/alert";
+    const topic = "porvenir/checklist/alert";
+     console.log(`Conectando al tópico: ${topic}`);
 
     const handler = (newData) => {
+      console.log("Datos recibidos del socket:", newData);
       const topicData = JSON.parse(newData);
       addToastFS({
         title: "CheckList Advertencia",

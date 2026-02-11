@@ -182,8 +182,8 @@ const RealTimeByHour = () => {
   return (
     <div className="grid grid-cols-1 flex-1 w-full gap-2">
       <PageHeader
-        title="Reporte por Diario de Viajes de Scoop"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones. ${format(dateFilter[0].startDate, 'dd-MM-yyyy')} al ${format(dateFilter[0].endDate, 'dd-MM-yyyy')}`}
+        title="Detalle Diario de Viajes de Scoop"
+        description={`Detalle de los viajes realizados por los equipos. ${format(dateFilter[0].startDate, 'dd-MM-yyyy')} al ${format(dateFilter[0].endDate, 'dd-MM-yyyy')}`}
         refetch={refetch}
         isFetching={isFetching}
         count={data.length}
@@ -239,9 +239,9 @@ const RealTimeByHour = () => {
       <div className="w-full gap-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
         <CardItem
           value={baseStats.totalUnits}
-          title="Total de Camiones"
+          title="Total de Equipos"
           valueColor="text-[#000000]"
-          unid="camiones"
+          unid="equipos"
         />
         <CardItem
           value={baseStats.totalTrips}
@@ -280,7 +280,7 @@ const RealTimeByHour = () => {
       </div>
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
         <Progress
-          title="Extracción de mineral en TM"
+          title="Transporte de mineral en TM"
           value={baseStats.totalTM}
           total={2400}
           color="#14B8A6"
@@ -312,7 +312,7 @@ const RealTimeByHour = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">{}
         <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
           <CardTitle
-            title="Acumulado de Extracción de mineral Turno Día en TM"
+            title="Acumulado de Transporte de mineral Turno Día en TM"
             subtitle="Análisis de la cantidad de viajes realizados"
             icon={ChartNoAxesColumn}
             classIcon="text-[#fac34c]"
@@ -332,7 +332,7 @@ const RealTimeByHour = () => {
             />
           </CardTitle>
           <CardTitle
-            title="Extracción de mineral turno Dia en TM"
+            title="Transporte de mineral turno Dia en TM"
             subtitle="Análisis de la cantidad de viajes realizados"
             icon={ChartNoAxesColumn}
             classIcon="text-[#fac34c]"
@@ -346,7 +346,7 @@ const RealTimeByHour = () => {
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
           <CardTitle
-            title="Acumulado de Extracción de mineral Turno Noche en TM"
+            title="Acumulado de Transporte de mineral Turno Noche en TM"
             subtitle="Análisis de la cantidad de viajes realizados"
             icon={ChartNoAxesColumn}
             classIcon="text-[#3c3f43]"
@@ -367,7 +367,7 @@ const RealTimeByHour = () => {
           </CardTitle>
 
           <CardTitle
-            title="Extracción de mineral turno Noche en TM"
+            title="Transporte de mineral turno Noche en TM"
             subtitle="Análisis de la cantidad de viajes realizados"
             icon={ChartNoAxesColumn}
             classIcon="text-[#3c3f43]"

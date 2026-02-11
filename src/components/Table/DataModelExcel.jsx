@@ -5,7 +5,6 @@ import { getDownloadRequest } from "@/api/api";
 
 export const DataModelExcel = ({
   loadingGlobal = false,
-  handleImportButtonClick,
   downloadTemplate,
   title="Plantilla",
 }) => {

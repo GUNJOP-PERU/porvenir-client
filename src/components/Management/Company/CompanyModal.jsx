@@ -90,7 +90,7 @@ export const ModalCompany = ({ isOpen, onClose, isEdit, dataCrud }) => {
       }}
       modal={true}
     >
-      <DialogContent className="w-[350px]">
+      <DialogContent className="w-[380px]">
         <DialogHeader>
           <div className="flex gap-2 items-center">
             <div>
@@ -116,7 +116,7 @@ export const ModalCompany = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Pablo Pablo"
+                      placeholder="Ej. Industriales S.A.C."
                       {...field}
                     />
                     <FormMessage />
@@ -132,7 +132,7 @@ export const ModalCompany = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. 12122222222"
+                      placeholder="Ej. 20123456789"
                       maxLength="11"
                       {...field}
                       onChange={(e) => {
@@ -154,7 +154,7 @@ export const ModalCompany = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Empresa minera"
+                      placeholder="Ej. Av. Industrial 450"
                       {...field}
                     />
                     <FormMessage />
@@ -171,7 +171,7 @@ export const ModalCompany = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Empresa minera"
+                      placeholder="Ej. Proveedor especializado en mantenimiento de maquinaria pesada"
                       {...field}
                     />
                     <FormMessage />

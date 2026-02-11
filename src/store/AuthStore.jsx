@@ -3,9 +3,10 @@ import { persist } from "zustand/middleware";
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       token: "",
       profile: [],
+      settings: {},
       type: "user",
       mining: null,
       isAuth: false,
@@ -13,12 +14,17 @@ export const useAuthStore = create(
 
       setToken: (token) => set({ token,isAuth: !!token, }),
       setProfile: (profile) => set({ profile: profile, type: profile.type }),
+      setSetting: (key, value) =>
+        set((state) => ({
+          settings: { ...state.settings, [key]: value },
+        })),
       setMining: (mining) => set({ mining }),
       setIsCollapsed: (isCollapsed) => set({ isCollapsed }),
       logout: () => {
         set({
           token: "",
           profile: [],
+          settings: {},
           mining: null,
           isAuth:false,
           isCollapsed: false,

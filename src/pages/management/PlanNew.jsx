@@ -45,6 +45,7 @@ export default function PlanNewEdit() {
     );
 
   return (
+    <>
     <PlanBody
       mode={mode}
       isEdit={isEdit}
@@ -59,5 +60,7 @@ export default function PlanNewEdit() {
       ruteReturn={config.ruteReturn}
       downloadTemplate={config.downloadTemplate}
     />
+    {/* <ButtonExcel /> */}
+    </>
   );
 }

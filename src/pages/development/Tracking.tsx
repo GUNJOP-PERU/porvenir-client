@@ -183,8 +183,9 @@ const TruckTracking = () => {
           flex-direction: column;
           align-items: center;
         ">
-          <!-- Icono del camión -->
-          <div class="${isSelected ? "truck-inner marker-highlight" : "truck-inner"
+          <!-- Icono  -->
+          <div class="${
+            isSelected ? "truck-inner marker-highlight" : "truck-inner"
           }" style="
             background-color: ${color};
             width: 25px;

@@ -7,7 +7,7 @@ import HighchartsMore from "highcharts/highcharts-more";
 import solidGauge from "highcharts/modules/solid-gauge";
 import { useSocketTopicValue } from "@/hooks/useSocketValue";
 
-if (typeof solidGauge === "function") {
+if (typeof solidGauge === "function") { 
   solidGauge(Highcharts);
 }
 

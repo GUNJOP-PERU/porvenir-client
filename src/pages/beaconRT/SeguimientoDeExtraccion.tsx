@@ -183,8 +183,8 @@ const SeguimientoDeExtraccion = () => {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <PageHeader
-        title="Seguimiento de Extracción / Plan de Campo"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(
+        title="Seguimiento de Transporte / Plan de Campo"
+        description={`Información en tiempo real de los viajes realizados por los equipos del ${format(
           dateFilter[0].startDate,
           "dd-MM-yyyy"
         )}.`}
@@ -347,7 +347,7 @@ const SeguimientoDeExtraccion = () => {
                   planDay={planDay.mineralPlan}
                 />
                 <DonutChart
-                  title="Avance de Extracción de Mineral"
+                  title="Avance de Transporte de Mineral"
                   size="medium"
                   donutData={{
                     currentValue: mineralTrips.length * baseData.mineral,
@@ -430,7 +430,7 @@ const SeguimientoDeExtraccion = () => {
                   planDay={planDay.desmontePlan}
                 />
                 <DonutChart
-                  title="Avance de Extracción de Desmonte"
+                  title="Avance de Transporte de Desmonte"
                   size="medium"
                   donutData={{
                     currentValue: planDay.desmonteTonnage

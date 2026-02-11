@@ -40,13 +40,15 @@ export function useHandleFormSubmit() {
     onClose,
     reset,
     invalidateKey,
+    onSuccess,
   }) {
     try {
       setLoadingGlobal(true);
       await mutation.mutateAsync({ isEdit,postId, endpoint, id, data ,invalidateKey});
-
-      if (onClose) onClose();
-      if (reset) reset();
+      
+      onSuccess?.(); 
+      onClose?.();
+      reset?.();
     } finally {
       setLoadingGlobal(false);
     }

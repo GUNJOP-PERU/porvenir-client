@@ -180,3 +180,27 @@ export type TruckStatus = {
   tag: string
   updatedAt: string
 }
+
+
+export type Beacon = {
+  _id: string;
+  mac: string;
+  description: string;
+  color?: string;
+  position: {
+    latitud: number;
+    longitud: number;
+  };
+  type: "mantenimiento" | "bocamina" | "superficie" | "destino";
+  ubication: string;
+  ubicationType: string;
+  isActive: boolean;
+  radius:number;
+}
+
+export type BeaconCrudData = {
+  position: {
+    latitud: number;
+    longitud: number;
+  };
+};

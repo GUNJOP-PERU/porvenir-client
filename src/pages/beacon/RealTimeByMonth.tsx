@@ -210,19 +210,19 @@ const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte Mensual / Marzo a Diciembre"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del año ${new Date().getFullYear()}.`}
+        title="Carguío Mensual / Marzo a Diciembre"
+        description={`Información en tiempo real de los viajes realizados por los equipos del año ${new Date().getFullYear()}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
         className="col-span-2"
-        actionsRight={<div className="relative flex flex-row gap-2"></div>}
+        actionsRight={<></>}
       />
       <div className="flex flex-col items-center justify-around gap-0">
         <IconTruck className="fill-yellow-500 h-30 w-40" color="" style={{}} />
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -274,7 +274,7 @@ const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
         <CardTitle
-          title="Ejecución de extracción de mineral acumulado (TM)"
+          title="Ejecución de Transporte de mineral acumulado (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           classIcon="fill-yellow-500 h-7 w-16"
           actions={
@@ -298,7 +298,7 @@ const tripsByMonth = useMemo<TripsByMonthItem[]>(() => {
         </CardTitle>
 
         <CardTitle
-          title="Ejecución de extracción de mineral por dia (TM)"
+          title="Ejecución de Transporte de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           classIcon="fill-yellow-500 h-7 w-14"
           actions={

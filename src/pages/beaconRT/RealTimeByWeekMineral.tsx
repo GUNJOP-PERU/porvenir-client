@@ -376,8 +376,8 @@ const RealTimeByWeek = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte Semanal / Mineral"
-        description={`Reporte en tiempo real de los viajes realizados por los camiones del ${format(dateFilter[0].startDate, "dd-MM-yyyy")} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}.`}
+        title="Carguío Semanal Mineral"
+        description={`Información en tiempo real de los viajes realizados por los equipos del ${format(dateFilter[0].startDate,"dd-MM-yyyy")} al ${format(dateFilter[0].endDate, "dd-MM-yyyy")}.`}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -405,7 +405,7 @@ const RealTimeByWeek = () => {
 
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -471,7 +471,7 @@ const RealTimeByWeek = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
         <CardTitle
-          title="Ejecución de extracción de mineral acumulado (TM)"
+          title="Ejecución de Transporte de mineral acumulado (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           classIcon="fill-yellow-500 h-7 w-16"
           actions={
@@ -499,7 +499,7 @@ const RealTimeByWeek = () => {
         </CardTitle>
 
         <CardTitle
-          title="Ejecución de extracción de mineral por dia (TM)"
+          title="Ejecución de Transporte de mineral por dia (TM)"
           subtitle="Análisis de la cantidad de viajes realizados TRUCK"
           classIcon="fill-yellow-500 h-7 w-14"
           actions={

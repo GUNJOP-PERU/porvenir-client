@@ -53,7 +53,7 @@ export default function UnproductiveType({ data, isLoading, isError }) {
       series: [
         {
           enableMouseTracking: false,
-          name: "Extracción",
+          name: "Transporte",
           innerSize: "35%",
           colorByPoint: true,
           data: pieData,

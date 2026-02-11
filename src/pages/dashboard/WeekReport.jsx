@@ -13,6 +13,8 @@ import { ChartNoAxesColumn, ChartPie, TrendingUp } from "lucide-react";
 
 export default function WeekReport() {
   const { allWeeks, currentWeek } = generateNormalWeeks();
+
+  console.log(currentWeek)
   const [selectedWeek, setSelectedWeek] = useState(
     currentWeek?.weekNumber?.toString() ?? ""
   );
@@ -34,7 +36,7 @@ export default function WeekReport() {
     queryKey: ["report-week", selectedRange],
     endpoint: "cycle/by-date-range",
     filters: selectedRange
-      ? `startDate=${selectedRange.startTimestamp}&endDate=${selectedRange.endTimestamp}`
+      ? `startDate=${selectedRange.start.getTime()}&endDate=${selectedRange.end.getTime()}`
       : "",
   });
 
@@ -42,7 +44,7 @@ export default function WeekReport() {
     queryKey: ["plan-week", selectedRange],
     endpoint: "planDay/by-date-range",
     filters: selectedRange
-      ? `startDate=${selectedRange.startDate}&endDate=${selectedRange.endDate}`
+      ? `startDate=${selectedRange.start.getTime()}&endDate=${selectedRange.end.getTime()}`
       : "",
   });
 
@@ -65,7 +67,7 @@ export default function WeekReport() {
   return (
     <>
       <PageHeader
-        title="Extracción, Remanejo y Historico"
+        title="Transporte, Remanejo y Historico"
         description="Administre los planes y sus caractestisticas."
         refetch={refetch}
         isFetching={isFetching}
@@ -123,7 +125,7 @@ export default function WeekReport() {
             <AreaWeek data={data} isLoading={isLoading} isError={isError} />
           </CardTitle>
           <CardTitle
-            title="Extracción Semanal - Viajes por Destino"
+            title="Transporte Semanal - Viajes por Destino"
             subtitle="Tiempo de espera en la cola"
             icon={ChartNoAxesColumn}
             classIcon="text-[#6B46C1]"

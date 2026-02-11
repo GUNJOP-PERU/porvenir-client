@@ -333,7 +333,7 @@ const RealTimeByScoopMineral = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte de Palas / Mineral"
+        title="Carguío Mineral"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -357,7 +357,7 @@ const RealTimeByScoopMineral = () => {
 
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -413,7 +413,7 @@ const RealTimeByScoopMineral = () => {
         {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -451,7 +451,7 @@ const RealTimeByScoopMineral = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -495,7 +495,7 @@ const RealTimeByScoopMineral = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -530,7 +530,7 @@ const RealTimeByScoopMineral = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"

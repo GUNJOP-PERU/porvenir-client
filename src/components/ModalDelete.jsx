@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { deleteDataRequest } from "@/api/api";
 import { useState } from "react";
 import { Button } from "./ui/button";

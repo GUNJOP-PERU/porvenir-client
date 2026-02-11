@@ -1,7 +1,14 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-// import "leaflet-rotate";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import "leaflet-rotate";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Circle,
   MapContainer,
@@ -16,22 +23,21 @@ import TimeAgo from "timeago-react";
 // Api
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 // Types
-import type { BeaconTruckStatus } from "@/types/Beacon";
+import type { Beacon, BeaconTruckStatus, BeaconCrudData } from "@/types/Beacon";
 // Data
 import SearchTruck from "@/components/Dashboard/Tracking/SearchTruck";
-import {
-  ubicationData,
-  rutasEstaticas,
-  maintenanceLocation,
-  superficieLocation,
-  ubicationBocamina,
-} from "./UbicationLocation";
-import Legend from "@/components/Dashboard/Tracking/Legend";
-import Toggle from "@/components/Dashboard/Tracking/Toggle";
+import { rutasEstaticas } from "./UbicationLocation";
 import clsx from "clsx";
 import Rute from "@/components/Dashboard/Tracking/Rute";
 import dayjs from "dayjs";
 import { formatFecha } from "@/lib/utilsGeneral";
+import { MapLocationPicker } from "@/components/Dashboard/Tracking/MapLocationPicker";
+import { BeaconModal } from "@/components/Management/Beacon/BeaconModal";
+import { deleteDataRequest } from "@/api/api";
+import Legend from "@/components/Dashboard/Tracking/Legend";
+import { ZoneModal } from "@/components/Dashboard/Tracking/ZoneModal";
+import IconArrow from "@/icons/IconArrow";
+import { ArrowLeft, Crosshair, Plus } from "lucide-react";
 
 // Extender tipos para leaflet-rotate
 declare module "react-leaflet" {
@@ -82,7 +88,19 @@ const MapControls = ({
   return null;
 };
 
+type MapMode = "idle" | "create" | "move";
+
 const TruckTracking = () => {
+  const [newBeaconPosition, setNewBeaconPosition] =
+    useState<BeaconCrudData | null>(null);
+  //createBeacon
+  const [openCreateBeacon, setOpenCreateBeacon] = useState(false);
+  //editBeacon
+  const [editingBeacon, setEditingBeacon] = useState<Beacon | null>(null);
+  const [mapMode, setMapMode] = useState<MapMode>("idle");
+  const [beaconMenuOpen, setBeaconMenuOpen] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const [selectedTruck, setSelectedTruck] = useState<{
     truck: BeaconTruckStatus;
     area: string;
@@ -91,21 +109,13 @@ const TruckTracking = () => {
   const [selectedTruckPosition, setSelectedTruckPosition] = useState<
     [number, number] | null
   >(null);
-  const [toggleStatus, setToggleStatus] = useState({
-    showBocaminas: true,
-    showWifiZones: true,
-    showTalleres: true,
-    showDestinations: true,
-    showSuperficie: true,
-  });
 
   const mapConfig = useMemo(
     () => ({
       centerLat: -10.6078,
-      centerLng: -76.2103,
-      zoom: 15,
+      centerLng: -76.2085,
     }),
-    []
+    [],
   );
 
   const {
@@ -113,9 +123,39 @@ const TruckTracking = () => {
     isLoading,
     error,
     refetch,
-  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", "", {
-    refetchInterval: 3000,
-  });
+  } = useFetchData<BeaconTruckStatus[]>(
+    "beacon-truck-map",
+    "beacon-truck",
+    undefined,
+    {
+      refetchInterval: 3000,
+    },
+  );
+
+  const {
+    data: dataZones = [],
+    isLoading: isLoadingBeacons,
+    error: errorBeacons,
+    refetch: refetchBeacons,
+  } = useFetchData<Beacon[]>(
+    "zone-superficie",
+    "zone?type=superficie",
+    undefined,
+    {},
+  );
+
+  const beaconByMac = useMemo(() => {
+    const map = new Map<string, Beacon>();
+
+    dataZones.forEach((beacon: Beacon) => {
+      if (!beacon.mac || !Array.isArray(beacon.mac)) return;
+      beacon.mac.forEach((mac) => {
+        map.set(mac.toLowerCase(), beacon);
+      });
+    });
+
+    return map;
+  }, [dataZones]);
 
   const filteredData = useMemo(() => {
     if (!Array.isArray(data)) return [];
@@ -138,42 +178,49 @@ const TruckTracking = () => {
     });
   }, [data]);
 
-  const handleSelectTruck = useCallback((truck: BeaconTruckStatus) => {
-    const foundUbication = [
-      ...ubicationData,
-      ...superficieLocation,
-      ...maintenanceLocation,
-      ...ubicationBocamina,
-    ].find((u) => {
-      if (!u.mac || !truck.lastUbicationMac) return false;
+  const trucksByBeacon = useMemo(() => {
+    const map = new Map<string, number>();
 
-      return u.mac.some(
-        (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-      );
+    filteredData.forEach((truck) => {
+      if (!truck.lastUbicationMac) return;
+
+      const beacon = beaconByMac.get(truck.lastUbicationMac.toLowerCase());
+      if (!beacon) return;
+
+      map.set(beacon._id, (map.get(beacon._id) || 0) + 1);
     });
 
-    setSelectedTruck({
-      truck,
-      area: foundUbication ? foundUbication.name : "",
-      position: foundUbication
-        ? [foundUbication.position.latitud, foundUbication.position.longitud]
-        : [0, 0],
-    });
+    return map;
+  }, [filteredData, beaconByMac]);
 
-    if (foundUbication) {
+  const handleSelectTruck = useCallback(
+    (truck: BeaconTruckStatus) => {
+      if (!truck.lastUbicationMac) return;
+
+      const beacon = beaconByMac.get(truck.lastUbicationMac.toLowerCase());
+
+      if (!beacon) return;
+
+      setSelectedTruck({
+        truck,
+        area: beacon.description,
+        position: [beacon.position.latitud, beacon.position.longitud],
+      });
+
       setSelectedTruckPosition([
-        foundUbication.position.latitud,
-        foundUbication.position.longitud,
+        beacon.position.latitud,
+        beacon.position.longitud,
       ]);
-    }
-  }, []);
+    },
+    [beaconByMac],
+  );
 
   const createCustomIcon = useCallback(
     (
       status: string,
       unitName: string,
       isSelected: boolean = false,
-      lastDate: string
+      lastDate: string,
     ) => {
       const statusColors: Record<string, string> = {
         operativo: "#16a34a",
@@ -223,7 +270,7 @@ const TruckTracking = () => {
         popupAnchor: [0, -20],
       });
     },
-    []
+    [],
   );
 
   const markers = useMemo(() => {
@@ -231,29 +278,33 @@ const TruckTracking = () => {
 
     const coordMap = new Map<string, any[]>();
     filteredData.forEach((truck) => {
-      const findBeacon = [
-        ...ubicationData,
-        ...superficieLocation,
-        ...maintenanceLocation,
-        ...ubicationBocamina,
-      ].find((beacon) => {
-        if (!beacon.mac || !truck.lastUbicationMac) return false;
+      // 1️⃣ Resolver beacon
+      if (!truck.lastUbicationMac) return;
 
-        return beacon.mac.some(
-          (mac) => mac.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-        );
-      });
+      const beacon = beaconByMac.get(truck.lastUbicationMac.toLowerCase());
 
-      const coord = findBeacon?.position || { latitud: 0, longitud: 0 };
+      if (!beacon) return;
+
+      // 2️⃣ Coordenadas válidas
+      const coord = beacon.position;
       const key = `${coord.latitud},${coord.longitud}`;
-      if (!coordMap.has(key)) coordMap.set(key, []);
+
+      // 3️⃣ Inicializar grupo
+      if (!coordMap.has(key)) {
+        coordMap.set(key, []);
+      }
+
+      // 4️⃣ Nombre corto
       const truckNameParts = truck.name.split("-");
       const displayName =
         truckNameParts.length > 2 ? truckNameParts[2] : truck.name;
 
-      if (findBeacon) {
-        coordMap.get(key)!.push({ ...truck, coordinates: coord, displayName });
-      }
+      // 5️⃣ Agregar al grupo
+      coordMap.get(key)!.push({
+        ...truck,
+        coordinates: coord,
+        displayName,
+      });
     });
 
     const result: JSX.Element[] = [];
@@ -290,7 +341,7 @@ const TruckTracking = () => {
               truck.status,
               truck.displayName || truck.name,
               selectedTruck?.truck.name === truck.name,
-              truck.connectivity
+              truck.connectivity,
             )}
           >
             <Popup>
@@ -309,15 +360,15 @@ const TruckTracking = () => {
                       className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
-                            .toLowerCase()
-                            .includes("mantenimiento") ||
-                            truck.status
-                              .toLowerCase()
-                              .includes("inoperativo") ||
-                            truck.status.toLowerCase().includes("demora")
+                                .toLowerCase()
+                                .includes("mantenimiento") ||
+                              truck.status
+                                .toLowerCase()
+                                .includes("inoperativo") ||
+                              truck.status.toLowerCase().includes("demora")
                             ? "bg-[#ff758f] text-white"
                             : "bg-red-100 text-red-800"
-                        }`}
+                      }`}
                     >
                       {truck.status === "operativo"
                         ? "Operativo"
@@ -332,7 +383,7 @@ const TruckTracking = () => {
                         "text-[9px] leading-3 font-semibold",
                         truck.connectivity === "online"
                           ? "text-amber-400"
-                          : "text-zinc-500"
+                          : "text-zinc-500",
                       )}
                     >
                       {truck.connectivity}{" "}
@@ -354,352 +405,346 @@ const TruckTracking = () => {
                     </b>
                   </span>
                   <span className="text-xs text-zinc-500 italic font-bold leading-none">
-                    {truck.status.toLowerCase().includes("mantenimiento") ?
-                      "En taller " : "Operativo "
-                    }
+                    {truck.status.toLowerCase().includes("mantenimiento")
+                      ? "En taller "
+                      : "Operativo "}
                     {dayjs(truck.changeStatusDate).fromNow()}
                   </span>
                 </div>
               </div>
             </Popup>
-          </Marker>
+          </Marker>,
         );
       });
     });
     return result;
-  }, [filteredData, createCustomIcon, ubicationData, selectedTruck]);
+  }, [filteredData, createCustomIcon, selectedTruck, beaconByMac]);
 
-  const routeComponents = () => {
-    const components: React.JSX.Element[] = [];
+  const routeComponents = useMemo(() => {
+    return rutasEstaticas.map((ruta) => (
+      <Polyline
+        key={ruta.id}
+        positions={ruta.positions.map(
+          (pos) => [pos[0], pos[1]] as [number, number],
+        )}
+        pathOptions={{
+          color: ruta.color,
+          weight: 5,
+          opacity: 0.7,
+        }}
+      />
+    ));
+  }, []);
 
-    rutasEstaticas.forEach((ruta) => {
-      components.push(
-        <Polyline
-          key={ruta.id}
-          positions={ruta.positions.map(
-            (pos: number[]) => [pos[0], pos[1]] as [number, number]
-          )}
-          pathOptions={{
-            color: ruta.color,
-            weight: 5,
-            opacity: 0.7,
-          }}
-        />
-      );
-    });
+  const handleDeleteBeacon = useCallback(
+    async (beacon: Beacon) => {
+      if (!window.confirm(`¿Eliminar el beacon "${beacon.description}"?`)) {
+        return;
+      }
 
-    ubicationData.forEach((ubication) => {
-      const color = ubication.color ? ubication.color : "#0EB1D2";
-      const position = [
-        ubication.position.latitud,
-        ubication.position.longitud,
-      ] as [number, number];
+      try {
+        const response = await deleteDataRequest(`zone/${beacon._id}`);
 
-      components.push(
-        <Circle
-          key={`route-circle-${ubication.id}`}
-          center={position}
-          radius={80}
-          pathOptions={{
-            color: color,
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.5,
-            dashArray: "16, 4",
-          }}
-        />
-      );
+        if (response?.status === 200) {
+          console.log("Zona eliminada correctamente");
+          refetchBeacons();
+        } else {
+          throw new Error("Error al eliminar");
+        }
+      } catch (error) {
+        console.error("Error al eliminar zona:", error);
+      } finally {
+        setBeaconMenuOpen(null);
+      }
+    },
+    [refetchBeacons],
+  );
 
-      components.push(
-        <Marker
-          key={`label-${ubication.id}`}
-          position={[position[0] + 0.0008, position[1]]}
-          icon={L.divIcon({
-            html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: ${color};
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                line-height: 0.7rem;
-              ">
-              <span style="
-                background: #FFFFFF85;
-                color: #ffffff0;
-                padding: 2px 4px;
-                border-radius: 4px; 
-                font-size: 0.8rem;
-                font-weight: bold;
-                line-height: 0.8rem;                            
-              ">
-                ${filteredData.filter(
-              (truck) =>
-                truck.lastUbicationMac &&
-                Array.isArray(ubication.mac) &&
-                ubication.mac
-                  .map((m) => m.toLowerCase())
-                  .includes(truck.lastUbicationMac.toLowerCase())
-            ).length
-              }
-              </span>
-              ${ubication.description}
-              </div>
-            `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        ></Marker>
-      );
-    });
-    return components;
-  };
+  const renderBeacons = useCallback(() => {
+    return dataZones.map((beacon: Beacon) => {
+      const count = trucksByBeacon.get(beacon._id) || 0;
+      const color = beacon.color || "#999";
+      const radius = beacon.radius || 60;
+      const radiusInDegrees = radius / 111320;
 
-  const superficieLocations = () => {
-    const components: React.JSX.Element[] = [];
+      const labelPosition: [number, number] = [
+        beacon.position.latitud + radiusInDegrees,
+        beacon.position.longitud,
+      ];
 
-    superficieLocation.forEach((beacon) => {
-      components.push(
-        <Circle
-          key={`superficie-circle-${beacon.id}`}
-          center={[beacon.position.latitud, beacon.position.longitud]}
-          radius={40}
-          pathOptions={{
-            color: "#ccc8af",
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.5,
-            dashArray: "16, 4",
-          }}
-        />
-      );
-      components.push(
-        <Marker
-          key={`superficie-label-${beacon.id}`}
-          position={[
-            beacon.position.latitud - 0.00045,
-            beacon.position.longitud,
-          ]}
-          icon={L.divIcon({
-            html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color:#ccc8af;
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                line-height: 0.8rem;
-              ">
-              ${beacon.description}
-              </div>
-            `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        ></Marker>
-      );
-    });
+      const isMenuOpen = beaconMenuOpen === beacon._id;
 
-    return components;
-  };
-
-  const bocaminaLocations = () => {
-    const components: React.JSX.Element[] = [];
-
-    ubicationBocamina.forEach((bocamina) => {
-      components.push(
-        <Circle
-          key={`bocamina-circle-${bocamina.id}`}
-          center={[bocamina.position.latitud, bocamina.position.longitud]}
-          radius={60}
-          pathOptions={{
-            color: "#66d20e",
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.5,
-            dashArray: "16, 4",
-          }}
-        />
-      );
-      components.push(
-        <Marker
-          key={`bocamina-label-${bocamina.id}`}
-          position={[
-            bocamina.position.latitud - 0.0005,
-            bocamina.position.longitud,
-          ]}
-          icon={L.divIcon({
-            html: `
-              <div style="
-                white-space: nowrap;
-                display: flex;
-                gap: 5px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color:#66d20e;
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                line-height: 0.7rem;
-              ">
-                <span style="
-                  background: #FFFFFF85;
-                  color: #ffffff0;
-                  padding: 2px 4px;
-                  border-radius: 4px; 
-                  font-size: 0.8rem;
+      return (
+        <Fragment key={beacon._id}>
+          <Circle
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
+            center={[beacon.position.latitud, beacon.position.longitud]}
+            radius={radius}
+            pathOptions={{
+              color,
+              fillColor: "black",
+              weight: 2,
+              opacity: 0.9,
+              fillOpacity: 0.5,
+              dashArray: "16,4",
+            }}
+          />
+          <Marker
+            interactive={true}
+            eventHandlers={{
+              click: () => {
+                if (!isEditMode || mapMode !== "idle") return;
+                setBeaconMenuOpen(beacon._id);
+              },
+            }}
+            position={labelPosition}
+            icon={L.divIcon({
+              html: `
+                <div style="
+                  white-space: nowrap;
+                  display: flex;
+                  gap: 5px;
+                  align-items: center;
+                  justify-content: center;
+                  position: absolute;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  background-color: ${color};
+                  color: black;
+                  padding: 2px 6px 2px 2px;
+                  border-radius: 5px;
+                  font-size: 0.75rem;
                   font-weight: bold;
-                  line-height: 0.8rem;                            
+                  line-height: 0.8rem;
+                  text-transform: uppercase;
+                  cursor: ${isEditMode && mapMode === "idle" ? "pointer" : "crosshair"};
+                  pointer-events: ${isEditMode && mapMode === "idle" ? "auto" : "none"};
+                  ${isMenuOpen ? "box-shadow: 2px 2px 2px 4px black;" : ""}
                 ">
-                  ${filteredData.filter(
-              (truck) =>
-                truck.lastUbicationMac &&
-                bocamina.mac &&
-                bocamina.mac.some(
-                  (mac) =>
-                    mac.toLowerCase() ===
-                    truck.lastUbicationMac.toLowerCase()
-                )
-            ).length
-              }
-                </span>
-              ${bocamina.description}
-              </div>
-            `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        ></Marker>
+                  <span style="
+                    background: rgba(255,255,255,0.55);
+                    color: black;
+                    padding: 2px 5px;
+                    border-radius: 4px; 
+                    font-size: 0.8rem;
+                    font-weight: bold;
+                    line-height: 0.8rem;                            
+                  ">
+                    ${count}
+                  </span>
+                  ${beacon.description}
+                </div>
+              `,
+              className: "geofence-label",
+              iconSize: [0, 0],
+              iconAnchor: [0, 0],
+            })}
+          />
+
+          {isEditMode && isMenuOpen && mapMode === "idle" && (
+            <Marker
+              position={[
+                beacon.position.latitud + radiusInDegrees * 1.5,
+                beacon.position.longitud,
+              ]}
+              icon={L.divIcon({
+                html: `
+                  <div style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.1rem;
+                    background: #000000bf;
+                    border-radius: 10px;
+                    padding: 6px;
+                    min-width: 100px;
+                  " class="beacon-menu-${beacon._id}">
+                    <button 
+                      data-action="edit"
+                      data-beacon-id="${beacon._id}"
+                      style="
+                        padding: 5px 12px;
+                        background: #FFFFFF30;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        transition: all 0.2s;
+                      "
+                      onmouseover="this.style.background='#FFFFFF30'"
+                      onmouseout="this.style.background='#FFFFFF20'"
+                    >
+                      &#9998 Editar
+                    </button>
+                    <button 
+                      data-action="move"
+                      data-beacon-id="${beacon._id}"
+                      style="
+                          padding: 5px 12px;
+                        background: #FFFFFF30;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        transition: all 0.2s;
+                      "
+                      onmouseover="this.style.background='#FFFFFF30'"
+                      onmouseout="this.style.background='#FFFFFF20'"
+                    >
+                       &#x2629; Mover
+                    </button>
+                    <button 
+                      data-action="delete"
+                      data-beacon-id="${beacon._id}"
+                      style="
+                         padding: 5px 12px;
+                        background: #FF000030;
+                        color: #ff2056;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        transition: all 0.2s;
+                      "
+                      onmouseover="this.style.background='#FF000030'"
+                      onmouseout="this.style.background='#FF000020'"
+                    >
+                     &#x2716; Eliminar
+                    </button>
+                    <button 
+                      data-action="close"
+                      style="
+                        padding: 5px 12px;
+                        background: #FFFFFF30;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        transition: all 0.2s;
+                      "
+                      onmouseover="this.style.background='#FFFFFF30'"
+                      onmouseout="this.style.background='#FFFFFF20'"
+                    >
+                      &#x21A9; Cerrar
+                    </button>
+                  </div>
+                `,
+                className: "beacon-context-menu",
+                iconSize: [0, 0],
+                iconAnchor: [0, 0],
+              })}
+            />
+          )}
+        </Fragment>
       );
     });
+  }, [
+    dataZones,
+    trucksByBeacon,
+    mapMode,
+    beaconMenuOpen,
+    isEditMode,
+    handleDeleteBeacon,
+  ]);
 
-    return components;
-  };
+  useEffect(() => {
+    const handleMenuClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const action = target.dataset.action;
+      const beaconId = target.dataset.beaconId;
 
-  const tallerLocations = () => {
-    const components: React.JSX.Element[] = [];
+      if (!action) return;
 
-    maintenanceLocation.forEach((taller) => {
-      const color = taller.color || "#f3d111";
+      if (action === "close") {
+        setBeaconMenuOpen(null);
+        return;
+      }
 
-      const count = filteredData.filter(
-        (truck) =>
-          truck.lastUbicationMac &&
-          Array.isArray(taller.mac) &&
-          taller.mac.some(
-            (m) => m.toLowerCase() === truck.lastUbicationMac.toLowerCase()
-          )
-      ).length;
+      if (!beaconId) return;
 
-      components.push(
-        <Circle
-          key={`taller-circle-${taller.id}`}
-          center={[taller.position.latitud, taller.position.longitud]}
-          radius={60}
-          pathOptions={{
-            color,
-            fillColor: "black",
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.5,
-            dashArray: "16, 4",
-          }}
-        />
-      );
+      const beacon = dataZones.find((b) => b._id === beaconId);
+      if (!beacon) return;
 
-      components.push(
-        <Marker
-          key={`taller-label-${taller.id}`}
-          position={[
-            taller.position.latitud - 0.0005,
-            taller.position.longitud,
-          ]}
-          icon={L.divIcon({
-            html: `
-          <div style="
-            white-space: nowrap;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-                justify-content: center;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: ${color};
-                color: #ffffff0;
-                padding: 2px 6px 2px 2px;
-                border-radius: 5px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                line-height: 0.8rem;
-          ">
-            <span style="
-              background: #ffffff85;
-              color: #fffff;
-              padding: 2px 5px;
-              border-radius: 4px; 
-              font-size: 0.8rem;
-              font-weight: bold;
-              line-height: 0.8rem;                            
-            ">
-              ${count}
-            </span>
-            ${taller.description}
-          </div>
-        `,
-            className: "geofence-label",
-            iconSize: [0, 0],
-            iconAnchor: [0, 0],
-          })}
-        />
-      );
-    });
+      switch (action) {
+        case "edit":
+          setEditingBeacon(beacon);
+          setOpenCreateBeacon(true);
+          setBeaconMenuOpen(null);
+          break;
 
-    return components;
-  };
+        case "move":
+          setEditingBeacon(beacon);
+          setMapMode("move");
+          setBeaconMenuOpen(null);
+          break;
 
-  const MapaCamiones = useMemo(() => {
-    const { centerLat, centerLng, zoom } = mapConfig;
+        case "delete":
+          handleDeleteBeacon(beacon);
+          break;
+      }
+    };
 
-    return (
+    document.addEventListener("click", handleMenuClick);
+    return () => document.removeEventListener("click", handleMenuClick);
+  }, [dataZones]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        beaconMenuOpen &&
+        !target.closest(`.beacon-menu-${beaconMenuOpen}`) &&
+        !target.closest(".geofence-label")
+      ) {
+        setBeaconMenuOpen(null);
+      }
+    };
+
+    if (beaconMenuOpen) {
+      setTimeout(() => {
+        document.addEventListener("click", handleClickOutside);
+      }, 100);
+    }
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [beaconMenuOpen]);
+
+  return (
+    <div className="h-full w-full bg-black relative">
       <div className="h-full w-full">
         <MapContainer
-          center={[centerLat, centerLng]}
-          zoom={zoom}
+          className="z-0"
+          center={[mapConfig.centerLat, mapConfig.centerLng]}
+          zoom={15}
           minZoom={16.5}
           maxZoom={17.4}
           zoomControl={false}
+          doubleClickZoom={false}
           style={{ height: "100%", width: "100%" }}
-          className="z-0"
           attributionControl={false}
           zoomSnap={0.1}
           zoomDelta={0.1}
@@ -707,62 +752,137 @@ const TruckTracking = () => {
           touchRotate={true}
           rotateControl={{
             closeOnZeroBearing: false,
-            position: "bottomleft"
+            position: "bottomleft",
           }}
-          bearing={45}
+          bearing={35}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           />
-          <ZoomControl position="bottomleft" />
-          {toggleStatus.showDestinations && routeComponents()}
-          {toggleStatus.showTalleres && tallerLocations()}
-          {toggleStatus.showSuperficie && superficieLocations()}
-          {toggleStatus.showBocaminas && bocaminaLocations()}
+          {/* <ZoomControl position="bottomleft" /> */}
           {markers}
-
+          {routeComponents}
+          {renderBeacons()}
           <MapControls selectedTruckPosition={selectedTruckPosition} />
+
+          <MapLocationPicker
+            enabled={mapMode === "create" || mapMode === "move"}
+            position={
+              mapMode === "create"
+                ? (newBeaconPosition?.position ?? null)
+                : (editingBeacon?.position ?? null)
+            }
+            onSelect={(lat, lng) => {
+              if (mapMode === "create") {
+                setNewBeaconPosition({
+                  position: { latitud: lat, longitud: lng },
+                });
+                setMapMode("idle");
+                setOpenCreateBeacon(true);
+              }
+
+              if (mapMode === "move" && editingBeacon) {
+                setEditingBeacon({
+                  ...editingBeacon,
+                  position: { latitud: lat, longitud: lng },
+                });
+                setMapMode("idle");
+                setOpenCreateBeacon(true);
+              }
+            }}
+          />
         </MapContainer>
       </div>
-    );
-  }, [routeComponents, tallerLocations, bocaminaLocations, markers]);
-
-  return (
-    <div className="h-full w-full bg-black relative">
-      {MapaCamiones}
-      <Legend data={data} />
-      <Toggle
-        showBocaminas={toggleStatus.showBocaminas}
-        showDestinations={toggleStatus.showDestinations}
-        showSuperficie={toggleStatus.showSuperficie}
-        showTalleres={toggleStatus.showTalleres}
-        onToggleBocaminas={(show) =>
-          setToggleStatus((prev) => ({ ...prev, showBocaminas: show }))
-        }
-        onToggleDestinations={(show) =>
-          setToggleStatus((prev) => ({ ...prev, showDestinations: show }))
-        }
-        onToggleTalleres={(show) =>
-          setToggleStatus((prev) => ({ ...prev, showTalleres: show }))
-        }
+      <ZoneModal
+        isOpen={openCreateBeacon}
+        onClose={() => {
+          setOpenCreateBeacon(false);
+          setNewBeaconPosition(null);
+          setEditingBeacon(null);
+          setMapMode("idle");
+        }}
+        dataCrud={editingBeacon ?? newBeaconPosition}
+        isEdit={!!editingBeacon}
+        invalidateKey={["crud", "zone-superficie"]}
+        type="superficie"
       />
       <SearchTruck
-        data={filteredData}
+        data={dataZones}
         onTruckSelect={handleSelectTruck}
         selectedTruck={selectedTruck}
         isLoading={isLoading}
-        ubicationData={ubicationData}
         includeExtraLocations={true}
+        reload={refetchBeacons}
       />
+      <Legend data={data} />
       <Rute data={data} />
+
+      <button
+        onClick={() => {
+          setIsEditMode(true); // solo muestra UI
+          setMapMode("idle"); // NO crea nada
+          setEditingBeacon(null);
+        }}
+        className="absolute bottom-12 left-2.5 z-50 size-[34px] rounded-lg shadow bg-primary text-white hover:bg-primary/80 flex items-center justify-center"
+      >
+        <Crosshair className="size-5" />
+      </button>
+
+      {isEditMode && (
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div className="bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold text-center pointer-events-none">
+            {mapMode === "idle" && "Click en una zona para ver opciones"}
+            {mapMode === "create" && "Haz click en el mapa para crear un punto"}
+            {mapMode === "move" && "Haz click en el mapa para mover este punto"}
+          </div>
+          <div className="flex gap-2">
+            {mapMode === "idle" && (
+              <button
+                onClick={() => {
+                  setBeaconMenuOpen(null);
+                  setMapMode("create");
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <Plus className="size-3" />
+                Crear Nuevo
+              </button>
+            )}
+            {mapMode !== "idle" && (
+              <button
+                onClick={() => {
+                  setMapMode("idle");
+                  setEditingBeacon(null);
+                  setNewBeaconPosition(null);
+                }}
+                className="bg-zinc-600 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+              >
+                <ArrowLeft className="size-3" />
+                Volver Anterior
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditMode(false);
+                setMapMode("idle");
+                setEditingBeacon(null);
+                setNewBeaconPosition(null);
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-all ease-in duration-300"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // ⭐ Estilos CSS para los tooltips de rutas
 const routeTooltipStyles = `
-  .route-tooltip, .geofence-tooltip, .geofence-label {
+  .route-tooltip, .geofence-tooltip {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -777,7 +897,6 @@ const routeTooltipStyles = `
     margin: 0 !important;
     padding: 0 !important;
   }
-  
   .route-tooltip::before,
   .geofence-tooltip::before {
     display: none !important;

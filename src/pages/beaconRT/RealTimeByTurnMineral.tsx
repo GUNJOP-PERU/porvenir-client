@@ -33,6 +33,7 @@ const RealTimeByHourRT = () => {
       key: "selection",
     },
   ]);
+  const [routeFilter, setRouteFilter] = useState<string>("");
 
   const {
     data = [],
@@ -68,6 +69,26 @@ const RealTimeByHourRT = () => {
     }
   );
 
+  const routeOptions = useMemo(() => {
+    const trips = (data || []).flatMap((u) => u.trips || []);
+    const routes = trips.map((t) => `${t.startUbication} → ${t.endUbication}`);
+    return Array.from(new Set(routes)).sort();
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (!routeFilter) return data;
+    const [startR, endR] = routeFilter.split(" → ");
+    return (data || []).map((unit) => ({
+      ...unit,
+      trips: unit.trips.filter(
+        (t) => t.startUbication === startR && t.endUbication === endR
+      ),
+      totalTrips: unit.trips.filter(
+        (t) => t.startUbication === startR && t.endUbication === endR
+      ).length,
+    }));
+  }, [data, routeFilter]);
+
   const baseData = useMemo(() => {
     const mineral =
       mineralData?.find((charge) => charge.name === "Mineral")?.value || 36;
@@ -99,11 +120,11 @@ const RealTimeByHourRT = () => {
   }, [planData, shiftFilter]);
 
   const prediction = useMemo(() => {
-    return calculateTripPrediction(data, beaconTruck, baseData.mineral, planDay.totalTonnageBlending);
-  }, [data, beaconTruck, baseData.mineral, shiftFilter]);
+    return calculateTripPrediction(filteredData, beaconTruck, baseData.mineral, planDay.totalTonnageBlending);
+  }, [filteredData, beaconTruck, baseData.mineral, shiftFilter]);
 
   const baseStats = useMemo(() => {
-    if (!data || !mineralData) {
+    if (!filteredData || !mineralData) {
       return {
         totalUnits: 0,
         totalUnitsDay: 0,
@@ -132,25 +153,25 @@ const RealTimeByHourRT = () => {
       };
     }
 
-    const totalTrips = data.reduce((acc, day) => acc + day.totalTrips, 0);
-    const allTrips = data.map((unitGroup) => unitGroup.trips).flat();
+    const totalTrips = filteredData.reduce((acc, day) => acc + day.totalTrips, 0);
+    const allTrips = filteredData.map((unitGroup) => unitGroup.trips).flat();
     const avgDurationSuperficieTripsDay = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "dia").length;
     const avgDurationSubterraneoTripsDay = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "dia").length;
     const avgDurationSuperficieTripsNight = allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Superficie" && trip.shift === "noche").length;
     const avgDurationSubterraneoTripsNight = allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").reduce((avg, trip) => avg + trip.tripDurationMin, 0) / allTrips.filter((trip) => trip.location === "Subterraneo" && trip.shift === "noche").length;
 
-    const dayTrips = data.reduce(
+    const dayTrips = filteredData.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "dia").length,
       0
     );
-    const nightTrips = data.reduce(
+    const nightTrips = filteredData.reduce(
       (acc, day) =>
         acc + day.trips.filter((trip) => trip.shift === "noche").length,
       0
     );
 
-    const totalDuration = data.reduce(
+    const totalDuration = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips.reduce(
@@ -160,7 +181,7 @@ const RealTimeByHourRT = () => {
       0
     );
 
-    const totalDurationDay = data.reduce(
+    const totalDurationDay = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips
@@ -172,7 +193,7 @@ const RealTimeByHourRT = () => {
       0
     );
 
-    const totalDurationNight = data.reduce(
+    const totalDurationNight = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.trips
@@ -184,12 +205,12 @@ const RealTimeByHourRT = () => {
       0
     );
 
-    const totalMaintenanceTimeMin = data.reduce(
+    const totalMaintenanceTimeMin = filteredData.reduce(
       (acc, tripsTruck) => acc + tripsTruck.totalMaintanceTimeMin,
       0
     );
 
-    const totalMaintenanceTimeMinDay = data.reduce(
+    const totalMaintenanceTimeMinDay = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.maintance
@@ -199,7 +220,7 @@ const RealTimeByHourRT = () => {
       0
     );
 
-    const totalMaintenanceTimeMinNight = data.reduce(
+    const totalMaintenanceTimeMinNight = filteredData.reduce(
       (acc, tripsTruck) =>
         acc +
         tripsTruck.maintance
@@ -210,23 +231,23 @@ const RealTimeByHourRT = () => {
     );
 
     const avgUnloadTime =
-      data.reduce((acc, truck) => {
+      filteredData.reduce((acc, truck) => {
         return acc + truck.avgUnloadTime / 60;
-      }, 0) / data.length;
+      }, 0) / filteredData.length;
 
     const avgLoadTime =
-      data.reduce((acc, truck) => {
+      filteredData.reduce((acc, truck) => {
         return acc + truck.avgFrontLaborDuration / 60;
-      }, 0) / data.length;
+      }, 0) / filteredData.length;
 
     const totalTM = totalTrips * baseData.mineral;
     const totalTMDay = dayTrips * baseData.mineral;
     const totalTMNight = nightTrips * baseData.mineral;
 
     return {
-      totalUnits: data.length,
-      totalUnitsDay: data.filter((unit) => unit.trips.length > 0).length,
-      totalUnitsNight: data.filter((unit) => unit.trips.length > 0).length,
+      totalUnits: filteredData.length,
+      totalUnitsDay: filteredData.filter((unit) => unit.trips.length > 0).length,
+      totalUnitsNight: filteredData.filter((unit) => unit.trips.length > 0).length,
       totalTrips,
       totalTM,
       totalDuration,
@@ -251,12 +272,12 @@ const RealTimeByHourRT = () => {
       avgDurationSuperficieTripsNight,
       avgDurationSubterraneoTripsNight,
     };
-  }, [data, baseData]);
+  }, [filteredData, baseData]);
 
   const tripsByShift = useMemo(() => {
-    if (!data) return { dia: [], noche: [] };
+    if (!filteredData) return { dia: [], noche: [] };
 
-    const trips = data.map((unitGroup) => unitGroup.trips).flat();
+    const trips = filteredData.map((unitGroup) => unitGroup.trips).flat();
     const hours = Array.from(
       { length: 24 },
       (_, i) => `${i < 10 ? `0${i}` : i}:00`
@@ -289,7 +310,7 @@ const RealTimeByHourRT = () => {
     });
 
     return grouped;
-  }, [data]);
+  }, [filteredData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -336,7 +357,7 @@ const RealTimeByHourRT = () => {
   return (
     <div className="grid grid-cols-[1fr_5fr] flex-1 w-full gap-4">
       <PageHeader
-        title="Reporte de Extracción por Turno / Mineral"
+        title="Carguío y Transporte de Mineral por Turno"
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={false}
@@ -353,6 +374,21 @@ const RealTimeByHourRT = () => {
           },
         ]}
       />
+      <div className="col-span-2 flex items-center gap-2">
+        <span className="text-xs text-zinc-600">Ruta</span>
+        <select
+          className="border rounded px-2 py-1 text-xs w-[220px]"
+          value={routeFilter}
+          onChange={(e) => setRouteFilter(e.target.value)}
+        >
+          <option value="">Todas</option>
+          {routeOptions.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="flex flex-col items-center justify-around gap-0">
         <IconTruck
           className="fill-yellow-500 h-30 w-40"
@@ -362,7 +398,7 @@ const RealTimeByHourRT = () => {
   
         <div className="flex flex-col gap-8">
           <DonutChart
-            title="Extracción de Mineral (TM)"
+            title="Transporte de Mineral (TM)"
             size="xlarge"
             donutData={{
               currentValue: baseStats.totalTM,
@@ -418,7 +454,7 @@ const RealTimeByHourRT = () => {
         {shiftFilter === "dia" ? (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -456,7 +492,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -500,7 +536,7 @@ const RealTimeByHourRT = () => {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-2">
             <CardTitle
-              title="Ejecución de extracción de mineral acumulado (TM)"
+              title="Ejecución de Transporte de mineral acumulado (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
@@ -535,7 +571,7 @@ const RealTimeByHourRT = () => {
               />
             </CardTitle>
             <CardTitle
-              title="Ejecución de extracción de mineral por hora (TM)"
+              title="Ejecución de Transporte de mineral por hora (TM)"
               subtitle="Análisis de la cantidad de viajes realizados"
               // icon={IconTruck}
               classIcon="fill-yellow-500 h-7 w-14"
