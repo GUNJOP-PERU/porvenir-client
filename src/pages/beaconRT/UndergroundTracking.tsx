@@ -364,8 +364,7 @@ const UndergroundTracking = () => {
                   </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${
-                        truck.status.toLowerCase().includes("operativo")
+                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
                                 .toLowerCase()
@@ -396,7 +395,7 @@ const UndergroundTracking = () => {
                     >
                       {truck.connectivity}{" "}
                       {truck.lastDate &&
-                      !isNaN(new Date(truck.lastDate).getTime()) ? (
+                        !isNaN(new Date(truck.lastDate).getTime()) ? (
                         <TimeAgo datetime={truck.lastDate} locale="es" />
                       ) : (
                         "----"

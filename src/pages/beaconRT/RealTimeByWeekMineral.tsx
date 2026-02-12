@@ -57,17 +57,18 @@ const RealTimeByWeek = () => {
     isError: tripsError,
   } = useFetchData<BeaconCycle[]>(
     "trip-report-week",
-    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate,"yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    `beacon-track/trip?material=mineral&startDate=${format(dateFilter[0].startDate, "yyyy-MM-dd")}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     { refetchInterval: 10000 }
   );
 
-  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", {
+  const { data: mineralData } = useFetchData<Mineral[]>("mineral", "mineral", "", {
     refetchInterval: 10000,
   });
 
   const {
-    data : beaconTruck = []
-  } = useFetchData<{status: string}[]>("beacon-truck", "beacon-truck", { refetchInterval: 10000 });
+    data: beaconTruck = []
+  } = useFetchData<{ status: string }[]>("beacon-truck", "beacon-truck", "", { refetchInterval: 10000 });
 
   const { data: planData = [] } = useFetchData<PlanWeek[]>(
     "plan-week",
@@ -75,6 +76,7 @@ const RealTimeByWeek = () => {
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     {
       refetchInterval: 10000,
     }
@@ -86,6 +88,7 @@ const RealTimeByWeek = () => {
       dateFilter[0].startDate,
       "yyyy-MM-dd"
     )}&endDate=${format(dateFilter[0].endDate, "yyyy-MM-dd")}`,
+    "",
     {
       refetchInterval: 10000,
     }
@@ -247,7 +250,7 @@ const RealTimeByWeek = () => {
         tripsTruck.maintance
           .filter((mant) => mant.shift === "dia")
           .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) /
-          60,
+        60,
       0
     );
 
@@ -257,7 +260,7 @@ const RealTimeByWeek = () => {
         tripsTruck.maintance
           .filter((mant) => mant.shift === "noche")
           .reduce((innerAcc, mant) => innerAcc + mant.duration, 0) /
-          60,
+        60,
       0
     );
 
@@ -341,8 +344,8 @@ const RealTimeByWeek = () => {
       const dayAbbrev = format(dateObj, 'EEE', { locale: es });
       const dayNumber = format(dateObj, 'd');
       const capitalizedDay = dayAbbrev.charAt(0).toUpperCase() + dayAbbrev.slice(1);
-      const label = `${capitalizedDay} ${dayNumber}`; 
-      
+      const label = `${capitalizedDay} ${dayNumber}`;
+
       return {
         date,
         label,
@@ -380,13 +383,16 @@ const RealTimeByWeek = () => {
         setDialogOpen={false}
         className="col-span-2"
         status={[
-          { value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "operativo").length} Operativos`,
             color: "#10aa18",
           },
-          { value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "mantenimiento").length} Mantenimiento`,
             color: "#d1be16",
           },
-          { value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
+          {
+            value: `${beaconTruck.filter((unit) => unit.status === "inoperativo").length} Inoperativos`,
             color: "#ca1616",
           },
         ]}
@@ -428,8 +434,8 @@ const RealTimeByWeek = () => {
               donutData={{
                 currentValue:
                   12 *
-                    isoDay *
-                    (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
+                  isoDay *
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
                   baseStats.totalMantanceTimeMin / 60,
                 total:
                   12 *
@@ -441,24 +447,24 @@ const RealTimeByWeek = () => {
           </div>
           <div>
             <h3 className="font-bold text-center leading-none text-[13px] col-span-2">
-            Utilización
-          </h3>
-          <DonutChart
-            title=""
-            size="medium"
-            donutData={{
-              currentValue:
-                12 *
+              Utilización
+            </h3>
+            <DonutChart
+              title=""
+              size="medium"
+              donutData={{
+                currentValue:
+                  12 *
                   isoDay *
                   (baseStats.totalUnitsNight + baseStats.totalUnitsDay) -
-                baseStats.totalDuration / 3600,
-              total:
-                12 *
-                isoDay *
-                (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
-              currentValueColor: "#ff5000",
-            }}
-          />
+                  baseStats.totalDuration / 3600,
+                total:
+                  12 *
+                  isoDay *
+                  (baseStats.totalUnitsNight + baseStats.totalUnitsDay),
+                currentValueColor: "#ff5000",
+              }}
+            />
           </div>
         </div>
       </div>
@@ -471,13 +477,13 @@ const RealTimeByWeek = () => {
           actions={
             <div className="flex flex-row gap-2">
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Mineral Extraído
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#A6A6A6] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Planificado
                 </p>
@@ -499,31 +505,31 @@ const RealTimeByWeek = () => {
           actions={
             <div className="flex flex-row gap-2">
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#68c970] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#68c970] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Diferencia positiva
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#f9c83e] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Diferencia negativa
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#ff5000] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Mineral Extraído Dia
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#3c3c3c] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Mineral Extraído Noche
                 </p>
               </div>
               <div className="flex flex-row items-center gap-1">
-                <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full"/>
+                <span className="flex bg-[#b8b8b8] w-2 h-2 rounded-full" />
                 <p className="text-[11px] font-bold">
                   Planificado
                 </p>
@@ -552,9 +558,9 @@ const RealTimeByWeek = () => {
                 currentValue:
                   shiftFilter === "dia"
                     ? baseStats.totalUnitsDay * 12 -
-                      baseStats.totalMaintenanceTimeMinDay / 60
+                    baseStats.totalMaintenanceTimeMinDay / 60
                     : baseStats.totalUnitsNight * 12 -
-                      baseStats.totalMaintenanceTimeMinNight / 60,
+                    baseStats.totalMaintenanceTimeMinNight / 60,
                 currentValueColor: "#ff5000",
               },
               {

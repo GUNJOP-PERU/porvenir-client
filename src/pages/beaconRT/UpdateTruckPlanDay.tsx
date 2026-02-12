@@ -44,11 +44,10 @@ export default function UpdateTruckPlanDay() {
   const userType = useAuthStore((state) => state.type);
   const { data: mineralTripsData = [] } = useFetchData<BeaconCycle[]>(
     "trip-group-by-current-day-truck-rt",
-    `beacon-track/trip?material=mineral&startDate=${
-      getCurrentDay().startDateString
-    }&endDate=${getCurrentDay().endDateString}${
-      getCurrentDay().shift ? `&shift=${getCurrentDay().shift}` : ""
+    `beacon-track/trip?material=mineral&startDate=${getCurrentDay().startDateString
+    }&endDate=${getCurrentDay().endDateString}${getCurrentDay().shift ? `&shift=${getCurrentDay().shift}` : ""
     }`,
+    "",
     { refetchInterval: 5000 }
   );
   const { data: planData = [], refetch } = useFetchData<Plan[]>(
@@ -64,6 +63,7 @@ export default function UpdateTruckPlanDay() {
   const { data: availableTrucks = [] } = useFetchData<Volquete[]>(
     "beacon-truck",
     "beacon-truck",
+    "",
     {}
   );
 

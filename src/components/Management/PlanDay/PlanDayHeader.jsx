@@ -41,7 +41,7 @@ export const PlanHeader = ({
     data: dataLaborList,
     refetch: refetchLaborList,
     isFetching: isLaborListFetching,
-    // isLoading: loadingLaborList,
+    isLoading: loadingLaborList,
   } = useFetchData("frontLabor-current", "frontLabor/current", {
     enabled: true,
     staleTime: 0,

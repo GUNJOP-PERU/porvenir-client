@@ -17,7 +17,7 @@ import DonutChart from "@/components/Dashboard/Charts/DonutChart";
 import { getCurrentDay, planDayDateParser } from "@/utils/dateUtils";
 import { calculateTripPrediction } from "@/utils/predictionUtils";
 // Icons
-import IconTruck from "@/icons/IconTruck";
+import IconScoop from "@/icons/IconScoop";
 
 const RealTimeByScoopMineral = () => {
   const [shiftFilter, setShiftFilter] = useState<string>(getCurrentDay().shift);
@@ -351,10 +351,8 @@ const RealTimeByScoopMineral = () => {
         ]}
       />
       <div className="flex flex-col items-center justify-around gap-0">
-        <IconTruck
+        <IconScoop
           className="fill-yellow-500 h-30 w-40"
-          color=""
-          style={{}}
         />
 
         <div className="flex flex-col gap-8">
@@ -577,67 +575,7 @@ const RealTimeByScoopMineral = () => {
         <div className="flex flex-col border border-zinc-100 shadow-sm rounded-xl p-3">
           <DonutAndTableChart
             title="Causas de Desviación del Plan %"
-            donutData={[
-              {
-                title: "Disponibilidad",
-                total: beaconTruck.length,
-                currentValue: beaconTruck.filter((unit) => unit.status === "operativo").length,
-                currentValueColor: "#ff5000",
-              },
-              {
-                title: "Utilización",
-                total:
-                  shiftFilter === "dia"
-                    ? baseStats.totalUnitsDay * 12
-                    : baseStats.totalUnitsNight * 12,
-                currentValue:
-                  shiftFilter === "dia"
-                    ? baseStats.totalDurationDay / 3600
-                    : baseStats.totalDurationNight / 3600,
-                currentValueColor: "#ff5000",
-              },
-            ]}
-            tableData={[
-              {
-                title: "Plan",
-                currentValue: 60,
-                total: 100,
-                subData: [
-                  {
-                    title: "Tiempo de Carga por Camión",
-                    currentValue: baseStats.avgLoadTime
-                      ? Number(baseStats.avgLoadTime.toFixed(2))
-                      : 0,
-                    total: 10,
-                  },
-                  {
-                    title: "Tiempo de Descarga de Camión",
-                    currentValue: baseStats.avgUnloadTime
-                      ? Number(baseStats.avgUnloadTime.toFixed(2))
-                      : 0,
-                    total: 10,
-                  }
-                ],
-              },
-              {
-                title: "Duración del Ciclo Subterraneo",
-                currentValue:
-                  shiftFilter === "dia"
-                    ? Number(baseStats.avgDurationSubterraneoTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSubterraneoTripsNight.toFixed(2)),
-                total: 100,
-                subData: [],
-              },
-              {
-                title: "Duración del Ciclo Superficie",
-                currentValue:
-                  shiftFilter === "dia"
-                    ? Number(baseStats.avgDurationSuperficieTripsDay.toFixed(2))
-                    : Number(baseStats.avgDurationSuperficieTripsNight.toFixed(2)),
-                total: 100,
-                subData: [],
-              },
-            ]}
+            donutData={[]}
           />
         </div>
       </div>

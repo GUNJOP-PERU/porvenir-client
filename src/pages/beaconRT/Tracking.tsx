@@ -233,9 +233,8 @@ const TruckTracking = () => {
       return L.divIcon({
         html: `
           <div style="display:flex; flex-direction:column; align-items:center;">
-            <div class="${
-              isSelected ? "truck-inner marker-highlight" : "truck-inner"
-            }" style="
+            <div class="${isSelected ? "truck-inner marker-highlight" : "truck-inner"
+          }" style="
               background-color: ${color};
               width: 1.8rem;
               height: 1.8rem;
@@ -358,19 +357,18 @@ const TruckTracking = () => {
                   </div>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${
-                        truck.status.toLowerCase().includes("operativo")
-                          ? "bg-green-100 text-green-800"
-                          : truck.status
-                                .toLowerCase()
-                                .includes("mantenimiento") ||
-                              truck.status
-                                .toLowerCase()
-                                .includes("inoperativo") ||
-                              truck.status.toLowerCase().includes("demora")
-                            ? "bg-[#ff758f] text-white"
-                            : "bg-red-100 text-red-800"
-                      }`}
+                      className={`px-2 py-1.5 rounded-lg text-xs leading-3 font-extrabold uppercase line-clamp-2  max-w-[120px] text-center ${truck.status.toLowerCase().includes("operativo")
+                        ? "bg-green-100 text-green-800"
+                        : truck.status
+                          .toLowerCase()
+                          .includes("mantenimiento") ||
+                          truck.status
+                            .toLowerCase()
+                            .includes("inoperativo") ||
+                          truck.status.toLowerCase().includes("demora")
+                          ? "bg-[#ff758f] text-white"
+                          : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {truck.status === "operativo"
                         ? "Operativo"
@@ -390,7 +388,7 @@ const TruckTracking = () => {
                     >
                       {truck.connectivity}{" "}
                       {truck.lastDate &&
-                      !isNaN(new Date(truck.lastDate).getTime()) ? (
+                        !isNaN(new Date(truck.lastDate).getTime()) ? (
                         <TimeAgo datetime={truck.lastDate} locale="es" />
                       ) : (
                         "----"
@@ -741,9 +739,9 @@ const TruckTracking = () => {
         <MapContainer
           className="z-0"
           center={[mapConfig.centerLat, mapConfig.centerLng]}
-          zoom={15}
-          minZoom={16.5}
-          maxZoom={17.4}
+          zoom={16.5}
+          minZoom={15}
+          maxZoom={18}
           zoomControl={false}
           doubleClickZoom={false}
           style={{ height: "100%", width: "100%" }}
@@ -756,11 +754,11 @@ const TruckTracking = () => {
             closeOnZeroBearing: false,
             position: "bottomleft",
           }}
-          bearing={35}
+          bearing={45}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='Offline Mode'
+            url="/maps/tiles/{z}/{x}/{y}.png"
           />
           {/* <ZoomControl position="bottomleft" /> */}
           {markers}
@@ -831,54 +829,56 @@ const TruckTracking = () => {
         <Crosshair className="size-5" />
       </button>
 
-      {isEditMode && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
-          <div className="bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold text-center pointer-events-none">
-            {mapMode === "idle" && "Click en una zona para ver opciones"}
-            {mapMode === "create" && "Haz click en el mapa para crear un punto"}
-            {mapMode === "move" && "Haz click en el mapa para mover este punto"}
-          </div>
-          <div className="flex gap-2">
-            {mapMode === "idle" && (
+      {
+        isEditMode && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+            <div className="bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold text-center pointer-events-none">
+              {mapMode === "idle" && "Click en una zona para ver opciones"}
+              {mapMode === "create" && "Haz click en el mapa para crear un punto"}
+              {mapMode === "move" && "Haz click en el mapa para mover este punto"}
+            </div>
+            <div className="flex gap-2">
+              {mapMode === "idle" && (
+                <button
+                  onClick={() => {
+                    setBeaconMenuOpen(null);
+                    setMapMode("create");
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+                >
+                  <Plus className="size-3" />
+                  Crear Nuevo
+                </button>
+              )}
+              {mapMode !== "idle" && (
+                <button
+                  onClick={() => {
+                    setMapMode("idle");
+                    setEditingBeacon(null);
+                    setNewBeaconPosition(null);
+                  }}
+                  className="bg-zinc-600 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+                >
+                  <ArrowLeft className="size-3" />
+                  Volver Anterior
+                </button>
+              )}
               <button
                 onClick={() => {
-                  setBeaconMenuOpen(null);
-                  setMapMode("create");
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
-              >
-                <Plus className="size-3" />
-                Crear Nuevo
-              </button>
-            )}
-            {mapMode !== "idle" && (
-              <button
-                onClick={() => {
+                  setIsEditMode(false);
                   setMapMode("idle");
                   setEditingBeacon(null);
                   setNewBeaconPosition(null);
                 }}
-                className="bg-zinc-600 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ease-in duration-300"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-all ease-in duration-300"
               >
-                <ArrowLeft className="size-3" />
-                Volver Anterior
+                Salir
               </button>
-            )}
-            <button
-              onClick={() => {
-                setIsEditMode(false);
-                setMapMode("idle");
-                setEditingBeacon(null);
-                setNewBeaconPosition(null);
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-all ease-in duration-300"
-            >
-              Salir
-            </button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

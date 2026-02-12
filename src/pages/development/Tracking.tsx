@@ -102,7 +102,7 @@ const TruckTracking = () => {
     isLoading,
     error,
     refetch,
-  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", {
+  } = useFetchData<BeaconTruckStatus[]>("beacon-truck-map", "beacon-truck", "", {
     refetchInterval: 2000,
   });
 
@@ -300,19 +300,18 @@ const TruckTracking = () => {
                   </span>
                   <div className="flex flex-col items-start gap-1">
                     <span
-                      className={`px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold ${
-                        truck.status.toLowerCase().includes("operativo")
+                      className={`px-2 py-[2px] rounded-full text-[9px] leading-3 font-semibold ${truck.status.toLowerCase().includes("operativo")
                           ? "bg-green-100 text-green-800"
                           : truck.status
-                              .toLowerCase()
-                              .includes("mantenimiento") ||
+                            .toLowerCase()
+                            .includes("mantenimiento") ||
                             truck.status
                               .toLowerCase()
                               .includes("inoperativo") ||
                             truck.status.toLowerCase().includes("demora")
-                          ? "bg-orange-300 text-orange-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
+                            ? "bg-orange-300 text-orange-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {truck.status}
                     </span>
@@ -348,7 +347,7 @@ const TruckTracking = () => {
                       ? "En línea"
                       : "Fuera de línea"}{" "}
                     {truck.lastDate &&
-                    !isNaN(new Date(truck.lastDate).getTime()) ? (
+                      !isNaN(new Date(truck.lastDate).getTime()) ? (
                       <TimeAgo datetime={truck.lastDate} locale="es" />
                     ) : (
                       "----"
@@ -439,14 +438,13 @@ const TruckTracking = () => {
                 font-weight: bold;
                 line-height: 0.7rem;                            
               ">
-                ${
-                  data.filter(
-                    (truck) =>
-                      truck.lastUbicationMac &&
-                      truck.lastUbicationMac.toLowerCase() ===
-                        ubication.mac.toLowerCase()
-                  ).length
-                }
+                ${data.filter(
+              (truck) =>
+                truck.lastUbicationMac &&
+                truck.lastUbicationMac.toLowerCase() ===
+                ubication.mac.toLowerCase()
+            ).length
+              }
               </span>
               ${ubication.description}
               </div>
@@ -630,14 +628,13 @@ const TruckTracking = () => {
                   font-weight: bold;
                   line-height: 0.7rem;                            
                 ">
-                  ${
-                    data.filter(
-                      (truck) =>
-                        truck.lastUbicationMac &&
-                        truck.lastUbicationMac.toLowerCase() ===
-                          bocamina.mac.toLowerCase()
-                    ).length
-                  }
+                  ${data.filter(
+              (truck) =>
+                truck.lastUbicationMac &&
+                truck.lastUbicationMac.toLowerCase() ===
+                bocamina.mac.toLowerCase()
+            ).length
+              }
                 </span>
               ${bocamina.description}
               </div>
@@ -817,7 +814,7 @@ const TruckTracking = () => {
         ubicationData={ubicationData}
         includeExtraLocations={true}
       />
-     <Rute data={data} />
+      <Rute data={data} />
     </div>
   );
 };

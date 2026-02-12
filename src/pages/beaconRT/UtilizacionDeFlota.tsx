@@ -25,6 +25,7 @@ const UtilizacionDeFlota = () => {
   const { data = [] } = useFetchData<TruckStatus[]>(
     "beacon-truck",
     "beacon-truck",
+    "",
     {
       refetchInterval: 5000,
     }
@@ -36,6 +37,7 @@ const UtilizacionDeFlota = () => {
       dateFilter,
       "yyyy-MM-dd"
     )}${shiftFilter ? `&shift=${shiftFilter}` : ""}`,
+    "",
     { refetchInterval: 5000 }
   );
 
@@ -59,7 +61,7 @@ const UtilizacionDeFlota = () => {
     ]
 
     beaconDetectionData.forEach((unit) => {
-      const unitBCValidation : any[] = []
+      const unitBCValidation: any[] = []
       const bcDetection = unit.tracks.filter((track) => validBC.some((bc) => bc === track.ubication))
       let isLateBocamina = false;
 
@@ -73,9 +75,9 @@ const UtilizacionDeFlota = () => {
         const nightShiftLimit = startTime.hour(20).minute(30);
         const duration = track.f_final && track.f_inicio
           ? dayjs(track.f_final).diff(
-              dayjs(track.f_inicio),
-              "minute"
-            )
+            dayjs(track.f_inicio),
+            "minute"
+          )
           : 0;
 
         if (shiftFilter === "dia") {
@@ -84,46 +86,46 @@ const UtilizacionDeFlota = () => {
           isLateBocamina = startTime.isAfter(nightShiftLimit);
         }
 
-        if(track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820"){
-          if(detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800"){
+        if (track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820") {
+          if (detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800") {
             return
           }
         }
 
-        if(track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800"){
-          if(detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie"){
+        if (track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800") {
+          if (detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie") {
             return unitBCValidation.push({
               unit: unit.unit,
               firstBocamina: {
-                  isLate: isLateBocamina,
-                  ubication: track.ubication,
-                  ubicationType: track.ubicationType,
-                  startTime: track.f_inicio,
-                  endTime: track.f_final,
-                  duration: duration.toFixed(1),
-              }
-            })
-          }
-        }
-
-        if(detectionAfter?.ubicationSubType === "superficie"){
-          return
-        } else if(validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie"){
-          return unitBCValidation.push({
-            unit: unit.unit,
-            firstBocamina: {
                 isLate: isLateBocamina,
                 ubication: track.ubication,
                 ubicationType: track.ubicationType,
                 startTime: track.f_inicio,
                 endTime: track.f_final,
                 duration: duration.toFixed(1),
+              }
+            })
+          }
+        }
+
+        if (detectionAfter?.ubicationSubType === "superficie") {
+          return
+        } else if (validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie") {
+          return unitBCValidation.push({
+            unit: unit.unit,
+            firstBocamina: {
+              isLate: isLateBocamina,
+              ubication: track.ubication,
+              ubicationType: track.ubicationType,
+              startTime: track.f_inicio,
+              endTime: track.f_final,
+              duration: duration.toFixed(1),
             }
           })
         }
       })
 
-      if(unitBCValidation.length > 0){
+      if (unitBCValidation.length > 0) {
         unitBCValidDetections.push(unitBCValidation[0])
       }
     })
@@ -133,7 +135,7 @@ const UtilizacionDeFlota = () => {
 
   const lunchTimeMineDetection = useMemo(() => {
     const unitBCValidDetections: any[] = []
-    if(!(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia")){
+    if (!(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia")) {
       return []
     }
     const validBC = [
@@ -154,7 +156,7 @@ const UtilizacionDeFlota = () => {
     ]
 
     beaconDetectionData.forEach((unit) => {
-      const unitBCValidation : any[] = []
+      const unitBCValidation: any[] = []
       const bcDetection = unit.tracks.filter((track) => {
         const isBocamina = validBC.some((bc) => bc === track.ubication)
         if (!isBocamina) return false;
@@ -163,7 +165,7 @@ const UtilizacionDeFlota = () => {
         const minutes = trackTime.getMinutes();
         const totalMinutes = hours * 60 + minutes;
 
-        return totalMinutes >=750;
+        return totalMinutes >= 750;
       })
       let isLateBocamina = false;
 
@@ -176,55 +178,55 @@ const UtilizacionDeFlota = () => {
         const dayShiftLimit = startTime.hour(13).minute(30);
         const duration = track.f_final && track.f_inicio
           ? dayjs(track.f_final).diff(
-              dayjs(track.f_inicio),
-              "minute"
-            )
+            dayjs(track.f_inicio),
+            "minute"
+          )
           : 0;
 
         if (shiftFilter === "dia") {
           isLateBocamina = startTime.isAfter(dayShiftLimit);
         }
 
-        if(track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820"){
-          if(detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800"){
+        if (track.ubication === "Int-BC-1820" || track.ubication === "Ext-BC-1820") {
+          if (detectionAfter?.ubication === "Int-BC-1800" || detectionBefore?.ubication === "Int-BC-1800" || detectionAfter?.ubication === "Ext-BC-1800" || detectionBefore?.ubication === "Ext-BC-1800") {
             return
           }
         }
 
-        if(track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800"){
-          if(detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie"){
+        if (track.ubication === "Ext-BC-1875" || track.ubication === "Ext-BC-1800") {
+          if (detectionAfter?.ubication !== "Int-BC-1875" && detectionAfter?.ubication !== "Int-BC-1800" && detectionAfter?.ubicationSubType !== "superficie") {
             return unitBCValidation.push({
               unit: unit.unit,
               firstBocamina: {
-                  isLate: isLateBocamina,
-                  ubication: track.ubication,
-                  ubicationType: track.ubicationType,
-                  startTime: track.f_inicio,
-                  endTime: track.f_final,
-                  duration: duration.toFixed(1),
-              }
-            })
-          }
-        }
-
-        if(detectionAfter?.ubicationSubType === "superficie"){
-          return
-        } else if(validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie"){
-          return unitBCValidation.push({
-            unit: unit.unit,
-            firstBocamina: {
                 isLate: isLateBocamina,
                 ubication: track.ubication,
                 ubicationType: track.ubicationType,
                 startTime: track.f_inicio,
                 endTime: track.f_final,
                 duration: duration.toFixed(1),
+              }
+            })
+          }
+        }
+
+        if (detectionAfter?.ubicationSubType === "superficie") {
+          return
+        } else if (validExtBC.some((bc) => bc === detectionBefore?.ubication) || detectionAfter?.ubicationSubType === "superficie") {
+          return unitBCValidation.push({
+            unit: unit.unit,
+            firstBocamina: {
+              isLate: isLateBocamina,
+              ubication: track.ubication,
+              ubicationType: track.ubicationType,
+              startTime: track.f_inicio,
+              endTime: track.f_final,
+              duration: duration.toFixed(1),
             }
           })
         }
       })
 
-      if(unitBCValidation.length > 0){
+      if (unitBCValidation.length > 0) {
         unitBCValidDetections.push(unitBCValidation[0])
       }
     })
@@ -320,7 +322,7 @@ const UtilizacionDeFlota = () => {
       } else if (
         isParqueo &&
         new Date().getTime() - new Date(truck.lastDate).getTime() <
-          20 * 60 * 1000
+        20 * 60 * 1000
       ) {
         parqueoUnits.push(truck);
       } else if (isSuperficie || isDestination) {
@@ -390,7 +392,7 @@ const UtilizacionDeFlota = () => {
     setInterval(() => {
       setDateFilter(getCurrentDay().endDate);
       setShiftFilter(getCurrentDay().shift);
-      if(getISODay(new Date()) === 3 && getCurrentDay().shift === "dia"){
+      if (getISODay(new Date()) === 3 && getCurrentDay().shift === "dia") {
         setShowOtherColumns(true);
       } else {
         setShowOtherColumns(false);
@@ -411,7 +413,7 @@ const UtilizacionDeFlota = () => {
           </div>
           <h4
             className="text-sm font-bold select-none text-zinc-500"
-            // style={{ color: itemColors.parqueo.color }}
+          // style={{ color: itemColors.parqueo.color }}
           >
             Parqueo (Inicio de turno)
           </h4>
@@ -440,7 +442,7 @@ const UtilizacionDeFlota = () => {
                 </div>
                 <div className="text-[9.5px] select-none leading-[10px] text-left gap-1 line-clamp-2 pl-3.5 pr-2 py-1 relative before:content-[''] before:w-[4px] before:h-[4px] before:absolute before:top-[7px]  before:left-[6px] before:rounded-full before:bg-zinc-100">
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
-                  Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
+                    Estado: {truck.connectivity === "online" ? "Conectado" : "Desconectado"}
                   </span>
                   <span className="font-semibold text-[9.5px] select-none leading-[10px] pb-0.5 text-center flex items-center gap-1 truncate text-white">
                     {truck.arriveDate &&
@@ -486,12 +488,12 @@ const UtilizacionDeFlota = () => {
         </div>
         <div className="p-1 w-full flex-1 overflow-y-auto custom-scrollbar rounded-xl transition-colors ease-in-out duration-500 grid grid-cols-2 items-start auto-rows-min gap-2">
           {mineDetection.filter(
-              (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
-            ).filter(
-              (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
-            ).filter(
-              (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
-            ).map((truck, index) => (
+            (truck) => !truckFiltered.lunchTrucks.some((e) => e.name === truck.unit)
+          ).filter(
+            (truck) => !lunchTimeMineDetection.some((e) => e.unit === truck.unit)
+          ).filter(
+            (truck) => !truckFiltered.finalParqueoUnits.some((e) => e.name === truck.unit)
+          ).map((truck, index) => (
             <div
               key={index}
               className="p-0.5 rounded-lg shadow cursor-move select-none outline outline-2 outline-offset-1 outline-transparent hover:outline-white/80 ease-in-out duration-300 flex flex-col gap-1"
@@ -552,7 +554,7 @@ const UtilizacionDeFlota = () => {
             </div>
             <h4
               className="text-sm font-bold select-none text-zinc-500"
-              // style={{ color: itemColors.unMove.color }}
+            // style={{ color: itemColors.unMove.color }}
             >
               En Refrigerio
             </h4>
@@ -602,7 +604,7 @@ const UtilizacionDeFlota = () => {
         </div>
       )}
 
-      { showOtherColumns &&(
+      {showOtherColumns && (
         <div className="border border-zinc-400 shadow-sm flex flex-col bg-[#1e3a1d8c] p-2 rounded-xl h-[calc(100vh-100px)]">
           <div
             className={`w-full flex gap-1.5 items-center select-none px-1 pb-1 rounded ${itemColors.mina.color}`}
@@ -614,7 +616,7 @@ const UtilizacionDeFlota = () => {
             </div>
             <h4
               className="text-sm font-bold select-none text-zinc-500"
-              // style={{ color: "#e0aaff" }}
+            // style={{ color: "#e0aaff" }}
             >
               Ingreso a mina después del refrigerio
             </h4>
@@ -684,7 +686,7 @@ const UtilizacionDeFlota = () => {
           </div>
           <h4
             className="text-sm font-bold select-none text-zinc-500"
-            // style={{ color: itemColors.guardia.color }}
+          // style={{ color: itemColors.guardia.color }}
           >
             Parqueo (Fin de turno)
           </h4>
