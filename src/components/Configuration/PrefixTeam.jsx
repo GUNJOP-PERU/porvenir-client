@@ -76,7 +76,7 @@ const PrefixTeam = () => {
             Configuración de Prefijo Equipo
           </h1>
           <p className="text-xs text-zinc-400">
-            Define el ciclo de 7 días para tus reportes.
+            Define el prefijo para los códigos de equipo.
           </p>
         </div>
         <div className="flex gap-2">
@@ -100,7 +100,7 @@ const PrefixTeam = () => {
 
       <div className="space-y-1">
         <label className="text-xs font-medium text-zinc-600">
-          Día de inicio de semana
+          Prefijo del equipo
         </label>
         <Input
           type="text"
@@ -116,12 +116,11 @@ const PrefixTeam = () => {
             <p className="text-xs text-red-500">{errors.value.message}</p>
           )}
           <p className="text-xs text-blue-800 leading-4">
-            Los datos se agruparán semanalmente empezando los de lo sgr ficos de
-            la s eid ei di de las qu due
+            El prefijo se usará para generar los códigos de equipo.
           </p>
         </div>
       </div>
-      <span>{prefix}-26</span>
+      {/* <span>{prefix}-26</span> */}
     </div>
   );
 };

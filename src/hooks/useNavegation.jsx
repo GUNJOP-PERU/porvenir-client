@@ -124,7 +124,7 @@ export const useNavigation = () => {
         icon: <TbReportAnalytics />,
         items: [
           {
-            name: "Detección de Bocaminas y Destinos",
+            name: "Detección de Ubicaciones",
             href: "dashboard/detection-report",
             icon: <TbReportAnalytics />,
             active: pathname === "/dashboard/detection-report",

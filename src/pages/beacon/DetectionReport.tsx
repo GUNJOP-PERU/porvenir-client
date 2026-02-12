@@ -219,7 +219,7 @@ const DetectionReport = () => {
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <PageHeader
-        title="Detección de Bocaminas y Destinos"
+        title="Detección de Ubicaciones"
         description="puntos de acceso y seguimiento de rutas logísticas."
         refetch={refetch}
         isFetching={isFetching}
