@@ -295,9 +295,8 @@ const TruckTracking = () => {
       }
 
       // 4️⃣ Nombre corto
-      const truckNameParts = truck.name.split("-");
-      const displayName =
-        truckNameParts.length > 2 ? truckNameParts[2] : truck.name;
+      const match = truck.name.match(/\d+/);
+      const displayName = match ? match[0] : truck.name;
 
       // 5️⃣ Agregar al grupo
       coordMap.get(key)!.push({
