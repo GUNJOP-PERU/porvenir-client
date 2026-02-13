@@ -9,7 +9,7 @@ export const useAuthStore = create(
       settings: {},
       type: "user",
       mining: null,
-      isAuth: true,
+      isAuth: false,
       isCollapsed: false,
 
       setToken: (token) => set({ token,isAuth: !!token, }),
