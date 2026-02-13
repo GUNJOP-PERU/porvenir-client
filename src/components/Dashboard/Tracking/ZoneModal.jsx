@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SketchPicker } from "react-color";
 
 import { useHandleFormSubmit } from "@/hooks/useMutation";
 import IconClose from "@/icons/IconClose";
@@ -27,6 +28,11 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const FormSchema = z.object({
   name: z
@@ -179,13 +185,32 @@ export const ZoneModal = ({
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Color</FormLabel>
-                    <Input
-                      type="color"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. #000000"
-                      className="p-0 rounded-none border-none m-0"
-                      {...field}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full justify-start gap-2 font-mono"
+                        >
+                          <div
+                            className="h-4 w-4 rounded border shadow-sm"
+                            style={{
+                              backgroundColor: field.value || "#000000",
+                            }}
+                          />
+                          {field.value || "#000000"}
+                        </Button>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-auto p-0 border-none shadow-lg">
+                        <SketchPicker
+                          color={field.value || "#000000"}
+                          onChange={(color) => field.onChange(color.hex)}
+                          elevation={0}
+                        />
+                      </PopoverContent>
+                    </Popover>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -202,7 +227,7 @@ export const ZoneModal = ({
                       type="text"
                       disabled={loadingGlobal}
                       placeholder="Ej. Parqueo"
-                       value={field.value}
+                      value={field.value}
                       onChange={(e) =>
                         field.onChange(e.target.value.toLowerCase())
                       }
