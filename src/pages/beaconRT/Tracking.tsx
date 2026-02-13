@@ -548,6 +548,7 @@ const TruckTracking = () => {
 
           {isEditMode && isMenuOpen && mapMode === "idle" && (
             <Marker
+              zIndexOffset={1000}
               position={[
                 beacon.position.latitud + radiusInDegrees * 1.5,
                 beacon.position.longitud,
