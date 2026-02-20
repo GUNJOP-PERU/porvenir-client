@@ -32,11 +32,9 @@ import Rute from "@/components/Dashboard/Tracking/Rute";
 import dayjs from "dayjs";
 import { formatFecha } from "@/lib/utilsGeneral";
 import { MapLocationPicker } from "@/components/Dashboard/Tracking/MapLocationPicker";
-import { BeaconModal } from "@/components/Management/Beacon/BeaconModal";
 import { deleteDataRequest } from "@/api/api";
 import Legend from "@/components/Dashboard/Tracking/Legend";
 import { ZoneModal } from "@/components/Dashboard/Tracking/ZoneModal";
-import IconArrow from "@/icons/IconArrow";
 import { ArrowLeft, Crosshair, Plus } from "lucide-react";
 
 // Extender tipos para leaflet-rotate

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -9,8 +9,9 @@ import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import IconToggle from "@/icons/IconToggle";
 import { Separator } from "@ariakit/react";
-import { CircleFadingPlus } from "lucide-react";
+import { Check, CircleFadingPlus, Search } from "lucide-react";
 import { Button } from "../../ui/button";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverAnchor,
+} from "@/components/ui/popover";
 import {
   Form,
   FormControl,
@@ -52,14 +58,14 @@ const FormSchema = z.object({
     .transform((val) => val.trim()),
   location: z
     .string()
-    .min(1, { message: "*Ubicación requerida (sin espacios)" })
+    .optional()
     .transform((val) => val.replace(/\s+/g, "")),
   isActive: z.boolean().default(true),
 });
 
 export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   const {
-    data: dataLaborList,
+    data: dataLaborList = [],
     refetch: refetchLaborList,
     isFetching: isLaborListFetching,
   } = useFetchData("frontLabor-current", "frontLabor/current", {
@@ -68,7 +74,20 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
     refetchOnMount: "always",
     refetchOnWindowFocus: false,
   });
+
+  const { data: dataBeacons = [] } = useFetchData("beacon", "beacon");
+
   const [loadingGlobal, setLoadingGlobal] = useState(false);
+  const [showLocationList, setShowLocationList] = useState(false);
+  const inputRef = useRef(null);
+
+  const existingLocations = useMemo(() => {
+    if (!dataBeacons || dataBeacons.length === 0) return [];
+    const locs = dataBeacons
+      .map((b) => b.location)
+      .filter((loc) => loc && loc.trim() !== "");
+    return [...new Set(locs)].sort();
+  }, [dataBeacons]);
 
   const handleFormSubmit = useHandleFormSubmit();
 
@@ -117,6 +136,10 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       setLoadingGlobal,
       onClose,
       reset,
+      extraInvalidateKeys: [
+        ["crud", "zone-superficie"],
+        ["crud", "zone-subterraneo"],
+      ],
     });
   }
 
@@ -205,19 +228,100 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                 control={control}
                 name="location"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col col-span-2">
+                  <FormItem className="flex flex-col col-span-2 relative">
                     <FormLabel className="font-bold text-blue-600">
                       *Localización
                     </FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(e.target.value.toLowerCase())
-                      }
-                    />
+                    <Popover
+                      open={showLocationList}
+                      onOpenChange={setShowLocationList}
+                      modal={false}
+                    >
+                      <PopoverAnchor asChild>
+                        <div className="relative group">
+                          <Input
+                            ref={inputRef}
+                            type="text"
+                            disabled={loadingGlobal}
+                            placeholder="Ej. zona-a, nivel-1600"
+                            value={field.value}
+                            autoComplete="off"
+                            onFocus={() => setShowLocationList(true)}
+                            onChange={(e) => {
+                              field.onChange(e.target.value.toLowerCase());
+                              if (!showLocationList) setShowLocationList(true);
+                            }}
+                            className="pr-8"
+                          />
+                          <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 size-4 text-zinc-300 pointer-events-none group-focus-within:text-blue-400 transition-colors" />
+                        </div>
+                      </PopoverAnchor>
+                      {existingLocations.length > 0 && (
+                        <PopoverContent
+                          className="w-[var(--radix-popover-trigger-width)] p-0 bg-white border border-zinc-200 shadow-xl rounded-lg overflow-hidden"
+                          align="start"
+                          sideOffset={0}
+                          onOpenAutoFocus={(e) => e.preventDefault()}
+                          onInteractOutside={(e) => {
+                            if (e.target === inputRef.current) {
+                              e.preventDefault();
+                            }
+                          }}
+                        >
+                          <div className="p-2 py-1.5 border-b bg-zinc-50/50 flex items-center">
+                            <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-wider leading-none">
+                              Ubicaciones existentes
+                            </span>
+                          </div>
+                          <div className="flex flex-col max-h-[200px] overflow-auto p-1 custom-scrollbar">
+                            {existingLocations
+                              .filter(
+                                (loc) =>
+                                  !field.value ||
+                                  loc.includes(field.value.toLowerCase()),
+                              )
+                              .map((loc) => {
+                                const isSelected = field.value === loc;
+                                return (
+                                  <button
+                                    key={loc}
+                                    type="button"
+                                    onClick={() => {
+                                      field.onChange(loc);
+                                      setShowLocationList(false);
+                                    }}
+                                    className={cn(
+                                      "flex items-center justify-between w-full px-3 py-1.5 text-xs text-left rounded-lg transition-colors",
+                                      isSelected
+                                        ? "bg-blue-50 text-blue-700 font-semibold"
+                                        : "hover:bg-zinc-50 text-zinc-600",
+                                    )}
+                                  >
+                                    <span>{loc}</span>
+                                    {isSelected && (
+                                      <Check className="size-3 text-blue-600" />
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            {existingLocations.filter(
+                              (loc) =>
+                                !field.value ||
+                                loc.includes(field.value.toLowerCase()),
+                            ).length === 0 && (
+                              <div className="flex flex-col py-3 px-3 text-center">
+                                <p className="text-[11px] text-zinc-400 italic">
+                                  No hay coincidencias exactas...
+                                </p>
+                                <p className="text-[10px] text-blue-500 font-medium">
+                                  Puedes seguir escribiendo para crear una nueva
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </PopoverContent>
+                      )}
+                    </Popover>
                     {isEdit ? (
                       <FormDescription className="text-[10px] leading-3 text-amber-600 font-semibold pl-2">
                         ⚠️ Cambiar esto podría reasignar el beacon a otra zona

@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import PageHeader from "../../components/PageHeader";
+import LoadingBuild from "@/components/ZShared/LoadingBuild";
 
 function PlanDay() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -31,7 +32,7 @@ function PlanDay() {
   } = useFetchData(
     "planDay",
     "planDay/groups?type=blending",
-    `date=${form.date}&shift=${form.shift}&populate=true`
+    `date=${form.date}&shift=${form.shift}&populate=true`,
   );
 
   return (
@@ -97,7 +98,7 @@ function PlanDay() {
             className="rounded-none"
             onClick={() => setForm({ ...form, shift: "noche" })}
             disabled={isFetching}
-            >
+          >
             Noche
           </Button>
         </div>
@@ -107,7 +108,15 @@ function PlanDay() {
           disabled={data.length === 0 || isFetching}
         />
       </div>
-      <PlanDayDetails dataCrud={data} isLoading={isLoading || isFetching} isError={isError} />
+      <LoadingBuild
+        isLoading={isLoading || isFetching}
+        isError={isError}
+        isEmpty={!isLoading && !isFetching && data.length === 0}
+        onRetry={refetch}
+      />
+      {!isLoading && !isFetching && !isError && data.length > 0 && (
+        <PlanDayDetails dataCrud={data} />
+      )}
       <ModalPlanDay isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
     </>
   );

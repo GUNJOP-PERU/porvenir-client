@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +10,7 @@ import IconClose from "@/icons/IconClose";
 import IconLoader from "@/icons/IconLoader";
 import IconToggle from "@/icons/IconToggle";
 import { dataLabor } from "@/lib/data";
-import { CircleFadingPlus, InfoIcon, Plus, RefreshCw } from "lucide-react";
+import { CircleFadingPlus, InfoIcon, RefreshCw } from "lucide-react";
 import { Button } from "../../ui/button";
 import {
   Dialog,
@@ -39,7 +41,7 @@ import LaborImport from "./LaborImport";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 
 const FormSchema = z.object({
-  firstPart: z.string().refine((value) => /^\d{2,3}$/.test(value), {
+  firstPart: z.string().refine((value) => /^\d{3,4}$/.test(value), {
     message: "*Requerida.",
   }),
   secondPart: z.string().min(1, { message: "*Requerida" }),
@@ -160,7 +162,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
   useEffect(() => {
     isOpen && refetchVeta();
-  }, [isOpen]);
+  }, [isOpen, refetchVeta]);
 
   return (
     <Dialog
@@ -224,7 +226,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                           onChange={(e) => {
                             const numericValue = e.target.value.replace(
                               /\D/g,
-                              ""
+                              "",
                             );
                             field.onChange(numericValue);
                           }}
@@ -234,16 +236,16 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     )}
                   />
                   <div className="col-span-1 flex items-center">
-                   <div className="h-8 mt-auto">
-                     <button
-                      className="h-8 w-8 border border-zinc-200 rounded-lg rounded-e-none flex items-center justify-center mt-auto disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => refetchVeta()}
-                      type="button"
-                      disabled={loadingVeta}
-                    >
-                      <RefreshCw className="w-4 h-4 text-blue-500" />
-                    </button>
-                   </div>
+                    <div className="h-8 mt-auto">
+                      <button
+                        className="h-8 w-8 border border-zinc-200 rounded-lg rounded-e-none flex items-center justify-center mt-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => refetchVeta()}
+                        type="button"
+                        disabled={loadingVeta}
+                      >
+                        <RefreshCw className="w-4 h-4 text-blue-500" />
+                      </button>
+                    </div>
                     <FormField
                       control={control}
                       name="secondPart"
@@ -254,7 +256,6 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                             onValueChange={field.onChange}
                             value={field.value}
                             disabled={loadingGlobal || loadingVeta}
-                           
                           >
                             <FormControl>
                               <SelectTrigger className="!rounded-s-none">

@@ -2,13 +2,8 @@ import PlanDetails from "@/components/Management/PlanMonth/PlanDetails";
 import PlanItems from "@/components/Management/PlanMonth/PlanItems";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import LoadingBuild from "@/components/ZShared/LoadingBuild";
+import { MonthYearPicker } from "@/components/ZShared/MonthYearPicker";
 import { useFetchData } from "@/hooks/useGlobalQueryV2";
 import { countItems } from "@/lib/utilsGeneral";
 import dayjs from "dayjs";
@@ -31,35 +26,13 @@ function PlanMonth() {
     `planMonth?date=${dayjs(selectedDate).format("YYYY-MM")}`,
   );
 
-  const months = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
-
-  const currentYear = dayjs().year();
-  const years = Array.from({ length: 3 }, (_, i) => currentYear - 2 + i);
-
-  const updateDate = (month, year) => {
-    setSelectedDate(dayjs().year(year).month(month).startOf("month"));
-  };
-
-useEffect(() => {
-  if (data?.length > 0) {
-    setSelectedPlan(data[0]); 
-  } else {
-    setSelectedPlan(null);
-  }
-}, [data]);
+  useEffect(() => {
+    if (data?.length > 0) {
+      setSelectedPlan(data[0]);
+    } else {
+      setSelectedPlan(null);
+    }
+  }, [data]);
 
   return (
     <>
@@ -80,52 +53,30 @@ useEffect(() => {
       />
 
       <div className="flex">
-        <div className="border border-zinc-200 rounded-lg flex">
-          <Select
-            value={selectedDate.month().toString()}
-            onValueChange={(value) =>
-              setSelectedDate(selectedDate.month(parseInt(value)))
-            }
-          >
-            <SelectTrigger className="w-28 border-none shadow-none bg-transparent rounded-e-none">
-              <SelectValue placeholder="Mes" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {month}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={selectedDate.year().toString()}
-            onValueChange={(value) =>
-              setSelectedDate(selectedDate.year(parseInt(value)))
-            }
-          >
-            <SelectTrigger className="w-20 border-none shadow-none bg-transparent rounded-s-none">
-              <SelectValue placeholder="Año" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((year) => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <div className="flex gap-4 w-full">
-        <PlanItems
-          data={data}
-          setSelectedPlan={setSelectedPlan}
-          selectedPlan={selectedPlan}
+        <MonthYearPicker
+          value={selectedDate}
+          onChange={setSelectedDate}
+          disabled={isLoading || isFetching}
         />
-        <PlanDetails plan={selectedPlan} />
       </div>
+      <LoadingBuild
+        isLoading={isLoading || isFetching}
+        isError={isError}
+        isEmpty={!isLoading && !isFetching && data.length === 0}
+        onRetry={refetch}
+      />
+      {!isLoading && !isFetching && !isError && data.length > 0 && (
+        <div className="flex gap-4 w-full">
+          <PlanItems
+            data={data}
+            setSelectedPlan={setSelectedPlan}
+            selectedPlan={selectedPlan}
+            mode="monthly"
+            urlDelete="planMonth"
+          />
+          <PlanDetails plan={selectedPlan} mode="monthly" />
+        </div>
+      )}
     </>
   );
 }

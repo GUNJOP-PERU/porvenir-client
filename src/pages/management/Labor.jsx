@@ -6,14 +6,16 @@ import { FileUp } from "lucide-react";
 import { useState } from "react";
 import { LaborModal } from "../../components/Management/Labor/LaborModal";
 import { Button } from "../../components/ui/button";
-import {
-  useFetchInfinityScroll,
-} from "../../hooks/useGlobalQuery";
+import { useFetchInfinityScroll } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
+import dayjs from "dayjs";
+import { MonthYearPicker } from "@/components/ZShared/MonthYearPicker";
 
 function PageLabor() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(dayjs().startOf("month"));
+
   const {
     data = [],
     isFetching,
@@ -22,10 +24,15 @@ function PageLabor() {
     refetch,
     fetchNextPage,
     hasNextPage,
-  } = useFetchInfinityScroll("frontLabor", "frontLabor/items",20, "month=12&year=2025");
-  
+  } = useFetchInfinityScroll(
+    "frontLabor",
+    "frontLabor/items",
+    20,
+    `month=${selectedDate.month() + 1}&year=${selectedDate.year()}`,
+  );
+
   return (
-    <>      
+    <>
       <PageHeader
         title="Gestión de Labor"
         description="Administre los labor aquí."
@@ -43,11 +50,11 @@ function PageLabor() {
             >
               <FileUp className="w-5 h-5 text-zinc-400" />
               Importar
-            </Button>            
+            </Button>
           </>
         }
       />
-    
+
       <DataTable
         data={data}
         columns={columns}
@@ -57,17 +64,17 @@ function PageLabor() {
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         tableType={"frontLabors"}
+        toolbarContent={
+          <MonthYearPicker value={selectedDate} onChange={setSelectedDate} />
+        }
       />
-      
+
       <LaborModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
       />
-      <LaborImport
-        isOpen={importOpen}
-        onClose={() => setImportOpen(false)}
-      />
+      <LaborImport isOpen={importOpen} onClose={() => setImportOpen(false)} />
     </>
   );
 }

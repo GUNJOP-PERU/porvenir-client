@@ -1,9 +1,8 @@
-import {
-  formatFecha
-} from "@/lib/utilsGeneral";
+import { formatFecha } from "@/lib/utilsGeneral";
 import TimeAgo from "timeago-react";
 import { DataTableColumnHeader } from "../../Table/DataTableColumnHeader";
 import { DataTableRowActions } from "../../Table/DataTableRowActions";
+import { getSoftColor } from "@/utils/tracking";
 
 export const columns = [
   {
@@ -19,17 +18,20 @@ export const columns = [
     accessorKey: "mac",
     header: "MAC",
     cell: ({ row }) => {
-      return <>{row.getValue("mac")}</>;
+      return (
+        <span className="font-mono text-[13px] text-sky-700 font-medium tracking-tight">
+          {row.getValue("mac") || "00:00:00:00:00:00"}
+        </span>
+      );
     },
   },
-  
- 
+
   {
     accessorKey: "type",
     header: "Tipo",
     cell: ({ row }) => {
-        return <>{row.getValue("type")}</>;
-      },
+      return <>{row.getValue("type")}</>;
+    },
   },
   {
     accessorKey: "ubicationType",
@@ -38,31 +40,36 @@ export const columns = [
       return <>{row.getValue("ubicationType")}</>;
     },
   },
- 
-  
+
   {
     accessorKey: "ubication",
     header: "Ubicación",
     cell: ({ row }) => {
       return (
-        <div className="flex flex-col gap-1">
-          {row.getValue("ubication")}
-        </div>
+        <div className="flex flex-col gap-1">{row.getValue("ubication")}</div>
       );
     },
   },
   {
     accessorKey: "location",
-    header: "Localización Mapa",
+    header: "Localización",
     cell: ({ row }) => {
+      const loc = row.getValue("location");
+      const colors = getSoftColor(loc);
+
       return (
-        <div className="flex flex-col gap-1">
-          {row.getValue("location")}
+        <div className="">
+          <span
+            style={loc ? colors : {}}
+            className={`text-[10px] font-bold uppercase px-2 py-[3px] rounded-[8px] border ${!loc && "bg-zinc-50 text-zinc-400 border-zinc-200 italic"}`}
+          >
+            {loc || "Sin asignar"}
+          </span>
         </div>
       );
     },
   },
- 
+
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (

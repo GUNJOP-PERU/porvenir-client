@@ -33,19 +33,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ListItems } from "./ListItems";
 
 const FormSchema = z.object({
   name: z
     .string()
-    .min(1, { message: "*Ubicación requerida" })
+    .min(1, { message: "*Nombre requerido" })
     .transform((val) => val.trim()),
   location: z
     .string()
-    .min(1, { message: "*Ubicación requerida" })
+    .min(1, { message: "*Localización requerida" })
     .transform((val) => val.replace(/\s+/g, "")),
   description: z
     .string()
-    .min(1, { message: "*Descripcion requerida" })
+    .min(1, { message: "*Descripción requerida" })
     .transform((val) => val.trim()),
   color: z
     .string()
@@ -61,7 +62,33 @@ const FormSchema = z.object({
       .gte(-180, "Longitud mínima -180")
       .lte(180, "Longitud máxima 180"),
   }),
-  radius: z.number().max(500, { message: "*Maximo 500" }).optional(),
+  radius: z.number().max(500, { message: "*Máximo 500" }).optional(),
+  // Array de macs seleccionadas
+  mac: z.array(z.string()).optional(),
+});
+
+// Extrae macs del array de beacons asignados
+const extractMacs = (dataCrud) => {
+  if (!dataCrud) return [];
+  // Preferir dataCrud.beacons (objetos completos) sobre dataCrud.mac (solo strings)
+  if (Array.isArray(dataCrud.beacons) && dataCrud.beacons.length > 0) {
+    return dataCrud.beacons.map((b) => b.mac).filter(Boolean);
+  }
+  if (Array.isArray(dataCrud.mac)) return dataCrud.mac;
+  return [];
+};
+
+const buildDefaults = (dataCrud) => ({
+  name: dataCrud?.name || "",
+  location: dataCrud?.location || "",
+  description: dataCrud?.description || "",
+  color: dataCrud?.color || "",
+  position: {
+    latitud: dataCrud?.position?.latitud || -10.60229,
+    longitud: dataCrud?.position?.longitud || -76.2088,
+  },
+  radius: dataCrud?.radius || 60,
+  mac: extractMacs(dataCrud),
 });
 
 export const ZoneModal = ({
@@ -73,52 +100,17 @@ export const ZoneModal = ({
   type,
 }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
-
   const handleFormSubmit = useHandleFormSubmit();
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: dataCrud?.name || "",
-      location: dataCrud?.location || "",
-      description: dataCrud?.description || "",
-      color: dataCrud?.color || "",
-      position: {
-        latitud: dataCrud?.position?.latitud || -10.60229,
-        longitud: dataCrud?.position?.longitud || -76.2088,
-      },
-      radius: dataCrud?.radius || 60,
-    },
+    defaultValues: buildDefaults(dataCrud),
   });
 
   const { handleSubmit, control, reset } = form;
 
   useEffect(() => {
-    if (dataCrud) {
-      reset({
-        name: dataCrud?.name || "",
-        location: dataCrud?.location || "",
-        description: dataCrud?.description || "",
-        color: dataCrud?.color || "",
-        position: {
-          latitud: dataCrud?.position?.latitud || -10.60229,
-          longitud: dataCrud?.position?.longitud || -76.2088,
-        },
-        radius: dataCrud?.radius || 60,
-      });
-    } else {
-      reset({
-        name: "",
-        location: "",
-        description: "",
-        color: "",
-        position: {
-          latitud: -10.60229,
-          longitud: -76.2088,
-        },
-        radius: 60,
-      });
-    }
+    reset(buildDefaults(dataCrud));
   }, [dataCrud, reset]);
 
   async function onSubmit(data) {
@@ -137,6 +129,9 @@ export const ZoneModal = ({
       onClose,
       reset,
       invalidateKey,
+       extraInvalidateKeys: [
+        ["crud", "beacon"]
+      ],
     });
   }
 
@@ -146,12 +141,10 @@ export const ZoneModal = ({
       onOpenChange={(onClose) => !loadingGlobal && onClose}
       modal={true}
     >
-      <DialogContent className="w-[420px] p-0">
+      <DialogContent className="w-[450px] p-0">
         <DialogHeader className="p-6 pb-0">
           <div className="flex gap-2 items-center">
-            <div>
-              <CircleFadingPlus className="w-6 h-6 text-zinc-300 " />
-            </div>
+            <CircleFadingPlus className="w-6 h-6 text-zinc-300" />
             <div>
               <DialogTitle>{isEdit ? "Editar" : "Crear"} Zona</DialogTitle>
               <DialogDescription>
@@ -160,14 +153,17 @@ export const ZoneModal = ({
             </div>
           </div>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-4 px-6">
+            <div className="grid grid-cols-2 gap-3 px-6 pt-4">
+
+              {/* Nombre */}
               <FormField
                 control={control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col ">
+                  <FormItem className="flex flex-col">
                     <FormLabel>Nombre</FormLabel>
                     <Input
                       type="text"
@@ -179,6 +175,8 @@ export const ZoneModal = ({
                   </FormItem>
                 )}
               />
+
+              {/* Color */}
               <FormField
                 control={control}
                 name="color"
@@ -190,19 +188,16 @@ export const ZoneModal = ({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-start gap-2 font-mono"
+                          className="w-full justify-start gap-2 font-mono px-1 uppercase "
                         >
                           <div
-                            className="h-4 w-4 rounded border shadow-sm"
-                            style={{
-                              backgroundColor: field.value || "#000000",
-                            }}
+                            className="size-6 rounded-lg border shadow-sm"
+                            style={{ backgroundColor: field.value || "#000000" }}
                           />
                           {field.value || "#000000"}
                         </Button>
                       </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0 border-none shadow-lg">
+                      <PopoverContent className="w-auto p-0 border-none" align="start">
                         <SketchPicker
                           color={field.value || "#000000"}
                           onChange={(color) => field.onChange(color.hex)}
@@ -210,11 +205,12 @@ export const ZoneModal = ({
                         />
                       </PopoverContent>
                     </Popover>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {/* Localización */}
               <FormField
                 control={control}
                 name="location"
@@ -226,7 +222,7 @@ export const ZoneModal = ({
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. Parqueo"
+                      placeholder="Ej. taller"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(e.target.value.toLowerCase())
@@ -247,11 +243,12 @@ export const ZoneModal = ({
                 )}
               />
 
+              {/* Descripción */}
               <FormField
                 control={control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col ">
+                  <FormItem className="flex flex-col">
                     <FormLabel>Descripción</FormLabel>
                     <Input
                       type="text"
@@ -264,6 +261,7 @@ export const ZoneModal = ({
                 )}
               />
 
+              {/* Radio */}
               <FormField
                 control={control}
                 name="radius"
@@ -281,6 +279,8 @@ export const ZoneModal = ({
                   </FormItem>
                 )}
               />
+
+              {/* Latitud */}
               <FormField
                 control={control}
                 name="position.latitud"
@@ -298,6 +298,8 @@ export const ZoneModal = ({
                   </FormItem>
                 )}
               />
+
+              {/* Longitud */}
               <FormField
                 control={control}
                 name="position.longitud"
@@ -315,31 +317,26 @@ export const ZoneModal = ({
                   </FormItem>
                 )}
               />
-              <div className="col-span-2">
-                {dataCrud?.mac &&
-                  Array.isArray(dataCrud.mac) &&
-                  dataCrud.mac.length > 0 && (
-                    <div>
-                      <p className="font-bold text-sm mb-2">
-                        MACs asignadas ({dataCrud.mac.length}):
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {dataCrud.mac.map((mac, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-mono"
-                          >
-                            {mac}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-              </div>
+
+              {/* MACs Asociadas — usa field "mac" directamente */}
+              <FormField
+                control={control}
+                name="mac"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    {/* <FormLabel> MACs asignadas ({dataCrud?.beacons?.length || 0}):</FormLabel> */}
+                    <ListItems
+                      field={field}
+                      assignedBeacons={dataCrud?.beacons ?? []}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <Separator className="my-6" />
-            <div className="flex gap-3 justify-end pt-0 pb-4 p-6">
+            <Separator className="my-4" />
+            <div className="flex gap-3 justify-end pt-0 pb-4 px-6">
               <Button
                 type="button"
                 onClick={() => onClose()}
@@ -352,13 +349,13 @@ export const ZoneModal = ({
               <Button type="submit" disabled={loadingGlobal}>
                 {loadingGlobal ? (
                   <>
-                    <IconLoader className="w-4 h-4  " />
+                    <IconLoader className="w-4 h-4" />
                     Cargando...
                   </>
                 ) : (
                   <>
                     <IconToggle className="text-background w-4 h-4" />
-                    {isEdit ? "Actualizar" : "Crear"} Beacon
+                    {isEdit ? "Actualizar" : "Crear"} Zona
                   </>
                 )}
               </Button>

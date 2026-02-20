@@ -6,13 +6,9 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import {
   Select,
   SelectContent,
@@ -20,15 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFetchData } from "@/hooks/useGlobalQuery";
 import IconEdit from "@/icons/IconEdit";
-import { cn } from "@/lib/utils";
-import { format, getMonth, getYear, startOfWeek } from "date-fns";
-import { es } from "date-fns/locale";
-import dayjs from "dayjs";
-import { CalendarIcon, CircleFadingPlus } from "lucide-react";
-import { useState } from "react";
+import { CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "../PlanDay/PlanDayFilterItems";
+import { MonthYearPicker } from "@/components/ZShared/MonthYearPicker";
 
 export const PlanHeader = ({
   form,
@@ -38,55 +29,7 @@ export const PlanHeader = ({
   mode,
   isEdit,
 }) => {
-  const { data: dataLaborList, refetch: refetchLaborList, isFetching: isLaborListFetching } = useFetchData(
-    "frontLabor-current",
-    "frontLabor/current",
-    {
-      enabled: true,
-      staleTime: 0,
-      refetchOnMount: "always",
-      refetchOnWindowFocus: false,
-    }
-  );
-
   const { allWeeks } = generateNormalWeeks();
-
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const months = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
-  const years = Array.from(
-    { length: 4 },
-    (_, i) => getYear(new Date()) - 3 + i
-  );
-
-  const updateDate = (month, year, field) => {
-    const startOfMonth = dayjs()
-      .year(year)
-      .month(month)
-      .startOf("month")
-      .toDate();
-
-    const endOfMonth = dayjs().year(year).month(month).endOf("month").toDate();
-
-    setSelectedDate(startOfMonth);
-    field.onChange({
-      start: startOfMonth,
-      end: endOfMonth,
-    });
-  };
 
   return (
     <Form {...form}>
@@ -105,7 +48,7 @@ export const PlanHeader = ({
                     value={field.value?.weekNumber?.toString() || ""}
                     onValueChange={(value) => {
                       const selectedWeek = allWeeks.find(
-                        (w) => w.weekNumber.toString() === value
+                        (w) => w.weekNumber.toString() === value,
                       );
 
                       if (selectedWeek) {
@@ -149,79 +92,13 @@ export const PlanHeader = ({
               control={form.control}
               name="dob"
               render={({ field }) => (
-                <FormItem>
-                  <Popover modal={true}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          disabled={loadingGlobal}
-                          className={cn(
-                            "w-[180px] capitalize",
-                            !selectedDate && "text-muted-foreground"
-                          )}
-                        >
-                          {selectedDate ? (
-                            format(selectedDate, "MMMM yyyy", { locale: es })
-                          ) : (
-                            <span>Seleccionar Mes y Año</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-2 z-[99999]"
-                      align="start"
-                    >
-                      <div className="flex gap-2">
-                        <Select
-                          onValueChange={(value) =>
-                            updateDate(
-                              parseInt(value),
-                              getYear(selectedDate),
-                              field
-                            )
-                          }
-                          value={getMonth(selectedDate).toString()}
-                        >
-                          <SelectTrigger className="w-[100px]">
-                            <SelectValue placeholder="Mes" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {months.map((month, index) => (
-                              <SelectItem key={index} value={index.toString()}>
-                                {month}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select
-                          onValueChange={(value) =>
-                            updateDate(
-                              getMonth(selectedDate),
-                              parseInt(value),
-                              field
-                            )
-                          }
-                          value={getYear(selectedDate).toString()}
-                        >
-                          <SelectTrigger className="w-[100px]">
-                            <SelectValue placeholder="Año" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {years.map((year) => (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
+                <FormControl>
+                  <MonthYearPicker
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={loadingGlobal}
+                  />
+                </FormControl>
               )}
             />
           )}
@@ -233,12 +110,8 @@ export const PlanHeader = ({
               <FormItem>
                 <FilterItems
                   column={""}
-                  title="Labor"
-                  options={dataLaborList}
+                  title="Seleccionar Labor(es)"
                   field={field}
-                  loadingGlobal={loadingGlobal}
-                  refetch={refetchLaborList}
-                  isFetching={isLaborListFetching}
                 />
                 <FormMessage />
               </FormItem>
@@ -246,7 +119,6 @@ export const PlanHeader = ({
           />
         </div>
 
-        {/* Botón de Enviar */}
         <Button type="submit" disabled={loadingGlobal} variant="tertiary">
           {hasData ? (
             <>

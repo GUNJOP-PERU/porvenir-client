@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { cn } from "@/lib/utils";
 import { Check, Layers, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";

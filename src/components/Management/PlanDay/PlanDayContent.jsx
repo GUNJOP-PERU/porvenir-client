@@ -1,6 +1,10 @@
 /* eslint-disable react/prop-types */
 import { dataFase, dataZona } from "@/lib/data";
-import { normalizarFase, normalizarTajo, normalizarZona } from "@/lib/utilsGeneral";
+import {
+  normalizarFase,
+  normalizarTajo,
+  normalizarZona,
+} from "@/lib/utilsGeneral";
 import { HotTable } from "@handsontable/react-wrapper";
 import { esMX, registerLanguageDictionary } from "handsontable/i18n";
 import { registerAllModules } from "handsontable/registry";
@@ -15,17 +19,19 @@ export const PlanContent = ({
   dataLaborList,
   loadingGlobal,
   setInvalidLabors,
+  form,
 }) => {
-  
-  const isLaborInList = (laborName) => {
-    return dataLaborList?.some((item) => item.name === laborName);
-  };
+  const isLaborInList = useMemo(() => {
+    return (laborName) =>
+      dataLaborList?.some((item) => item.name === laborName);
+  }, [dataLaborList]);
 
-  const handleAfterChange = (changes, _source) => {
+  const handleAfterChange = (changes) => {
     if (!changes) return;
 
     setDataHotTable((prevData) => {
       const newData = [...prevData];
+      let laborChanged = false;
 
       changes.forEach(([row, prop, oldValue, newValue]) => {
         if (row < 0 || row >= newData.length) return;
@@ -39,6 +45,7 @@ export const PlanContent = ({
 
         if (key === "labor" && typeof newValue === "string") {
           newData[row][key] = normalizarTajo(newValue);
+          laborChanged = true;
           return;
         }
 
@@ -60,6 +67,15 @@ export const PlanContent = ({
         newData[row][key] = isNaN(clean) ? 0 : clean;
       });
 
+      if (laborChanged) {
+        const currentValidLabors = newData
+          .map((row) => row.labor)
+          .filter((labor) => labor && isLaborInList(labor));
+
+        const uniqueLabors = [...new Set(currentValidLabors)];
+        form.setValue("selectedItems", uniqueLabors, { shouldValidate: true });
+      }
+
       return newData;
     });
   };
@@ -69,7 +85,7 @@ export const PlanContent = ({
       .map((row) => row.labor)
       .filter((laborName) => !isLaborInList(laborName));
     setInvalidLabors(invalids);
-  }, [dataHotTable, dataLaborList]);
+  }, [dataHotTable, dataLaborList, isLaborInList, setInvalidLabors]);
 
   const orderedKeys = useMemo(() => {
     if (!dataHotTable || dataHotTable.length === 0) return [];
@@ -89,7 +105,7 @@ export const PlanContent = ({
       else
         totals[key] = dataHotTable.reduce(
           (sum, row) => sum + (Number(row[key]) || 0),
-          0
+          0,
         );
     });
     return totals;
@@ -115,7 +131,7 @@ export const PlanContent = ({
   }, [dataHotTable, totalsRow, orderedKeys]);
 
   return (
-     <div
+    <div
       className={`-z-0 ${
         loadingGlobal ? "pointer-events-none opacity-50 select-none" : ""
       }`}
@@ -130,7 +146,6 @@ export const PlanContent = ({
         nestedHeaders={generateNestedHeaders}
         height="30vh"
         mergeCells={true}
-        
         contextMenu={{
           items: {
             row_above: {},
@@ -147,6 +162,23 @@ export const PlanContent = ({
         autoWrapCol={true}
         autoColumnSize={true}
         columnSorting={false}
+        beforeRemoveRow={(index, amount) => {
+          setDataHotTable((prevData) => {
+            const updatedData = [...prevData];
+            updatedData.splice(index, amount);
+
+            const currentValidLabors = updatedData
+              .map((row) => row.labor)
+              .filter((labor) => labor && isLaborInList(labor));
+
+            const uniqueLabors = [...new Set(currentValidLabors)];
+            form.setValue("selectedItems", uniqueLabors, {
+              shouldValidate: true,
+            });
+            return updatedData;
+          });
+          return false; // prevent internal mutation to fix double deletion
+        }}
         columns={
           dataHotTable.length > 0
             ? Object.keys(dataHotTable[0]).map((key) => {

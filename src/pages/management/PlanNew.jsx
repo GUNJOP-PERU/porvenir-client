@@ -12,19 +12,17 @@ export default function PlanNewEdit() {
       apiBase: "planWeek",
       apiCreate: "planWeek",
       title: "Plan Semanal",
-      dateSelector: "week",
       refreshQueryKey: ["crud", "planWeek"],
       ruteReturn: "/planWeek",
-      downloadTemplate: "planWeek/download/modelo-semanal",
+      downloadTemplate: "/ExcelModelo/Modelo_Semanal.xlsx",
     },
     monthly: {
       apiBase: "planMonth",
       apiCreate: "planMonth/many",
       title: "Plan Mensual",
-      dateSelector: "month",
       refreshQueryKey: ["crud", "planMonth"],
       ruteReturn: "/planMonth",
-      downloadTemplate: "planMonth/download/modelo-mensual",
+      downloadTemplate: "/ExcelModelo/Modelo_Mensual.xlsx",
     },
   };
 
@@ -33,7 +31,7 @@ export default function PlanNewEdit() {
   const { data, isLoading } = useFetchData(
     isEdit ? `${config.apiBase}-${id}` : null,
     isEdit ? `${config.apiBase}/${id}` : null,
-    { enabled: isEdit }
+    { enabled: isEdit },
   );
 
   if (isEdit && isLoading)
@@ -45,7 +43,6 @@ export default function PlanNewEdit() {
     );
 
   return (
-    <>
     <PlanBody
       mode={mode}
       isEdit={isEdit}
@@ -54,13 +51,10 @@ export default function PlanNewEdit() {
         create: config.apiCreate,
         update: `${config.apiBase}/:id`,
       }}
-      dateSelector={config.dateSelector}
       title={config.title}
       refreshQueryKey={config.refreshQueryKey}
       ruteReturn={config.ruteReturn}
       downloadTemplate={config.downloadTemplate}
     />
-    {/* <ButtonExcel /> */}
-    </>
   );
 }

@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFetchData } from "@/hooks/useGlobalQuery";
 import IconEdit from "@/icons/IconEdit";
 import { dataTurn } from "@/lib/data";
 import { cn } from "@/lib/utils";
@@ -29,26 +28,7 @@ import { es } from "date-fns/locale";
 import { CalendarIcon, CircleFadingPlus } from "lucide-react";
 import { FilterItems } from "./PlanDayFilterItems";
 
-export const PlanHeader = ({
-  form,
-  onSubmit,
-  hasData,
-  loadingGlobal,
-  frontLaborSubHeader,
-  setShowFrontLaborSubHeader,
-}) => {
-  const {
-    data: dataLaborList,
-    refetch: refetchLaborList,
-    isFetching: isLaborListFetching,
-    isLoading: loadingLaborList,
-  } = useFetchData("frontLabor-current", "frontLabor/current", {
-    enabled: true,
-    staleTime: 0,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: false,
-  });
-
+export const PlanHeader = ({ form, onSubmit, hasData, loadingGlobal }) => {
   return (
     <Form {...form}>
       <form
@@ -96,7 +76,7 @@ export const PlanHeader = ({
                         disabled={loadingGlobal}
                         className={cn(
                           " w-[90px] capitalize",
-                          !field.value && "text-muted-foreground "
+                          !field.value && "text-muted-foreground ",
                         )}
                       >
                         {field.value ? (
@@ -127,43 +107,22 @@ export const PlanHeader = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="selectedItems"
-            render={({ field }) => (
-              <FormItem>
-                <FilterItems
-                  column={""}
-                  title="Labor"
-                  options={dataLaborList}
-                  field={field}
-                  loadingGlobal={loadingGlobal}
-                  refetch={refetchLaborList}
-                  isFetching={isLaborListFetching}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="button"
-            variant="tertiary"
-            onClick={() => setShowFrontLaborSubHeader(!frontLaborSubHeader)}
-            disabled={loadingGlobal}
-          >
-            {frontLaborSubHeader ? (
-              <>
-                <IconEdit className="w-5 h-5 stroke-primary" />
-                Cancelar
-              </>
-            ) : (
-              <>
-                <CircleFadingPlus className="text-primary w-4 h-4" />
-                Front Labor
-              </>
-            )}
-          </Button>
+          <div className="flex items-center">
+            <FormField
+              control={form.control}
+              name="selectedItems"
+              render={({ field }) => (
+                <FormItem>
+                  <FilterItems
+                    column={""}
+                    title="Seleccionar Labor(es)"
+                    field={field}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
         <Button type="submit" disabled={loadingGlobal} variant="tertiary">
           {hasData ? (
@@ -178,7 +137,6 @@ export const PlanHeader = ({
             </>
           )}
         </Button>
-        
       </form>
     </Form>
   );

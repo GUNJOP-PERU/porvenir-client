@@ -404,42 +404,6 @@ number-flow-react::part(suffix) {
   transform-origin: center center;
 }
 
-/* Estilos personalizados para Notyf */
-.notyf__toast {
-  border-radius: 15px !important;
-  max-width: 300px;
-  min-width: 250px;
-  font-size: 12px;
-}
-.notyf__title {
-  font-size: 12px !important;
-  font-weight: 500;
-}
-.notyf__message {
-  font-size: 11px !important;
-  line-height: 1.2;
-  white-space: pre-line;
-}
-.notyf__dismiss {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  color: white !important;
-  opacity: 0.8;
-}
-
-.notyf__dismiss:hover {
-  opacity: 1;
-}
-
-/* Posicionamiento */
-.notyf {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
-}
-
 .dialog-with-overlay::before {
   content: '';
   position: fixed;
@@ -447,4 +411,77 @@ number-flow-react::part(suffix) {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: -1;
   pointer-events: none;
+}
+
+
+/*//////////////////////////////////////////////////////////////////
+[ NOTYF ]*/
+/* Contenedor principal */
+.notyf__toast {
+  min-width: 320px;
+  max-width: 420px;
+  padding: 16px 18px;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont;
+  border-radius: 15px !important;
+  background: #141026;
+  user-select: none;
+}
+
+.notyf__title {
+  font-size: 14px !important;
+  font-weight: 500;
+}
+
+/* Texto */
+.notyf__message {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  font-weight: 500;
+  white-space: pre-line;
+  display: flex;
+  flex-direction: column;
+  gap: px;
+}
+
+/* Mensaje secundario */
+.notyf__message small {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* Icono */
+.notyf__icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* SUCCESS */
+.notyf__toast--success {
+  border-left: 5px solid #22c55e;
+}
+
+/* ERROR */
+.notyf__toast--error {
+  border-left: 5px solid #b31800;
+}
+
+/* WARNING */
+.notyf__toast--warning {
+  border-left: 5px solid #f59e0b;
+}
+
+/* INFO */
+.notyf__toast--info {
+  border-left: 5px solid #3b82f6;
+}
+
+.notyf__toast--error strong {
+  color: white;
+}
+
+.notyf__toast--success strong {
+  color: #22c55e;
 }

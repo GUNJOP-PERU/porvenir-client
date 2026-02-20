@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useToast } from "@/hooks/useToaster";
 import { RefreshCcw } from "lucide-react";
 import { useRef, useState } from "react";
@@ -125,45 +126,44 @@ export const ButtonExcel = () => {
 
       // 1. HEADERS (aunque estén vacíos)
       const headers = data[headerRowIndex].map((h, i) =>
-        h ? String(h).trim() : `Columna ${i + 1}`
+        h ? String(h).trim() : `Columna ${i + 1}`,
       );
 
       // === DETECCIÓN AUTOMÁTICA DE COLUMNAS DE DÍAS ===
       // === DETECCIÓN AUTOMÁTICA DE COLUMNAS DE DÍAS ===
-const { dob } = form.getValues();
-const startDay = dayjs(dob.start).date(); // 29
-const endDay = dayjs(dob.end).date();     // 4
+      const { dob } = form.getValues();
+      const startDay = dayjs(dob.start).date(); // 29
+      const endDay = dayjs(dob.end).date(); // 4
 
-const detectedDayColumns = headers
-  .map((h, index) => {
-    if (!h) return null;
+      const detectedDayColumns = headers
+        .map((h, index) => {
+          if (!h) return null;
 
-    // Extraer el número del header, por ejemplo "Suma de 29D" => 29
-    const match = String(h).match(/(\d{1,2})\s*(D|N)/i);
-    if (!match) return null;
+          // Extraer el número del header, por ejemplo "Suma de 29D" => 29
+          const match = String(h).match(/(\d{1,2})\s*(D|N)/i);
+          if (!match) return null;
 
-    const day = Number(match[1]);
-    const shift = match[2].toUpperCase();
+          const day = Number(match[1]);
+          const shift = match[2].toUpperCase();
 
-    // Acomodar el rango de días cuando cruza de un mes a otro
-    const inRange =
-      startDay <= endDay
-        ? day >= startDay && day <= endDay
-        : day >= startDay || day <= endDay; // si empieza 29 y termina 4, toma 29,30,31,1,2,3,4
+          // Acomodar el rango de días cuando cruza de un mes a otro
+          const inRange =
+            startDay <= endDay
+              ? day >= startDay && day <= endDay
+              : day >= startDay || day <= endDay; // si empieza 29 y termina 4, toma 29,30,31,1,2,3,4
 
-    if (!inRange) return null;
+          if (!inRange) return null;
 
-    return {
-      index,
-      label: h,
-      day,
-      shift,
-    };
-  })
-  .filter(Boolean);
+          return {
+            index,
+            label: h,
+            day,
+            shift,
+          };
+        })
+        .filter(Boolean);
 
-setDayColumns(detectedDayColumns);
-
+      setDayColumns(detectedDayColumns);
 
       console.log("DAY COLUMNS DETECTADAS:", detectedDayColumns);
 
@@ -334,7 +334,7 @@ setDayColumns(detectedDayColumns);
   );
 };
 
-export const ButtonRefresh = ({ refetch, isFetching, showText = true }) => {
+export const ButtonRefresh = ({ refetch, isFetching, showText = true, className }) => {
   const loadingState = isFetching;
 
   return (
@@ -342,7 +342,7 @@ export const ButtonRefresh = ({ refetch, isFetching, showText = true }) => {
       <Button
         onClick={() => refetch()}
         disabled={isFetching}
-        className="flex items-center gap-2 bg-blue-500/[0.08] text-blue-500  hover:bg-blue-500 hover:text-white ease-in-out transition-all duration-500 !min-w-9 md:!min-w-[10px] px-2 md:px-3 border-none"
+        className={`flex items-center gap-2 bg-blue-500/[0.08] text-blue-500  hover:bg-blue-500 hover:text-white ease-in-out transition-all duration-500 !min-w-9 md:!min-w-[10px] px-2 md:px-3 border-none h-8 ${className}`}
         type="button"
       >
         <RefreshCcw

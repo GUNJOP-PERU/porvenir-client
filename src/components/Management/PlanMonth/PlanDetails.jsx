@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 import dayjs from "dayjs";
 
-export default function PlanDetails({ plan }) {
+export default function PlanDetails({ plan, mode }) {
   const planDay = plan;
 
   if (!planDay || !Array.isArray(planDay.dataEdit)) {
@@ -25,7 +26,7 @@ export default function PlanDetails({ plan }) {
   }
 
   const dynamicColumns = Object.keys(rows[0]).filter(
-    (key) => !["zona", "labor", "fase"].includes(key)
+    (key) => !["zona", "labor", "fase"].includes(key),
   );
 
   const columnTotals = dynamicColumns.reduce((acc, col) => {
@@ -37,16 +38,22 @@ export default function PlanDetails({ plan }) {
   }, {});
 
   return (
-    <div className="w-[85%]">
+    <div className="h-[80vh] flex-1 flex flex-col gap-1 min-w-0 ">
       <div className="mb-3">
         <h1 className="text-base font-extrabold">
           Planificación /{" "}
-          <span className="text-primary">
-            {dayjs(planDay.startDate).format("DD MMMM")} -{" "}
-            {dayjs(planDay.endDate).format("DD MMMM")}
+          <span className="text-primary capitalize">
+            {mode === "weekly"
+              ? `${dayjs(planDay.startDate).format("DD MMMM")} - ${dayjs(
+                  planDay.endDate,
+                ).format("DD MMMM")}`
+              : planDay.month
+                ? dayjs()
+                    .month(planDay.month - 1)
+                    .format("MMMM")
+                : dayjs(planDay.startDate).format("MMMM")}
           </span>
         </h1>
-
         <span className="text-2xl font-extrabold">
           {planDay.totalTonnage.toLocaleString("es-MX")} TM
         </span>
@@ -90,18 +97,15 @@ export default function PlanDetails({ plan }) {
                 <td className="text-center bg-[#959493] text-white border border-[#FF500030] font-bold">
                   {index + 1}
                 </td>
-
-                <td className="px-3 py-1 border border-[#FF500030] uppercase ">
+                <td className="px-3 py-1 border border-[#FF500030] w-[100px] uppercase">
                   {row.zona}
                 </td>
                 <td className="px-3 py-1 border border-[#FF500030] font-semibold text-green-600 w-[250px] uppercase">
                   {row.labor}
                 </td>
-
                 <td className="px-3 py-1 border border-[#FF500030] w-[100px] uppercase">
                   {row.fase}
                 </td>
-
                 {dynamicColumns.map((col) => (
                   <td
                     key={col}
