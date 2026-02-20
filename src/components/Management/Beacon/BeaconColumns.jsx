@@ -61,7 +61,7 @@ export const columns = [
         <div className="">
           <span
             style={loc ? colors : {}}
-            className={`text-[10px] font-bold uppercase px-2 py-[3px] rounded-[8px] border ${!loc && "bg-zinc-50 text-zinc-400 border-zinc-200 italic"}`}
+            className={`text-[10px] font-bold px-2 py-[3px] rounded-[8px] border ${!loc && "bg-zinc-50 text-zinc-300 border-zinc-200 italic"}`}
           >
             {loc || "Sin asignar"}
           </span>
@@ -78,7 +78,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex">
               <TimeAgo datetime={row.original.updatedAt} locale="es" />
@@ -99,7 +98,6 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
-          {/* <IconTime className="h-5 w-5 text-custom-600" /> */}
           <div className="flex flex-col justify-center">
             <h4 className="text-[12.5px] font-semibold leading-4 flex capitalize">
               {formatFecha(row.original.createdAt)}

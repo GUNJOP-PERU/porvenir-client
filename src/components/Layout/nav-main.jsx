@@ -17,7 +17,7 @@ export function NavMain() {
   return (
     <div
       className={clsx(
-        "hidden md:flex bg-primary-black transition-all duration-300 ease-in-out relative",
+        "hidden md:flex bg-primary-black transition-all duration-300 ease-in-out relative shrink-0 overflow-hidden",
         isCollapsed ? "w-14" : "w-60",
       )}
     >
@@ -225,8 +225,10 @@ const NavTitle = ({ item, isCollapsed, children }) => {
         </span>
 
         {!isCollapsed && (
-          <ChevronDown className="h-3 w-3 text-zinc-500 transition-transform 
-          group-open/title:rotate-180" />
+          <ChevronDown
+            className="h-3 w-3 text-zinc-500 transition-transform 
+          group-open/title:rotate-180"
+          />
         )}
       </summary>
 

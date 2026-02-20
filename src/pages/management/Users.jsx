@@ -5,6 +5,8 @@ import { useState } from "react";
 import { ModalUser } from "../../components/Management/Users/ModalUser";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
+import { TabsItems } from "@/components/ZShared/TabsItems";
+import { useTabsFilter } from "@/hooks/useTabsFilter";
 
 function HomeUsers() {
   const {
@@ -16,23 +18,43 @@ function HomeUsers() {
   } = useFetchData("user", "user");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const {
+    items: cargos,
+    filteredData,
+    activeTab,
+    setActiveTab,
+    countByTab,
+  } = useTabsFilter(data, "cargo", { showCount: true });
+
   return (
     <>
       <PageHeader
         title="Gestión de Usuarios"
         description="Administre los usuarios aquí."
-        count={countItems(data)}
+        count={countItems(filteredData)}
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={setDialogOpen}
       />
       <DataTable
-        data={data}
+        data={filteredData}
         columns={columns}
         isFetching={isFetching}
         isError={isError}
         tableType={"users"}
         isLoading={isLoading}
+        toolbarContent={
+          <>
+            {cargos.length > 1 && (
+              <TabsItems
+                items={cargos}
+                activeTab={activeTab}
+                onSelect={setActiveTab}
+                countByTab={countByTab}
+              />
+            )}
+          </>
+        }
       />
       <ModalUser
         isOpen={dialogOpen}

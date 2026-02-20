@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "../ui/button";
@@ -10,10 +10,11 @@ export function DataTableToolbar({
   table,
   isFetching,
   filters = [], // Filtros dinámicos pasados como props
-  searchColumns = [], // Columnas en las que se aplicará el buscador
   toolbarContent,
 }) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  const isFiltered =
+    table.getState().columnFilters.length > 0 ||
+    !!table.getState().globalFilter;
 
   const renderFacetedFilter = ({ columnId, title, options }) => {
     const column = table.getColumn(columnId);
@@ -23,16 +24,11 @@ export function DataTableToolbar({
   };
 
   const getFilterValue = () => {
-    return searchColumns
-      .map((col) => table.getColumn(col)?.getFilterValue() || "")
-      .find((value) => value !== "");
+    return table.getState().globalFilter ?? "";
   };
 
   const handleSearchChange = (value) => {
-    searchColumns.forEach((col) => {
-      const column = table.getColumn(col);
-      if (column) column.setFilterValue(value);
-    });
+    table.setGlobalFilter(value);
   };
 
   return (
@@ -84,7 +80,10 @@ export function DataTableToolbar({
                 >
                   <Button
                     variant="ghost"
-                    onClick={() => table.resetColumnFilters()}
+                    onClick={() => {
+                      table.resetColumnFilters();
+                      table.setGlobalFilter("");
+                    }}
                     className="px-2 lg:px-3 text-red-500 hover:bg-red-50"
                   >
                     Reset

@@ -476,8 +476,8 @@ export const PlanBody = ({
               <li>
                 Para <strong>añadir</strong> una labor, seleccione un ítem en el
                 botón
-                <span className="font-semibold">&quot;Labor&quot;</span> y haga clic en{" "}
-                <strong>Actualizar</strong>.
+                <span className="font-semibold">&quot;Labor&quot;</span> y haga
+                clic en <strong>Actualizar</strong>.
               </li>
               <li>
                 Para <strong>eliminar</strong> una labor, quite la selección y
@@ -522,7 +522,7 @@ export const PlanBody = ({
               </>
             ) : (
               <>
-                {isEdit ? "Actualizar Plan" : "Enviar Plan"}
+                {isEdit ? "Guardar Cambios" : "Enviar Plan"}
                 <SendHorizontal className="text-background w-4 h-4" />
               </>
             )}

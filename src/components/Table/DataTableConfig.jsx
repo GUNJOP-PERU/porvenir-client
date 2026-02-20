@@ -1,26 +1,19 @@
 // src/config/tableConfigs.js
 
-import {
-  cargo,
-  dataMaterial,
-  dataPhase,
-  dataTypeVehicle,
-  turn,
-} from "@/lib/data";
+import { dataMaterial, dataTypeVehicle, turn } from "@/lib/data";
 
 export const tableConfigs = {
   users: {
     searchColumns: ["name"],
-    filters: [     
-      { columnId: "cargo", title: "Cargo", options: cargo },
-    ],
   },
   enterprises: {
     searchColumns: ["name"],
   },
   vehicles: {
     searchColumns: ["tagName"],
-    filters: [{ columnId: "type", title: "Vehiculo", options: dataTypeVehicle },],
+    filters: [
+      { columnId: "type", title: "Vehiculo", options: dataTypeVehicle },
+    ],
   },
   frontLabors: {
     searchColumns: ["name"],
@@ -37,24 +30,27 @@ export const tableConfigs = {
     ],
   },
   cycles: {
-    searchColumns: ["user", "tagName","frontLabor"],
+    searchColumns: ["user", "tagName", "frontLabor"],
     filters: [
       { columnId: "shift", title: "Turno", options: turn },
       { columnId: "material", title: "Material", options: dataMaterial },
     ],
   },
   activities: {
-    searchColumns: ["user", "tagName","frontLabor"],
+    searchColumns: ["user", "tagName", "frontLabor"],
     filters: [
-        { columnId: "shift", title: "Turno", options: turn },
-        { columnId: "material", title: "Material", options: dataMaterial },
+      { columnId: "shift", title: "Turno", options: turn },
+      { columnId: "material", title: "Material", options: dataMaterial },
     ],
   },
   trips: {
     searchColumns: ["unit"],
     filters: [
-        { columnId: "shift", title: "Turno", options: turn },
-        { columnId: "tripType", title: "Material", options: dataMaterial },
+      { columnId: "shift", title: "Turno", options: turn },
+      { columnId: "tripType", title: "Material", options: dataMaterial },
     ],
+  },
+  beacon: {
+    searchColumns: ["mac", "location", "type"],
   },
 };

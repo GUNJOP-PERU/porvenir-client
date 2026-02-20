@@ -123,12 +123,12 @@ export const PlanHeader = ({
           {hasData ? (
             <>
               <IconEdit className="w-5 h-5 stroke-primary" />
-              Actualizar Plan
+              Actualizar Listado
             </>
           ) : (
             <>
               <CircleFadingPlus className="text-primary w-4 h-4" />
-              Crear Nuevo Plan
+              Generar Tabla
             </>
           )}
         </Button>

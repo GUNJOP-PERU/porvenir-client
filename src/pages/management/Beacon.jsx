@@ -5,6 +5,8 @@ import { DataTable } from "@/components/Table/DataTable";
 import { useState } from "react";
 import { useFetchData } from "../../hooks/useGlobalQuery";
 import { countItems } from "../../lib/utilsGeneral";
+import { TabsItems } from "@/components/ZShared/TabsItems";
+import { useTabsFilter } from "@/hooks/useTabsFilter";
 
 export default function PageBeacon() {
   const {
@@ -17,24 +19,38 @@ export default function PageBeacon() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const { items, filteredData, activeTab, setActiveTab, countByTab } =
+    useTabsFilter(data, "location", { showCount: true });
+
   return (
     <>
       <PageHeader
         title="Gestión de Beacons"
-        count={countItems(data)}
+        count={countItems(filteredData)}
         description="Administre los beacons de su equipo aquí."
         refetch={refetch}
         isFetching={isFetching}
         setDialogOpen={setDialogOpen}
       />
-      
       <DataTable
-        data={data}
+        data={filteredData}
         columns={columns}
         isFetching={isFetching}
         isError={isError}
         tableType={"beacon"}
         isLoading={isLoading}
+        toolbarContent={
+          <>
+            {items.length > 1 && (
+              <TabsItems
+                items={items}
+                activeTab={activeTab}
+                onSelect={setActiveTab}
+                countByTab={countByTab}
+              />
+            )}
+          </>
+        }
       />
       <BeaconModal
         isOpen={dialogOpen}
@@ -44,4 +60,3 @@ export default function PageBeacon() {
     </>
   );
 }
-

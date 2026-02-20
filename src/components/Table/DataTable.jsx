@@ -44,6 +44,7 @@ export function DataTable({
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const parentRef = useRef();
 
@@ -58,7 +59,9 @@ export function DataTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
     enableRowSelection: true,
     enableMultiRowSelection: false,
     onRowSelectionChange: setRowSelection,
@@ -147,7 +150,7 @@ export function DataTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -174,7 +177,7 @@ export function DataTable({
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}
