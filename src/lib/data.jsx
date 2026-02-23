@@ -31,12 +31,13 @@ export const dataTurn = [
 export const dataLabor = [
   { value: "TJ", name: "Tajo" },
   { value: "CX", name: "Crucero" },
-  { value: "GA", name: "Galeria" },
+  { value: "GL", name: "Galeria" },
   { value: "BP", name: "By Pass" },
   { value: "RP", name: "Rampa" },
   { value: "CH", name: "Chimenea" },
   { value: "OV", name: "Ovalo" },
-  { value: "AVANCE", name: "Avance" },
+  { value: "AC", name: "Avance" },
+  { value: "SN", name: "SubNivel" },
 ];
 export const dataTypeVehicle = [
   { value: "scoop", label: "Scoop" },

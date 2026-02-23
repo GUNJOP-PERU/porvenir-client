@@ -216,7 +216,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     name="firstPart"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Nivel</FormLabel>
+                        <FormLabel>NIVEL</FormLabel>
                         <Input
                           type="text"
                           placeholder="Ej. 2926"
@@ -280,7 +280,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     name="thirdPart"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Labor</FormLabel>
+                        <FormLabel>TIPO DE LABOR</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -308,7 +308,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     name="quarterPart"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Número</FormLabel>
+                        <FormLabel>NÚMERO / ID</FormLabel>
                         <Input
                           type="text"
                           placeholder="Ej. 370"
@@ -328,7 +328,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     name="fifthPart"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Número</FormLabel>
+                        <FormLabel>ALA / EJE</FormLabel>
                         <Input
                           type="text"
                           placeholder="Ej. A2"
@@ -348,7 +348,7 @@ export const LaborModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
                     name="sixthPart"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Número</FormLabel>
+                        <FormLabel>CORTE</FormLabel>
                         <Input
                           type="text"
                           placeholder="Ej. C1"
