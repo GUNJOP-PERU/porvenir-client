@@ -31,55 +31,64 @@ import {
 import { Input } from "../../ui/input";
 import { useFetchData } from "@/hooks/useGlobalQuery";
 import { Switch } from "@/components/ui/switch";
-import { ListItems } from "./ListItems";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CATEGORIAS = [
+  "Carga",
+  "Descarga",
+  "Parqueo",
+  "Mantenimiento",
+  "Paso",
+  "Rampa",
+  "Acceso",
+  "Galería",
+  "Bocamina",
+];
 
 const FormSchema = z.object({
+  nombre: z
+    .string()
+    .min(1, { message: "*Nombre requerido" })
+    .transform((val) => val.trim()),
   mac: z
     .string()
-    .min(1, { message: "*Nombre requerido" })
+    .min(1, { message: "*MAC requerida" })
     .transform((val) => val.replace(/\s+/g, "")),
-  type: z
+  operacion: z
     .string()
-    .min(1, { message: "*Nombre requerido" })
+    .min(1, { message: "*Operación requerida" })
     .transform((val) => val.trim()),
-  ubicationType: z
+  categoria: z
     .string()
-    .min(1, { message: "*Tipo requerido" })
-    .transform((val) => val.trim()),
-  ubication: z
-    .string()
-    .min(1, { message: "*Ubicación requerida" })
+    .min(1, { message: "*Categoría requerida" })
     .transform((val) => val.trim()),
   location: z
     .string()
-    .min(1, { message: "*Ubicación requerida (sin espacios)" })
+    .min(1, { message: "*Localización requerida" })
     .transform((val) => val.replace(/\s+/g, "")),
+  detectionToleranceSeconds: z.coerce.number().min(0).default(60),
   isActive: z.boolean().default(true),
 });
 
 export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
-  const {
-    data: dataLaborList,
-    refetch: refetchLaborList,
-    isFetching: isLaborListFetching,
-  } = useFetchData("frontLabor-current", "frontLabor/current", {
-    enabled: true,
-    staleTime: 0,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: false,
-  });
   const [loadingGlobal, setLoadingGlobal] = useState(false);
-
   const handleFormSubmit = useHandleFormSubmit();
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      nombre: dataCrud?.nombre || "",
       mac: dataCrud?.mac || "",
-      type: dataCrud?.type || "",
-      ubicationType: dataCrud?.ubicationType || "",
-      ubication: dataCrud?.ubication || "",
+      operacion: dataCrud?.operacion || "",
+      categoria: dataCrud?.categoria || "",
       location: dataCrud?.location || "",
+      detectionToleranceSeconds: dataCrud?.detectionToleranceSeconds || 60,
       isActive: dataCrud?.isActive ?? true,
     },
   });
@@ -89,20 +98,22 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   useEffect(() => {
     if (dataCrud) {
       reset({
+        nombre: dataCrud.nombre || "",
         mac: dataCrud.mac || "",
-        type: dataCrud.type || "",
-        ubicationType: dataCrud.ubicationType || "",
-        ubication: dataCrud.ubication || "",
+        operacion: dataCrud.operacion || "",
+        categoria: dataCrud.categoria || "",
         location: dataCrud.location || "",
+        detectionToleranceSeconds: dataCrud.detectionToleranceSeconds || 60,
         isActive: dataCrud.isActive ?? true,
       });
     } else {
       reset({
+        nombre: "",
         mac: "",
-        type: "",
-        ubicationType: "",
-        ubication: "",
+        operacion: "",
+        categoria: "",
         location: "",
+        detectionToleranceSeconds: 60,
         isActive: true,
       });
     }
@@ -111,20 +122,16 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
   async function onSubmit(data) {
     await handleFormSubmit({
       isEdit,
-      endpoint: "beacon",
+      endpoint: "beacons",
       id: dataCrud?._id,
       data,
       setLoadingGlobal,
       onClose,
       reset,
+      useSecondary: true,
     });
   }
 
-  useEffect(() => {
-    if (!isEdit) {
-      form.setValue("ubication", "");
-    }
-  }, [isEdit, form]);
 
   return (
     <Dialog
@@ -151,6 +158,22 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
             <div className="grid grid-cols-2 gap-4 px-6">
               <FormField
                 control={control}
+                name="nombre"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col col-span-2">
+                    <FormLabel>Nombre</FormLabel>
+                    <Input
+                      type="text"
+                      disabled={loadingGlobal}
+                      placeholder="Ej. Beacon Acceso Principal"
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
                 name="mac"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
@@ -170,14 +193,14 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
               />
               <FormField
                 control={control}
-                name="type"
+                name="operacion"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Tipo</FormLabel>
+                    <FormLabel>Operación</FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
+                      placeholder="Ej. Extracción"
                       {...field}
                     />
                     <FormMessage />
@@ -187,47 +210,21 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
               <FormField
                 control={control}
-                name="ubicationType"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Tipo de ubicación</FormLabel>
-                    <Input
-                      type="text"
-                      disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
                 name="location"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col col-span-2">
-                    <FormLabel className="font-bold text-blue-600">
-                      *Localización
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="font-bold">
+                      Localización
                     </FormLabel>
                     <Input
                       type="text"
                       disabled={loadingGlobal}
-                      placeholder="Ej. beacon"
+                      placeholder="Ej. zona_a"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(e.target.value.toLowerCase())
                       }
                     />
-                    {isEdit ? (
-                      <FormDescription className="text-[10px] leading-3 text-amber-600 font-semibold pl-2">
-                        ⚠️ Cambiar esto podría reasignar el beacon a otra zona
-                      </FormDescription>
-                    ) : (
-                      <FormDescription className="text-[11px] leading-3 text-blue-600 font-medium pl-2">
-                        ✓ Este beacon se asignará automáticamente a zonas con la
-                        misma localización
-                      </FormDescription>
-                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -235,52 +232,47 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
 
               <FormField
                 control={control}
-                name="ubication"
+                name="categoria"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col col-span-2">
-                    <FormLabel>Ubicación / Labor</FormLabel>
-                    <div className="flex ">
-                      <Input
-                        type="text"
-                        disabled={loadingGlobal}
-                        placeholder="Ej. Mantenimiento"
-                        {...field}
-                      />
-                      <ListItems
-                        column={""}
-                        title="Labor"
-                        options={dataLaborList}
-                        field={field}
-                        loadingGlobal={loadingGlobal}
-                        refetch={refetchLaborList}
-                        isFetching={isLaborListFetching}
-                      />
-                    </div>
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Categoría</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                      disabled={loadingGlobal}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione una categoría" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {CATEGORIAS.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mt-8 px-6">
+              
               <FormField
-                control={form.control}
-                name="isActive"
+                control={control}
+                name="detectionToleranceSeconds"
                 render={({ field }) => (
-                  <FormItem className="col-span-2 flex flex-row items-center justify-between rounded-lg border border-custom-1400 px-4 py-3 gap-2">
-                    <div className="flex flex-col  justify-center ">
-                      <FormLabel>Activar/Desactivar</FormLabel>
-                      <FormDescription className="pt-0">
-                        Se deshabilitará el beacon.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-readonly
-                        disabled={loadingGlobal}
-                      />
-                    </FormControl>
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Tolerancia (seg)</FormLabel>
+                    <Input
+                      type="number"
+                      disabled={loadingGlobal}
+                      placeholder="60"
+                      {...field}
+                    />
+                    <FormMessage />
                   </FormItem>
                 )}
               />

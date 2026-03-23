@@ -2,9 +2,10 @@ import { getDataRequest } from "@/api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export function useFetchData(queryKey, endpoint, options = {}) {
+  const { useSecondary, ...queryOptions } = options;
   return useQuery({
     queryKey: ["crud", queryKey],
-    queryFn: () => getDataRequest(endpoint),
+    queryFn: () => getDataRequest(endpoint, { useSecondary }),
     cacheTime: Infinity,
     staleTime: Infinity,
     refetchOnReconnect: true,

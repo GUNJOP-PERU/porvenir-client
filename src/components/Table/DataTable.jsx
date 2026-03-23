@@ -43,11 +43,17 @@ export function DataTable({
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const parentRef = useRef();
 
   const emptyData = [];
   const emptyColumns = [];
+
+  const { searchColumns, filters } = tableConfigs[tableType] || {
+    searchColumns: [],
+    filters: [],
+  };
 
   const table = useReactTable({
     data: data || emptyData,
@@ -57,18 +63,32 @@ export function DataTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
     },
     enableRowSelection: true,
     enableMultiRowSelection: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    globalFilterFn: (row, columnId, filterValue) => {
+      const value = filterValue.toLowerCase();
+      // Si hay searchColumns definidas, buscamos en ellas
+      if (searchColumns.length > 0) {
+        return searchColumns.some((colId) => {
+          const cellValue = String(row.getValue(colId) ?? "").toLowerCase();
+          return cellValue.includes(value);
+        });
+      }
+      // Por defecto buscamos en la columna principal o todas
+      return String(row.getValue(columnId) ?? "").toLowerCase().includes(value);
+    },
   });
 
   const rows = isLoading ? [] : table.getRowModel().rows;
@@ -94,11 +114,6 @@ export function DataTable({
     overscan: 5,
     measureElement: (el) => el?.getBoundingClientRect().height || 50,
   });
-
-  const { searchColumns, filters } = tableConfigs[tableType] || {
-    searchColumns: [],
-    filters: [],
-  };
 
   if (isLoading) return <SkeletonWrapper isLoading={isLoading} />;
   if (isError) {

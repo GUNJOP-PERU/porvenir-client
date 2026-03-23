@@ -9,9 +9,14 @@ const authApi = axios.create({
   timeout: 60000,
 });
 
-// Interceptor para agregar el token dinámicamente en cada request
+// Interceptor para agregar el token y cambiar URL si es necesario
 authApi.interceptors.request.use(
   (config) => {
+    // Si se pasa el flag useSecondary: true, cambiamos la baseURL
+    if (config.useSecondary) {
+      config.baseURL = import.meta.env.VITE_URL_SECONDARY || import.meta.env.VITE_URL;
+    }
+
     const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

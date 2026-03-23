@@ -1,6 +1,7 @@
 // src/config/tableConfigs.js
 
 import {
+  beaconCategory,
   cargo,
   dataMaterial,
   dataPhase,
@@ -55,6 +56,12 @@ export const tableConfigs = {
     filters: [
         { columnId: "shift", title: "Turno", options: turn },
         { columnId: "tripType", title: "Material", options: dataMaterial },
+    ],
+  },
+  beacon: {
+    searchColumns: ["nombre", "mac", "operacion", "categoria", "location"],
+    filters: [
+        { columnId: "categoria", title: "Categoria", options: beaconCategory },
     ],
   },
 };

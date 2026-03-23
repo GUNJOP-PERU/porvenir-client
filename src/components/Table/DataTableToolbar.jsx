@@ -23,16 +23,11 @@ export function DataTableToolbar({
   };
 
   const getFilterValue = () => {
-    return searchColumns
-      .map((col) => table.getColumn(col)?.getFilterValue() || "")
-      .find((value) => value !== "");
+    return table.getState().globalFilter || "";
   };
 
   const handleSearchChange = (value) => {
-    searchColumns.forEach((col) => {
-      const column = table.getColumn(col);
-      if (column) column.setFilterValue(value);
-    });
+    table.setGlobalFilter(value);
   };
 
   return (

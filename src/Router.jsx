@@ -77,6 +77,7 @@ import RealTimeByMonth from "./pages/beacon/RealTimeByMonth";
 import ChangeHistory from "./pages/beaconRT/ChangeHistory";
 import Vehicles from "./pages/management/Vehicles";
 import PageVeta from "./pages/management/Veta";
+import Tracking from "./pages/Tracking";
 
 const protectedRoutes = [
   //General
@@ -152,7 +153,7 @@ const protectedRoutes = [
   { path: "dashboard/beacon/availability", element: <Availability /> },
 
   // Historico Beacon
-  { path: "/", element: <TrackingRT /> },
+  { path: "/", element: <Tracking /> },
   { path: "dashboard/detection-report", element: <DetectionReport /> },
   { path: "dashboard/real-time-by-hour-truck", element: <RealTimeByHour /> },
   {

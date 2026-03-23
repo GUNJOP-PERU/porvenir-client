@@ -125,3 +125,42 @@ export const dataStatusVehicle = [
     color: "#FF6565",
   },
 ]
+
+export const beaconCategory = [
+  {
+    value: "Carga",
+    label: "Carga",
+  },
+  {
+    value: "Descarga",
+    label: "Descarga",
+  },
+  {
+    value: "Parqueo",
+    label: "Parqueo",
+  },
+  {
+    value: "Mantenimiento",
+    label: "Mantenimiento",
+  },
+  {
+    value: "Paso",
+    label: "Paso",
+  },
+  {
+    value: "Rampa",
+    label: "Rampa",
+  },
+  {
+    value: "Acceso",
+    label: "Acceso",
+  },
+  {
+    value: "Galería",
+    label: "Galería",
+  },
+  {
+    value: "Bocamina",
+    label: "Bocamina",
+  },
+]

@@ -16,48 +16,51 @@ export const columns = [
     enableHiding: false,
   },
   {
+    accessorKey: "nombre",
+    header: "Nombre",
+    cell: ({ row }) => {
+      return <>{row.getValue("nombre")}</>;
+    },
+  },
+  {
     accessorKey: "mac",
     header: "MAC",
     cell: ({ row }) => {
       return <>{row.getValue("mac")}</>;
     },
   },
-  
- 
   {
-    accessorKey: "type",
-    header: "Tipo",
+    accessorKey: "location",
+    header: "Localización",
     cell: ({ row }) => {
-        return <>{row.getValue("type")}</>;
+        return <>{row.getValue("location")}</>;
       },
   },
   {
-    accessorKey: "ubicationType",
-    header: "Tipo Ubicación",
+    accessorKey: "operacion",
+    header: "Operación",
     cell: ({ row }) => {
-      return <>{row.getValue("ubicationType")}</>;
+      return <>{row.getValue("operacion")}</>;
     },
   },
- 
-  
   {
-    accessorKey: "ubication",
-    header: "Ubicación",
+    accessorKey: "categoria",
+    header: "Categoría",
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-1">
-          {row.getValue("ubication")}
+          {row.getValue("categoria")}
         </div>
       );
     },
   },
   {
-    accessorKey: "location",
-    header: "Localización Mapa",
+    accessorKey: "detectionToleranceSeconds",
+    header: "Tolerancia",
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-1">
-          {row.getValue("location")}
+          {row.getValue("detectionToleranceSeconds")}
         </div>
       );
     },

@@ -1,30 +1,35 @@
 import authApi from "../lib/axios";
 
+const getPrefix = (config) => (config?.useSecondary ? "api" : "api/v1");
+
 // Login
 export const loginRequest = async (data) =>
-  authApi.post("api/v1/auth/verify-login", data);
+  authApi.post(`${getPrefix()}/auth/verify-login`, data);
 
 // Obtener datos
-export const getDataRequest = (endpoint) => authApi.get(`api/v1/${endpoint}`);
+export const getDataRequest = (endpoint, config = {}) => 
+  authApi.get(`${getPrefix(config)}/${endpoint}`, config);
 
 // Postear datos
-export const postDataRequest = (endpoint, data) =>
-  authApi.post(`api/v1/${endpoint}`, data);
+export const postDataRequest = (endpoint, data, config = {}) =>
+  authApi.post(`${getPrefix(config)}/${endpoint}`, data, config);
 
 // Actualizar datos (PUT)
-export const putDataRequest = (endpoint, data) =>
-  authApi.put(`api/v1/${endpoint}`, data);
+export const putDataRequest = (endpoint, data, config = {}) =>
+  authApi.put(`${getPrefix(config)}/${endpoint}`, data, config);
 
 // Eliminar datos
-export const deleteDataRequest = (endpoint) => authApi.delete(`api/v1/${endpoint}`);
+export const deleteDataRequest = (endpoint, config = {}) => 
+  authApi.delete(`${getPrefix(config)}/${endpoint}`, config);
 
 // Obtener datos Dashboard
-export const getDataGraphicRequest = async (endpoint) => {
-  const response = await authApi.get(`api/v1/${endpoint}`);
+export const getDataGraphicRequest = async (endpoint, config = {}) => {
+  const response = await authApi.get(`${getPrefix(config)}/${endpoint}`, config);
   return response.data; 
 };
 
-export const getDownloadRequest = (endpoint) => 
-  authApi.get(`api/v1/${endpoint}`, {
-    responseType: 'blob' // <--- ESTO ES LA CLAVE
+export const getDownloadRequest = (endpoint, config = {}) => 
+  authApi.get(`${getPrefix(config)}/${endpoint}`, {
+    ...config,
+    responseType: 'blob'
   });

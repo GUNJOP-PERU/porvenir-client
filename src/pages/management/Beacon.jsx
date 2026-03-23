@@ -13,7 +13,7 @@ export default function PageBeacon() {
     isLoading,
     isError,
     refetch,
-  } = useFetchData("beacon", "beacon");
+  } = useFetchData("beacon", "beacons", { useSecondary: true });
 
   const [dialogOpen, setDialogOpen] = useState(false);
 

@@ -6,10 +6,11 @@ export function useHandleFormSubmit() {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const mutation = useMutation({
-    mutationFn: async ({ isEdit, postId, endpoint, id, data }) => {
+    mutationFn: async ({ isEdit, postId, endpoint, id, data, useSecondary }) => {
+      const config = { useSecondary };
       return isEdit
-        ? await putDataRequest(`${endpoint}/${id}`, data)
-        : await postDataRequest(`${endpoint}/${postId ? id:""}`, data);
+        ? await putDataRequest(`${endpoint}/${id}`, data, config)
+        : await postDataRequest(`${endpoint}/${postId ? id : ""}`, data, config);
     },
     onSuccess: (_, variables) => {
       const invalidateKey = variables.invalidateKey || ["crud", variables.endpoint];
@@ -41,10 +42,19 @@ export function useHandleFormSubmit() {
     reset,
     invalidateKey,
     onSuccess,
+    useSecondary,
   }) {
     try {
       setLoadingGlobal(true);
-      await mutation.mutateAsync({ isEdit,postId, endpoint, id, data ,invalidateKey});
+      await mutation.mutateAsync({
+        isEdit,
+        postId,
+        endpoint,
+        id,
+        data,
+        invalidateKey,
+        useSecondary,
+      });
       
       onSuccess?.(); 
       onClose?.();
