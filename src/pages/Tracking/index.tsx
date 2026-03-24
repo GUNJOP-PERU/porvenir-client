@@ -4,7 +4,7 @@ const TrackingPage: React.FC = () => {
   return (
     <div className="w-full h-full overflow-hidden">
       <iframe
-        src="http://localhost:8080/mine-map"
+        src="http://172.15.80.28:8080/mine-map"
         title="Mine Map Tracking"
         className="w-full h-full border-none"
       />
