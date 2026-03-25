@@ -6,10 +6,12 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { FaTimeline } from "react-icons/fa6";
 import { useAuthStore } from "@/store/AuthStore";
 import {
+  Activity,
   ChartArea,
   ChartBarStacked,
   ChartColumnStacked,
   ChartNoAxesCombined,
+  Clock,
   CopyCheck,
   Eye,
   FileChartPie,
@@ -414,6 +416,24 @@ export const useNavigation = () => {
                   active: pathname === "/incidence",
                 },
               ],
+            },
+            {
+              name: "Detecciones",
+              href: "/sessions",
+              icon: <Clock />,
+              active: pathname === "/sessions",
+            },
+            {
+              name: "Estado Camión",
+              href: "/truck-states",
+              icon: <MapPin />,
+              active: pathname === "/truck-states",
+            },
+            {
+              name: "Tiempo real",
+              href: "/realtime",
+              icon: <Activity />,
+              active: pathname === "/realtime",
             },
           ],
         },

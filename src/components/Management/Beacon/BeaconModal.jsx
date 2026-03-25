@@ -21,16 +21,12 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
-  // FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { useFetchData } from "@/hooks/useGlobalQuery";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -76,7 +72,7 @@ const FormSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
+export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud, useSecondary }) => {
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const handleFormSubmit = useHandleFormSubmit();
 
@@ -128,7 +124,7 @@ export const BeaconModal = ({ isOpen, onClose, isEdit, dataCrud }) => {
       setLoadingGlobal,
       onClose,
       reset,
-      useSecondary: true,
+      useSecondary,
     });
   }
 

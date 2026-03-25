@@ -1,4 +1,5 @@
-import { ListCollapse, MoreHorizontal } from "lucide-react";
+/* eslint-disable react/prop-types */
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -15,7 +16,6 @@ import IconEdit from "@/icons/IconEdit";
 import { ModalUser } from "../Management/Users/ModalUser";
 import { ModalVehicle } from "../Management/Vehicle/ModalVehicle";
 import { ModalCompany } from "../Management/Company/CompanyModal";
-import { DetailsUser } from "../Management/Users/DetailsUser";
 import { LaborModal } from "../Management/Labor/LaborModal";
 import { DestinyModal } from "../Management/Destiny/DestinyModal";
 
@@ -30,7 +30,6 @@ import { TurnCardModal } from "@/components/Configuration/Modal/TurnCardModal";
 import { ModalDelete } from "../ModalDelete";
 import { TripModal } from "../Dashboard/Trips/TripModal";
 import { VetaModal } from "../Management/Veta/VetaModal";
-import { PlanDayDetails } from "../Management/PlanDay/PlanDayDetails";
 import { useNavigate } from "react-router-dom";
 
 export function DataTableRowActions({
@@ -38,6 +37,7 @@ export function DataTableRowActions({
   row,
   deleteModal = true,
   mode,
+  useSecondary,
 }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -136,14 +136,16 @@ export function DataTableRowActions({
         onClose={() => setOpen(false)}
         dataCrud={rowData}
         isEdit={true}
+        useSecondary={useSecondary}
       />
     ),
-    wap: (
+    wifis: (
       <ModalWap
         isOpen={open}
         onClose={() => setOpen(false)}
         dataCrud={rowData}
         isEdit={true}
+        useSecondary={useSecondary}
       />
     ),
     cycleTruck: (
@@ -221,6 +223,7 @@ export function DataTableRowActions({
         urlDelete={`${componentToShow}/${rowData?._id}`}
         itemId={rowData?._id}
         queryKeyToUpdate={componentToShow}
+        useSecondary={useSecondary}
       />
     </>
   );

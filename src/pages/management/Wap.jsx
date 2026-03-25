@@ -14,12 +14,12 @@ export default function PageWap() {
     isLoading,
     isError,
     refetch,
-  } = useFetchData("wap", "wap");
+  } = useFetchData("wifis", "wifis", { useSecondary: true });
 
   return (
     <>
       <PageHeader
-        title="Gestión de WAP"
+        title="Gestión de WAPs (Wifis)"
         count={countItems(data)}
         description="Administre los WAP de su equipo aquí."
         refetch={refetch}
@@ -31,10 +31,11 @@ export default function PageWap() {
         columns={columns}
         isFetching={isFetching}
         isError={isError}
-        tableType={"wap"}
+        tableType={"wifis"}
         isLoading={isLoading}
+        onRetry={refetch}
       />
-      <ModalWap isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
+      <ModalWap isOpen={dialogOpen} onClose={() => setDialogOpen(false)} useSecondary={true} />
     </>
   );
 }

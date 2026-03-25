@@ -10,7 +10,7 @@ export function useHandleFormSubmit() {
       const config = { useSecondary };
       return isEdit
         ? await putDataRequest(`${endpoint}/${id}`, data, config)
-        : await postDataRequest(`${endpoint}/${postId ? id : ""}`, data, config);
+        : await postDataRequest(postId ? `${endpoint}/${id}` : endpoint, data, config);
     },
     onSuccess: (_, variables) => {
       const invalidateKey = variables.invalidateKey || ["crud", variables.endpoint];

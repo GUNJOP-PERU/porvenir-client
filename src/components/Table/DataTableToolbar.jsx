@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";

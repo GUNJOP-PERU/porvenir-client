@@ -20,6 +20,7 @@ export const ModalDelete = ({
   urlDelete,
   queryKeyToUpdate,
   itemId,
+  useSecondary,
 }) => {
   const { addToast } = useToast();
   const [loadingGlobal, setLoadingGlobal] = useState(false);
@@ -29,8 +30,8 @@ export const ModalDelete = ({
 
     try {
       setLoadingGlobal(true);
-      const response = await deleteDataRequest(urlDelete);
-      if (response?.status === 200) {
+      const response = await deleteDataRequest(urlDelete, { useSecondary });
+      if (response?.status === 200 || response?.status === 204) {
          queryClient.invalidateQueries({ queryKey: ["crud", queryKeyToUpdate] });
         addToast({
           title:  "Eliminado correctamente",

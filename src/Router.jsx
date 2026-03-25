@@ -49,7 +49,7 @@ import RealTimeByTurnEsteril from "./pages/beaconRT/RealTimeByTurnEsteril";
 import RealTimeByScoopMineral from "./pages/beaconRT/RealTimeByScoopMineral";
 import RealTimeByScoopEsteril from "./pages/beaconRT/RealTimeByScoopEsteril";
 import RealTimeByMonthRT from "./pages/beaconRT/RealTimeByMonth";
-import TrackingRT from "./pages/beaconRT/Tracking";
+
 import UtilizacionDeFlota from "./pages/beaconRT/UtilizacionDeFlota";
 import UndergroundTracking from "./pages/beaconRT/UndergroundTracking";
 import SeguimientoDeExtraccion from "./pages/beaconRT/SeguimientoDeExtraccion";
@@ -78,6 +78,9 @@ import ChangeHistory from "./pages/beaconRT/ChangeHistory";
 import Vehicles from "./pages/management/Vehicles";
 import PageVeta from "./pages/management/Veta";
 import Tracking from "./pages/Tracking";
+import TruckStates from "./pages/monitoring/TruckStates";
+import TruckRealTime from "./pages/monitoring/TruckRealTime";
+import Sesions from "./pages/monitoring/Sesions";
 
 const protectedRoutes = [
   //General
@@ -90,6 +93,10 @@ const protectedRoutes = [
   { path: "cycleTruck", element: <PageCycleTruck /> },
   { path: "activityTruck", element: <PageActivity /> },
   { path: "incidence", element: <Incidence /> },
+  { path: "sessions", element: <Sesions /> },
+  { path: "truck-states", element: <TruckStates /> },
+  { path: "realtime", element: <TruckRealTime /> },
+  
   //Planes
   { path: "planDay", element: <PlanDay /> },
   { path: "planMonth", element: <PlanMonth /> },

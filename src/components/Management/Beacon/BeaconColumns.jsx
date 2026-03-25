@@ -111,7 +111,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"beacon"} row={row} />
+      <DataTableRowActions componentToShow={"beacon"} row={row} useSecondary={true} />
     ),
     enableHiding: false,
   },

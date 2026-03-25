@@ -14,12 +14,12 @@ export const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "nombre",
     header: "Nombre",
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("name") || (
+          {row.getValue("nombre") || (
             <span className="text-zinc-400 ">... </span>
           )}
         </>
@@ -27,25 +27,12 @@ export const columns = [
     },
   },
   {
-    accessorKey: "description",
-    header: "Descripción",
-    cell: ({ row }) => {
-      return (
-        <>
-          {row.getValue("description") || (
-            <span className="text-zinc-400 ">... </span>
-          )}
-        </>
-      );
-    },
-  },
-  {
-    accessorKey: "mac_ap",
+    accessorKey: "mac",
     header: "MAC AP",
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("mac_ap") || (
+          {row.getValue("mac") || (
             <span className="text-zinc-400 ">... </span>
           )}
         </>
@@ -53,13 +40,86 @@ export const columns = [
     },
   },
   {
-    accessorKey: "category",
-    header: "Categoria",
+    accessorKey: "ip",
+    header: "IP",
     cell: ({ row }) => {
       return (
         <>
-          {row.getValue("category") || (
+          {row.getValue("ip") || (
             <span className="text-zinc-400 ">... </span>
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "ssid",
+    header: "SSID",
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("ssid") || (
+            <span className="text-zinc-400 ">... </span>
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "location",
+    header: "Ubicación",
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("location") || (
+            <span className="text-zinc-400 ">... </span>
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "type",
+    header: "Tipo",
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("type") || (
+            <span className="text-zinc-400 ">... </span>
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "type",
+    header: "Tipo",
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("type") || (
+            <span className="text-zinc-400 ">... </span>
+          )}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "active",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <>
+          {row.getValue("active") === true ? (
+            <span className="px-2 py-0.5 bg-green-50 rounded-[6px] text-[10px] text-green-500 leading-[10px]">
+              activo
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 bg-red-50 rounded-[6px] text-[10px] text-red-500 leading-[10px]">
+              inactivo
+            </span>
           )}
         </>
       );
@@ -104,7 +164,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <DataTableRowActions componentToShow={"wap"} row={row} />
+      <DataTableRowActions componentToShow={"wifis"} row={row} useSecondary={true} />
     ),
     enableHiding: false,
   },

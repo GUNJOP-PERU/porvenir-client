@@ -40,6 +40,7 @@ export default function PageBeacon() {
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         isEdit={false}
+        
       />
     </>
   );

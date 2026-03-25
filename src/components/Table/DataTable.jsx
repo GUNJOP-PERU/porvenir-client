@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   flexRender,
   getCoreRowModel,
@@ -25,6 +26,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { tableConfigs } from "./DataTableConfig";
 
 import SkeletonWrapper from "@/components/Table/SkeletonWrapper";
+import { RefreshCcw } from "lucide-react";
 
 export function DataTable({
   columns,
@@ -38,6 +40,7 @@ export function DataTable({
   hideToolbar = false,
   toolbarContent,
   meta,
+  onRetry,
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -58,6 +61,7 @@ export function DataTable({
   const table = useReactTable({
     data: data || emptyData,
     columns: columns || emptyColumns,
+    meta,
     state: {
       sorting,
       columnVisibility,
@@ -125,6 +129,15 @@ export function DataTable({
             Hubo un error al cargar los datos. Por favor, intente nuevamente mas
             tarde.
           </p>
+          {onRetry && (
+          <button
+            onClick={onRetry}
+            className="flex items-center gap-1.5 bg-blue-500/[0.08] text-blue-500 px-3 py-1 rounded-lg text-xs font-medium focus:border-blue-500 focus:outline-none cursor-pointer hover:bg-blue-500 hover:text-white transition-all ease-out duration-200 active:scale-90  h-8 mt-2 group"
+          >
+            <RefreshCcw className="size-4 text-blue-500 group-hover:text-white" />{" "}
+            Reintentar
+          </button>
+        )}
         </div>
       </div>
     );

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
